@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/redis%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%8E%9F%E7%90%86111.png-1000width">
 <meta property="og:image" content="http://redisbook.com/_images/graphviz-f0d024ca2782cbbe20e2cd1e52540d92f64b3a37.png">
 <meta property="og:image" content="http://redisbook.com/_images/graphviz-f4835e5b07c5a6ab04e09dc8d887d62a1854ac94.png">
-<meta property="og:updated_time" content="2018-05-30T14:22:04.432Z">
+<meta property="og:updated_time" content="2018-05-30T14:26:57.467Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="1.redis简介">
 <meta name="twitter:description" content="redis在面试中经常被问到，决定系统学习一下redis，经过几天的学习，收获颇丰。记录一下，第一章是关于redis的一个简介和线程模型的介绍。">
@@ -329,7 +329,7 @@
 <p><img src="http://redisbook.com/_images/graphviz-f4835e5b07c5a6ab04e09dc8d887d62a1854ac94.png" alt="image"></p>
 <p>文件事件分派器接收 I/O 多路复用程序传来的套接字， 并根据套接字产生的事件的类型， 调用相应的事件处理器。</p>
 <p>服务器会为执行不同任务的套接字关联不同的事件处理器， 这些处理器是一个个函数， 它们定义了某个事件发生时， 服务器应该执行的动作。</p>
-<p>++整个模块使 <code>Redis</code> 能以单进程运行的同时服务成千上万个文件描述符，避免了由于多进程应用的引入导致代码实现复杂度的提升，减少了出错的可能性。++</p>
+<p><strong>整个模块使 <code>Redis</code> 能以单进程运行的同时服务成千上万个文件描述符，避免了由于多进程应用的引入导致代码实现复杂度的提升，减少了出错的可能性。</strong></p>
 <p>最后，为什么<code>redis</code>比较快大概思路通俗的说就是：<code>Redis</code>是纯内存数据库，读取快，瓶颈在于IO上，如果使用阻塞式IO，因为是单线程的缘故，就会停止等待。所以采用IO多路复用监听文件描述符的状态，将对redis的开关读写换成事件，加入队列进行相应的事件处理，采用非阻塞IO，吞吐量比较大。</p>
 <h2 id="7-reids在linux下的安装"><a href="#7-reids在linux下的安装" class="headerlink" title="7. reids在linux下的安装"></a>7. reids在linux下的安装</h2><p><code>Redis</code>对于<code>Linux</code>是官方支持的，安装起来也非常地简单，直接编译源码然后进行安装即可。</p>
 <p>这里以<code>centos</code>为例，大概说一下步骤：</p>
@@ -358,7 +358,7 @@
         <p><span>本文标题:</span><a href="/2018/05/30/1.redis简介/">1.redis简介</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-05-30, 20:36:58</p>
-        <p><span>最后更新:</span>2018-05-30, 22:22:04</p>
+        <p><span>最后更新:</span>2018-05-30, 22:26:57</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/05/30/1.redis简介/" title="1.redis简介">http://yoursite.com/2018/05/30/1.redis简介/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/30/1.redis简介/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
