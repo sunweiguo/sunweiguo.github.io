@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/redis%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%8E%9F%E7%90%86111.png-1000width">
 <meta property="og:image" content="http://redisbook.com/_images/graphviz-f0d024ca2782cbbe20e2cd1e52540d92f64b3a37.png">
 <meta property="og:image" content="http://redisbook.com/_images/graphviz-f4835e5b07c5a6ab04e09dc8d887d62a1854ac94.png">
-<meta property="og:updated_time" content="2018-05-30T14:15:26.598Z">
+<meta property="og:updated_time" content="2018-05-30T14:18:08.139Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[object Object]">
 <meta name="twitter:description" content="redis在面试中经常被问到，决定系统学习一下redis，经过几天的学习，收获颇丰。记录一下，第一章是关于redis的一个简介和线程模型的介绍。">
@@ -231,8 +231,8 @@
       
           
         <p>redis在面试中经常被问到，决定系统学习一下redis，经过几天的学习，收获颇丰。记录一下，第一章是关于redis的一个简介和线程模型的介绍。<br><a id="more"></a></p>
-<h2 id="1-redis是什么"><a href="#1-redis是什么" class="headerlink" title="1. redis是什么"></a>1. <code>redis</code>是什么</h2><p><code>Redis</code>是一个开源的使用ANSI <strong>C语言编写</strong>、支持网络、<strong>单进程单线程</strong>、<strong>可基于内存亦可持久化的日志型</strong>、一个<strong>高性能的<code>key-value</code>数据库</strong>。</p>
-<h2 id="2-Redis与其他key-value存储有什么不同"><a href="#2-Redis与其他key-value存储有什么不同" class="headerlink" title="2. Redis与其他key-value存储有什么不同"></a>2. <code>Redis</code>与其他<code>key-value</code>存储有什么不同</h2><ul>
+<h2 id="1-redis是什么"><a href="#1-redis是什么" class="headerlink" title="1. redis是什么"></a>1. redis是什么</h2><p><code>Redis</code>是一个开源的使用ANSI <strong>C语言编写</strong>、支持网络、<strong>单进程单线程</strong>、<strong>可基于内存亦可持久化的日志型</strong>、一个<strong>高性能的<code>key-value</code>数据库</strong>。</p>
+<h2 id="2-Redis与其他key-value存储有什么不同"><a href="#2-Redis与其他key-value存储有什么不同" class="headerlink" title="2. Redis与其他key-value存储有什么不同"></a>2. Redis与其他key-value存储有什么不同</h2><ul>
 <li>多样的数据结构和原子性操作</li>
 </ul>
 <p><strong><code>Redis</code>有着更为复杂的数据结构并且提供对他们的原子性操作</strong>，这是一个不同于其他数据库的进化路径。Redis的数据类型都是基于基本数据结构的同时对程序员透明，无需进行额外的抽象。</p>
@@ -240,7 +240,7 @@
 <li>运行于内存+持久化于磁盘</li>
 </ul>
 <p>Redis运行在内存中但是可以持久化到磁盘，所以在对不同数据集进行高速读写时需要权衡内存，应为数据量不能大于硬件内存。在内存数据库方面的另一个优点是， <strong>相比在磁盘上相同的复杂的数据结构，在内存中操作起来非常简单，这样Redis可以做很多内部复杂性很强的事情。 同时，在磁盘格式方面他们是紧凑的以追加的方式产生的，因为他们并不需要进行随机访问</strong>。</p>
-<h2 id="3-redis特点"><a href="#3-redis特点" class="headerlink" title="3. redis特点"></a>3. <code>redis</code>特点</h2><blockquote>
+<h2 id="3-redis特点"><a href="#3-redis特点" class="headerlink" title="3. redis特点"></a>3. redis特点</h2><blockquote>
 <p><strong>速度快</strong>：基于内存,这是快的最主要原因。</p>
 </blockquote>
 <blockquote>
@@ -264,7 +264,7 @@
 <blockquote>
 <p><strong>高可用、分布式</strong>：高可用：<code>redis-Sentinel</code>(v2.8版本)；分布式：<code>redis-cluster</code>(v3.0版本)</p>
 </blockquote>
-<h2 id="4-redis典型应用场景"><a href="#4-redis典型应用场景" class="headerlink" title="4. redis典型应用场景"></a>4. <code>redis</code>典型应用场景</h2><blockquote>
+<h2 id="4-redis典型应用场景"><a href="#4-redis典型应用场景" class="headerlink" title="4. redis典型应用场景"></a>4. redis典型应用场景</h2><blockquote>
 <p><strong>缓存系统</strong>：这个就不多说了，<code>redis</code>作为高速缓存是其主要存在价值。</p>
 </blockquote>
 <blockquote>
@@ -282,7 +282,7 @@
 <blockquote>
 <p><strong>实时系统</strong>：如垃圾邮件处理系统</p>
 </blockquote>
-<h2 id="5-redis优势"><a href="#5-redis优势" class="headerlink" title="5. redis优势"></a>5. <code>redis</code>优势</h2><blockquote>
+<h2 id="5-redis优势"><a href="#5-redis优势" class="headerlink" title="5. redis优势"></a>5. redis优势</h2><blockquote>
 <p><strong>缓存管理</strong>：可以在必要时将无效的旧数据从内存中删除，为新数据腾出新的空间</p>
 </blockquote>
 <blockquote>
@@ -301,7 +301,7 @@
 <blockquote>
 <p><code>Memcached</code>的特点：<code>Memcached</code>唯一支持的数据类型是<code>String</code>,所以更适合存储只读数据，因为字符串并不会因为额外的处理造成额外的开销。毕竟Memcached每次更新一个对象时，都需要重复执行下面的操作：获取整个字符串-&gt;反序列化为对象-&gt;修改其中的值-&gt;再次序列化该对象-&gt;在缓存中将整个字符串替换为新字符串。这样一来，更新存储数据就会有更高的消耗，可能就不是我们的最佳选择了。 </p>
 </blockquote>
-<h2 id="6-redis快的原因总结"><a href="#6-redis快的原因总结" class="headerlink" title="6. redis快的原因总结"></a>6. <code>redis</code>快的原因总结</h2><blockquote>
+<h2 id="6-redis快的原因总结"><a href="#6-redis快的原因总结" class="headerlink" title="6. redis快的原因总结"></a>6. redis快的原因总结</h2><blockquote>
 <p>完全基于内存</p>
 </blockquote>
 <p><code>Redis</code>是纯内存数据库，相对于读写磁盘，读写内存的速度就不是几倍几十倍了，一般，hash查找可以达到每秒百万次的数量级。</p>
@@ -310,7 +310,7 @@
 </blockquote>
 <p>“多路”指的是多个网络连接，“复用”指的是复用同一个线程。采用多路 I/O 复用技术可以让单个线程高效的处理多个连接请求（尽量减少网络IO的时间消耗）。可以直接理解为：单线程的原子操作，避免上下文切换的时间和性能消耗；加上对内存中数据的处理速度，很自然的提高redis的吞吐量。</p>
 <h4 id="6-1-Redis为什么是单线程的？"><a href="#6-1-Redis为什么是单线程的？" class="headerlink" title="6.1 Redis为什么是单线程的？"></a>6.1 <code>Redis</code>为什么是单线程的？</h4><p>因为CPU不是Redis的瓶颈。<code>Redis</code>的瓶颈最有可能是机器内存或者网络带宽。既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了。</p>
-<h4 id="6-2-为什么-Redis-中要使用-I-O-多路复用这种技术呢？"><a href="#6-2-为什么-Redis-中要使用-I-O-多路复用这种技术呢？" class="headerlink" title="6.2 为什么 Redis 中要使用 I/O 多路复用这种技术呢？"></a>6.2 为什么 <code>Redis</code> 中要使用 I/O 多路复用这种技术呢？</h4><p>首先，<code>Redis</code> 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I/O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I/O 阻塞导致整个进程无法对其它客户提供服务，而 I/O 多路复用就是为了解决这个问题而出现的。</p>
+<h4 id="6-2-为什么-Redis-中要使用-I-O-多路复用这种技术呢？"><a href="#6-2-为什么-Redis-中要使用-I-O-多路复用这种技术呢？" class="headerlink" title="6.2 为什么 Redis 中要使用 I/O 多路复用这种技术呢？"></a>6.2 为什么 Redis 中要使用 I/O 多路复用这种技术呢？</h4><p>首先，<code>Redis</code> 是跑在单线程中的，所有的操作都是按照顺序线性执行的，但是由于读写操作等待用户输入或输出都是阻塞的，所以 I/O 操作在一般情况下往往不能直接返回，这会导致某一文件的 I/O 阻塞导致整个进程无法对其它客户提供服务，而 I/O 多路复用就是为了解决这个问题而出现的。</p>
 <blockquote>
 <p>假设你是一个老师，让30个学生解答一道题目，然后检查学生做的是否正确，你有下面几个选择：</p>
 <ol>
@@ -325,9 +325,9 @@
 </blockquote>
 <h4 id="6-3-redis的线程模型？"><a href="#6-3-redis的线程模型？" class="headerlink" title="6.3 redis的线程模型？"></a>6.3 redis的线程模型？</h4><p>Redis 服务采用 <code>Reactor</code>的方式来实现文件事件处理器（++每一个网络连接其实都对应一个文件描述符++）</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/redis%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E5%8E%9F%E7%90%86111.png-1000width" alt="image"></p>
-<p>文件事件处理器使用 I/O 多路复用模块同时监听多个 FD，当 accept、read、write 和 close 文件事件产生时，文件事件处理器就会回调 FD 绑定的事件处理器。</p>
+<p>文件事件处理器使用 I/O 多路复用模块同时监听多个 FD，当 <code>accept</code>、<code>read</code>、<code>write</code> 和 <code>close</code> 文件事件产生时，文件事件处理器就会回调 FD 绑定的事件处理器。</p>
 <p>虽然整个文件事件处理器是在单线程上运行的，但是通过 I/O 多路复用模块的引入，实现了同时对多个 FD 读写的监控，提高了网络通信模型的性能，同时也可以保证整个 Redis 服务实现的简单。</p>
-<p>上面简单理解就是：多个网络连接并发读写redis的时候，先将对应的fd注册到epoll上，I/O多路复用模块会监听这些网络请求的情况，一旦有一个网络连接产生了accept、read、write 和 close 文件事件，I/O多路复用模块就会向文件事件分派器传送那些产生了事件的网络连接。</p>
+<p>上面简单理解就是：多个网络连接并发读写redis的时候，先将对应的fd注册到<code>epoll</code>上，I/O多路复用模块会监听这些网络请求的情况，一旦有一个网络连接产生了<code>accept</code>、<code>read</code>、<code>write</code> 和 <code>close</code> 文件事件，I/O多路复用模块就会向文件事件分派器传送那些产生了事件的网络连接。</p>
 <p><img src="http://redisbook.com/_images/graphviz-f0d024ca2782cbbe20e2cd1e52540d92f64b3a37.png" alt="image"></p>
 <p>当然了，上面的文件事件可能会并发产生，这时的策略是，将所有产生事件的套接字（对应上面的网络连接）都入队到一个队列里面， 然后通过这个队列， 以有序（<code>sequentially</code>）、同步（<code>synchronously</code>）、每次一个套接字的方式向文件事件分派器传送套接字： 当上一个套接字产生的事件被处理完毕之后（该套接字为事件所关联的事件处理器执行完毕）， I/O 多路复用程序才会继续向文件事件分派器传送下一个套接字。</p>
 <p><img src="http://redisbook.com/_images/graphviz-f4835e5b07c5a6ab04e09dc8d887d62a1854ac94.png" alt="image"></p>
@@ -335,7 +335,7 @@
 <p>服务器会为执行不同任务的套接字关联不同的事件处理器， 这些处理器是一个个函数， 它们定义了某个事件发生时， 服务器应该执行的动作。</p>
 <p>++整个模块使 <code>Redis</code> 能以单进程运行的同时服务成千上万个文件描述符，避免了由于多进程应用的引入导致代码实现复杂度的提升，减少了出错的可能性。++</p>
 <p>最后，为什么<code>redis</code>比较快大概思路通俗的说就是：<code>Redis</code>是纯内存数据库，读取快，瓶颈在于IO上，如果使用阻塞式IO，因为是单线程的缘故，就会停止等待。所以采用IO多路复用监听文件描述符的状态，将对redis的开关读写换成事件，加入队列进行相应的事件处理，采用非阻塞IO，吞吐量比较大。</p>
-<h2 id="7-reids在linux下的安装"><a href="#7-reids在linux下的安装" class="headerlink" title="7. reids在linux下的安装"></a>7. <code>reids</code>在<code>linux</code>下的安装</h2><p><code>Redis</code>对于<code>Linux</code>是官方支持的，安装起来也非常地简单，直接编译源码然后进行安装即可。</p>
+<h2 id="7-reids在linux下的安装"><a href="#7-reids在linux下的安装" class="headerlink" title="7. reids在linux下的安装"></a>7. reids在linux下的安装</h2><p><code>Redis</code>对于<code>Linux</code>是官方支持的，安装起来也非常地简单，直接编译源码然后进行安装即可。</p>
 <p>这里以<code>centos</code>为例，大概说一下步骤：</p>
 <blockquote>
 <p>下载redis编译工具:<code>yum install gcc</code>和<code>yum install g++</code></p>
@@ -362,7 +362,7 @@
         <p><span>本文标题:</span><a href="/2018/05/30/1.redis简介/">[object Object]</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-05-30, 20:36:58</p>
-        <p><span>最后更新:</span>2018-05-30, 22:15:26</p>
+        <p><span>最后更新:</span>2018-05-30, 22:18:08</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/05/30/1.redis简介/" title="[object Object]">http://yoursite.com/2018/05/30/1.redis简介/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/30/1.redis简介/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
