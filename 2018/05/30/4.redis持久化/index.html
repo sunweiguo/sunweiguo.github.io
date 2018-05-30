@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="这一章是介绍redis持久化的两大方式，对其进行详细分析。">
+<meta name="keywords" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="4.redis持久化">
+<meta property="og:url" content="http://yoursite.com/2018/05/30/4.redis持久化/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="这一章是介绍redis持久化的两大方式，对其进行详细分析。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E4%BB%80%E4%B9%88%E6%98%AFRDB.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/save%E5%91%BD%E4%BB%A4.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/newbgsave.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/save%E5%92%8Cbgsave%E5%AF%B9%E6%AF%94.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof-always.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof-everysec.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof-no.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof%E4%B8%89%E7%A7%8D%E7%AD%96%E7%95%A5%E7%9A%84%E6%AF%94%E8%BE%83.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/AOF%E9%87%8D%E5%86%99.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/bgrewriteaof.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/RDB%E5%92%8CAOF%E5%AF%B9%E6%AF%94.png">
+<meta property="og:updated_time" content="2018-05-30T13:30:37.266Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="4.redis持久化">
+<meta name="twitter:description" content="这一章是介绍redis持久化的两大方式，对其进行详细分析。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/%E4%BB%80%E4%B9%88%E6%98%AFRDB.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>4.redis持久化 | Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于后端</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-4.redis持久化" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/05/30/4.redis持久化/" class="article-date">
+      <time datetime="2018-05-30T12:36:58.095Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      4.redis持久化
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>这一章是介绍redis持久化的两大方式，对其进行详细分析。</p>
+<a id="more"></a>
+<h2 id="1-什么是持久化"><a href="#1-什么是持久化" class="headerlink" title="1. 什么是持久化"></a>1. 什么是持久化</h2><p>redis所有数据保持在内存中，对数据的更新将异步地保存到磁盘中。</p>
+<h2 id="2-持久化的方式"><a href="#2-持久化的方式" class="headerlink" title="2. 持久化的方式"></a>2. 持久化的方式</h2><p>快照—mysql dump或者redis rdb</p>
+<p>写日志—mysql binlog或者hbase glog或者redis aof</p>
+<h2 id="3-RDB"><a href="#3-RDB" class="headerlink" title="3. RDB"></a>3. RDB</h2><h4 id="什么是RDB"><a href="#什么是RDB" class="headerlink" title="什么是RDB"></a>什么是RDB</h4><p><img src="http://p376695fl.bkt.clouddn.com/%E4%BB%80%E4%B9%88%E6%98%AFRDB.png" alt="image"></p>
+<h4 id="触发机制三种主要方式"><a href="#触发机制三种主要方式" class="headerlink" title="触发机制三种主要方式"></a>触发机制三种主要方式</h4><ul>
+<li>save(同步)</li>
+</ul>
+<p>save是同步的，当保存的数据量很大时，可能造成redis的阻塞，即客户端访问redis被阻塞。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/save%E5%91%BD%E4%BB%A4.png" alt="image"></p>
+<p>他的文件策略是：如果存在老的RDB文件，则新的替换老的。复杂度为O(n)。</p>
+<ul>
+<li>bgsave(异步)</li>
+</ul>
+<p>一般情况下，fork是比较快的，但是也可以会慢，这时会阻塞redis。只要fork不慢，客户端不会被阻塞。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/newbgsave.png" alt="image"></p>
+<p>他的文件策略和复杂度与save是一样的。</p>
+<p>save和bgsave两者对比：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/save%E5%92%8Cbgsave%E5%AF%B9%E6%AF%94.png" alt="image"></p>
+<ul>
+<li>自动</li>
+</ul>
+<p>redis的自动保存的默认配置是：</p>
+<table>
+<thead>
+<tr>
+<th>配置</th>
+<th>seconds</th>
+<th>changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>save</td>
+<td>900</td>
+<td>1</td>
+</tr>
+<tr>
+<td>save</td>
+<td>300</td>
+<td>10</td>
+</tr>
+<tr>
+<td>save</td>
+<td>60</td>
+<td>10000</td>
+</tr>
+</tbody>
+</table>
+<p>就是说，在60秒内改变了10000条数据，就自动保存；在300秒内有10条改变才自动保存；900秒内有1一条改变就保存。</p>
+<h4 id="RDB总结"><a href="#RDB总结" class="headerlink" title="RDB总结"></a>RDB总结</h4><ol>
+<li>RDB是Redis内存到硬盘的快照，用于持久化。</li>
+<li>save通常会阻塞redis。</li>
+<li>bgsave不会阻塞redis，但是会fork新进程。</li>
+<li>save自动配置满足任一就会被执行。</li>
+<li>有些触发机制不容忽视。</li>
+</ol>
+<h2 id="4-AOF"><a href="#4-AOF" class="headerlink" title="4. AOF"></a>4. AOF</h2><h4 id="RDB问题"><a href="#RDB问题" class="headerlink" title="RDB问题"></a>RDB问题</h4><p>O(n)数据的备份，很耗时间；对于bgsave来说，fork()是一个很消耗内存的操作；将数据全写到硬盘，必然对硬盘IO占用很大。</p>
+<p>还有一点是：某个时间点宕机，那么在某个时间段的数据就丢失了。</p>
+<h4 id="AOF原理"><a href="#AOF原理" class="headerlink" title="AOF原理"></a>AOF原理</h4><p>将对redis的操作追加到aof文件中。当redis宕机之后，使用aof恢复所有的操作继而实现数据的恢复。</p>
+<h4 id="AOF三种策略"><a href="#AOF三种策略" class="headerlink" title="AOF三种策略"></a>AOF三种策略</h4><ul>
+<li>always</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/aof-always.png" alt="image"></p>
+<ul>
+<li>everysec</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/aof-everysec.png" alt="image"></p>
+<p>redis出现故障，有可能丢失一秒的数据。redis默认方式。</p>
+<ul>
+<li>no</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/aof-no.png" alt=""></p>
+<h4 id="三种策略的比较"><a href="#三种策略的比较" class="headerlink" title="三种策略的比较"></a>三种策略的比较</h4><p><img src="http://p376695fl.bkt.clouddn.com/aof%E4%B8%89%E7%A7%8D%E7%AD%96%E7%95%A5%E7%9A%84%E6%AF%94%E8%BE%83.png" alt="image"></p>
+<h4 id="AOF重写"><a href="#AOF重写" class="headerlink" title="AOF重写"></a>AOF重写</h4><p><img src="http://p376695fl.bkt.clouddn.com/AOF%E9%87%8D%E5%86%99.png" alt="image"></p>
+<p>好处是：减少硬盘占用量、加速恢复速度</p>
+<p>实现的两种方式：bgrewriteaof和aof重写配置</p>
+<blockquote>
+<p>bgrewriteaof</p>
+</blockquote>
+<p><img src="http://p376695fl.bkt.clouddn.com/bgrewriteaof.png" alt="image"></p>
+<p>注意：这里的重写并不是上面演示的，将原来的aof文件进行重写，而是对redis的内存数据进行一次回溯。</p>
+<h4 id="aof重写流程"><a href="#aof重写流程" class="headerlink" title="aof重写流程"></a>aof重写流程</h4><p><img src="http://p376695fl.bkt.clouddn.com/aof%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png" alt="image"></p>
+<h2 id="5-持久化的取舍和选择"><a href="#5-持久化的取舍和选择" class="headerlink" title="5. 持久化的取舍和选择"></a>5. 持久化的取舍和选择</h2><h4 id="RDB和AOF对比"><a href="#RDB和AOF对比" class="headerlink" title="RDB和AOF对比"></a>RDB和AOF对比</h4><p><img src="http://p376695fl.bkt.clouddn.com/RDB%E5%92%8CAOF%E5%AF%B9%E6%AF%94.png" alt="image"></p>
+<h4 id="RDB最佳策略"><a href="#RDB最佳策略" class="headerlink" title="RDB最佳策略"></a>RDB最佳策略</h4><p>“关”：建议关闭，但是后面主从复制功能是需要他的，因为需要主节点执行dbsave，然后将rdb文件传给从节点。所以说，关不是永久关。</p>
+<p>“集中管理”：虽然RDB很重，但是对于数据备份是很重要的，按照小时或者天集中地进行备份比较好，因为他的文件很小，利于传输。</p>
+<p>“主从，从开”：有时候从节点打开这个功能是比较好的，但是备份太频繁，取决于实际的场景。</p>
+<h4 id="AOF最佳策略"><a href="#AOF最佳策略" class="headerlink" title="AOF最佳策略"></a>AOF最佳策略</h4><p>“开”：建议打开，如果仅仅是作为一个普通缓存，对于数据要求不是很高，这次数据丢了，下次可以从数据库取(数据库压力不是很大)，这种情况就建议关闭，因为AOF还是有性能开销的。</p>
+<p>“AOF重写集中管理”</p>
+<p>“everysec”</p>
+<h4 id="最佳策略"><a href="#最佳策略" class="headerlink" title="最佳策略"></a>最佳策略</h4><p>“小分片”</p>
+<p>“缓存或者存储”</p>
+<p>“监控(硬盘、内存、负载、网络)”</p>
+<p>“足够的内存”</p>
+<h2 id="6-总结"><a href="#6-总结" class="headerlink" title="6. 总结"></a>6. 总结</h2><ul>
+<li><a href="http://www.ywnds.com/?p=4876" target="_blank" rel="noopener">http://www.ywnds.com/?p=4876</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/05/30/4.redis持久化/">4.redis持久化</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-05-30, 20:36:58</p>
+        <p><span>最后更新:</span>2018-05-30, 21:30:37</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/05/30/4.redis持久化/" title="4.redis持久化">http://yoursite.com/2018/05/30/4.redis持久化/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/30/4.redis持久化/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/05/30/3.并发编程-线程安全性-synchronized/">
+                    3.线程安全性-synchronized
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-什么是持久化"><span class="toc-number">1.</span> <span class="toc-text">1. 什么是持久化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-持久化的方式"><span class="toc-number">2.</span> <span class="toc-text">2. 持久化的方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-RDB"><span class="toc-number">3.</span> <span class="toc-text">3. RDB</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是RDB"><span class="toc-number">3.0.1.</span> <span class="toc-text">什么是RDB</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#触发机制三种主要方式"><span class="toc-number">3.0.2.</span> <span class="toc-text">触发机制三种主要方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RDB总结"><span class="toc-number">3.0.3.</span> <span class="toc-text">RDB总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-AOF"><span class="toc-number">4.</span> <span class="toc-text">4. AOF</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RDB问题"><span class="toc-number">4.0.1.</span> <span class="toc-text">RDB问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF原理"><span class="toc-number">4.0.2.</span> <span class="toc-text">AOF原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF三种策略"><span class="toc-number">4.0.3.</span> <span class="toc-text">AOF三种策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#三种策略的比较"><span class="toc-number">4.0.4.</span> <span class="toc-text">三种策略的比较</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF重写"><span class="toc-number">4.0.5.</span> <span class="toc-text">AOF重写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#aof重写流程"><span class="toc-number">4.0.6.</span> <span class="toc-text">aof重写流程</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-持久化的取舍和选择"><span class="toc-number">5.</span> <span class="toc-text">5. 持久化的取舍和选择</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RDB和AOF对比"><span class="toc-number">5.0.1.</span> <span class="toc-text">RDB和AOF对比</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#RDB最佳策略"><span class="toc-number">5.0.2.</span> <span class="toc-text">RDB最佳策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AOF最佳策略"><span class="toc-number">5.0.3.</span> <span class="toc-text">AOF最佳策略</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#最佳策略"><span class="toc-number">5.0.4.</span> <span class="toc-text">最佳策略</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-总结"><span class="toc-number">6.</span> <span class="toc-text">6. 总结</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"4.redis持久化　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/05/30/3.并发编程-线程安全性-synchronized/" title="下一篇: 3.线程安全性-synchronized">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/3.并发编程-线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/2.并发编程-线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.redis缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/8.JUC组件拓展-ForkJoin/">8.JUC组件拓展-ForkJoin</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/4.并发编程-安全发布对象/">4.安全发布对象</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

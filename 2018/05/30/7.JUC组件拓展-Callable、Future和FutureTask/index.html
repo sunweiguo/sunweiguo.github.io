@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="Callable、Future和FutureTask">
+<meta name="keywords" content="java多线程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.JUC组件拓展-Callable、Future和FutureTask">
+<meta property="og:url" content="http://yoursite.com/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Callable、Future和FutureTask">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-05-30T13:39:08.307Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="7.JUC组件拓展-Callable、Future和FutureTask">
+<meta name="twitter:description" content="Callable、Future和FutureTask">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>7.JUC组件拓展-Callable、Future和FutureTask | Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于后端</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-7.JUC组件拓展-Callable、Future和FutureTask" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/" class="article-date">
+      <time datetime="2018-05-30T12:36:57.976Z" itemprop="datePublished">2018-05-30</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      7.JUC组件拓展-Callable、Future和FutureTask
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java多线程/">java多线程</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>Callable、Future和FutureTask<br><a id="more"></a></p>
+<h2 id="Callable、Future和FutureTask"><a href="#Callable、Future和FutureTask" class="headerlink" title="Callable、Future和FutureTask"></a>Callable、Future和FutureTask</h2><p>创建线程有2种方式，一种是直接继承Thread，另外一种就是实现Runnable接口。<br>这2种方式都有一个缺陷就是：在执行完任务之后无法获取执行结果。如果需要获取执行结果，就必须通过共享变量或者使用线程通信的方式来达到效果，这样使用起来就比较麻烦。</p>
+<p>而自从Java 1.5开始，就提供了Callable和Future，通过它们可以在任务执行完毕之后得到任务执行结果。</p>
+<h4 id="callable和runnable"><a href="#callable和runnable" class="headerlink" title="callable和runnable"></a>callable和runnable</h4><p>Runnable是一个接口，在它里面只声明了一个run()方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于run()方法返回值为void类型，所以在执行完任务之后无法返回任何结果。</p>
+<p>Callable位于java.util.concurrent包下，它也是一个接口，在它里面也只声明了一个方法，只不过这个方法叫做call()：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//call()函数返回的类型就是传递进来的V类型</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Callable</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * Computes a result, or throws an exception if unable to do so.</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> computed result</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception if unable to compute a result</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">V <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么怎么使用Callable呢？一般情况下是配合ExecutorService来使用的，在ExecutorService接口中声明了若干个submit方法的重载版本：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Runnable task, T result)</span></span>;</span><br><span class="line">Future&lt;?&gt; submit(Runnable task);</span><br></pre></td></tr></table></figure>
+<hr>
+<p>注意，这里线程的submit()和execute()的区别：</p>
+<p>例如，创建可缓存线程池，Executors.newCachedThreadPool()，源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                      <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该方法返回的是一个ExecutorService接口，而这个接口继承Executor接口，Executor是最上层的，其中只包含一个execute()方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>execute()方法的入参为一个Runnable，返回值为void。</p>
+<p>而submit已经在上面说了，是ExecutorService接口中的方法，是由返回值的。</p>
+<p>所以他们的区别是：</p>
+<ul>
+<li>接收的参数不一样;</li>
+<li>submit()有返回值，而execute()没有;</li>
+<li>submit()可以进行Exception处理;</li>
+</ul>
+<hr>
+<p>两者功能大致相似，callable更强大一些，因为对线程执行后可以有返回值，并且可以抛出异常。</p>
+<p>关于runnable创建线程就不再赘述了，callable与future结合起来一起使用，在下面将给出例子。</p>
+<h4 id="Future接口"><a href="#Future接口" class="headerlink" title="Future接口"></a>Future接口</h4><p>对于callable或者runnable的任务，可以进行取消，查询任务是否被取消，查询任务是否完成以及获取结果。future可以得到别的线程任务方法的返回值。</p>
+<p>必要时可以通过get方法获取执行结果，该方法会阻塞直到任务返回结果。</p>
+<p>Future类位于java.util.concurrent包下，它是一个接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">cancel</span><span class="params">(<span class="keyword">boolean</span> mayInterruptIfRunning)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isCancelled</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isDone</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException, ExecutionException</span>;</span><br><span class="line">    <span class="function">V <span class="title">get</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException, ExecutionException, TimeoutException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在Future接口中声明了5个方法，下面依次解释每个方法的作用：</p>
+<blockquote>
+<p>cancel方法用来取消任务，如果取消任务成功则返回true，如果取消任务失败则返回false。参数mayInterruptIfRunning表示是否允许取消正在执行却没有执行完毕的任务，如果设置true，则表示可以取消正在执行过程中的任务。</p>
+<ul>
+<li>1.如果任务已经完成，则无论mayInterruptIfRunning为true还是false，此方法肯定返回false，即如果取消已经完成的任务会返回false；</li>
+<li>如果任务正在执行，若mayInterruptIfRunning设置为true，则返回true，- 若mayInterruptIfRunning设置为false，则返回false；<br>-如果任务还没有执行，则无论mayInterruptIfRunning为true还是false，肯定返回true。</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>isCancelled方法表示任务是否被取消成功，如果在任务正常完成前被取消成功，则返回 true。</p>
+</blockquote>
+<blockquote>
+<p>isDone方法表示任务是否已经完成，若任务完成，则返回true；</p>
+</blockquote>
+<blockquote>
+<p>get()方法用来获取执行结果，这个方法会产生阻塞，会一直等到任务执行完毕才返回；</p>
+</blockquote>
+<blockquote>
+<p>get(long timeout, TimeUnit unit)用来获取执行结果，如果在指定时间内，还没获取到结果，就直接返回null。</p>
+</blockquote>
+<p>也就是说Future提供了三种功能：判断任务是否完成；能够中断任务；能够获取任务执行结果。</p>
+<p>因为Future只是一个接口，所以是无法直接用来创建对象使用的，因此就有了下面的FutureTask。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyCallable</span> <span class="keyword">implements</span> <span class="title">Callable</span>&lt;<span class="title">String</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            log.info(<span class="string">"do something in callable..."</span>);</span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="string">"Done"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException, ExecutionException </span>&#123;</span><br><span class="line">        ExecutorService exec = Executors.newCachedThreadPool();</span><br><span class="line">        <span class="comment">//获取callable运行结果</span></span><br><span class="line">        Future&lt;String&gt; future = exec.submit(<span class="keyword">new</span> MyCallable());</span><br><span class="line">        log.info(<span class="string">"do something in main..."</span>);</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        String result = future.get();</span><br><span class="line">        log.info(<span class="string">"result=&#123;&#125;..."</span>,result);</span><br><span class="line">        exec.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">21</span>:<span class="number">21</span>:<span class="number">20.441</span> [main] INFO - <span class="keyword">do</span> something in main...</span><br><span class="line"><span class="number">21</span>:<span class="number">21</span>:<span class="number">20.462</span> [pool-<span class="number">1</span>-thread-<span class="number">1</span>] INFO - <span class="keyword">do</span> something in callable...</span><br><span class="line"><span class="comment">//等5秒后才拿到结果</span></span><br><span class="line"><span class="number">21</span>:<span class="number">21</span>:<span class="number">25.462</span> [main] INFO - result=Done...</span><br></pre></td></tr></table></figure>
+<h4 id="FutureTask类"><a href="#FutureTask类" class="headerlink" title="FutureTask类"></a>FutureTask类</h4><p>我们先来看一下FutureTask的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureTask</span>&lt;<span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>FutureTask类实现了RunnableFuture接口，我们看一下RunnableFuture接口的实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RunnableFuture</span>&lt;<span class="title">V</span>&gt; <span class="keyword">extends</span> <span class="title">Runnable</span>, <span class="title">Future</span>&lt;<span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出RunnableFuture继承了Runnable接口和Future接口，而FutureTask实现了RunnableFuture接口。所以它既可以作为Runnable被线程执行，又可以作为Future得到Callable的返回值。</p>
+<p>事实上，FutureTask是Future接口的一个唯一实现类。</p>
+<p>FutureTask提供了2个构造器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FutureTask</span><span class="params">(Callable&lt;V&gt; callable)</span> </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FutureTask</span><span class="params">(Runnable runnable, V result)</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，我们就可以在FutureTask传入一个callable任务了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FutureTaskTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        FutureTask&lt;String&gt; futureTask = <span class="keyword">new</span> FutureTask&lt;String&gt;(<span class="keyword">new</span> Callable&lt;String&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> String <span class="title">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                log.info(<span class="string">"do something in callable..."</span>);</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"Done"</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> Thread(futureTask).start();</span><br><span class="line">        log.info(<span class="string">"do something in main..."</span>);</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        String result = futureTask.get();</span><br><span class="line">        log.info(<span class="string">"result=&#123;&#125;..."</span>,result);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果同上。都可以实现一个场景：一个复杂的任务执行，但是不是立即需要他的结果，而是我这个线程继续干其他事情，等需要他 结果的时候，再去跟她要。我可以拿到他的返回值继续做其他事情。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-05-30, 20:36:57</p>
+        <p><span>最后更新:</span>2018-05-30, 21:39:08</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/" title="7.JUC组件拓展-Callable、Future和FutureTask">http://yoursite.com/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/05/30/7.redis cluster理论详解/">
+                    7.redis cluster理论详解
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/05/30/6.redis sentinel实现高可用读写分离/">
+                    6.redis sentinel实现高可用读写分离
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Callable、Future和FutureTask"><span class="toc-number">1.</span> <span class="toc-text">Callable、Future和FutureTask</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#callable和runnable"><span class="toc-number">1.0.1.</span> <span class="toc-text">callable和runnable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Future接口"><span class="toc-number">1.0.2.</span> <span class="toc-text">Future接口</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#FutureTask类"><span class="toc-number">1.0.3.</span> <span class="toc-text">FutureTask类</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"7.JUC组件拓展-Callable、Future和FutureTask　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/05/30/7.redis cluster理论详解/" title="上一篇: 7.redis cluster理论详解">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/05/30/6.redis sentinel实现高可用读写分离/" title="下一篇: 6.redis sentinel实现高可用读写分离">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/3.并发编程-线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/2.并发编程-线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.redis缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/8.JUC组件拓展-ForkJoin/">8.JUC组件拓展-ForkJoin</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/4.并发编程-安全发布对象/">4.安全发布对象</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
