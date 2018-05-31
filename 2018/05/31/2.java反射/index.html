@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-05-31T14:01:29.870Z">
+<meta property="og:updated_time" content="2018-05-31T14:23:50.622Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2.java反射">
 <meta name="twitter:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
@@ -277,41 +277,36 @@
 <p>静态加载的类在编译的时候就能确定该类是否存在，但动态加载一个类的时候却无法在编译阶段确定是否存在该类，而是在运行时候才能够确定是否有这个类，所以要捕捉可能发生的异常</p>
 <p>Class对象有一个<code>newInstance</code>方法，我们可以用它来创建实例对象</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class classInstance = Class.forName(<span class="string">"mypackage.MyClass"</span>);</span><br><span class="line">MyClass myClass = (MyClass) classInstance.newInstance();</span><br></pre></td></tr></table></figure>
-<h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a>7. 总结</h2><blockquote>
-<p>1.反射为我们提供了全面的分析类信息的能力，例如类的方法，成员变量和构造器等的相关信息，反射能够让我们很方便的获取这些信息， 而实现这个获取过程的关键是取得类的Class对象，然后根据Class对象取得相应的Method对象，Field对象和Constructor对象，再分别根据各自的API取得信息。</p>
-<p>2.反射还为我们提供动态加载类的能力</p>
-<p>3.API中getDeclaredXXX和getXXX的区别在于前者只获取本类声明的XXX（如成员变量或方法），而不获取超类中继承的XXX， 后者相反</p>
-<p>4.API中， getXXXs（注意后面的s）返回的是一个数组， 而对应的 getXXX（”键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try-catch语句包裹）</p>
-<p>5.私有成员变量是不能直接获取到值的！因为java本身的保护机制，允许你取得私有成员变量的类型，但是不允许直接获取值，所以要对对应的field对象调用field.setAccessible(true) 放开权限</p>
-</blockquote>
+<h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a>7. 总结</h2><ul>
+<li>反射为我们提供了全面的分析类信息的能力，例如类的方法，成员变量和构造器等的相关信息，反射能够让我们很方便的获取这些信息， 而实现这个获取过程的关键是取得类的Class对象，然后根据Class对象取得相应的Method对象，Field对象和Constructor对象，再分别根据各自的API取得信息。</li>
+<li>反射还为我们提供动态加载类的能力</li>
+<li>API中getDeclaredXXX和getXXX的区别在于前者只获取本类声明的XXX（如成员变量或方法），而不获取超类中继承的XXX， 后者相反</li>
+<li>API中， getXXXs（注意后面的s）返回的是一个数组， 而对应的 getXXX（”键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try-catch语句包裹）</li>
+<li>私有成员变量是不能直接获取到值的！因为java本身的保护机制，允许你取得私有成员变量的类型，但是不允许直接获取值，所以要对对应的field对象调用field.setAccessible(true) 放开权限</li>
+</ul>
 <h2 id="8-面试"><a href="#8-面试" class="headerlink" title="8. 面试"></a>8. 面试</h2><h4 id="什么是反射"><a href="#什么是反射" class="headerlink" title="什么是反射"></a>什么是反射</h4><p>反射是一种能够在程序运行时动态访问、修改某个类中任意属性（状态）和方法（行为）的机制</p>
-<h4 id="反射机制能做什么"><a href="#反射机制能做什么" class="headerlink" title="反射机制能做什么"></a>反射机制能做什么</h4><blockquote>
-<p>在运行时判断任意一个对象所属的类(父类和接口都可以)</p>
-</blockquote>
-<blockquote>
-<p>在运行时构造任意一个类的对象</p>
-</blockquote>
-<blockquote>
-<p>在运行时判断任意一个类所具有的成员变量和方法</p>
-</blockquote>
-<blockquote>
-<p>在运行时调用任意一个对象的方法</p>
-</blockquote>
-<blockquote>
-<p>生成动态代理</p>
-</blockquote>
-<h4 id="反射到底有什么具体的用处"><a href="#反射到底有什么具体的用处" class="headerlink" title="反射到底有什么具体的用处"></a>反射到底有什么具体的用处</h4><blockquote>
-<p>操作因访问权限限制的属性和方法；</p>
-</blockquote>
-<blockquote>
-<p>实现自定义注解；</p>
-</blockquote>
-<blockquote>
-<p>动态加载第三方jar包，解决android开发中方法数不能超过65536个的问题；</p>
-</blockquote>
-<blockquote>
-<p>按需加载类，节省编译和初始化APK的时间；</p>
-</blockquote>
+<h4 id="反射机制能做什么"><a href="#反射机制能做什么" class="headerlink" title="反射机制能做什么"></a>反射机制能做什么</h4><ul>
+<li><p>在运行时判断任意一个对象所属的类(父类和接口都可以)</p>
+</li>
+<li><p>在运行时构造任意一个类的对象</p>
+</li>
+<li><p>在运行时判断任意一个类所具有的成员变量和方法</p>
+</li>
+<li><p>在运行时调用任意一个对象的方法</p>
+</li>
+<li><p>生成动态代理</p>
+</li>
+</ul>
+<h4 id="反射到底有什么具体的用处"><a href="#反射到底有什么具体的用处" class="headerlink" title="反射到底有什么具体的用处"></a>反射到底有什么具体的用处</h4><ul>
+<li><p>操作因访问权限限制的属性和方法；</p>
+</li>
+<li><p>实现自定义注解；</p>
+</li>
+<li><p>动态加载第三方jar包，解决android开发中方法数不能超过65536个的问题；</p>
+</li>
+<li><p>按需加载类，节省编译和初始化APK的时间；</p>
+</li>
+</ul>
 <h4 id="反射的原理是什么"><a href="#反射的原理是什么" class="headerlink" title="反射的原理是什么"></a>反射的原理是什么</h4><p>当我们编写完一个Java项目之后，每个java文件都会被编译成一个.class文件，这些Class对象承载了这个类的所有信息，包括父类、接口、构造函数、方法、属性等，这些class文件在程序运行时会被ClassLoader加载到虚拟机中。当一个类被加载以后，Java虚拟机就会在内存中自动产生一个Class对象。我们通过new的形式创建对象实际上就是通过这些Class来创建，只是这个过程对于我们是透明的而已。</p>
 <p>反射的工作原理就是借助Class.java、Constructor.java、Method.java、Field.java这四个类在程序运行时动态访问和修改任何类的行为和状态。</p>
 <h4 id="如何获取Class对象"><a href="#如何获取Class对象" class="headerlink" title="如何获取Class对象"></a>如何获取Class对象</h4><ul>
@@ -370,7 +365,7 @@
         <p><span>本文标题:</span><a href="/2018/05/31/2.java反射/">2.java反射</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-05-31, 21:55:58</p>
-        <p><span>最后更新:</span>2018-05-31, 22:01:29</p>
+        <p><span>最后更新:</span>2018-05-31, 22:23:50</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/05/31/2.java反射/" title="2.java反射">http://yoursite.com/2018/05/31/2.java反射/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/31/2.java反射/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
