@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-05-31T14:23:50.622Z">
+<meta property="og:updated_time" content="2018-05-31T14:29:32.923Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2.java反射">
 <meta name="twitter:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
@@ -281,7 +281,7 @@
 <li>反射为我们提供了全面的分析类信息的能力，例如类的方法，成员变量和构造器等的相关信息，反射能够让我们很方便的获取这些信息， 而实现这个获取过程的关键是取得类的Class对象，然后根据Class对象取得相应的Method对象，Field对象和Constructor对象，再分别根据各自的API取得信息。</li>
 <li>反射还为我们提供动态加载类的能力</li>
 <li>API中getDeclaredXXX和getXXX的区别在于前者只获取本类声明的XXX（如成员变量或方法），而不获取超类中继承的XXX， 后者相反</li>
-<li>API中， getXXXs（注意后面的s）返回的是一个数组， 而对应的 getXXX（”键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try-catch语句包裹）</li>
+<li>API中， getXXXs（注意后面的s）返回的是一个数组， 而对应的 getXXX（”键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try*catch语句包裹）</li>
 <li>私有成员变量是不能直接获取到值的！因为java本身的保护机制，允许你取得私有成员变量的类型，但是不允许直接获取值，所以要对对应的field对象调用field.setAccessible(true) 放开权限</li>
 </ul>
 <h2 id="8-面试"><a href="#8-面试" class="headerlink" title="8. 面试"></a>8. 面试</h2><h4 id="什么是反射"><a href="#什么是反射" class="headerlink" title="什么是反射"></a>什么是反射</h4><p>反射是一种能够在程序运行时动态访问、修改某个类中任意属性（状态）和方法（行为）的机制</p>
@@ -365,7 +365,7 @@
         <p><span>本文标题:</span><a href="/2018/05/31/2.java反射/">2.java反射</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-05-31, 21:55:58</p>
-        <p><span>最后更新:</span>2018-05-31, 22:23:50</p>
+        <p><span>最后更新:</span>2018-05-31, 22:29:32</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/05/31/2.java反射/" title="2.java反射">http://yoursite.com/2018/05/31/2.java反射/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/31/2.java反射/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
