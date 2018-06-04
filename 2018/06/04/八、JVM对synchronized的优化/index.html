@@ -15,23 +15,20 @@
 
 
 
-<meta name="description" content="本文分析HashMap和LinkedHashMap遍历机制.">
-<meta name="keywords" content="java容器">
+<meta name="description" content="聊一聊JVM对synchronized的优化。">
+<meta name="keywords" content="java并发基础">
 <meta property="og:type" content="article">
-<meta property="og:title" content="8、HashMap和LinkedHashMap遍历机制">
-<meta property="og:url" content="http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/index.html">
+<meta property="og:title" content="八、JVM对synchronized的优化">
+<meta property="og:url" content="http://yoursite.com/2018/06/04/八、JVM对synchronized的优化/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="本文分析HashMap和LinkedHashMap遍历机制.">
+<meta property="og:description" content="聊一聊JVM对synchronized的优化。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://img.blog.csdn.net/20150122114620929">
-<meta property="og:image" content="http://img.blog.csdn.net/20150122131549304">
-<meta property="og:image" content="http://img.blog.csdn.net/20150122133322461">
-<meta property="og:image" content="http://img.blog.csdn.net/20150122140842817">
-<meta property="og:updated_time" content="2018-06-04T07:28:47.060Z">
+<meta property="og:image" content="http://cmsblogs.qiniudn.com/wp-content/uploads/2017/02/22222222222222-1.png">
+<meta property="og:updated_time" content="2018-06-04T14:08:58.907Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="8、HashMap和LinkedHashMap遍历机制">
-<meta name="twitter:description" content="本文分析HashMap和LinkedHashMap遍历机制.">
-<meta name="twitter:image" content="http://img.blog.csdn.net/20150122114620929">
+<meta name="twitter:title" content="八、JVM对synchronized的优化">
+<meta name="twitter:description" content="聊一聊JVM对synchronized的优化。">
+<meta name="twitter:image" content="http://cmsblogs.qiniudn.com/wp-content/uploads/2017/02/22222222222222-1.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -63,7 +60,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>8、HashMap和LinkedHashMap遍历机制 | Hexo</title>
+<title>八、JVM对synchronized的优化 | Hexo</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -187,11 +184,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-8、HashMap和LinkedHashMap遍历机制" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-八、JVM对synchronized的优化" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/" class="article-date">
-      <time datetime="2018-06-04T07:28:45.947Z" itemprop="datePublished">2018-06-04</time>
+      <a href="/2018/06/04/八、JVM对synchronized的优化/" class="article-date">
+      <time datetime="2018-06-04T14:08:58.232Z" itemprop="datePublished">2018-06-04</time>
 </a>
 
 
@@ -206,7 +203,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      8、HashMap和LinkedHashMap遍历机制
+      八、JVM对synchronized的优化
     </h1>
   
 
@@ -217,7 +214,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java容器/">java容器</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -227,46 +224,79 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>本文分析HashMap和LinkedHashMap遍历机制.<br><a id="more"></a></p>
-<h2 id="一、对HashMap和LinkedHashMap遍历的几种方法"><a href="#一、对HashMap和LinkedHashMap遍历的几种方法" class="headerlink" title="一、对HashMap和LinkedHashMap遍历的几种方法"></a>一、对HashMap和LinkedHashMap遍历的几种方法</h2><p>这里以<code>HashMap</code>为例，<code>LinkedHashMap</code>一样的方式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  Map&lt;String,String&gt; map=<span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">        map.put(<span class="string">"1"</span>, <span class="string">"value1"</span>);</span><br><span class="line">        map.put(<span class="string">"2"</span>, <span class="string">"value2"</span>);</span><br><span class="line">        map.put(<span class="string">"3"</span>, <span class="string">"value3"</span>);</span><br><span class="line">        map.put(<span class="string">"4"</span>, <span class="string">"value4"</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第一种：普通使用，二次取值</span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.keySet遍历key和value："</span>);  </span><br><span class="line">        <span class="keyword">for</span>(String key:map.keySet())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+key+<span class="string">" Value: "</span>+map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第二种</span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.entrySet使用iterator遍历key和value: "</span>);  </span><br><span class="line">        Iterator&lt;Map.Entry&lt;String, String&gt;&gt; map1it=map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span>(map1it.hasNext())</span><br><span class="line">        &#123;</span><br><span class="line">         Map.Entry&lt;String, String&gt; entry= map1it.next();</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+entry.getKey()+<span class="string">" Value: "</span>+entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第三种：推荐，尤其是容量大时  </span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.entrySet遍历key和value"</span>);  </span><br><span class="line">        <span class="keyword">for</span>(Map.Entry&lt;String, String&gt; entry: map.entrySet())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+ entry.getKey()+ <span class="string">" Value: "</span>+entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第四种  </span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.values()遍历所有的value，但不能遍历key"</span>);  </span><br><span class="line">        <span class="keyword">for</span>(String v:map.values())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"The value is "</span>+v);</span><br><span class="line">        &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
-<p>我们知道，<code>HashMap</code>的输出顺序与元素的输入顺序无关，<code>LinkedHashMap</code>可以按照输入顺序输出，也可以根据读取元素的顺序输出。这一现象，已经在上一篇中展示出来了。</p>
-<h2 id="二、HashMap的遍历机制"><a href="#二、HashMap的遍历机制" class="headerlink" title="二、HashMap的遍历机制"></a>二、HashMap的遍历机制</h2><p><code>HashMap</code> 提供了两个遍历访问其内部元素<code>Entry&lt;k,v&gt;</code>的接口：</p>
-<ol>
-<li><code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code>——-&gt;返回此映射所包含的映射关系的 Set 视图。</li>
-<li><code>Set&lt;K&gt; keySet()</code>——–&gt;返回此映射中所包含的键的 Set 视图。</li>
-</ol>
-<blockquote>
-<p>实际上，第二个借口表示的<code>Key</code>的顺序，和第一个接口返回的<code>Entry</code>顺序是对应的，也就是说：这两种接口对<code>HashMap</code>的元素遍历的顺序相相同的。  那么，<code>HashMap</code>遍历内部<code>Entry&lt;K,V&gt;</code> 的顺序是什么呢？ 搞清楚这个问题，先要知道其内部结构是怎样的。          </p>
+        <p>聊一聊JVM对synchronized的优化。<br><a id="more"></a></p>
+<h2 id="1）锁消除"><a href="#1）锁消除" class="headerlink" title="1）锁消除"></a>1）锁消除</h2><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>JVM在JIT编译(即时编译)时，通过对运行上下文的扫描，去除掉那些不可能发生共享资源竞争的锁，从而节省了线程请求这些锁的时间。</p>
+<h4 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h4><blockquote>
+<p><code>StringBuffer</code>的<code>append</code>方法是一个同步方法，如果<code>StringBuffer</code>类型的变量是一个局部变量，<br>则该变量就不会被其它线程所使用，即对局部变量的操作是不会发生线程不安全的问题。<br>在这种情景下，JVM会在JIT编译时自动将<code>append</code>方法上的锁去掉。</p>
 </blockquote>
-<p><code>HashMap</code>内部对键值对的存储结构使用的是数组+链表的形式。其结构如下图所示：</p>
-<p><img src="http://img.blog.csdn.net/20150122114620929" alt="image"></p>
-<p><code>HashMap</code>在存储<code>Entry</code>对象的时候，是根据<code>Key</code>的<code>hash</code>值判定存储到<code>Entry[] table</code>数组的哪一个索引值表示的链表上。</p>
-<p>对<code>HashMap</code>遍历<code>Entry</code>对象的顺序和<code>Entry</code>对象的存储顺序之间没有任何关系。</p>
-<p><strong><code>HashMap</code>散列图、<code>Hashtable</code>散列表是按“有利于随机查找的散列(hash)的顺序”。并非按输入顺序。遍历时只能全部输出，而没有顺序</strong>。甚至可以<code>rehash()</code>重新散列，来获得更利于随机存取的内部顺序。</p>
-<h2 id="三、LinkedHashMap-的遍历机制"><a href="#三、LinkedHashMap-的遍历机制" class="headerlink" title="三、LinkedHashMap 的遍历机制"></a>三、LinkedHashMap 的遍历机制</h2><p><code>LinkedHashMap</code> 是<code>HashMap</code>的子类，它可以实现对容器内Entry的存储顺序和对Entry的遍历顺序保持一致。</p>
-<p>为了实现这个功能，<strong><code>LinkedHashMap</code>内部使用了一个<code>Entry</code>类型的双向链表，用这个双向链表记录<code>Entry</code>的存储顺序</strong>。当需要对该<code>Map</code>进行遍历的时候，实际上是遍历的是这个双向链表。</p>
-<p><code>LinkedHashMap</code>内部使用的<code>LinkedHashMap.Entry</code>类继承自<code>Map.Entry</code>类，在其基础上增加了<code>LinkedHashMap.Entry</code>类型的两个字段，用来引用该<code>Entry</code>在双向链表中的前面的<code>Entry</code>对象和后面的<code>Entry</code>对象。</p>
-<p>它的内部会在<code>Map.Entry</code>类的基础上，增加两个<code>Entry</code>类型的引用：<code>before</code>，<code>after</code>。<code>LinkedHashMap</code>使用一个双向连表，将其内部所有的<code>Entry</code>串起来。</p>
-<p><img src="http://img.blog.csdn.net/20150122131549304" alt="image"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LinkedHashMap linkedHashMap = <span class="keyword">new</span> LinkedHashMap();  </span><br><span class="line">linkedHashMap.put(<span class="string">"name"</span>,<span class="string">"louis"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"age"</span>,<span class="string">"24"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"sex"</span>,<span class="string">"male"</span>);</span><br></pre></td></tr></table></figure>
-<p><img src="http://img.blog.csdn.net/20150122133322461" alt="image"></p>
-<p>对<code>LinkedHashMap</code>进行遍历的策略：</p>
-<p><strong>从 <code>header.after</code> 指向的<code>Entry</code>对象开始，然后一直沿着此链表遍历下去，直到某个<code>entry.after == header</code> 为止，完成遍历。</strong></p>
-<p>根据<code>Entry&lt;K,V&gt;</code>插入<code>LinkedHashMap</code>的顺序进行遍历的方式叫做：按插入顺序遍历。</p>
-<p>另外，<code>LinkedHashMap</code>还支持一种遍历顺序，叫做：Get读取顺序。</p>
-<p>如果<code>LinkedHashMap</code>的这个<code>Get</code>读取遍历顺序开启，那么，当我们在<code>LinkedHashMap</code>上调用<code>get(key)</code> 方法时，会导致内部<code>key</code>对应的<code>Entry</code>在双向链表中的位置移动到双向链表的最后。</p>
-<p><img src="http://img.blog.csdn.net/20150122140842817" alt="image"></p>
-<h2 id="四、遍历机制的总结"><a href="#四、遍历机制的总结" class="headerlink" title="四、遍历机制的总结"></a>四、遍历机制的总结</h2><ol>
-<li><p><code>HashMap</code>对元素的遍历顺序跟<code>Entry</code>插入的顺序无关，而<code>LinkedHashMap</code>对元素的遍历顺序可以跟<code>Entry&lt;K,V&gt;</code>插入的顺序保持一致。</p>
-</li>
-<li><p>当<code>LinkedHashMap</code>处于<code>Get</code>获取顺序遍历模式下，当执行<code>get()</code> 操作时，会将对应的<code>Entry&lt;k,v&gt;</code>移到遍历的最后位置。</p>
-</li>
-<li><p><code>LinkedHashMap</code>处于按插入顺序遍历的模式下，如果新插入的<code>&lt;key,value&gt;</code> 对应的<code>key</code>已经存在，对应的<code>Entry</code>在遍历顺序中的位置并不会改变。</p>
-</li>
-<li><p>除了遍历顺序外，其他特性<code>HashMap</code>和<code>LinkedHashMap</code>基本相同。</p>
-</li>
-</ol>
+<h2 id="2）锁粗化"><a href="#2）锁粗化" class="headerlink" title="2）锁粗化"></a>2）锁粗化</h2><h4 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h4><p>将多个连续的加锁、解锁操作连接在一起，扩展成一个范围更大的锁，即将加锁的粒度放大。</p>
+<h4 id="举例-1"><a href="#举例-1" class="headerlink" title="举例"></a>举例</h4><p>在for循环里的加锁/解锁操作，一般需要放到for循环外。</p>
+<h2 id="3）使用偏向锁和轻量级锁"><a href="#3）使用偏向锁和轻量级锁" class="headerlink" title="3）使用偏向锁和轻量级锁"></a>3）使用偏向锁和轻量级锁</h2><h4 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h4><p>1)java6为了减少获取锁和释放锁带来的性能消耗，引入了偏向锁和轻量级锁。</p>
+<p>2)锁一共有4种状态，级别从低到高依次是：无锁状态、偏向锁、轻量级锁、重量级锁。</p>
+<p>3)锁的状态会随着竞争情况逐渐升级，并且只可以升级而不能降级。</p>
+<h4 id="【偏向锁】"><a href="#【偏向锁】" class="headerlink" title="【偏向锁】"></a>【偏向锁】</h4><p>1)背景：大多数情况下，锁不仅不存在多线程竞争，而且总是由同一线程多次获得，为了让线程获得锁的代价更低而引入了偏向锁。</p>
+<p>2)概念：核心思想就是锁会偏向第一个获取它的线程，如果在接下来的执行过程中没有其它的线程获取该锁，则持有偏向锁的线程永远不需要同步。</p>
+<p>3)目的：偏向锁实际上是一种优化锁，其目的是为了减少数据在无竞争情况下的性能损耗。</p>
+<p>4)原理：</p>
+<blockquote>
+<p>当一个线程访问同步块并获取锁时，会在对象头和栈帧中的锁记录里存储锁偏向的线程ID。</p>
+<p>以后该线程在进入和退出同步块时就不需要进行CAS操作来加锁和解锁，只需简单地判断一下对象头的MarkWord里是否存储着指向当前线程的偏向锁。</p>
+</blockquote>
+<p>5)偏向锁的获取：</p>
+<pre><code>1&gt;访问Mark Word中偏向锁的标识位是否为1，如果是1，则确定为偏向锁。
+    说明：
+        [1]如果偏向锁的标识位为0，说明此时是处于无锁状态，则当前线程通过CAS操作尝试获取偏向锁，如果获取锁成功，则将Mark Word中的偏向线程ID设置为当前线程ID；并且将偏向标识位设为1。
+        [2]如果偏向锁的标识位不为1，也不为0(此时偏向锁的标识位没有值)，说明发生了竞争，偏向锁已经膨胀为轻量级锁，这时使用CAS操作尝试获得锁。
 
+2&gt;如果是偏向锁，则判断Mark Word中的偏向线程ID是否指向当前线程，如果偏向线程ID指向当前线程，则表明当前线程已经获取到了锁；
+3&gt;如果偏向线程ID并未指向当前线程，则通过CAS操作尝试获取偏向锁，如果获取锁成功，则将Mark Word中的偏向线程ID设置为当前线程ID；
+4&gt;如果CAS获取偏向锁失败，则表示有竞争。当到达全局安全点时(在这个时间点上没有正在执行的字节码)，获得偏向锁的线程被挂起，偏向锁升级为轻量级锁，然后被阻塞在安全点的线程继续往下执行同步代码。
+
+6)偏向锁的释放：
+                1&gt;当其它的线程尝试获取偏向锁时，持有偏向锁的线程才会释放偏向锁。  
+                2&gt;释放偏向锁需要等待全局安全点(在这个时间点上没有正在执行的字节码)。 
+    3&gt;过程：
+        首先暂停拥有偏向锁的线程，然后检查持有偏向锁的线程是否活着，如果线程不处于活动状态，则将对象头设置成无锁状态，
+        如果线程还活着，说明此时发生了竞争，则偏向锁升级为轻量级锁，然后刚刚被暂停的线程会继续往下执行同步代码。
+
+7)优点：加锁和解锁不需要额外的消耗，和执行非同步方法相比仅存在纳秒级的差距
+
+8)缺点：如果线程间存在锁竞争，锁撤销会带来额外的消耗。
+
+9)说明：
+    1)偏向锁默认在应用程序启动几秒钟之后才激活。
+    2)可以通过设置 -XX:BiasedLockingStartupDelay=0 来关闭延迟。
+    3)可以通过设置 -XX:-UseBiasedLocking=false 来关闭偏向锁，程序默认会进入轻量级锁状态。(如果应用程序里的锁大多情况下处于竞争状态，则应该将偏向锁关闭)
+</code></pre><h4 id="【轻量级锁】"><a href="#【轻量级锁】" class="headerlink" title="【轻量级锁】"></a>【轻量级锁】</h4><p>1)原理：</p>
+<pre><code>    1&gt;当使用轻量级锁(锁标识位为00)时，线程在执行同步块之前，JVM会先在当前线程的栈桢中创建用于存储锁记录的空间，并将对象头中的Mark Word复制到锁记录中(注:锁记录中的标识字段称为Displaced Mark Word)。
+
+    2&gt;将对象头中的MarkWord复制到栈桢中的锁记录中之后，虚拟机将尝试使用CAS将对象头中Mark Word替换为指向该线程虚拟机栈中锁记录的指针，此时如果没有线程占有锁或者没有线程竞争锁，则当前线程成功获取到锁，然后执行同步块中的代码。
+    3&gt;如果在获取到锁的线程执行同步代码的过程中，另一个线程也完成了栈桢中锁记录的创建，并且已经将对象头中的MarkWord复制到了自己的锁记录中，然后尝试使用CAS将对象头中的MarkWord修改为指向自己的锁记录的指针，但是由于之前获取到锁的线程已经将对象头中的MarkWord修改过了(并且现在还在执行同步体中的代码,即仍然持有着锁)，所以此时对象头中的MarkWord与当前线程锁记录中MarkWord的值不同，导致CAS操作失败，然后该线程就会不停地循环使用CAS操作试图将对象头中的MarkWord替换为自己锁记录中MarkWord的值，(当循环次数或循环时间达到上限时停止循环)如果在循环结束之前CAS操作成功，那么该线程就可以成功获取到锁，如果循环结束之后依然获取不到锁，则锁获取失败，对象头中的MarkWord会被修改为指向重量级锁的指针，然后这个获取锁失败的线程就会被挂起，阻塞了。
+
+    4&gt;当持有锁的那个线程执行完同步体之后，使用CAS操作将对象头中的MarkWord还原为最初的状态时(将对象头中指向锁记录的指针替换为Displaced Mark Word )，发现MarkWord已被修改为指向重量级锁的指针，因此CAS操作失败，该线程会释放锁并唤起阻塞等待的线程，开始新一轮夺锁之争，而此时，轻量级锁已经膨胀为重量级锁，所有竞争失败的线程都会阻塞，而不是自旋。
+
+    自旋锁：  
+        1)所谓自旋锁，就是让没有获得锁的进程自己运行一段时间自循环(默认开启)，但是不挂起线程。  
+        2)自旋的代价就是该线程会一直占用处理器如果锁占用的时间很短，自旋等待的效果很好，反之，自旋锁会消耗大量处理器资源。  
+        3)因此，自旋的等待时间必须有一定限度，超过限度还没有获得锁，就要挂起线程。  
+
+优点：在没有多线程竞争的前提下，减少传统的重量级锁带来的性能损耗。  
+
+缺点：竞争的线程如果始终得不到锁，自旋会消耗cpu。  
+
+应用：追求响应时间，同步块执行速度非常快。
+</code></pre><p><img src="http://cmsblogs.qiniudn.com/wp-content/uploads/2017/02/22222222222222-1.png" alt="image"></p>
+<h4 id="【重量级锁】"><a href="#【重量级锁】" class="headerlink" title="【重量级锁】"></a>【重量级锁】</h4><p>说明：</p>
+<pre><code>    1)java6之前的synchronized属于重量级锁，效率低下，因为monitor是依赖操作系统的Mutex Lock(互斥量)来实现的。
+    2)操作系统实现线程之间的切换需要从用户态转换到核心态，这个状态之间的转换需要相对较长的时间，时间成本相对较高。
+    3)在互斥状态下，没有得到锁的线程会被挂起阻塞，而挂起线程和恢复线程的操作都需要从用户态转入内核态中完成。
+
+优点：线程竞争不使用自旋，不会消耗cpu。
+
+缺点：线程阻塞，响应时间缓慢。
+
+应用：追求吞吐量，同步块执行速度较长
+</code></pre>
       
     </div>
     
@@ -274,13 +304,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-06-04, 15:28:45</p>
-        <p><span>最后更新:</span>2018-06-04, 15:28:47</p>
+        <p><span>发布时间:</span>2018-06-04, 22:08:58</p>
+        <p><span>最后更新:</span>2018-06-04, 22:08:58</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/" title="8、HashMap和LinkedHashMap遍历机制">http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/04/八、JVM对synchronized的优化/" title="八、JVM对synchronized的优化">http://yoursite.com/2018/06/04/八、JVM对synchronized的优化/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/八、JVM对synchronized的优化/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -293,15 +323,15 @@
     <nav id="article-nav">
         
             <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/06/04/9、Hashtable源码分析/">
-                    9、Hashtable源码分析
+                <a href="/2018/06/04/九、Lock接口简单体验/">
+                    九、Lock接口简单体验
                 </a>
             </div>
         
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/06/04/7、LinkedHashMap源码分析/">
-                    7、LinkedHashMap源码分析
+                <a href="/2018/06/04/七、读写锁/">
+                    七、读写锁
                 </a>
             </div>
         
@@ -313,7 +343,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、对HashMap和LinkedHashMap遍历的几种方法"><span class="toc-number">1.</span> <span class="toc-text">一、对HashMap和LinkedHashMap遍历的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、HashMap的遍历机制"><span class="toc-number">2.</span> <span class="toc-text">二、HashMap的遍历机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、LinkedHashMap-的遍历机制"><span class="toc-number">3.</span> <span class="toc-text">三、LinkedHashMap 的遍历机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、遍历机制的总结"><span class="toc-number">4.</span> <span class="toc-text">四、遍历机制的总结</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1）锁消除"><span class="toc-number">1.</span> <span class="toc-text">1）锁消除</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概念"><span class="toc-number">1.0.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#举例"><span class="toc-number">1.0.2.</span> <span class="toc-text">举例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2）锁粗化"><span class="toc-number">2.</span> <span class="toc-text">2）锁粗化</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#概念-1"><span class="toc-number">2.0.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#举例-1"><span class="toc-number">2.0.2.</span> <span class="toc-text">举例</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3）使用偏向锁和轻量级锁"><span class="toc-number">3.</span> <span class="toc-text">3）使用偏向锁和轻量级锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#说明"><span class="toc-number">3.0.1.</span> <span class="toc-text">说明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#【偏向锁】"><span class="toc-number">3.0.2.</span> <span class="toc-text">【偏向锁】</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#【轻量级锁】"><span class="toc-number">3.0.3.</span> <span class="toc-text">【轻量级锁】</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#【重量级锁】"><span class="toc-number">3.0.4.</span> <span class="toc-text">【重量级锁】</span></a></li></ol></li></ol></li></ol>
         
     </div>
     <style>
@@ -349,7 +379,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"8、HashMap和LinkedHashMap遍历机制　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"八、JVM对synchronized的优化　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -369,7 +399,7 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/04/9、Hashtable源码分析/" title="上一篇: 9、Hashtable源码分析">
+            <a href="/2018/06/04/九、Lock接口简单体验/" title="上一篇: 九、Lock接口简单体验">
                 <i class="fa fa-angle-left"></i>
             </a>
         
@@ -377,7 +407,7 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/06/04/7、LinkedHashMap源码分析/" title="下一篇: 7、LinkedHashMap源码分析">
+            <a href="/2018/06/04/七、读写锁/" title="下一篇: 七、读写锁">
                 <i class="fa fa-angle-right"></i>
             </a>
         
