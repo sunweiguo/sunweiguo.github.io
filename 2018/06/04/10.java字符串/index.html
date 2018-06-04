@@ -25,7 +25,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%BC%95%E7%94%A8%E4%B8%8E%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%85%B3%E7%B3%BB.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/String%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80.png">
-<meta property="og:updated_time" content="2018-06-04T01:27:39.395Z">
+<meta property="og:updated_time" content="2018-06-04T01:32:44.433Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="10.java字符串">
 <meta name="twitter:description" content="字符串中的一些面试考点。">
@@ -247,6 +247,10 @@
 <h2 id="String对象真的不可变吗？"><a href="#String对象真的不可变吗？" class="headerlink" title="String对象真的不可变吗？"></a>String对象真的不可变吗？</h2><p>从上文可知String的成员变量是private final 的，也就是初始化之后不可改变。那么在这几个成员中， value比较特殊，因为他是一个引用变量，而不是真正的对象。<font color="#ff0000">value是final修饰的，也就是说final不能再指向其他数组对象，那么我能改变value指向的数组吗？</font> 比如将数组中的某个位置上的字符变为下划线“_”。 至少在我们自己写的普通代码中不能够做到，因为我们根本不能够访问到这个value引用，更不能通过这个引用去修改数组。<br>那么用什么方式可以访问私有成员呢？ 没错，用反射， 可以反射出String对象中的value属性， 进而改变通过获得的value引用改变数组的结构。下面是实例代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">testReflection</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//创建字符串"Hello World"， 并赋给引用s  </span></span><br><span class="line">    String s = <span class="string">"Hello World"</span>;   </span><br><span class="line">      </span><br><span class="line">    System.out.println(<span class="string">"s = "</span> + s); <span class="comment">//Hello World  </span></span><br><span class="line">      </span><br><span class="line">    <span class="comment">//获取String类中的value字段  </span></span><br><span class="line">    Field valueFieldOfString = String.class.getDeclaredField(<span class="string">"value"</span>);  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//改变value属性的访问权限  </span></span><br><span class="line">    valueFieldOfString.setAccessible(<span class="keyword">true</span>);  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//获取s对象上的value属性的值  </span></span><br><span class="line">    <span class="keyword">char</span>[] value = (<span class="keyword">char</span>[]) valueFieldOfString.get(s);  </span><br><span class="line">      </span><br><span class="line">    <span class="comment">//改变value所引用的数组中的第5个字符  </span></span><br><span class="line">    value[<span class="number">5</span>] = <span class="string">'_'</span>;  </span><br><span class="line">      </span><br><span class="line">    System.out.println(<span class="string">"s = "</span> + s);  <span class="comment">//Hello_World  </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在这个过程中，s始终引用的同一个String对象，但是再反射前后，这个String对象发生了变化， 也就是说，通过反射是可以修改所谓的“不可变”对象的。但是一般我们不这么做。这个反射的实例还可以说明一个问题：如果一个对象，他组合的其他对象的状态是可以改变的，那么这个对象很可能不是不可变对象。例如一个Car对象，它组合了一个Wheel对象，虽然这个Wheel对象声明成了private final 的，但是这个Wheel对象内部的状态可以改变， 那么就不能很好的保证Car对象不可变。</p>
+<p>参考：</p>
+<ul>
+<li><a href="https://blog.csdn.net/zhangjg_blog/article/details/18319521" target="_blank" rel="noopener">https://blog.csdn.net/zhangjg_blog/article/details/18319521</a></li>
+</ul>
 
       
     </div>
@@ -258,7 +262,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/10.java字符串/">10.java字符串</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 09:27:38</p>
-        <p><span>最后更新:</span>2018-06-04, 09:27:39</p>
+        <p><span>最后更新:</span>2018-06-04, 09:32:44</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/10.java字符串/" title="10.java字符串">http://yoursite.com/2018/06/04/10.java字符串/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/10.java字符串/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
