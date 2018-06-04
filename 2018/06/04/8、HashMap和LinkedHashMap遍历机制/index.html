@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="本文分析HashMap和LinkedHashMap遍历机制.">
+<meta name="keywords" content="java容器">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8、HashMap和LinkedHashMap遍历机制">
+<meta property="og:url" content="http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本文分析HashMap和LinkedHashMap遍历机制.">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20150122114620929">
+<meta property="og:image" content="http://img.blog.csdn.net/20150122131549304">
+<meta property="og:image" content="http://img.blog.csdn.net/20150122133322461">
+<meta property="og:image" content="http://img.blog.csdn.net/20150122140842817">
+<meta property="og:updated_time" content="2018-06-04T07:28:47.060Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="8、HashMap和LinkedHashMap遍历机制">
+<meta name="twitter:description" content="本文分析HashMap和LinkedHashMap遍历机制.">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20150122114620929">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>8、HashMap和LinkedHashMap遍历机制 | Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-8、HashMap和LinkedHashMap遍历机制" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/" class="article-date">
+      <time datetime="2018-06-04T07:28:45.947Z" itemprop="datePublished">2018-06-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      8、HashMap和LinkedHashMap遍历机制
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java容器/">java容器</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>本文分析HashMap和LinkedHashMap遍历机制.<br><a id="more"></a></p>
+<h2 id="一、对HashMap和LinkedHashMap遍历的几种方法"><a href="#一、对HashMap和LinkedHashMap遍历的几种方法" class="headerlink" title="一、对HashMap和LinkedHashMap遍历的几种方法"></a>一、对HashMap和LinkedHashMap遍历的几种方法</h2><p>这里以<code>HashMap</code>为例，<code>LinkedHashMap</code>一样的方式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">  Map&lt;String,String&gt; map=<span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">        map.put(<span class="string">"1"</span>, <span class="string">"value1"</span>);</span><br><span class="line">        map.put(<span class="string">"2"</span>, <span class="string">"value2"</span>);</span><br><span class="line">        map.put(<span class="string">"3"</span>, <span class="string">"value3"</span>);</span><br><span class="line">        map.put(<span class="string">"4"</span>, <span class="string">"value4"</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第一种：普通使用，二次取值</span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.keySet遍历key和value："</span>);  </span><br><span class="line">        <span class="keyword">for</span>(String key:map.keySet())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+key+<span class="string">" Value: "</span>+map.get(key));</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第二种</span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.entrySet使用iterator遍历key和value: "</span>);  </span><br><span class="line">        Iterator&lt;Map.Entry&lt;String, String&gt;&gt; map1it=map.entrySet().iterator();</span><br><span class="line">        <span class="keyword">while</span>(map1it.hasNext())</span><br><span class="line">        &#123;</span><br><span class="line">         Map.Entry&lt;String, String&gt; entry= map1it.next();</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+entry.getKey()+<span class="string">" Value: "</span>+entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第三种：推荐，尤其是容量大时  </span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.entrySet遍历key和value"</span>);  </span><br><span class="line">        <span class="keyword">for</span>(Map.Entry&lt;String, String&gt; entry: map.entrySet())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"Key: "</span>+ entry.getKey()+ <span class="string">" Value: "</span>+entry.getValue());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//第四种  </span></span><br><span class="line">        System.out.println(<span class="string">"\n通过Map.values()遍历所有的value，但不能遍历key"</span>);  </span><br><span class="line">        <span class="keyword">for</span>(String v:map.values())</span><br><span class="line">        &#123;</span><br><span class="line">         System.out.println(<span class="string">"The value is "</span>+v);</span><br><span class="line">        &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></p>
+<p>我们知道，<code>HashMap</code>的输出顺序与元素的输入顺序无关，<code>LinkedHashMap</code>可以按照输入顺序输出，也可以根据读取元素的顺序输出。这一现象，已经在上一篇中展示出来了。</p>
+<h2 id="二、HashMap的遍历机制"><a href="#二、HashMap的遍历机制" class="headerlink" title="二、HashMap的遍历机制"></a>二、HashMap的遍历机制</h2><p><code>HashMap</code> 提供了两个遍历访问其内部元素<code>Entry&lt;k,v&gt;</code>的接口：</p>
+<ol>
+<li><code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code>——-&gt;返回此映射所包含的映射关系的 Set 视图。</li>
+<li><code>Set&lt;K&gt; keySet()</code>——–&gt;返回此映射中所包含的键的 Set 视图。</li>
+</ol>
+<blockquote>
+<p>实际上，第二个借口表示的<code>Key</code>的顺序，和第一个接口返回的<code>Entry</code>顺序是对应的，也就是说：这两种接口对<code>HashMap</code>的元素遍历的顺序相相同的。  那么，<code>HashMap</code>遍历内部<code>Entry&lt;K,V&gt;</code> 的顺序是什么呢？ 搞清楚这个问题，先要知道其内部结构是怎样的。          </p>
+</blockquote>
+<p><code>HashMap</code>内部对键值对的存储结构使用的是数组+链表的形式。其结构如下图所示：</p>
+<p><img src="http://img.blog.csdn.net/20150122114620929" alt="image"></p>
+<p><code>HashMap</code>在存储<code>Entry</code>对象的时候，是根据<code>Key</code>的<code>hash</code>值判定存储到<code>Entry[] table</code>数组的哪一个索引值表示的链表上。</p>
+<p>对<code>HashMap</code>遍历<code>Entry</code>对象的顺序和<code>Entry</code>对象的存储顺序之间没有任何关系。</p>
+<p><strong><code>HashMap</code>散列图、<code>Hashtable</code>散列表是按“有利于随机查找的散列(hash)的顺序”。并非按输入顺序。遍历时只能全部输出，而没有顺序</strong>。甚至可以<code>rehash()</code>重新散列，来获得更利于随机存取的内部顺序。</p>
+<h2 id="三、LinkedHashMap-的遍历机制"><a href="#三、LinkedHashMap-的遍历机制" class="headerlink" title="三、LinkedHashMap 的遍历机制"></a>三、LinkedHashMap 的遍历机制</h2><p><code>LinkedHashMap</code> 是<code>HashMap</code>的子类，它可以实现对容器内Entry的存储顺序和对Entry的遍历顺序保持一致。</p>
+<p>为了实现这个功能，<strong><code>LinkedHashMap</code>内部使用了一个<code>Entry</code>类型的双向链表，用这个双向链表记录<code>Entry</code>的存储顺序</strong>。当需要对该<code>Map</code>进行遍历的时候，实际上是遍历的是这个双向链表。</p>
+<p><code>LinkedHashMap</code>内部使用的<code>LinkedHashMap.Entry</code>类继承自<code>Map.Entry</code>类，在其基础上增加了<code>LinkedHashMap.Entry</code>类型的两个字段，用来引用该<code>Entry</code>在双向链表中的前面的<code>Entry</code>对象和后面的<code>Entry</code>对象。</p>
+<p>它的内部会在<code>Map.Entry</code>类的基础上，增加两个<code>Entry</code>类型的引用：<code>before</code>，<code>after</code>。<code>LinkedHashMap</code>使用一个双向连表，将其内部所有的<code>Entry</code>串起来。</p>
+<p><img src="http://img.blog.csdn.net/20150122131549304" alt="image"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LinkedHashMap linkedHashMap = <span class="keyword">new</span> LinkedHashMap();  </span><br><span class="line">linkedHashMap.put(<span class="string">"name"</span>,<span class="string">"louis"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"age"</span>,<span class="string">"24"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"sex"</span>,<span class="string">"male"</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20150122133322461" alt="image"></p>
+<p>对<code>LinkedHashMap</code>进行遍历的策略：</p>
+<p><strong>从 <code>header.after</code> 指向的<code>Entry</code>对象开始，然后一直沿着此链表遍历下去，直到某个<code>entry.after == header</code> 为止，完成遍历。</strong></p>
+<p>根据<code>Entry&lt;K,V&gt;</code>插入<code>LinkedHashMap</code>的顺序进行遍历的方式叫做：按插入顺序遍历。</p>
+<p>另外，<code>LinkedHashMap</code>还支持一种遍历顺序，叫做：Get读取顺序。</p>
+<p>如果<code>LinkedHashMap</code>的这个<code>Get</code>读取遍历顺序开启，那么，当我们在<code>LinkedHashMap</code>上调用<code>get(key)</code> 方法时，会导致内部<code>key</code>对应的<code>Entry</code>在双向链表中的位置移动到双向链表的最后。</p>
+<p><img src="http://img.blog.csdn.net/20150122140842817" alt="image"></p>
+<h2 id="四、遍历机制的总结"><a href="#四、遍历机制的总结" class="headerlink" title="四、遍历机制的总结"></a>四、遍历机制的总结</h2><ol>
+<li><p><code>HashMap</code>对元素的遍历顺序跟<code>Entry</code>插入的顺序无关，而<code>LinkedHashMap</code>对元素的遍历顺序可以跟<code>Entry&lt;K,V&gt;</code>插入的顺序保持一致。</p>
+</li>
+<li><p>当<code>LinkedHashMap</code>处于<code>Get</code>获取顺序遍历模式下，当执行<code>get()</code> 操作时，会将对应的<code>Entry&lt;k,v&gt;</code>移到遍历的最后位置。</p>
+</li>
+<li><p><code>LinkedHashMap</code>处于按插入顺序遍历的模式下，如果新插入的<code>&lt;key,value&gt;</code> 对应的<code>key</code>已经存在，对应的<code>Entry</code>在遍历顺序中的位置并不会改变。</p>
+</li>
+<li><p>除了遍历顺序外，其他特性<code>HashMap</code>和<code>LinkedHashMap</code>基本相同。</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-04, 15:28:45</p>
+        <p><span>最后更新:</span>2018-06-04, 15:28:47</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/" title="8、HashMap和LinkedHashMap遍历机制">http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/04/9、Hashtable源码分析/">
+                    9、Hashtable源码分析
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/04/7、LinkedHashMap源码分析/">
+                    7、LinkedHashMap源码分析
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、对HashMap和LinkedHashMap遍历的几种方法"><span class="toc-number">1.</span> <span class="toc-text">一、对HashMap和LinkedHashMap遍历的几种方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、HashMap的遍历机制"><span class="toc-number">2.</span> <span class="toc-text">二、HashMap的遍历机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、LinkedHashMap-的遍历机制"><span class="toc-number">3.</span> <span class="toc-text">三、LinkedHashMap 的遍历机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、遍历机制的总结"><span class="toc-number">4.</span> <span class="toc-text">四、遍历机制的总结</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"8、HashMap和LinkedHashMap遍历机制　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/04/9、Hashtable源码分析/" title="上一篇: 9、Hashtable源码分析">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/04/7、LinkedHashMap源码分析/" title="下一篇: 7、LinkedHashMap源码分析">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
