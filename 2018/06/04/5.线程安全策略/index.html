@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="接着上一篇继续探讨线程安全的策略。">
+<meta name="keywords" content="java并发进阶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.线程安全策略">
+<meta property="og:url" content="http://yoursite.com/2018/06/04/5.线程安全策略/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="接着上一篇继续探讨线程安全的策略。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-04T14:15:26.820Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="5.线程安全策略">
+<meta name="twitter:description" content="接着上一篇继续探讨线程安全的策略。">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>5.线程安全策略 | Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-5.线程安全策略" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/04/5.线程安全策略/" class="article-date">
+      <time datetime="2018-06-04T14:15:26.221Z" itemprop="datePublished">2018-06-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      5.线程安全策略
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>接着上一篇继续探讨线程安全的策略。<br><a id="more"></a></p>
+<h2 id="1-不可变对象"><a href="#1-不可变对象" class="headerlink" title="1. 不可变对象"></a>1. 不可变对象</h2><h4 id="1-1-如何Immutable-不可变-的类"><a href="#1-1-如何Immutable-不可变-的类" class="headerlink" title="1.1 如何Immutable(不可变)的类"></a>1.1 如何Immutable(不可变)的类</h4><ul>
+<li>将类声明为<code>final</code>，这样就不能被继承了</li>
+<li>将所有成员声明为<code>private</code>，这样就不能直接访问成员</li>
+<li>对变量不提供<code>set</code>方法，所有可变成员变量声明为<code>final</code>，只有只能赋值一次</li>
+<li>通过构造器初始化所有成员，进行深度拷贝，在<code>get</code>方法中不直接返回对象本身，而是克隆对象，返回对象的拷贝。</li>
+</ul>
+<p>JDK本身包含了一些不可变的类，如<code>String</code>，<code>Integer</code>和其它的包装类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Contacts</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String mobile;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Contacts</span><span class="params">(String name, String mobile)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.mobile = mobile;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getMobile</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mobile;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如：<code>String</code>和<code>StringBuilde</code>r，<code>String</code>是<code>immutable</code>的，每次对于<code>String</code>对象的修改都将产生一个新<code>的String</code>对象，而原来的对象保持不变，而<code>StringBuilder</code>是<code>mutable</code>，因为每次对于它的对象的修改都作用于该对象本身，并没有产生新的对象。</p>
+<h4 id="1-2-不可变对象需要满足的条件"><a href="#1-2-不可变对象需要满足的条件" class="headerlink" title="1.2 不可变对象需要满足的条件"></a>1.2 不可变对象需要满足的条件</h4><ul>
+<li>对象创建之后其状态就不能修改</li>
+<li>对象所有域否是<code>final</code>类型</li>
+<li>对象是正确创建的(在对象创建期间，<code>this</code>引用没有逸出)</li>
+<li>类应该是<code>fina</code>l类型的，以此防止子类的扩展破坏父类的不可变性。</li>
+</ul>
+<h4 id="1-3-使用Immutable对象的好处"><a href="#1-3-使用Immutable对象的好处" class="headerlink" title="1.3 使用Immutable对象的好处"></a>1.3 使用Immutable对象的好处</h4><ul>
+<li><code>Immutabl</code>e对象是线程安全的，可以不用被<code>synchronize</code>就在并发环境中共享</li>
+<li><code>Immutable</code>对象简化了程序开发，因为它无需使用额外的锁机制就可以在线程间共享</li>
+<li><code>Immutable</code>对象提高了程序的性能，因为它减少了<code>synchroinzed</code>的使用</li>
+<li><code>Immutable</code>对象是可以被重复使用的，你可以将它们缓存起来重复使用，就像字符串字面量和整型数字一样。你可以使用静态工厂方法来提供类似于<code>valueOf（）</code>这样的方法，它可以从缓存中返回一个已经存在的<code>Immutable</code>对象，而不是重新创建一个。</li>
+<li>有一些小缺点，就是会制造大量垃圾，由于他们不能被重用而且对于它们的使用就是”用“然后”扔“，字符串就是一个典型的例子，它会创造很多的垃圾，给垃圾收集带来很大的麻烦。当然这只是个极端的例子，合理的使用<code>immutable</code>对象会创造很大的价值。</li>
+</ul>
+<h4 id="1-4-final关键字"><a href="#1-4-final关键字" class="headerlink" title="1.4 final关键字"></a>1.4 final关键字</h4><ul>
+<li>修饰类：这个类不能被继承，<code>String</code>,<code>Integer</code>,<code>Long</code>这些基础类型的封装类都是<code>final</code>修饰的类，<code>fianl</code>类中的成员变量可以根据需要设置为<code>final</code>，但是要注意，<code>final</code>类中的成员方法都会被隐式地声明为<code>final</code>方法。</li>
+<li>修饰方法：1.锁定方法不被继承类修改；2.效率(已失效)：在早期java实现中，将<code>final</code>修饰的方法转为内嵌调用，但是当方法过于庞大时，可能看不出来转为内嵌调用带来的性能提升；新版本中不再需要用<code>final</code>方法来进行内嵌优化了。</li>
+<li>修饰变量：基本数据类型变量：初始化数值之后就不能再被修改了；引用类型变量：对其初始化之后，他不能再指向另外一个对象。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImmutableExample1</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Integer a = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String b = <span class="string">"sss"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Map&lt;Integer,Integer&gt; map = Maps.newHashMap();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        map.put(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">        map.put(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">        map.put(<span class="number">5</span>,<span class="number">6</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//a = 1;     //编译出错</span></span><br><span class="line">        <span class="comment">//a = 2;     //编译出错</span></span><br><span class="line">        <span class="comment">//b = "sss";  //编译出错</span></span><br><span class="line">        <span class="comment">//b = "ttt";  //编译出错</span></span><br><span class="line">        <span class="comment">//map = Maps.newHashMap();     //编译出错</span></span><br><span class="line">        System.out.println(map.get(<span class="number">1</span>));  <span class="comment">//2</span></span><br><span class="line">        map.put(<span class="number">1</span>,<span class="number">3</span>);   <span class="comment">//值可以修改，所以会引发线程安全问题</span></span><br><span class="line">        System.out.println(map.get(<span class="number">1</span>));  <span class="comment">//3</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了<code>final</code>修饰称为不可变类，其他的还有什么方法可以做到？</p>
+<ul>
+<li><code>collections.unmodifiableXXX</code>：<code>Collection</code>,<code>List</code>,<code>Set</code>,<code>Map</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ImmutableExample2</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;Integer,Integer&gt; map = Maps.newHashMap();<span class="comment">//final去掉</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        map.put(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">        map.put(<span class="number">3</span>,<span class="number">4</span>);</span><br><span class="line">        map.put(<span class="number">5</span>,<span class="number">6</span>);</span><br><span class="line">        map = Collections.unmodifiableMap(map);<span class="comment">//处理过的map就不能再被修改了，否则报运行时异常：java.lang.UnsupportedOperationException</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        map.put(<span class="number">1</span>,<span class="number">3</span>);   <span class="comment">//这个put会引发异常</span></span><br><span class="line">        System.out.println(map.get(<span class="number">1</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进入<code>unmodifiableMap</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;K,V&gt; <span class="function">Map&lt;K,V&gt; <span class="title">unmodifiableMap</span><span class="params">(Map&lt;? extends K, ? extends V&gt; m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> UnmodifiableMap&lt;&gt;(m);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>UnmodifiableMap</code>方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//先进行一个拷贝，拷贝到UnmodifiableMap对象中</span></span><br><span class="line">UnmodifiableMap(Map&lt;? extends K, ? extends V&gt; m) &#123;</span><br><span class="line">    <span class="keyword">if</span> (m==<span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    <span class="keyword">this</span>.m = m;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//如果发现是改变map的操作，就抛出异常</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">putAll</span><span class="params">(Map&lt;? extends K, ? extends V&gt; m)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">clear</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> UnsupportedOperationException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Guava</code>:<code>ImmutableXXX:Collection</code>,<code>List</code>,<code>Set</code>,<code>Map</code></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@ThreadSafe</span><br><span class="line">public class ImmutableExample3 &#123;</span><br><span class="line">    private final static ImmutableList list = ImmutableList.of(1,2,3);//可以无限写下去</span><br><span class="line"></span><br><span class="line">    private final static ImmutableSet set = ImmutableSet.copyOf(list);</span><br><span class="line"></span><br><span class="line">    private final static ImmutableMap&lt;Integer,Integer&gt; map = ImmutableMap.of(1,2,3,4);</span><br><span class="line"></span><br><span class="line">    private final static ImmutableMap&lt;Integer,Integer&gt; map2 = ImmutableMap.&lt;Integer,Integer&gt;builder()</span><br><span class="line">                                                                .put(1,2).put(3,4).build();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        list.add(4);//会被标识为不建议使用，强行使用，会抛出异常</span><br><span class="line">        set.add(4);</span><br><span class="line">        map.put(5,6);</span><br><span class="line">        map2.put(5,6);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-线程封闭"><a href="#2-线程封闭" class="headerlink" title="2. 线程封闭"></a>2. 线程封闭</h2><ul>
+<li>Ad-hoc线程封闭：程序控制实现，最糟糕，忽略；</li>
+<li>堆栈封闭：局部变量，无并发问题</li>
+<li>ThreadLocal线程封闭：特别好的封闭方法</li>
+</ul>
+<p>关于线程封闭，有一个典型就是<code>JDBC</code>，在并发的场景下，如何安全地获取<code>Connection</code>连接对象并且正确地返回给连接池呢？</p>
+<p>原理是这样：线程从连接池获取一个<code>Connection</code>对象，用完之后再将其返还给连接池，由于大多数的连接都是单线程的，所以在<code>connection</code>对象返还之前，连接池不会再将这个对象分配给其他线程使用，那么就实现了将<code>connection</code>对象封闭在线程里，达到了线程安全的目的。</p>
+<p>这里对<code>ThreadLocal</code>进行一个<code>demo</code>的演练：模拟一个线程过程中,我们保存一下<code>userId</code>在<code>threadLocal</code>中，在这个线程的任意时候都可以获取到这个<code>id</code>，并且这个<code>id</code>是封闭在线程内的，不会出现线程安全问题。<code>threadLocal</code>中有一个<code>Map</code>，键值分别是&lt;当前线程ID，封闭的对象&gt;</p>
+<h4 id="2-1-ThreadLocal放入一个声明以及三个方法："><a href="#2-1-ThreadLocal放入一个声明以及三个方法：" class="headerlink" title="2.1 ThreadLocal放入一个声明以及三个方法："></a>2.1 ThreadLocal放入一个声明以及三个方法：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestHolder</span> </span>&#123;</span><br><span class="line">    <span class="comment">//声明threadlocal</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> ThreadLocal&lt;Long&gt; requestHolder = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//每次拦截请求，filter中就往threadlocal中添加一下userId</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(Long userId)</span></span>&#123;</span><br><span class="line">        requestHolder.set(userId);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//从threadlocal中获取当前线程对应的值</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Long <span class="title">getId</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> requestHolder.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//每次都移除一下threadlocal，因为可能会造成内存泄漏的问题</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span></span>&#123;</span><br><span class="line">        requestHolder.remove();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-2-filter拦截请求"><a href="#2-2-filter拦截请求" class="headerlink" title="2.2 filter拦截请求"></a>2.2 filter拦截请求</h4><p><code>filter</code>先拦截前台传来的<code>url</code>，再将相应的信息写入到<code>threadlocal</code>中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpFilter</span> <span class="keyword">implements</span> <span class="title">Filter</span></span>&#123;</span><br><span class="line">    <span class="comment">////tomcat启动，或者context重新加载的时候调用init（先destroy再init） </span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig filterConfig)</span> <span class="keyword">throws</span> ServletException </span>&#123;</span><br><span class="line">        log.info(<span class="string">"init"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        HttpServletRequest request = (HttpServletRequest)servletRequest;</span><br><span class="line">        log.info(<span class="string">"do filter &#123;&#125;,&#123;&#125;"</span>,Thread.currentThread().getId(),request.getServletPath());</span><br><span class="line">        RequestHolder.add(<span class="number">1L</span>);<span class="comment">//userId,如果是用户信息，可以用request.getSession().getAttribute("user");获取，再add进去。</span></span><br><span class="line">        <span class="comment">////转给过滤器链中的下一个filter，如果是最后一个filter，调用要访问的资源  </span></span><br><span class="line">        filterChain.doFilter(servletRequest,servletResponse);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">////tomcat关闭或者context重新加载的时候调用destroy </span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>过滤器链 </p>
+<ul>
+<li><code>request</code>到达以后，实际匹配到的过滤器可能有一个，也可能有多个，多个的时候，会形成一个过滤器链，过滤器的执行顺序和<code>web.xml</code>中<code>filter-mapping</code>的配置的先后顺序一致，写在前面的先执行，写在后面的后执行。 </li>
+<li>每个过滤器执行完以后会调用<code>chain.doFilter(request,response);</code>从而调用下一个过滤器的<code>doFilter</code>方法。（其实此时执行到的只是每个过滤器中<code>chain.doFilter(request,response);</code>之前的代码） </li>
+<li>当所有的匹配到的过滤器都执行完以后，将调用具体访问的资源，比如<code>servlet</code>，或者<code>jsp</code>。 </li>
+<li>请求的资源执行结束后，<code>response</code>返回的时候，再次调用匹配到的过滤器。调用顺序和<code>request</code>到达时的调用顺序正好相反。（此时执行的是每个过滤器中<code>chain.doFilter(request,response);</code>之后的代码） （客户端发出<code>request</code> –&gt; <code>MyFilter1</code> –&gt; <code>MyFilter2</code> –&gt; <code>MyFilter3</code> –&gt; <code>MyServlet</code> –&gt; <code>MyFilter3 response</code> –&gt; <code>MyFilter2 response</code> –&gt; <code>MyFilter1 response</code>，最后客户端获得<code>response</code>）</li>
+</ul>
+<h4 id="2-3-注册filter，使得springboot在启动的时候发现filter"><a href="#2-3-注册filter，使得springboot在启动的时候发现filter" class="headerlink" title="2.3 注册filter，使得springboot在启动的时候发现filter"></a>2.3 注册filter，使得springboot在启动的时候发现filter</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> FilterRegistrationBean <span class="title">httpFilter</span><span class="params">()</span></span>&#123;</span><br><span class="line">	FilterRegistrationBean registrationBean = <span class="keyword">new</span> FilterRegistrationBean();</span><br><span class="line">	registrationBean.setFilter(<span class="keyword">new</span> HttpFilter());</span><br><span class="line">	registrationBean.addUrlPatterns(<span class="string">"/threadLocal/*"</span>);</span><br><span class="line">	<span class="keyword">return</span> registrationBean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-4-拦截器"><a href="#2-4-拦截器" class="headerlink" title="2.4 拦截器"></a>2.4 拦截器</h4><p>为了在每次请求过后能够及时删除<code>threadlocal</code>，防止内存泄漏，使用mvc拦截器。</p>
+<p>这里涉及到为什么用拦截器来做这件事：因为我们要保证在每次请求之后就清空<code>doFilter</code>刚刚塞入到<code>threadlocal</code>中的值，防止内存泄漏。而<code>filter</code>的<code>destroy</code>方法却无法做这件事。</p>
+<p>还涉及过滤器和拦截器的执行顺序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HttpInteceptor</span> <span class="keyword">extends</span> <span class="title">HandlerInterceptorAdapter</span></span>&#123;</span><br><span class="line">    <span class="comment">//每次开始要执行controller之前调用一次</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        log.info(<span class="string">"preHandler"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//每次请求controller执行完毕之后执行这个方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterCompletion</span><span class="params">(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        RequestHolder.remove();</span><br><span class="line">        log.info(<span class="string">"afterCompletion"</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-5-注册拦截器"><a href="#2-5-注册拦截器" class="headerlink" title="2.5 注册拦截器"></a>2.5 注册拦截器</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">	registry.addInterceptor(<span class="keyword">new</span> HttpInteceptor()).addPathPatterns(<span class="string">"/**"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-6-controller"><a href="#2-6-controller" class="headerlink" title="2.6 controller"></a>2.6 controller</h4><p>直接返回json，显示刚刚塞进去的<code>userId</code>即1.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/threadLocal"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/test"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Long <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RequestHolder.getId();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-不安全类"><a href="#3-不安全类" class="headerlink" title="3. 不安全类"></a>3. 不安全类</h2><ul>
+<li><code>StringBuilder</code>和<code>StringBuffer</code></li>
+</ul>
+<p><code>StringBuilder</code>是非线程安全的，<code>StringBuffer</code>是线程安全的。<code>StringBuilder</code>在堆栈封闭的情况下，即没有线程安全问题的情况下，效率高。</p>
+<ul>
+<li><code>SimpleDateFormat</code>日期工具类，是非线程安全的</li>
+</ul>
+<p>因为<code>SimpleDateFormat</code>是非线程安全的，同时执行<code>parse</code>方法，会抛出大量异常。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateFormatExample</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SimpleDateFormat simpleDateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyyMMdd"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//总请求数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> clientTotal = <span class="number">5000</span>;</span><br><span class="line">    <span class="comment">//并发数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> threadTotal = <span class="number">200</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//线程池</span></span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        <span class="comment">//信号量，控制一次执行多少请求</span></span><br><span class="line">        Semaphore semaphore = <span class="keyword">new</span> Semaphore(threadTotal);</span><br><span class="line">        <span class="comment">//计数器，到0就表示线程全部执行完</span></span><br><span class="line">        CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(clientTotal);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;clientTotal; i++)&#123;</span><br><span class="line">            executorService.execute(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span>&#123;</span><br><span class="line">                    semaphore.acquire();</span><br><span class="line">                    update();</span><br><span class="line">                    semaphore.release();</span><br><span class="line">                &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                    log.error(<span class="string">"semaphore exception"</span>,e);</span><br><span class="line">                &#125;</span><br><span class="line">                countDownLatch.countDown();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            countDownLatch.await();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            log.error(<span class="string">"countDownLatch exception"</span>,e);</span><br><span class="line">        &#125;</span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            simpleDateFormat.parse(<span class="string">"20180208"</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">"parse error"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>那么我们在用这个类的时候，如何使用呢？？？？？其实很简单，做成一个线程封闭的即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">()</span></span>&#123;</span><br><span class="line">    SimpleDateFormat simpleDateFormat = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyyMMdd"</span>);</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        simpleDateFormat.parse(<span class="string">"20180208"</span>);</span><br><span class="line">    &#125;<span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">"parse error"</span>, e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>做日期转换，可以借用joda-time类来实现安全的操作:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">private</span> <span class="keyword">static</span> DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(<span class="string">"yyyyMMdd"</span>);</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">    log.info(<span class="string">"&#123;&#125;,&#123;&#125;"</span>,DateTime.parse(<span class="string">"20180228"</span>,dateTimeFormatter).toDate(),i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是比较推荐的写法，因为不仅仅是线程安全的，joda-time也支持更多的操作。不是简单的StringBuilder和StringBuffer的区别。</p>
+<ul>
+<li>ArrayList,HashSet,HashMap等</li>
+</ul>
+<h2 id="4-同步容器"><a href="#4-同步容器" class="headerlink" title="4. 同步容器"></a>4. 同步容器</h2><ul>
+<li><code>ArrayList</code> -&gt; <code>Vector</code>,<code>Stack</code></li>
+<li><code>HashMap</code> -&gt; <code>HashTable(key和value不能为null)</code></li>
+<li><code>Collections.synchronizedXXX(list,set,map)</code></li>
+</ul>
+<p>计数的程序，改成同步容器来做，是可以得到正确的结果的。</p>
+<p>要注意，在某些场合下，同步容器不一定就是线程安全的！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VectorTest</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Vector&lt;Integer&gt; vector = <span class="keyword">new</span> Vector&lt;&gt;();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                vector.add(i);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//一个线程专门来remove</span></span><br><span class="line">            Thread t1 = <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;vector.size();i++)&#123;</span><br><span class="line">                        vector.remove(i);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//一个线程专门来获取</span></span><br><span class="line">            Thread t2 = <span class="keyword">new</span> Thread()&#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;vector.size();i++)&#123;</span><br><span class="line">                        vector.get(i);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line"></span><br><span class="line">            t1.start();</span><br><span class="line">            t2.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行的效果是：<code>java.lang.ArrayIndexOutOfBoundsException；</code>原因是可能<code>get</code>线程中执行<code>for</code>循环的时候，i还在，但是等到下面<code>vector.get(i);</code>的时候， 已经被上面一个线程给<code>remove</code>掉了。造成了越界的异常。</p>
+<p>对之前不安全的计数程序进行修改:测试<code>Collections.synchronizedList</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Integer&gt; list =  Collections.synchronizedList(Lists.newArrayList());</span><br></pre></td></tr></table></figure></p>
+<p>还有一点是：在对集合进行遍历的时候，不要尝试去修改其中的值，否则会抛出异常：</p>
+<p>如果一定要进行修改，可以对要修改的值进行保存，在遍历完成之后再进行修改或者删除操作。还有就是推荐用<code>for(int i=0;i&lt;n;i++)</code>的进行修改。</p>
+<p>在多线程环境下，一个线程在遍历这个容器，而另一个线程在对这个容器进行删除操作，会出现问题。</p>
+<p>解决：用并发容器解决多线程下的各种问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//java.util.ConcurrentModificationException</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">iterator1</span><span class="params">(Vector&lt;Integer&gt; v)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Integer i:v)&#123;</span><br><span class="line">            <span class="keyword">if</span>(i.equals(<span class="number">3</span>))&#123;</span><br><span class="line">                v.remove(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//java.util.ConcurrentModificationException</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">iterator2</span><span class="params">(Vector&lt;Integer&gt; v)</span></span>&#123;</span><br><span class="line">        Iterator&lt;Integer&gt; iterator = v.iterator();</span><br><span class="line">        <span class="keyword">while</span>(iterator.hasNext())&#123;</span><br><span class="line">            Integer i = iterator.next();</span><br><span class="line">            <span class="keyword">if</span>(i.equals(<span class="number">3</span>))&#123;</span><br><span class="line">                v.remove(i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//无异常</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">iterator3</span><span class="params">(Vector&lt;Integer&gt; v)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;v.size();i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(v.get(i).equals(<span class="number">3</span>))&#123;</span><br><span class="line">                v.remove(<span class="number">3</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Vector&lt;Integer&gt; vector = <span class="keyword">new</span> Vector&lt;&gt;();</span><br><span class="line">        vector.add(<span class="number">1</span>);</span><br><span class="line">        vector.add(<span class="number">2</span>);</span><br><span class="line">        vector.add(<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        iterator1(vector);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="5-初涉并发容器"><a href="#5-初涉并发容器" class="headerlink" title="5. 初涉并发容器"></a>5. 初涉并发容器</h2><ul>
+<li><code>ArrayList</code> -&gt; <code>CopyOnWriteArrayList</code></li>
+</ul>
+<p><code>CopyOnWriteArrayList</code>：写复制，当有新元素插入到<code>CopyOnWriteArrayList</code>中时，先复制一个新数组，将新元素插入新数组中，然后将原来的引用指向新数组。这些操作都在锁的保护下进行，这么做的原因是防止通知<code>copy</code>出多个<code>CopyOnWriteArrayList</code>搞坏数据。</p>
+<p><code>CopyOnWriteArrayList</code>缺点：因为不停地拷贝新数组，当数组元素较多时，因为占用大量的内存，可能会导致JVM频繁的GC；只能保证最终一致性，不能满足实时性较高的场景，所以比较适合读多写少的场景。</p>
+<p>体现三个思想：读写分离、最终一致性、用另外开辟空间来解决并发冲突。</p>
+<p>读操作是在原数组上进行，不需要加锁；写操作是需要加锁的。</p>
+<ul>
+<li><code>HashSet</code>,<code>TreeSet</code> -&gt; <code>CopyOnWriteArraySet</code>,<code>ConcurrentSkipListSet</code></li>
+</ul>
+<p><code>CopyOnWriteArraySet</code>同<code>CopyOnWriteArrayList</code>。</p>
+<p><code>ConcurrentSkipListSet</code>：与<code>TreeSet</code>一样是支持自然排序的，并且在构造的时候定义比较器。对于批量操作，比如<code>containsAll</code>，<code>addAll</code>,<code>removeAll</code>，并不能保证以原子方式执行：<code>ConcurrentSkipListSet</code>只能保证每次的<code>constains</code>,<code>add</code>,<code>remove</code>是原子操作，但是不能保证每次批量操作都不被其他线程打断，需要手动加锁进行同步操作。<code>ConcurrentSkipListSet</code>是不能有<code>null</code>元素的。</p>
+<ul>
+<li><code>HashMap</code>，<code>TreeMap</code> -&gt; <code>ConcurrentHashMap</code>,<code>ConcurrentSkipListMap</code></li>
+</ul>
+<p><code>ConcurrentHashMap</code>:不允许null，面试必问，后面会单独介绍。</p>
+<p><code>ConcurrentSkipListMap</code>：高并发下存取数据性能低于<code>ConcurrentHashMap</code>，但是它有自己不可代替的优点：<code>key</code>是有序的；</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-04, 22:15:26</p>
+        <p><span>最后更新:</span>2018-06-04, 22:15:26</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/04/5.线程安全策略/" title="5.线程安全策略">http://yoursite.com/2018/06/04/5.线程安全策略/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/5.线程安全策略/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/04/6.AQS以及同步组件/">
+                    6.AQS以及同步组件
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/04/4.安全发布对象/">
+                    4.安全发布对象
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-不可变对象"><span class="toc-number">1.</span> <span class="toc-text">1. 不可变对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-如何Immutable-不可变-的类"><span class="toc-number">1.0.1.</span> <span class="toc-text">1.1 如何Immutable(不可变)的类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-不可变对象需要满足的条件"><span class="toc-number">1.0.2.</span> <span class="toc-text">1.2 不可变对象需要满足的条件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-使用Immutable对象的好处"><span class="toc-number">1.0.3.</span> <span class="toc-text">1.3 使用Immutable对象的好处</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-final关键字"><span class="toc-number">1.0.4.</span> <span class="toc-text">1.4 final关键字</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-线程封闭"><span class="toc-number">2.</span> <span class="toc-text">2. 线程封闭</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-ThreadLocal放入一个声明以及三个方法："><span class="toc-number">2.0.1.</span> <span class="toc-text">2.1 ThreadLocal放入一个声明以及三个方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-filter拦截请求"><span class="toc-number">2.0.2.</span> <span class="toc-text">2.2 filter拦截请求</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-注册filter，使得springboot在启动的时候发现filter"><span class="toc-number">2.0.3.</span> <span class="toc-text">2.3 注册filter，使得springboot在启动的时候发现filter</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-拦截器"><span class="toc-number">2.0.4.</span> <span class="toc-text">2.4 拦截器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-注册拦截器"><span class="toc-number">2.0.5.</span> <span class="toc-text">2.5 注册拦截器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-controller"><span class="toc-number">2.0.6.</span> <span class="toc-text">2.6 controller</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-不安全类"><span class="toc-number">3.</span> <span class="toc-text">3. 不安全类</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-同步容器"><span class="toc-number">4.</span> <span class="toc-text">4. 同步容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-初涉并发容器"><span class="toc-number">5.</span> <span class="toc-text">5. 初涉并发容器</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"5.线程安全策略　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/04/6.AQS以及同步组件/" title="上一篇: 6.AQS以及同步组件">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/04/4.安全发布对象/" title="下一篇: 4.安全发布对象">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
