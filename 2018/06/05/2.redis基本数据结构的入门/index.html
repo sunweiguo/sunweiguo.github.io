@@ -15,20 +15,18 @@
 
 
 
-<meta name="description" content="这里简单介绍业务拆分的常用策略，提供一种应对高并发的解决思路。">
-<meta name="keywords" content="java并发进阶">
+<meta name="description" content="介绍redis最基本的五种数据结构的操作。">
+<meta name="keywords" content="redis学习">
 <meta property="og:type" content="article">
-<meta property="og:title" content="14.高并发处理之应用拆分思路">
-<meta property="og:url" content="http://yoursite.com/2018/06/04/14.高并发处理之应用拆分思路/index.html">
+<meta property="og:title" content="2.redis基本数据结构的入门">
+<meta property="og:url" content="http://yoursite.com/2018/06/05/2.redis基本数据结构的入门/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="这里简单介绍业务拆分的常用策略，提供一种应对高并发的解决思路。">
+<meta property="og:description" content="介绍redis最基本的五种数据结构的操作。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/dubbo%E5%8E%9F%E7%90%86%E5%9B%BE111.png">
-<meta property="og:updated_time" content="2018-06-04T14:24:01.023Z">
+<meta property="og:updated_time" content="2018-06-05T01:54:25.730Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="14.高并发处理之应用拆分思路">
-<meta name="twitter:description" content="这里简单介绍业务拆分的常用策略，提供一种应对高并发的解决思路。">
-<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/dubbo%E5%8E%9F%E7%90%86%E5%9B%BE111.png">
+<meta name="twitter:title" content="2.redis基本数据结构的入门">
+<meta name="twitter:description" content="介绍redis最基本的五种数据结构的操作。">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -60,7 +58,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>14.高并发处理之应用拆分思路 | Hexo</title>
+<title>2.redis基本数据结构的入门 | Hexo</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -184,11 +182,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-14.高并发处理之应用拆分思路" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-2.redis基本数据结构的入门" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/04/14.高并发处理之应用拆分思路/" class="article-date">
-      <time datetime="2018-06-04T14:23:06.954Z" itemprop="datePublished">2018-06-04</time>
+      <a href="/2018/06/05/2.redis基本数据结构的入门/" class="article-date">
+      <time datetime="2018-06-05T01:52:33.984Z" itemprop="datePublished">2018-06-05</time>
 </a>
 
 
@@ -203,7 +201,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      14.高并发处理之应用拆分思路
+      2.redis基本数据结构的入门
     </h1>
   
 
@@ -214,7 +212,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -224,26 +222,9 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>这里简单介绍业务拆分的常用策略，提供一种应对高并发的解决思路。<br><a id="more"></a></p>
-<h2 id="应用拆分原则"><a href="#应用拆分原则" class="headerlink" title="应用拆分原则"></a>应用拆分原则</h2><ul>
-<li>业务优先</li>
-<li>循序渐进</li>
-<li>兼顾技术：重构、分层</li>
-<li>可靠测试</li>
-</ul>
-<h2 id="应用之间通信"><a href="#应用之间通信" class="headerlink" title="应用之间通信"></a>应用之间通信</h2><ul>
-<li>RPC（dubbo等，实时性较高）、消息队列（适合于数据包小，数据量大，实时性不高的场景）</li>
-</ul>
-<h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><ul>
-<li>每个应用都有独立的数据库</li>
-</ul>
-<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><ul>
-<li>避免事务操作跨应用</li>
-</ul>
-<h2 id="dobbo"><a href="#dobbo" class="headerlink" title="dobbo"></a>dobbo</h2><p>dubbo是一种分布式的服务框架</p>
-<p><img src="http://p376695fl.bkt.clouddn.com/dubbo%E5%8E%9F%E7%90%86%E5%9B%BE111.png" alt="image"></p>
-<p>具体的原理还需要整理一下。</p>
-<h2 id="springCloud"><a href="#springCloud" class="headerlink" title="springCloud"></a>springCloud</h2><p>这是以后着重要研究的方向。</p>
+        <p>介绍redis最基本的五种数据结构的操作。<br><a id="more"></a></p>
+<p>由于不是md文件，所以在这里将我的学习笔记以有道云的链接形式分享出来。</p>
+<p><a href="http://note.youdao.com/noteshare?id=48e87aa2830884521b851d76358729b9&amp;sub=B40DB14F22274EAC81B46F4309098294" target="_blank" rel="noopener">有道云笔记-2.redis基本数据结构的入门</a></p>
 
       
     </div>
@@ -252,13 +233,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-06-04, 22:23:06</p>
-        <p><span>最后更新:</span>2018-06-04, 22:24:01</p>
+        <p><span>发布时间:</span>2018-06-05, 09:52:33</p>
+        <p><span>最后更新:</span>2018-06-05, 09:54:25</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/06/04/14.高并发处理之应用拆分思路/" title="14.高并发处理之应用拆分思路">http://yoursite.com/2018/06/04/14.高并发处理之应用拆分思路/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/14.高并发处理之应用拆分思路/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/05/2.redis基本数据结构的入门/" title="2.redis基本数据结构的入门">http://yoursite.com/2018/06/05/2.redis基本数据结构的入门/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/2.redis基本数据结构的入门/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -270,16 +251,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/06/04/15.高并发处理之应用限流思路/">
-                    15.高并发处理之应用限流思路
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/06/04/13.高并发处理之消息队列思路/">
-                    13.高并发处理之消息队列思路
+                <a href="/2018/06/05/1.redis简介/">
+                    1.redis简介
                 </a>
             </div>
         
@@ -291,7 +266,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#应用拆分原则"><span class="toc-number">1.</span> <span class="toc-text">应用拆分原则</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#应用之间通信"><span class="toc-number">2.</span> <span class="toc-text">应用之间通信</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库"><span class="toc-number">3.</span> <span class="toc-text">数据库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事务"><span class="toc-number">4.</span> <span class="toc-text">事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dobbo"><span class="toc-number">5.</span> <span class="toc-text">dobbo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#springCloud"><span class="toc-number">6.</span> <span class="toc-text">springCloud</span></a></li></ol>
+            
         
     </div>
     <style>
@@ -327,7 +302,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"14.高并发处理之应用拆分思路　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"2.redis基本数据结构的入门　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -347,15 +322,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/04/15.高并发处理之应用限流思路/" title="上一篇: 15.高并发处理之应用限流思路">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/06/04/13.高并发处理之消息队列思路/" title="下一篇: 13.高并发处理之消息队列思路">
+            <a href="/2018/06/05/1.redis简介/" title="下一篇: 1.redis简介">
                 <i class="fa fa-angle-right"></i>
             </a>
         
