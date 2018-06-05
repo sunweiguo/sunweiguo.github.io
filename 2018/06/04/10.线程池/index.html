@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B111.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86111.png">
-<meta property="og:updated_time" content="2018-06-05T01:28:31.937Z">
+<meta property="og:updated_time" content="2018-06-05T01:31:47.792Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="10.线程池">
 <meta name="twitter:description" content="线程池的原理是面试的重灾区。本篇将完整分析线程池的原理。">
@@ -453,7 +453,7 @@
 <li>1.如果当前运行的线程少于<code>corePoolSize</code>，则创建新线程来执行任务（注意，执行这一步骤需要获取全局锁）。 </li>
 <li>2.如果运行的线程等于或多于<code>corePoolSize</code>，则将任务加入<code>BlockingQueue</code>。</li>
 <li>3.如果无法将任务加入<code>BlockingQueue</code>（队列已满），则在非<code>corePool</code>中创建新的线程来处理任务（注意，执行这一步骤需要获取全局锁）。 </li>
-<li>4.如果创建新线程将使当前运行的线程超出<code>maximumPoolSize</code>，任务将被拒绝，并调用<br><code>RejectedExecutionHandler.rejectedExecution()</code>方法。 </li>
+<li>4.如果创建新线程将使当前运行的线程超出<code>maximumPoolSize</code>，任务将被拒绝，并调用<code>RejectedExecutionHandler.rejectedExecution()</code>方法。 </li>
 </ul>
 <blockquote>
 <p><code>ThreadPoolExecutor</code>采取上述步骤的总体设计思路，是为了在执行<code>execute()</code>方法时，尽可能地避免获取全局锁（那将会是一个严重的可伸缩瓶颈）。<strong>在<code>ThreadPoolExecutor</code>完成预热之后（当前运行的线程数大于等于<code>corePoolSize</code>），几乎所有的<code>execute()</code>方法调用都是执行步骤2</strong>，而步骤2不需要获取全局锁。</p>
@@ -496,7 +496,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/10.线程池/">10.线程池</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:18:51</p>
-        <p><span>最后更新:</span>2018-06-05, 09:28:31</p>
+        <p><span>最后更新:</span>2018-06-05, 09:31:47</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/10.线程池/" title="10.线程池">http://yoursite.com/2018/06/04/10.线程池/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/10.线程池/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
