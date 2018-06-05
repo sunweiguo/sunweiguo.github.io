@@ -25,7 +25,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6.png">
-<meta property="og:updated_time" content="2018-06-05T03:13:04.862Z">
+<meta property="og:updated_time" content="2018-06-05T03:15:31.691Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5.redis主从复制">
 <meta name="twitter:description" content="介绍redis主从复制功能实现原理。">
@@ -238,16 +238,17 @@
 <li>一个<code>salve</code>只能有一个<code>master</code></li>
 </ul>
 <h2 id="3-两种实现方式"><a href="#3-两种实现方式" class="headerlink" title="3. 两种实现方式"></a>3. 两种实现方式</h2><ul>
-<li><p>方式一：<code>slaveof</code>命令<br>  +<code>slaveof masterIp masterPort</code><br>  +<code>slaveof no one</code>(不会清除原来同步的数据，而是新的数据不会再同步给他)</p>
+<li>方式一：<code>slaveof</code>命令<ul>
+<li><code>slaveof masterIp masterPort</code></li>
+<li><code>slaveof no one</code>(不会清除原来同步的数据，而是新的数据不会再同步给他)</li>
+</ul>
 </li>
-<li><p>方式二：配置 </p>
-<ul>
+<li>方式二：配置 <ul>
 <li>修改某一行的配置：<code>slaveof ip port</code></li>
 <li>从节点只做读操作：<code>slave-read-only yes</code></li>
 </ul>
 </li>
-<li><p>对比</p>
-<ul>
+<li>对比<ul>
 <li>命令的优点：不需要重启</li>
 <li>命令的缺点：不便于管理</li>
 <li>配置的优点：统一配置</li>
@@ -325,7 +326,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:04:53</p>
-        <p><span>最后更新:</span>2018-06-05, 11:13:04</p>
+        <p><span>最后更新:</span>2018-06-05, 11:15:31</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/5.redis主从复制/" title="5.redis主从复制">http://yoursite.com/2018/06/05/5.redis主从复制/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/5.redis主从复制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
