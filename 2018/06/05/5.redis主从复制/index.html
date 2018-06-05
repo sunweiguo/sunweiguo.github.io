@@ -25,7 +25,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6.png">
-<meta property="og:updated_time" content="2018-06-05T03:04:54.029Z">
+<meta property="og:updated_time" content="2018-06-05T03:13:04.862Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5.redis主从复制">
 <meta name="twitter:description" content="介绍redis主从复制功能实现原理。">
@@ -233,58 +233,51 @@
 </ul>
 <h2 id="2-主从复制的作用"><a href="#2-主从复制的作用" class="headerlink" title="2. 主从复制的作用"></a>2. 主从复制的作用</h2><ul>
 <li>数据副本</li>
-<li><p>扩展读性能</p>
-</li>
-<li><p>一个<code>master</code>可以有多个<code>slave</code></p>
-</li>
+<li>扩展读性能</li>
+<li>一个<code>master</code>可以有多个<code>slave</code></li>
 <li>一个<code>salve</code>只能有一个<code>master</code></li>
 </ul>
 <h2 id="3-两种实现方式"><a href="#3-两种实现方式" class="headerlink" title="3. 两种实现方式"></a>3. 两种实现方式</h2><ul>
-<li><p>方式一：<code>slaveof</code>命令</p>
-<blockquote>
-<p><code>slaveof masterIp masterPort</code></p>
-<p><code>slaveof no one</code>(不会清除原来同步的数据，而是新的数据不会再同步给他)</p>
-</blockquote>
+<li><p>方式一：<code>slaveof</code>命令<br>  +<code>slaveof masterIp masterPort</code><br>  +<code>slaveof no one</code>(不会清除原来同步的数据，而是新的数据不会再同步给他)</p>
 </li>
-<li><p>方式二：配置</p>
-<blockquote>
-<p>修改某一行的配置：<code>slaveof ip port</code></p>
-<p>从节点只做读操作：<code>slave-read-only yes</code></p>
-</blockquote>
+<li><p>方式二：配置 </p>
+<ul>
+<li>修改某一行的配置：<code>slaveof ip port</code></li>
+<li>从节点只做读操作：<code>slave-read-only yes</code></li>
+</ul>
 </li>
 <li><p>对比</p>
-<blockquote>
-<p>命令的优点：不需要重启</p>
-<p>命令的缺点：不便于管理</p>
-<p>配置的优点：统一配置</p>
-<p>配置的缺点：需要重启</p>
-</blockquote>
+<ul>
+<li>命令的优点：不需要重启</li>
+<li>命令的缺点：不便于管理</li>
+<li>配置的优点：统一配置</li>
+<li>配置的缺点：需要重启</li>
+</ul>
 </li>
 </ul>
 <p>一个场景，加入6380是6379的一个从节点，然后将6380执行<code>salveof no one</code>，然后插入一些新的数据；再重新变成6379的从节点，那么里面的新数据会被清除掉。</p>
 <ul>
-<li><p>查看run_id</p>
-<blockquote>
-<p><code>redis-cli -p 6379 info server | grep run</code></p>
-</blockquote>
+<li>查看run_id<ul>
+<li><code>redis-cli -p 6379 info server | grep run</code></li>
+</ul>
 </li>
 </ul>
 <h2 id="4-全量复制"><a href="#4-全量复制" class="headerlink" title="4. 全量复制"></a>4. 全量复制</h2><p> <img src="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png" alt="image"></p>
 <ul>
 <li><p>全量复制开销</p>
-<blockquote>
-<p>bgsave时间</p>
-<p>rdb网络传输时间</p>
-<p>从节点清空数据的时间</p>
-<p>从节点加载RDB的时间</p>
-<p>可能的AOF重写时间</p>
-</blockquote>
+<ul>
+<li>bgsave时间 </li>
+<li>rdb网络传输时间</li>
+<li>从节点清空数据的时间</li>
+<li>从节点加载RDB的时间</li>
+<li>可能的AOF重写时间</li>
+</ul>
 </li>
 <li><p>存在的问题</p>
-<blockquote>
-<p>时间开销比较大</p>
-<p>如果<code>master</code>和<code>slave</code>之间网络扰动甚至断开，那么<code>master</code>此间更新的数据对于<code>slave</code>是不知道的，最简单的方法就是再进行一次全量复制，但是显然，消耗太大了。</p>
-</blockquote>
+<ul>
+<li>时间开销比较大</li>
+<li>如果<code>master</code>和<code>slave</code>之间网络扰动甚至断开，那么<code>master</code>此间更新的数据对于<code>slave</code>是不知道的，最简单的方法就是再进行一次全量复制，但是显然，消耗太大了。</li>
+</ul>
 </li>
 </ul>
 <h2 id="5-部分复制"><a href="#5-部分复制" class="headerlink" title="5. 部分复制"></a>5. 部分复制</h2><p><img src="http://p376695fl.bkt.clouddn.com/%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6.png" alt="image"></p>
@@ -332,7 +325,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:04:53</p>
-        <p><span>最后更新:</span>2018-06-05, 11:04:54</p>
+        <p><span>最后更新:</span>2018-06-05, 11:13:04</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/5.redis主从复制/" title="5.redis主从复制">http://yoursite.com/2018/06/05/5.redis主从复制/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/5.redis主从复制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
