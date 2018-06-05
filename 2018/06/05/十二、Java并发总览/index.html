@@ -43,7 +43,7 @@
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%812.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E8%BD%BB%E9%87%8F%E7%BA%A7%E9%94%813.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%81%8F%E5%90%91%E9%94%81.jpg">
-<meta property="og:updated_time" content="2018-06-05T13:27:42.087Z">
+<meta property="og:updated_time" content="2018-06-05T13:30:42.576Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="十二、Java并发总览">
 <meta name="twitter:description" content="从今天开始，开始学习java并发编程的基础知识。本篇介绍java并发编程中的几个关键字以及如何使用。">
@@ -657,20 +657,13 @@
 <p>当有另外一个线程去尝试获取这个锁对象时，偏向状态就宣告结束，此时撤销偏向（Revoke Bias）后恢复到未锁定状态或者轻量级锁状态。</p>
 <p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%81%8F%E5%90%91%E9%94%81.jpg" alt="image"></p>
 <h1 id="十三、多线程开发良好的实践"><a href="#十三、多线程开发良好的实践" class="headerlink" title="十三、多线程开发良好的实践"></a>十三、多线程开发良好的实践</h1><ul>
-<li><p>给线程起个有意义的名字，这样可以方便找 Bug。</p>
-</li>
-<li><p>缩小同步范围，例如对于 <code>synchronized</code>，应该尽量使用同步块而不是同步方法。</p>
-</li>
-<li><p>多用同步类少用 <code>wait()</code> 和 <code>notify()</code>。首先，<code>CountDownLatch</code>, <code>Semaphore</code>, <code>CyclicBarrier</code> 和 <code>Exchanger</code> 这些同步类简化了编码操作，而用 <code>wait()</code> 和 <code>notify()</code> 很难实现对复杂控制流的控制。其次，这些类是由最好的企业编写和维护，在后续的 JDK 中它们还会不断优化和完善，使用这些更高等级的同步工具你的程序可以不费吹灰之力获得优化。</p>
-</li>
-<li><p>多用并发集合少用同步集合。并发集合比同步集合的可扩展性更好，例如应该使用 <code>ConcurrentHashMap</code> 而不是 <code>Hashtable</code>。</p>
-</li>
-<li><p>使用本地变量和不可变类来保证线程安全。</p>
-</li>
-<li><p>使用线程池而不是直接创建 <code>Thread</code> 对象，这是因为创建线程代价很高，线程池可以有效地利用有限的线程来启动任务。</p>
-</li>
-<li><p>使用 <code>BlockingQueue</code> 实现生产者消费者问题。</p>
-</li>
+<li>给线程起个有意义的名字，这样可以方便找 Bug。</li>
+<li>缩小同步范围，例如对于 <code>synchronized</code>，应该尽量使用同步块而不是同步方法。</li>
+<li>多用同步类少用 <code>wait()</code> 和 <code>notify()</code>。首先，<code>CountDownLatch</code>, <code>Semaphore</code>, <code>CyclicBarrier</code> 和 <code>Exchanger</code> 这些同步类简化了编码操作，而用 <code>wait()</code> 和 <code>notify()</code> 很难实现对复杂控制流的控制。其次，这些类是由最好的企业编写和维护，在后续的 JDK 中它们还会不断优化和完善，使用这些更高等级的同步工具你的程序可以不费吹灰之力获得优化。</li>
+<li>多用并发集合少用同步集合。并发集合比同步集合的可扩展性更好，例如应该使用 <code>ConcurrentHashMap</code> 而不是 <code>Hashtable</code>。</li>
+<li>使用本地变量和不可变类来保证线程安全。</li>
+<li>使用线程池而不是直接创建 <code>Thread</code> 对象，这是因为创建线程代价很高，线程池可以有效地利用有限的线程来启动任务。</li>
+<li>使用 <code>BlockingQueue</code> 实现生产者消费者问题。</li>
 </ul>
 <p>转自：<a href="https://github.com/CyC2018/Interview-Notebook/blob/master/notes/Java%20%E5%B9%B6%E5%8F%91.md" target="_blank" rel="noopener">https://github.com/CyC2018/Interview-Notebook/blob/master/notes/Java%20%E5%B9%B6%E5%8F%91.md</a></p>
 
@@ -684,7 +677,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 21:27:28</p>
-        <p><span>最后更新:</span>2018-06-05, 21:27:42</p>
+        <p><span>最后更新:</span>2018-06-05, 21:30:42</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/十二、Java并发总览/" title="十二、Java并发总览">http://yoursite.com/2018/06/05/十二、Java并发总览/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/十二、Java并发总览/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
