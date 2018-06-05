@@ -41,7 +41,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/84104163.jpg">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/97521024.jpg">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/92977181.jpg">
-<meta property="og:updated_time" content="2018-06-05T03:07:35.638Z">
+<meta property="og:updated_time" content="2018-06-05T03:28:00.199Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="9.缓存设计与优化">
 <meta name="twitter:description" content="介绍redis缓存。">
@@ -330,14 +330,10 @@
 <h4 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h4><p>当存在的节点异常多的时候，IO的代价已经超过数据传输，上文提到的facebook的节点已经超过3000个，在这种情况下再增加节点已经没法再提高效率了。</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/45516608.jpg" alt="image"></p>
 <h4 id="问题解决—优化IO"><a href="#问题解决—优化IO" class="headerlink" title="问题解决—优化IO"></a>问题解决—优化IO</h4><ul>
-<li><p>命令本身的效率：例如sql优化，命令优化</p>
-</li>
-<li><p>网络次数：减少通信次数</p>
-</li>
-<li><p>降低接入成本:长连/连接池,NIO等。</p>
-</li>
-<li><p>IO访问合并:O(n)到O(1)过程:批量接口(mget)，就是第八节文章中介绍的对于mget的四个方案。</p>
-</li>
+<li>命令本身的效率：例如sql优化，命令优化</li>
+<li>网络次数：减少通信次数</li>
+<li>降低接入成本:长连/连接池,NIO等。</li>
+<li>IO访问合并:O(n)到O(1)过程:批量接口(mget)，就是第八节文章中介绍的对于mget的四个方案。</li>
 </ul>
 <h2 id="6-缓存雪崩优化"><a href="#6-缓存雪崩优化" class="headerlink" title="6. 缓存雪崩优化"></a>6. 缓存雪崩优化</h2><h4 id="什么是缓存雪崩？"><a href="#什么是缓存雪崩？" class="headerlink" title="什么是缓存雪崩？"></a>什么是缓存雪崩？</h4><p>从下图可以很清晰出什么是缓存雪崩：由于缓存层承载着大量请求，有效的保护了存储层，但是如果缓存层由于某些原因整体不能提供服务，于是所有的请求都会达到存储层，存储层的调用量会暴增，造成存储层也会挂掉的情况。 缓存雪崩的英文原意是 stampeding herd（奔逃的野牛），指的是缓存层宕掉后，流量会像奔逃的野牛一样，打向后端存储。</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/92547625.jpg" alt="image"></p>
@@ -387,7 +383,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:07:32</p>
-        <p><span>最后更新:</span>2018-06-05, 11:07:35</p>
+        <p><span>最后更新:</span>2018-06-05, 11:28:00</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/9.缓存设计与优化/" title="9.缓存设计与优化">http://yoursite.com/2018/06/05/9.缓存设计与优化/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/9.缓存设计与优化/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
