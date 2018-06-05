@@ -25,7 +25,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6.png">
-<meta property="og:updated_time" content="2018-06-05T03:15:31.691Z">
+<meta property="og:updated_time" content="2018-06-05T03:18:18.896Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="5.redis主从复制">
 <meta name="twitter:description" content="介绍redis主从复制功能实现原理。">
@@ -263,10 +263,8 @@
 </ul>
 </li>
 </ul>
-<h2 id="4-全量复制"><a href="#4-全量复制" class="headerlink" title="4. 全量复制"></a>4. 全量复制</h2><p> <img src="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png" alt="image"></p>
-<ul>
-<li><p>全量复制开销</p>
-<ul>
+<h2 id="4-全量复制"><a href="#4-全量复制" class="headerlink" title="4. 全量复制"></a>4. 全量复制</h2><ul>
+<li>全量复制开销<ul>
 <li>bgsave时间 </li>
 <li>rdb网络传输时间</li>
 <li>从节点清空数据的时间</li>
@@ -274,13 +272,13 @@
 <li>可能的AOF重写时间</li>
 </ul>
 </li>
-<li><p>存在的问题</p>
-<ul>
+<li>存在的问题<ul>
 <li>时间开销比较大</li>
 <li>如果<code>master</code>和<code>slave</code>之间网络扰动甚至断开，那么<code>master</code>此间更新的数据对于<code>slave</code>是不知道的，最简单的方法就是再进行一次全量复制，但是显然，消耗太大了。</li>
 </ul>
 </li>
 </ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E5%85%A8%E9%87%8F%E5%A4%8D%E5%88%B6.png" alt="image"></p>
 <h2 id="5-部分复制"><a href="#5-部分复制" class="headerlink" title="5. 部分复制"></a>5. 部分复制</h2><p><img src="http://p376695fl.bkt.clouddn.com/%E9%83%A8%E5%88%86%E5%A4%8D%E5%88%B6.png" alt="image"></p>
 <h2 id="6-开发与运维的问题"><a href="#6-开发与运维的问题" class="headerlink" title="6. 开发与运维的问题"></a>6. 开发与运维的问题</h2><ul>
 <li>读写分离</li>
@@ -326,7 +324,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:04:53</p>
-        <p><span>最后更新:</span>2018-06-05, 11:15:31</p>
+        <p><span>最后更新:</span>2018-06-05, 11:18:18</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/5.redis主从复制/" title="5.redis主从复制">http://yoursite.com/2018/06/05/5.redis主从复制/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/5.redis主从复制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
