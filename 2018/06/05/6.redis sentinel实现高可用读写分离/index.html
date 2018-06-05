@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="介绍redis sentinel实现高可用读写分离。">
+<meta name="keywords" content="redis学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.redis sentinel实现高可用读写分离">
+<meta property="og:url" content="http://yoursite.com/2018/06/05/6.redis sentinel实现高可用读写分离/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="介绍redis sentinel实现高可用读写分离。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/redis_sentinel%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%A4%9A%E4%B8%AAmaster_slave.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%95%88%E6%9E%9C%E5%9B%BE.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/redis-7000.conf.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/redis-slave.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/sentinel%E4%B8%BB%E8%A6%81%E9%85%8D%E7%BD%AE.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
+<meta property="og:updated_time" content="2018-06-05T03:05:28.734Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="6.redis sentinel实现高可用读写分离">
+<meta name="twitter:description" content="介绍redis sentinel实现高可用读写分离。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/redis_sentinel%E7%BB%93%E6%9E%84.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>6.redis sentinel实现高可用读写分离 | Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-6.redis sentinel实现高可用读写分离" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/05/6.redis sentinel实现高可用读写分离/" class="article-date">
+      <time datetime="2018-06-05T03:05:28.140Z" itemprop="datePublished">2018-06-05</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      6.redis sentinel实现高可用读写分离
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>介绍redis sentinel实现高可用读写分离。<br><a id="more"></a></p>
+<h2 id="1-redis-sentinel"><a href="#1-redis-sentinel" class="headerlink" title="1. redis sentinel"></a>1. redis sentinel</h2><p><img src="http://p376695fl.bkt.clouddn.com/redis_sentinel%E7%BB%93%E6%9E%84.png" alt="image"></p>
+<p>故障转移的基本原理：</p>
+<ul>
+<li>多个<code>sentinel</code>发现并确认<code>master</code>有问题</li>
+<li>选举出一个<code>sentinel</code>作为领导</li>
+<li>选出一个<code>slave</code>称为新的<code>master</code>的<code>slave</code></li>
+<li>通知其他的<code>slave</code>称为新的<code>master</code>的<code>slave</code></li>
+<li>通知客户端主从变化</li>
+<li>等待老的<code>master</code>复活称为新的<code>master</code>的<code>slave</code></li>
+</ul>
+<p>也支持多个<code>master-slave</code>结构：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E5%A4%9A%E4%B8%AAmaster_slave.png" alt="image"></p>
+<h2 id="2-安装与配置"><a href="#2-安装与配置" class="headerlink" title="2. 安装与配置"></a>2. 安装与配置</h2><ol>
+<li>配置开启主从节点</li>
+<li>配置开启<code>sentinel</code>监控主节点（<code>sentinel</code>是特殊的<code>redis</code>）</li>
+<li>实际应该多台机器，但是演示方便，只用一台机器来搭建</li>
+<li>详细配置节点</li>
+</ol>
+<p>本地安装的结构图：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E6%95%88%E6%9E%9C%E5%9B%BE.png" alt="image"></p>
+<p>对于<code>master:redis-7000.conf</code>配置：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/redis-7000.conf.png" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">port 7000</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile /usr/local/redis/data/redis-7000.pid</span><br><span class="line">logfile &quot;7000.log&quot;</span><br><span class="line">dir &quot;/usr/local/redis/data&quot;</span><br></pre></td></tr></table></figure>
+<p>对于<code>slave:redis-7001</code>和<code>redis-7002</code>配置：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/redis-slave.png" alt="image"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">port 7001</span><br><span class="line">daemonize yes</span><br><span class="line">pidfile /usr/local/redis/data/redis-7001.pid</span><br><span class="line">logfile &quot;7001.log&quot;</span><br><span class="line">dir &quot;/usr/local/redis/data&quot;</span><br><span class="line">slaveof 127.0.0.1 7000</span><br></pre></td></tr></table></figure>
+<p>启动<code>redis</code>服务：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server ../config/redis-7000.conf</span><br></pre></td></tr></table></figure>
+<p>访问7000端口的<code>master redis</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 7000 info replication</span><br></pre></td></tr></table></figure>
+<p>显示他有两个从节点：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line">role:master</span><br><span class="line">connected_slaves:2</span><br><span class="line">slave0:ip=127.0.0.1,port=7002,state=online,offset=99550,lag=1</span><br><span class="line">slave1:ip=127.0.0.1,port=7001,state=online,offset=99816,lag=0</span><br><span class="line">master_repl_offset:99816</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:1048576</span><br><span class="line">repl_backlog_first_byte_offset:2</span><br><span class="line">repl_backlog_histlen:99815</span><br></pre></td></tr></table></figure>
+<p>对于<code>sentinel</code>主要配置：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/sentinel%E4%B8%BB%E8%A6%81%E9%85%8D%E7%BD%AE.png" alt="image"></p>
+<p><code>master sentinel config</code>:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">port 26379</span><br><span class="line">daemonize yes</span><br><span class="line">dir &quot;/usr/local/redis/data&quot;</span><br><span class="line">logfile &quot;26379.log&quot;</span><br><span class="line">sentinel monitor mymaster 127.0.0.1 7000 2</span><br><span class="line">...</span><br></pre></td></tr></table></figure></p>
+<p>启动<code>redis sentinel</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-sentinel ../config/redis-sentinel-26379.conf</span><br></pre></td></tr></table></figure>
+<p>访问26379 <code>redis sentinel master</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 26379 info sentinel</span><br></pre></td></tr></table></figure>
+<p>显示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Sentinel</span><br><span class="line">sentinel_masters:1</span><br><span class="line">sentinel_tilt:0</span><br><span class="line">sentinel_running_scripts:0</span><br><span class="line">sentinel_scripts_queue_length:0</span><br><span class="line">master0:name=mymaster,status=ok,address=127.0.0.1:7000,slaves=2,sentinels=3</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">查看这六个进程是否都起来了：ps -ef | grep redis</span><br></pre></td></tr></table></figure>
+<p>注意，如果上面是配置在虚拟机的话，需要将127.0.0.1改为虚拟机的ip，要不然找不着。</p>
+<h2 id="3-故障转移演练"><a href="#3-故障转移演练" class="headerlink" title="3. 故障转移演练"></a>3. 故障转移演练</h2><h4 id="3-1-java客户端程序"><a href="#3-1-java客户端程序" class="headerlink" title="3.1 java客户端程序"></a>3.1 java客户端程序</h4><p><code>JedisSentinelPool</code>只是一个配置中心，不需要具体连接某个<code>redis</code>，注意它不是代理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(AppTest.class);</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test4</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="comment">//哨兵配置，我们访问redis，就通过sentinel来访问</span></span><br><span class="line">    String masername = <span class="string">"mymaster"</span>;</span><br><span class="line">    Set&lt;String&gt; sentinels = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">    sentinels.add(<span class="string">"10.128.24.176:26379"</span>);</span><br><span class="line">    sentinels.add(<span class="string">"10.128.24.176:26380"</span>);</span><br><span class="line">    sentinels.add(<span class="string">"10.128.24.176:26381"</span>);</span><br><span class="line"></span><br><span class="line">    JedisSentinelPool sentinelPool = <span class="keyword">new</span> JedisSentinelPool(masername,sentinels);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//一个while死循环，每隔一秒往master塞入一个值，并且日志打印</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">        Jedis jedis = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span>&#123;</span><br><span class="line">            jedis = sentinelPool.getResource();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span> index = <span class="keyword">new</span> Random().nextInt(<span class="number">100000</span>);</span><br><span class="line">            String key = <span class="string">"k-"</span> + index;</span><br><span class="line">            String value = <span class="string">"v-"</span> + index;</span><br><span class="line">            jedis.set(key,value);</span><br><span class="line">            logger.info(<span class="string">"&#123;&#125;  value is &#123;&#125;"</span>,key,jedis.get(key));</span><br><span class="line"></span><br><span class="line">            TimeUnit.MILLISECONDS.sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">            logger.error(e.getMessage(),e);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="keyword">if</span>(jedis != <span class="keyword">null</span>)&#123;</span><br><span class="line">                jedis.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>maven</code>依赖是：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--jedis--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;redis.clients&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;jedis&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;2.9.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!--slf4j日志接口--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.slf4j&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;slf4j-api&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;1.7.6&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;!--logback日志实现--&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;ch.qos.logback&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;logback-classic&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;1.1.1&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>启动程序，发现是正常写入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">16:16:01.424 [main] INFO  com.njupt.swg.AppTest - k-54795  value is v-54795</span><br><span class="line">16:16:02.426 [main] INFO  com.njupt.swg.AppTest - k-55630  value is v-55630</span><br><span class="line">16:16:03.429 [main] INFO  com.njupt.swg.AppTest - k-70642  value is v-70642</span><br><span class="line">16:16:04.430 [main] INFO  com.njupt.swg.AppTest - k-42978  value is v-42978</span><br><span class="line">16:16:05.431 [main] INFO  com.njupt.swg.AppTest - k-96297  value is v-96297</span><br><span class="line">16:16:06.433 [main] INFO  com.njupt.swg.AppTest - k-4220  value is v-4220</span><br><span class="line">16:16:07.435 [main] INFO  com.njupt.swg.AppTest - k-34103  value is v-34103</span><br><span class="line">16:16:08.436 [main] INFO  com.njupt.swg.AppTest - k-9177  value is v-9177</span><br><span class="line">16:16:09.437 [main] INFO  com.njupt.swg.AppTest - k-24389  value is v-24389</span><br><span class="line">16:16:10.439 [main] INFO  com.njupt.swg.AppTest - k-32325  value is v-32325</span><br><span class="line">16:16:11.440 [main] INFO  com.njupt.swg.AppTest - k-68538  value is v-68538</span><br><span class="line">16:16:12.441 [main] INFO  com.njupt.swg.AppTest - k-36233  value is v-36233</span><br><span class="line">16:16:13.443 [main] INFO  com.njupt.swg.AppTest - k-305  value is v-305</span><br><span class="line">16:16:14.444 [main] INFO  com.njupt.swg.AppTest - k-59279  value is v-59279</span><br></pre></td></tr></table></figure>
+<p>我们将现在的端口为7000的<code>redis master</code> 给<code>kill</code>掉</p>
+<blockquote>
+<p>kill -9 master的pid</p>
+</blockquote>
+<p>我们会发现：客户端报异常，但是在大概十几秒之后，就继续正常塞值了。原因是服务端的哨兵机制的选举<code>matser</code>需要一定的时间。</p>
+<h2 id="4-三个定时任务"><a href="#4-三个定时任务" class="headerlink" title="4. 三个定时任务"></a>4. 三个定时任务</h2><h4 id="4-1-每10秒每个sentinel对master和slave执行Info"><a href="#4-1-每10秒每个sentinel对master和slave执行Info" class="headerlink" title="4.1 每10秒每个sentinel对master和slave执行Info"></a>4.1 每10秒每个sentinel对master和slave执行Info</h4><ul>
+<li>发现<code>slave</code>节点</li>
+<li>确认主从关系</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9A%E6%97%B6.png" alt="image"></p>
+<h4 id="4-2-每2秒每个sentinel通过master节点的channel交换信息-pub-sub"><a href="#4-2-每2秒每个sentinel通过master节点的channel交换信息-pub-sub" class="headerlink" title="4.2 每2秒每个sentinel通过master节点的channel交换信息(pub/sub)"></a>4.2 每2秒每个sentinel通过master节点的channel交换信息(pub/sub)</h4><ul>
+<li>通过<code>__sentinel__</code>:hello进行频道交互</li>
+<li>交互对节点的“看法”和自身信息</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%AE%9A%E6%97%B6.png" alt="image"></p>
+<h4 id="4-3-每1秒每个sentinel对其他sentinel和redis执行ping"><a href="#4-3-每1秒每个sentinel对其他sentinel和redis执行ping" class="headerlink" title="4.3 每1秒每个sentinel对其他sentinel和redis执行ping"></a>4.3 每1秒每个<code>sentinel</code>对其他<code>sentinel</code>和<code>redis</code>执行<code>ping</code></h4><ul>
+<li>心跳监测，失败判定依据</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6.png" alt="image"></p>
+<h2 id="5-主观下线和客观下线"><a href="#5-主观下线和客观下线" class="headerlink" title="5. 主观下线和客观下线"></a>5. 主观下线和客观下线</h2><p>对于之前的<code>Sentinel</code>配置文件中有两条配置：</p>
+<p>监控<code>master redis</code>节点，这里是当超过两个<code>sentinel</code>认为<code>master</code>挂了，则认为<code>master</code>挂了。</p>
+<blockquote>
+<p><code>sentinel monitor &lt;masterName&gt; &lt;masterIp&gt; &lt;msterPort&gt; &lt;quorum&gt;</code></p>
+<p><code>sentinel monitor mymaster 127.0.0.1 6379 2</code></p>
+</blockquote>
+<p>这里是每秒<code>sentinel</code>都会去<code>Ping</code>周围的<code>master redis</code>，超过30秒没有任何相应，说明其挂了。</p>
+<blockquote>
+<p><code>sentinel down-after-milliseconds &lt;masterName&gt; &lt;timeout&gt;</code></p>
+<p><code>sentinel down-after-milliseconds mymaster 300000</code></p>
+</blockquote>
+<h4 id="5-1-主观下线"><a href="#5-1-主观下线" class="headerlink" title="5.1 主观下线"></a>5.1 主观下线</h4><p>主观下线：每个<code>sentinel</code>节点对<code>Redis</code>节点失败的“偏见”</p>
+<p>这是一种主观下线。因为在复杂的网络环境下，这个<code>sentinel</code>与这个<code>master</code>不通，但是<code>master</code>与其他的<code>sentinel</code>都是通的呢？所以是一种“偏见”</p>
+<p>这是依靠的第三种定时：每秒去ping一下周围的<code>sentinel</code>和<code>redis</code>。对于<code>slave redis</code>,可以使用这个主观下线，因为他不需要进行故障转移。</p>
+<h4 id="5-2-客观下线"><a href="#5-2-客观下线" class="headerlink" title="5.2 客观下线"></a>5.2 客观下线</h4><p>客观下线：所有<code>sentinel</code>节点对<code>master Redis</code>节点失败“达成共识”（超过<code>quorum</code>个则统一）</p>
+<p>这是依靠的第二种定时：每两秒，<code>sentinel</code>之间进行“商量”，传递的消息是:<code>sentinel is-master-down-by-addr</code></p>
+<p>对于<code>master redis</code>的下线，必须要达成共识才可以，因为涉及故障转移，仅仅依靠一个<code>sentinel</code>判断是不够的。</p>
+<h2 id="6-领导者选举"><a href="#6-领导者选举" class="headerlink" title="6. 领导者选举"></a>6. 领导者选举</h2><p>原因：只有一个<code>sentinel</code>节点完成故障转移</p>
+<p>选举：通过<code>sentinel is-master-down-by-addr</code>命令都希望成为领导者</p>
+<ul>
+<li>每个做主观下线的<code>sentinel</code>节点向其他<code>sentinel</code>节点发送命令，要求将它设置为领导者</li>
+<li>收到命令的<code>sentinel</code>节点如果没有同意通过其他<code>semtinel</code>节点发送的命令，那么将同意该请求，否则拒绝</li>
+<li>如果该<code>sentinel</code>节点发现自己的票数已经超过<code>sentinel</code>集合半数并且超过<code>quorum</code>，那么它将成为领导者。</li>
+<li>如果此过程中多个<code>sentinel</code>节点成为了领导者，那么将等待一段时间重新进行选举</li>
+</ul>
+<h2 id="7-故障转移"><a href="#7-故障转移" class="headerlink" title="7. 故障转移"></a>7. 故障转移</h2><ul>
+<li>从<code>slave</code>节点中选出一个“合适的”节点作为新的<code>master</code>节点</li>
+<li>对上述的<code>slave</code>节点执行“<code>slaveof no one</code>”命令使其成为<code>master</code>节点</li>
+<li>向剩余的<code>slave</code>节点发送命令，让它们成为新<code>master</code>节点的<code>slave</code>节点，复制规则和<code>parallel-syncs</code>参数一样</li>
+<li>更新对原来的<code>master</code>节点配置为<code>slave</code>，并保持着对其“关注”，当恢复后命令他去复制新的<code>master</code>节点</li>
+</ul>
+<p>那么，如何选择“合适”的<code>slave</code>节点呢？</p>
+<ul>
+<li>选择<code>slave-priority</code>(<code>slave</code>节点优先级)最高的<code>slave</code>节点，如果存在则返回，不存在则继续。</li>
+<li>选择复制偏移量对打的<code>slave</code>节点(复制得最完整)，如果存在则返回，不存在则继续</li>
+<li>选择<code>run_id</code>最小的<code>slave</code>节点(最早的节点)</li>
+</ul>
+<h2 id="8-节点下线"><a href="#8-节点下线" class="headerlink" title="8. 节点下线"></a>8. 节点下线</h2><p>主节点下线：<code>sentinel failover &lt;masterName&gt;</code></p>
+<p>从节点下线要注意读写分离问题。</p>
+<h2 id="9-总结与思考"><a href="#9-总结与思考" class="headerlink" title="9. 总结与思考"></a>9. 总结与思考</h2><blockquote>
+<p><code>redis sentinel</code>是<code>redis</code>高可用实现方案：故障发现、故障自动转移、配置中心、客户端通知。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>从<code>redis2.8</code>版本才正式生产可用，之前版本不可生产用。</p>
+</blockquote>
+<blockquote>
+<p>尽可能在不同物理机上部署<code>redis sentinel</code>所有节点。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>中的<code>sentinel</code>节点个数应该大于等于3且最好是奇数。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>中的数据节点和普通数据节点没有区别。每个<code>sentinel</code>节点在本质上还是一个<code>redis</code>实例，只不过和<code>redis</code>数据节点不同的是，其主要作用是监控<code>redis</code>数据节点</p>
+</blockquote>
+<blockquote>
+<p>客户端初始化时连接的是<code>sentinel</code>节点集合，不再是具体的<code>redis</code>节点，但<code>sentinel</code>只是配置中心不是代理。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>通过三个定时任务实现了<code>sentinel</code>节点对于主节点、从节点、其余<code>sentinel</code>节点的监控。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>在对节点做失败判定时分为主观下线和客观下线。</p>
+</blockquote>
+<blockquote>
+<p>看懂<code>redis sentinel</code>故障转移日志对于<code>redis sentine</code>l以及问题排查非常有用。</p>
+</blockquote>
+<blockquote>
+<p><code>redis sentinel</code>实现读写分离高可用可以依赖<code>sentinel</code>节点的消息通知，获取<code>redis</code>数据节点的状态变化。</p>
+</blockquote>
+<p><code>redis sentinel</code>可以实现高可用的读写分离，高可用体现在故障转移，那么实现高可用的基础就是要有从节点，主从节点还实现了读写分离，减少<code>master</code>的压力。但是如果是从节点下线了，<code>sentinel</code>是不会对其进行故障转移的，并且连接从节点的客户端也无法获取到新的可用从节点，而这些问题在<code>Cluster</code>中都得到了有效的解决。</p>
+<p>对于性能提高、容量扩展的时候，这种方式是比较复杂的，比较推荐的是使用集群，就是下面讨论的<code>redis cluster</code>!</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-05, 11:05:28</p>
+        <p><span>最后更新:</span>2018-06-05, 11:05:28</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/05/6.redis sentinel实现高可用读写分离/" title="6.redis sentinel实现高可用读写分离">http://yoursite.com/2018/06/05/6.redis sentinel实现高可用读写分离/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/6.redis sentinel实现高可用读写分离/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/05/7.redis cluster理论详解/">
+                    7.redis cluster理论详解
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/05/5.redis主从复制/">
+                    5.redis主从复制
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-redis-sentinel"><span class="toc-number">1.</span> <span class="toc-text">1. redis sentinel</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-安装与配置"><span class="toc-number">2.</span> <span class="toc-text">2. 安装与配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-故障转移演练"><span class="toc-number">3.</span> <span class="toc-text">3. 故障转移演练</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-java客户端程序"><span class="toc-number">3.0.1.</span> <span class="toc-text">3.1 java客户端程序</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-三个定时任务"><span class="toc-number">4.</span> <span class="toc-text">4. 三个定时任务</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-每10秒每个sentinel对master和slave执行Info"><span class="toc-number">4.0.1.</span> <span class="toc-text">4.1 每10秒每个sentinel对master和slave执行Info</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-每2秒每个sentinel通过master节点的channel交换信息-pub-sub"><span class="toc-number">4.0.2.</span> <span class="toc-text">4.2 每2秒每个sentinel通过master节点的channel交换信息(pub/sub)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-每1秒每个sentinel对其他sentinel和redis执行ping"><span class="toc-number">4.0.3.</span> <span class="toc-text">4.3 每1秒每个sentinel对其他sentinel和redis执行ping</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-主观下线和客观下线"><span class="toc-number">5.</span> <span class="toc-text">5. 主观下线和客观下线</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-主观下线"><span class="toc-number">5.0.1.</span> <span class="toc-text">5.1 主观下线</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-客观下线"><span class="toc-number">5.0.2.</span> <span class="toc-text">5.2 客观下线</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-领导者选举"><span class="toc-number">6.</span> <span class="toc-text">6. 领导者选举</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-故障转移"><span class="toc-number">7.</span> <span class="toc-text">7. 故障转移</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-节点下线"><span class="toc-number">8.</span> <span class="toc-text">8. 节点下线</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-总结与思考"><span class="toc-number">9.</span> <span class="toc-text">9. 总结与思考</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"6.redis sentinel实现高可用读写分离　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/05/7.redis cluster理论详解/" title="上一篇: 7.redis cluster理论详解">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/05/5.redis主从复制/" title="下一篇: 5.redis主从复制">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
