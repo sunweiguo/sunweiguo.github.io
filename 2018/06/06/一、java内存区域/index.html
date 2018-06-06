@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。">
+<meta name="keywords" content="java虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一、java内存区域">
+<meta property="og:url" content="http://yoursite.com/2018/06/06/一、java内存区域/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/jdk8.png">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/5916422-b4ee2e4fde89da96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/456">
+<meta property="og:image" content="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png">
+<meta property="og:image" content="http://img.blog.csdn.net/20141013141216040">
+<meta property="og:image" content="http://img.blog.csdn.net/20141117164047783">
+<meta property="og:image" content="http://img.blog.csdn.net/20141013142638909">
+<meta property="og:image" content="http://img.blog.csdn.net/20141013142924359">
+<meta property="og:image" content="http://img.blog.csdn.net/20160720214130162?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20160720214145756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:updated_time" content="2018-06-06T08:22:34.626Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一、java内存区域">
+<meta name="twitter:description" content="学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/jdk8.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>一、java内存区域 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-一、java内存区域" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/一、java内存区域/" class="article-date">
+      <time datetime="2018-06-06T08:22:33.446Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一、java内存区域
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。<br><a id="more"></a></p>
+<h3 id="1、jdk-amp-jre-amp-jvm"><a href="#1、jdk-amp-jre-amp-jvm" class="headerlink" title="1、jdk&amp;jre&amp;jvm"></a>1、jdk&amp;jre&amp;jvm</h3><p><img src="http://p376695fl.bkt.clouddn.com/jdk8.png" alt="image"></p>
+<p>从图中可以看到范围是<code>jdk</code>&gt;<code>jre</code>&gt;<code>jvm</code>。</p>
+<h3 id="2、Java虚拟机运行时内存模型"><a href="#2、Java虚拟机运行时内存模型" class="headerlink" title="2、Java虚拟机运行时内存模型"></a>2、Java虚拟机运行时内存模型</h3><p><img src="https://upload-images.jianshu.io/upload_images/5916422-b4ee2e4fde89da96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/456" alt="image"></p>
+<p>具体一点的图：</p>
+<p><img src="http://dl.iteye.com/upload/picture/pic/115264/4991b17e-a8b4-3d0a-a316-4651bb23da5e.png" alt="image"></p>
+<p>还有一张图也不错：</p>
+<p><img src="http://img.blog.csdn.net/20141013141216040" alt="image"></p>
+<p><strong>2.1 程序计数器</strong></p>
+<blockquote>
+<p>是一块较小的内存空间，他可以看作是当前线程所执行的字节码的行号指示器。</p>
+</blockquote>
+<blockquote>
+<p>字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</p>
+</blockquote>
+<blockquote>
+<p>为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们成这类内存区域为“线程私有”的内存。</p>
+</blockquote>
+<blockquote>
+<p>如果线程正在执行的是一个java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址；如果正在执行的是Native方法，这个计数器值则为空(undefined).</p>
+</blockquote>
+<blockquote>
+<p>此内存区域是唯一一个在java虚拟机规范中没有规定任何<code>OutOfMemoryError</code>情况的区域。</p>
+</blockquote>
+<p><strong>2.2 java虚拟机栈</strong></p>
+<p><img src="http://img.blog.csdn.net/20141117164047783" alt="image"></p>
+<blockquote>
+<p>线程私有，生命周期与线程相同。</p>
+</blockquote>
+<blockquote>
+<p>虚拟机栈描述的是Java方法的内存模型：每个方法在执行的同时都会创建一个栈帧用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机中入栈道出栈的过程。</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20141013142638909" alt="image"></p>
+<blockquote>
+<p>我们口中常常提到的栈与堆，其中栈就是现在讲的虚拟机栈，或者说是虚拟机栈中局部变量表部分。</p>
+</blockquote>
+<blockquote>
+<p>局部变量表存放了编译期可知的各种基本数据类型(<code>boolean</code>,<code>byte</code>,<code>char</code>,<code>short</code>,<code>int</code>,<code>float</code>,<code>long</code>,<code>double</code>),对象引用(它不等同于对象本身，可能是一个指向对象地址的引用指针，也可能是指向一个代表对象的句柄或其他与此对象相关的位置)、<code>returnAddress</code>类型(指向了一条字节码指令的地址)</p>
+</blockquote>
+<blockquote>
+<p>其中64位长度的<code>long</code>和<code>double</code>类型的数据会占用2个局部变量空间，其余的数据类型只占用1个。</p>
+</blockquote>
+<blockquote>
+<p>局部变量表所需的内存空间在编译期完成分配，当进入一个方法时，这个方法需要在帧中分配多大的局部变量空间是完全确定的，在方法运行期间不会改变局部变量表的大小。</p>
+</blockquote>
+<blockquote>
+<p>如果线程请求的栈深度大于虚拟机所允许的深度，将抛出<code>StackOverflowError</code>异常；如果虚拟机可以动态扩展，扩展时却无法申请到足够的内存，就会抛出<code>OutOfMemoryError</code>异常。</p>
+</blockquote>
+<p><strong>2.3 本地方法栈</strong></p>
+<blockquote>
+<p>本地方法栈与虚拟机栈所发挥的作用是非常相似的，他们之间的区别不过是虚拟机栈尾虚拟机执行java方法(也就是字节码)服务，而本地方法栈则为虚拟机用到的Native方法服务。</p>
+</blockquote>
+<blockquote>
+<p><code>Sun HotSpot</code>虚拟机直接将本地方法栈和虚拟机栈合二为一。</p>
+</blockquote>
+<blockquote>
+<p>与虚拟机栈一样会抛出<code>StackOverflowError</code>异常或者<code>OutOfMemoryError</code>异常。</p>
+</blockquote>
+<p><strong>什么是native方法？</strong></p>
+<blockquote>
+<p>简单地讲，一个<code>Native Method</code>就是一个java调用非java代码的接口。一个<code>Native Method</code>是这样一个java的方法：该方法的实现由非java语言实现，比如C。这个特征并非java所特有，很多其它的编程语言都有这一机制，比如在<code>C＋＋</code>中，你可以用<code>extern “C”</code>告知<code>C＋＋</code>编译器去调用一个C的函数。</p>
+</blockquote>
+<p><strong>2.4 java堆</strong></p>
+<blockquote>
+<p>java堆一般是java虚拟机所管理的内存中最大的一块。</p>
+</blockquote>
+<blockquote>
+<p>java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。</p>
+</blockquote>
+<blockquote>
+<p>堆上存放对象实例和数组。</p>
+</blockquote>
+<blockquote>
+<p>java堆可以处于物理上不连续的内存空间中，只要逻辑上是连续的即可。</p>
+</blockquote>
+<blockquote>
+<p>如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出<code>OutOfMemoryError</code>异常。</p>
+</blockquote>
+<p><strong>2.5 方法区</strong></p>
+<p><img src="http://img.blog.csdn.net/20141013142924359" alt="image"></p>
+<blockquote>
+<p>方法区和堆一样，是各个线程共享的内存区域。</p>
+</blockquote>
+<blockquote>
+<p>它用于存储已被虚拟机加载的类信息、常量、静态变量、及时编译器编译后的代码等数据。</p>
+</blockquote>
+<blockquote>
+<p>其中，类信息包含类的版本、字段、接口、方法</p>
+</blockquote>
+<blockquote>
+<p>虽然Java虚拟机规范把方法区描述为堆的一个逻辑部分，但是他有一个别名叫做<code>Non-Heap</code>(非堆)，目的是与堆区分开。</p>
+</blockquote>
+<blockquote>
+<p>方法区不等同于永久代。</p>
+</blockquote>
+<p><strong>2.6 运行时常量池</strong></p>
+<blockquote>
+<p>是方法区的一部分。</p>
+</blockquote>
+<blockquote>
+<p>类文件中除了类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法的运行时常量池中存放。</p>
+</blockquote>
+<blockquote>
+<p>这里尤其值得注意的是字符串的创建，会被扔到常量池中。如果是new，那么还是在堆重创建的。当然，运行时也可以产生新的常量放入池中，比如讲new出来的字符串用<code>intern()</code>方法便可以在运行时将其放到常量池中。</p>
+</blockquote>
+<p><strong>举例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String str1 = <span class="string">"hello"</span>;</span><br><span class="line">	String str2 = <span class="string">"hello"</span>;</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str2); <span class="comment">//true</span></span><br><span class="line">	</span><br><span class="line">	String str3 = <span class="keyword">new</span> String(<span class="string">"hello"</span>);</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3); <span class="comment">//false</span></span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3.intern()); <span class="comment">//true	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<blockquote>
+<p>对于直接声明的内容相同的字符串，对于str2来说是不需要重新分配地址的，因为str1的hello这个常量已经存在于常量池中了。所以他们两个其实是一个东西。</p>
+</blockquote>
+<blockquote>
+<p>对于new出来的str3，是不会直接扔到常量池中的，他是在堆中分配，地址不一样，所以显然是false。</p>
+</blockquote>
+<blockquote>
+<p>String类的<code>intern()</code>方法，使得运行时将堆中产生的对象放入常量池中，所以是true。</p>
+</blockquote>
+<p><strong>2.7 直接内存</strong></p>
+<blockquote>
+<p>直接内存并不是虚拟机运行时数据区的一部分，也不是java虚拟机规范中定义的内存区域。可能抛出<code>OutOfMemoryError</code>异常,不怎么关注。</p>
+</blockquote>
+<h3 id="3、对象探秘"><a href="#3、对象探秘" class="headerlink" title="3、对象探秘"></a>3、对象探秘</h3><p><strong>对象的创建</strong></p>
+<blockquote>
+<p>类加载检查：检查该对象的类是否已经被加载、解析、初始化过，如果没有则先进行类加载操作。</p>
+</blockquote>
+<blockquote>
+<p>分配内存：如果内存规整使用“指针碰撞”分配，否则一般使用“空闲列表”分配，具体看垃圾回收器是否带有整理（<code>Compact</code>）空闲内存功能。</p>
+</blockquote>
+<blockquote>
+<p>初始化：将内存区初始化置零，不包含对象头，这一步保证了对象的实例字段在java代码中可以不赋初值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</p>
+</blockquote>
+<blockquote>
+<p>对象头设置：这个对象是哪个类的实例、如何找到类的元数据信息、哈希码、GC分代年龄信息等即为对象头</p>
+</blockquote>
+<blockquote>
+<p>对象的方法：即按照程序员的意愿进行初始化</p>
+</blockquote>
+<p><strong>对象的内存布局</strong></p>
+<h5 id="对象头"><a href="#对象头" class="headerlink" title="对象头"></a>对象头</h5><p><strong>一部分称为<code>Mark Word</code>，存储对象自身运行时的数据</strong>，包含哈希码、GC分代年龄、锁状态标志等等，采用压缩存储，压缩到虚拟机位数（32位/64位）。由于对象头信息是与对象自身定义的数据无关的额外存储成本，考虑到虚拟机的空间效率，<code>Mark Word</code>被设计为一个非固定的数据结构以便在极小的空间内存储尽量多的信息，它会根据对象的状态复用自己的存储空间。<strong>另一部分为类型指针，指向它的类元数据，虚拟机通过这个指针来确定这个对象是哪个类的实例</strong>。并不是所有虚拟机实现都必须在对象数据上保留类型指针，换句话说，查找对象的元数据信息不一定要经过对象本身。<strong>注意</strong> 如果对象是一个java数组，那么在对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通java对象的元数据信息确定java对象的大小，但是从数组的元数据中却无法确定数组的大小。</p>
+<h5 id="实例数据"><a href="#实例数据" class="headerlink" title="实例数据"></a>实例数据</h5><blockquote>
+<p>实例数据部分是对象真正存储的有效信息，也是在程序中定义的各种类型的字段内容。</p>
+</blockquote>
+<blockquote>
+<p>无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</p>
+</blockquote>
+<blockquote>
+<p>从分配策略中可以看出，相同宽度的字段总是分配在一起，在满足这个前提条件的情况下，在父类中定义的变量会出现在子类之前。</p>
+</blockquote>
+<h5 id="对齐填充"><a href="#对齐填充" class="headerlink" title="对齐填充"></a>对齐填充</h5><blockquote>
+<p>非必需，只有前两者加起来非8的倍数时才会有。</p>
+</blockquote>
+<blockquote>
+<p>因为<code>HotSpot VM</code> 的自动内存管理系统要求对象起始地址必须是8字节的整数倍，也就是说，对象的大小必须是8字节的整数倍。不对齐的时候，需要通过它来填充对齐。</p>
+</blockquote>
+<p><strong>对象的访问定位</strong></p>
+<blockquote>
+<p>通过句柄访问</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20160720214130162?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>通过句柄访问对象：当java虚拟机GC移动堆对象时，并不需要修改<code>reference</code>，只需修改句柄对象的实例数据指针。</p>
+<blockquote>
+<p>通过直接指针访问</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20160720214145756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>通过直接指针访问对象：加快了对象访问速度，比间接访问少一次对象实例数据的访问，<code>HotSpot</code>则采用的这种访问方式。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/一、java内存区域/">一、java内存区域</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 16:22:33</p>
+        <p><span>最后更新:</span>2018-06-06, 16:22:34</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/一、java内存区域/" title="一、java内存区域">http://yoursite.com/2018/06/06/一、java内存区域/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/一、java内存区域/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/二、垃圾回收/">
+                    二、垃圾回收
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/随笔1/">
+                    我们的重量
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、jdk-amp-jre-amp-jvm"><span class="toc-number">1.</span> <span class="toc-text">1、jdk&amp;jre&amp;jvm</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、Java虚拟机运行时内存模型"><span class="toc-number">2.</span> <span class="toc-text">2、Java虚拟机运行时内存模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、对象探秘"><span class="toc-number">3.</span> <span class="toc-text">3、对象探秘</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#对象头"><span class="toc-number">3.0.1.</span> <span class="toc-text">对象头</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#实例数据"><span class="toc-number">3.0.2.</span> <span class="toc-text">实例数据</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#对齐填充"><span class="toc-number">3.0.3.</span> <span class="toc-text">对齐填充</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"一、java内存区域　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/二、垃圾回收/" title="上一篇: 二、垃圾回收">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/随笔1/" title="下一篇: 我们的重量">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
