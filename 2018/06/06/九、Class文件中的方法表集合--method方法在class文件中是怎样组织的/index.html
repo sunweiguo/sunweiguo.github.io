@@ -40,7 +40,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141115154139486">
 <meta property="og:image" content="http://img.blog.csdn.net/20141115114030609">
 <meta property="og:image" content="http://img.blog.csdn.net/20141117142215355">
-<meta property="og:updated_time" content="2018-06-06T09:55:30.068Z">
+<meta property="og:updated_time" content="2018-06-06T12:03:10.370Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="九、Class文件中的方法表集合--method方法在class文件中是怎样组织的">
 <meta name="twitter:description" content="继续讲class文件中的字段表集合。">
@@ -382,27 +382,27 @@
 <ol>
 <li><p>方法访问标志(access_flags)： 占有 2个字节，值为 0x0039 ,即二进制的00000000 00111001,即标志位的第11、12、13、16位为1，根据上面讲的方法标志位的表示，可以得到该greeting()方法的修饰符有：ACC_SYNCHRONIZED、ACC_FINAL、ACC_STATIC、ACC_PUBLIC;</p>
 </li>
-<li><p>名称索引(name_index)： 占有 2 个字节，值为 0x0007，指向常量池的第 7 项，该项表示字符串“greeting”，即该方法的名称是“greeting”;</p>
+<li><p>名称索引(<code>name_index</code>)： 占有 2 个字节，值为 0x0007，指向常量池的第 7 项，该项表示字符串“greeting”，即该方法的名称是“greeting”;</p>
 </li>
-<li><p>描述符索引(descriptor_index): 占有 2 个字节，值为0x0005,指向常量池的第 5 项，该项表示字符串“()V”，即表示该方法不带参数，并且无返回值；</p>
+<li><p>描述符索引(<code>descriptor_index</code>): 占有 2 个字节，值为0x0005,指向常量池的第 5 项，该项表示字符串“()V”，即表示该方法不带参数，并且无返回值；</p>
 </li>
-<li><p>属性计数器（attribute_count): 占有 2 个字节，值为0x0001,表示该方法表中含有一个属性表，后面会紧跟着一个属性表；</p>
+<li><p>属性计数器（<code>attribute_count</code>): 占有 2 个字节，值为0x0001,表示该方法表中含有一个属性表，后面会紧跟着一个属性表；</p>
 </li>
-<li><p>属性表的名称索引(attribute_name_index)：占有 2 个字节，值为0x0006,指向常量池中的第6 项，该项表示字符串“Code”，表示这个属性表是Code类型的属性表；</p>
+<li><p>属性表的名称索引(<code>attribute_name_index</code>)：占有 2 个字节，值为0x0006,指向常量池中的第6 项，该项表示字符串“Code”，表示这个属性表是Code类型的属性表；</p>
 </li>
-<li><p>属性长度（attribute_length）：占有4个字节，值为0x0000 0010，即十进制的16，表明后续的16个字节可以表示这个Code属性表的属性信息；</p>
+<li><p>属性长度（<code>attribute_length</code>）：占有4个字节，值为0x0000 0010，即十进制的16，表明后续的16个字节可以表示这个Code属性表的属性信息；</p>
 </li>
-<li><p>操作数栈的最大深度（max_stack）：占有2个字节，值为0x0001,表示栈帧中操作数栈的最大深度是1；</p>
+<li><p>操作数栈的最大深度（<code>max_stack</code>）：占有2个字节，值为0x0001,表示栈帧中操作数栈的最大深度是1；</p>
 </li>
-<li><p>局部变量表的最大容量（max_variable）：占有2个字节，值为0x0001, JVM在调用该方法时，根据这个值设置栈帧中的局部变量表的大小；</p>
+<li><p>局部变量表的最大容量（<code>max_variable</code>）：占有2个字节，值为0x0001, JVM在调用该方法时，根据这个值设置栈帧中的局部变量表的大小；</p>
 </li>
-<li><p>机器指令数目(code_length)：占有4 个字节，值为0x0000 0004,表示后续的4个字节0x10、 0x0A、 0x3B、0xB1的是表示机器指令;</p>
+<li><p>机器指令数目(<code>code_length</code>)：占有4 个字节，值为0x0000 0004,表示后续的4个字节0x10、 0x0A、 0x3B、0xB1的是表示机器指令;</p>
 </li>
-<li><p>机器指令集(code[code_length])：这里共有4 个字节，值为0x10、 0x0A、 0x3B、0xB1 ；</p>
+<li><p>机器指令集(<code>code[code_length]</code>)：这里共有4 个字节，值为0x10、 0x0A、 0x3B、0xB1 ；</p>
 </li>
-<li><p>显式异常表集合（exception_table_count）： 占有2 个字节，值为0x0000,表示方法中没有需要处理的异常信息；</p>
+<li><p>显式异常表集合（<code>exception_table_count</code>）： 占有2 个字节，值为0x0000,表示方法中没有需要处理的异常信息；</p>
 </li>
-<li><p>Code属性表的属性表集合（attribute_count）： 占有2 个字节，值为0x0000，表示它没有其他的属性表集合，因为我们使用了-g:none 禁止编译器生成Code属性表的 LineNumberTable 和LocalVariableTable;</p>
+<li><p>Code属性表的属性表集合（<code>attribute_count</code>）： 占有2 个字节，值为0x0000，表示它没有其他的属性表集合，因为我们使用了-g:none 禁止编译器生成Code属性表的 LineNumberTable 和LocalVariableTable;</p>
 </li>
 </ol>
 <h3 id="6-2-Exceptions类型的属性表—-method方法声明的要抛出的异常信息"><a href="#6-2-Exceptions类型的属性表—-method方法声明的要抛出的异常信息" class="headerlink" title="6.2 Exceptions类型的属性表—-method方法声明的要抛出的异常信息"></a>6.2 Exceptions类型的属性表—-method方法声明的要抛出的异常信息</h3><p>有些方法在定义的时候，会声明该方法会抛出什么类型的异常，如下定义一个<code>Interface</code>接口，它声明了<code>sayHello()</code>方法，抛出<code>Exception</code>异常：</p>
@@ -445,7 +445,7 @@
 <li><p>异常名称索引(<code>exception_index_table</code>)中的值为0x0008,指向了常量池中的第8项，第8项表示的是<code>CONSTANT_Class_info</code>类型的常量池项，表示<code>java/lang/Exception</code>，即表示此方法抛出了<code>java.lang.Exception</code>异常。</p>
 </li>
 </ol>
-<h2 id="7-IDE代码提示功能实现的基本原理"><a href="#7-IDE代码提示功能实现的基本原理" class="headerlink" title="7. IDE代码提示功能实现的基本原理"></a>7. IDE代码提示功能实现的基本原理</h2><p>每个IDE都提供了代码提示功能，它们实现的基本原理其实就是IDE针对它们项目下的包中所有的class文件进行建模，解析出它们的方法信息，当我们一定的条件时，IDE会自动地将合适条件的方法列表展示给开发者，供开发者使用。</p>
+<h2 id="7-IDE代码提示功能实现的基本原理"><a href="#7-IDE代码提示功能实现的基本原理" class="headerlink" title="7. IDE代码提示功能实现的基本原理"></a>7. IDE代码提示功能实现的基本原理</h2><p>每个IDE都提供了代码提示功能，它们实现的基本原理其实就是IDE针对它们项目下的包中所有的<code>class</code>文件进行建模，解析出它们的方法信息，当我们一定的条件时，IDE会自动地将合适条件的方法列表展示给开发者，供开发者使用。</p>
 <p><img src="http://img.blog.csdn.net/20141117142215355" alt="image"></p>
 
       
@@ -458,7 +458,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:14:30</p>
-        <p><span>最后更新:</span>2018-06-06, 17:55:30</p>
+        <p><span>最后更新:</span>2018-06-06, 20:03:10</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/" title="九、Class文件中的方法表集合--method方法在class文件中是怎样组织的">http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
