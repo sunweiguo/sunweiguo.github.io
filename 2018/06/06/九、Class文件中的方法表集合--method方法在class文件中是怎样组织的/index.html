@@ -40,7 +40,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141115154139486">
 <meta property="og:image" content="http://img.blog.csdn.net/20141115114030609">
 <meta property="og:image" content="http://img.blog.csdn.net/20141117142215355">
-<meta property="og:updated_time" content="2018-06-06T09:25:00.190Z">
+<meta property="og:updated_time" content="2018-06-06T09:55:30.068Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="九、Class文件中的方法表集合--method方法在class文件中是怎样组织的">
 <meta name="twitter:description" content="继续讲class文件中的字段表集合。">
@@ -313,7 +313,7 @@
 <ol>
 <li><p><code>attribute_name_index</code>,属性名称索引，占有2个字节，其内的值指向了常量池中的某一项，该项表示字符串“Code”;</p>
 </li>
-<li><p>a<code>ttribute_length</code>,属性长度，占有 4个字节，其内的值表示后面有多少个字节是属于此Code属性表的；</p>
+<li><p><code>attribute_length</code>,属性长度，占有 4个字节，其内的值表示后面有多少个字节是属于此Code属性表的；</p>
 </li>
 <li><p><code>max_stack</code>,操作数栈深度的最大值，占有 2 个字节，在方法执行的任意时刻，操作数栈都不应该超过这个值，虚拟机的运行的时候，会根据这个值来设置该方法对应的栈帧(<code>Stack Frame</code>)中的操作数栈的深度；</p>
 </li>
@@ -458,7 +458,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:14:30</p>
-        <p><span>最后更新:</span>2018-06-06, 17:25:00</p>
+        <p><span>最后更新:</span>2018-06-06, 17:55:30</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/" title="九、Class文件中的方法表集合--method方法在class文件中是怎样组织的">http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

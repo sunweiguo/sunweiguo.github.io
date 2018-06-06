@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20160117130521757">
 <meta property="og:image" content="http://img.blog.csdn.net/20160119193940660">
 <meta property="og:image" content="http://img.blog.csdn.net/20160123173750315">
-<meta property="og:updated_time" content="2018-06-06T09:50:27.475Z">
+<meta property="og:updated_time" content="2018-06-06T09:54:11.707Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="十三、实例说明类加载过程（对十、十一的补充和加深理解）">
 <meta name="twitter:description" content="本章对虚拟机的类加载过程进行一个补充。">
@@ -282,7 +282,6 @@
 <tr>
 <td>jce.jar</td>
 <td>是一组包，它们提供用于加密、密钥生成和协商以及 Message Authentication Code（MAC）</td>
-<td>算法的框架和实现</td>
 </tr>
 <tr>
 <td>jsse.jar</td>
@@ -374,10 +373,8 @@ AppClassLoader发现父类加载器ExtClassLoader无法加载，
 <p><img src="http://img.blog.csdn.net/20160117150008559" alt="image"></p>
 <p>如上图所示：</p>
 <ul>
-<li><p>JVM方法区的类信息区是按照类加载器进行划分的，每个类加载器会维护自己加载类信息；</p>
-</li>
-<li><p>某个类加载器在加载相应的类时，会相应地在JVM内存堆（Heap）中创建一个对应的Class<t>，用来表示访问该类信息的入口</t></p>
-</li>
+<li>JVM方法区的类信息区是按照类加载器进行划分的，每个类加载器会维护自己加载类信息；</li>
+<li>某个类加载器在加载相应的类时，会相应地在JVM内存堆（Heap）中创建一个对应的Class<t>，用来表示访问该类信息的入口</t></li>
 </ul>
 <h3 id="1-5-使用Main类的main方法作为程序入口运行程序"><a href="#1-5-使用Main类的main方法作为程序入口运行程序" class="headerlink" title="1.5 使用Main类的main方法作为程序入口运行程序"></a>1.5 使用Main类的main方法作为程序入口运行程序</h3><h3 id="1-6-方法执行完毕，JVM销毁，释放内存"><a href="#1-6-方法执行完毕，JVM销毁，释放内存" class="headerlink" title="1.6 方法执行完毕，JVM销毁，释放内存"></a>1.6 方法执行完毕，JVM销毁，释放内存</h3><h2 id="2-再来回顾回顾java类加载器相关的概念吧"><a href="#2-再来回顾回顾java类加载器相关的概念吧" class="headerlink" title="2. 再来回顾回顾java类加载器相关的概念吧"></a>2. 再来回顾回顾java类加载器相关的概念吧</h2><p>类加载器(<code>Class Loader</code>)：顾名思义，指的是可以加载类的工具。JVM自身定义了三个类加载器：引导类加载器(<code>Bootstrap Class</code> Loader)、拓展类加载器(<code>Extension Class Loader</code> )、应用加载器(<code>Application Class Loader</code>)。当然，我们有时候也会自己定义一些类加载器来满足自身的需要。</p>
 <p>引导类加载器(<code>Bootstrap Class Loader</code>): 该类加载器使JVM使用C++/C底层代码实现的加载器，用以加载JVM运行时所需要的系统类，这些系统类在<code>{JRE_HOME}/lib</code>目录下。<strong>由于类加载器是使用平台相关的底层<code>C++/C</code>语言实现的， 所以该加载器不能被Java代码访问到。但是，我们可以查询某个类是否被引导类加载器加载过</strong>。我们经常使用的系统类如：<code>java.lang.String</code>,<code>java.lang.Object</code>,<code>java.lang*</code>……. 这些都被放在 <code>{JRE_HOME}/lib/rt.jar</code>包内， 当JVM系统启动的时候，引导类加载器会将其加载到 JVM内存的方法区中。</p>
@@ -406,7 +403,7 @@ AppClassLoader发现父类加载器ExtClassLoader无法加载，
         <p><span>本文标题:</span><a href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:32:14</p>
-        <p><span>最后更新:</span>2018-06-06, 17:50:27</p>
+        <p><span>最后更新:</span>2018-06-06, 17:54:11</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/" title="十三、实例说明类加载过程（对十、十一的补充和加深理解）">http://yoursite.com/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
