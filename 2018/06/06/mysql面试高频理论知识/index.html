@@ -24,7 +24,7 @@
 <meta property="og:description" content="对比较重要的mysql面试题进行汇总。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/jdbc%E6%8F%92%E5%85%A5%E7%99%BE%E4%B8%87%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2018-06-06T13:41:11.985Z">
+<meta property="og:updated_time" content="2018-06-06T13:58:21.082Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql面试高频理论知识">
 <meta name="twitter:description" content="对比较重要的mysql面试题进行汇总。">
@@ -248,14 +248,10 @@
 <h3 id="4-3-oracle分页"><a href="#4-3-oracle分页" class="headerlink" title="4.3 oracle分页"></a>4.3 oracle分页</h3><p>是使用了三层嵌套查询。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String sql = </span><br><span class="line">	 &quot;select * from &quot; +  </span><br><span class="line">	 (select *,rownum rid from (select * from students order by postime desc) where rid&lt;=&quot; + pagesize*pagenumber + &quot;) as t&quot; + </span><br><span class="line">	 &quot;where t&gt;&quot; + pageSize*(pageNumber-1);</span><br></pre></td></tr></table></figure></p>
 <h2 id="5-触发器"><a href="#5-触发器" class="headerlink" title="5. 触发器"></a>5. 触发器</h2><p>略。</p>
 <h2 id="6-存储过程"><a href="#6-存储过程" class="headerlink" title="6. 存储过程"></a>6. 存储过程</h2><h3 id="6-1-数据库存储过程具有如下优点："><a href="#6-1-数据库存储过程具有如下优点：" class="headerlink" title="6.1 数据库存储过程具有如下优点："></a>6.1 数据库存储过程具有如下优点：</h3><ul>
-<li><p>1、存储过程只在创建时进行编译，以后每次执行存储过程都不需再重新编译，而一般 SQL 语句每执行一次就编译一次，因此使用存储过程可以大大提高数据库执行速度。</p>
-</li>
-<li><p>2、通常，复杂的业务逻辑需要多条 SQL 语句。这些语句要分别地从客户机发送到服务器，当客户机和服务器之间的操作很多时，将产生大量的网络传输。如果将这些操作放在一个存储过程中，那么客户机和服务器之间的网络传输就会大大减少，降低了网络负载。</p>
-</li>
-<li><p>3、存储过程创建一次便可以重复使用，从而可以减少数据库开发人员的工作量。</p>
-</li>
-<li><p>4、安全性高，存储过程可以屏蔽对底层数据库对象的直接访问，使用 EXECUTE 权限调用存储过程，无需拥有访问底层数据库对象的显式权限。</p>
-</li>
+<li>1、存储过程只在创建时进行编译，以后每次执行存储过程都不需再重新编译，而一般 SQL 语句每执行一次就编译一次，因此使用存储过程可以大大提高数据库执行速度。</li>
+<li>2、通常，复杂的业务逻辑需要多条 SQL 语句。这些语句要分别地从客户机发送到服务器，当客户机和服务器之间的操作很多时，将产生大量的网络传输。如果将这些操作放在一个存储过程中，那么客户机和服务器之间的网络传输就会大大减少，降低了网络负载。</li>
+<li>3、存储过程创建一次便可以重复使用，从而可以减少数据库开发人员的工作量。</li>
+<li>4、安全性高，存储过程可以屏蔽对底层数据库对象的直接访问，使用 EXECUTE 权限调用存储过程，无需拥有访问底层数据库对象的显式权限。</li>
 </ul>
 <h3 id="6-2-定义存储过程"><a href="#6-2-定义存储过程" class="headerlink" title="6.2 定义存储过程:"></a>6.2 定义存储过程:</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> insert_Student (_name <span class="built_in">varchar</span>(<span class="number">50</span>),_age <span class="built_in">int</span> ,<span class="keyword">out</span> _id <span class="built_in">int</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">	<span class="keyword">insert</span> <span class="keyword">into</span> student <span class="keyword">value</span>(<span class="literal">null</span>,_name,_age);</span><br><span class="line">	<span class="keyword">select</span> <span class="keyword">max</span>(stuId) <span class="keyword">into</span> _id <span class="keyword">from</span> student;</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">call</span> insert_Student(<span class="string">'wfz'</span>,<span class="number">23</span>,@<span class="keyword">id</span>);</span><br><span class="line"><span class="keyword">select</span> @<span class="keyword">id</span>;</span><br></pre></td></tr></table></figure>
 <h2 id="7-用jdbc怎么调用存储过程？"><a href="#7-用jdbc怎么调用存储过程？" class="headerlink" title="7. 用jdbc怎么调用存储过程？"></a>7. 用jdbc怎么调用存储过程？</h2><blockquote>
@@ -342,14 +338,10 @@
 <p>分类：普通索引/唯一索引/主键索引/全文索引</p>
 </blockquote>
 <ul>
-<li><p>普通索引:允许重复的值出现</p>
-</li>
-<li><p>唯一索引:除了不能有重复的记录外，其它和普通索引一样(用户名、用户身份证、email,tel)</p>
-</li>
-<li><p>主键索引：是随着设定主键而创建的，也就是把某个列设为主键的时候，数据库就会給改列创建索引。这就是主键索引.唯一且没有null值</p>
-</li>
-<li><p>全文索引:用来对表中的文本域(<code>char</code>，<code>varchar</code>，<code>text</code>)进行索引， 全文索引针对<code>MyIsam</code><br><code>explain select * from articles where match(title,body) against(‘database’);</code>【会使用全文索引】</p>
-</li>
+<li>普通索引:允许重复的值出现</li>
+<li>唯一索引:除了不能有重复的记录外，其它和普通索引一样(用户名、用户身份证、email,tel)</li>
+<li>主键索引：是随着设定主键而创建的，也就是把某个列设为主键的时候，数据库就会給改列创建索引。这就是主键索引.唯一且没有null值</li>
+<li>全文索引:用来对表中的文本域(<code>char</code>，<code>varchar</code>，<code>text</code>)进行索引， 全文索引针对<code>MyIsam</code><br><code>explain select * from articles where match(title,body) against(‘database’);</code>【会使用全文索引】</li>
 </ul>
 <h3 id="13-3-使用索引的注意事项"><a href="#13-3-使用索引的注意事项" class="headerlink" title="13.3 使用索引的注意事项"></a>13.3 使用索引的注意事项</h3><blockquote>
 <p>索引弊端</p>
@@ -518,7 +510,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 21:26:58</p>
-        <p><span>最后更新:</span>2018-06-06, 21:41:11</p>
+        <p><span>最后更新:</span>2018-06-06, 21:58:21</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/mysql面试高频理论知识/" title="mysql面试高频理论知识">http://yoursite.com/2018/06/06/mysql面试高频理论知识/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/mysql面试高频理论知识/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
