@@ -24,7 +24,7 @@
 <meta property="og:description" content="对比较重要的mysql面试题进行汇总。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/jdbc%E6%8F%92%E5%85%A5%E7%99%BE%E4%B8%87%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96.png">
-<meta property="og:updated_time" content="2018-06-06T13:58:21.082Z">
+<meta property="og:updated_time" content="2018-06-06T14:13:25.286Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql面试高频理论知识">
 <meta name="twitter:description" content="对比较重要的mysql面试题进行汇总。">
@@ -273,8 +273,7 @@
 <ol>
 <li>加载驱动(<code>com.mysql.jdbc.Driver,oracle.jdbc.driver.OracleDriver</code>)</li>
 <li>取连接(<code>DriverManager.getConnection(url,usernam,passord)</code>)</li>
-<li>设置参数  <code>Statement PreparedStatement</code><pre><code>`cstmt.setXXX(index, value);`
-</code></pre></li>
+<li>设置参数  <code>Statement PreparedStatement</code>,<code>cstmt.setXXX(index, value);</code></li>
 <li>执行   <code>executeQuery executeUpdate</code></li>
 <li>释放连接(是否连接要从小到大，必须放到<code>finnaly</code>)</li>
 </ol>
@@ -345,19 +344,19 @@
 </ul>
 <h3 id="13-3-使用索引的注意事项"><a href="#13-3-使用索引的注意事项" class="headerlink" title="13.3 使用索引的注意事项"></a>13.3 使用索引的注意事项</h3><blockquote>
 <p>索引弊端</p>
+</blockquote>
 <ol>
 <li>占用磁盘空间。</li>
 <li>对<code>dml</code>(插入、修改、删除)操作有影响，变慢。</li>
 </ol>
-</blockquote>
 <blockquote>
-<p>使用场景：</p>
+<p>使用场景</p>
+</blockquote>
 <ol>
 <li>肯定在<code>where</code>条件经常使用,如果不做查询就没有意义</li>
 <li>该字段的内容不是唯一的几个值(sex) </li>
 <li>字段内容不是频繁变化.</li>
 </ol>
-</blockquote>
 <blockquote>
 <p>注意事项</p>
 </blockquote>
@@ -510,7 +509,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 21:26:58</p>
-        <p><span>最后更新:</span>2018-06-06, 21:58:21</p>
+        <p><span>最后更新:</span>2018-06-06, 22:13:25</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/mysql面试高频理论知识/" title="mysql面试高频理论知识">http://yoursite.com/2018/06/06/mysql面试高频理论知识/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/mysql面试高频理论知识/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
