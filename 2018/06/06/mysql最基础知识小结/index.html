@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="进行一个简单的小结。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-06T13:26:42.044Z">
+<meta property="og:updated_time" content="2018-06-06T13:54:12.160Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mysql最基础知识小结">
 <meta name="twitter:description" content="进行一个简单的小结。">
@@ -236,47 +236,56 @@
 <hr>
 <p>二、DML语句</p>
 <ul>
-<li><p>插入：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into table(字段1，字段2，...) values (value1,value2,...) , (value3,value4,..)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>更新：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update table set 字段=value where ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from table where ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>单表查询：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 字段 from table</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连表查询方式1：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 别名1.字段,别名2.字段 from table1 别名1,table2 别名2 where ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>连表查询方式2：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 别名1.字段,别名2.字段 from table1 别名1 join table2 别名2 on ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查询不重复的记录：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select distinct 字段 from table ...</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>排序：默认是升序 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 字段 from table where ... order by ... asc/desc</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>limit：主要用于分页 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where ... order by ... asc/desc limit 起始偏移位置，显示条数</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>聚合：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select count(*)/avg(..)/sum(...)/max(...)/min(...) from table group by ... having ....</span><br></pre></td></tr></table></figure>
-</li>
+<li>插入：</li>
 </ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">table</span>(字段<span class="number">1</span>，字段<span class="number">2</span>，...) <span class="keyword">values</span> (value1,value2,...) , (value3,value4,..)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>更新：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">table</span> <span class="keyword">set</span> 字段=<span class="keyword">value</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>单表查询：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>连表查询方式1：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 别名<span class="number">1.</span>字段,别名<span class="number">2.</span>字段 <span class="keyword">from</span> table1 别名<span class="number">1</span>,table2 别名<span class="number">2</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>连表查询方式2：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 别名<span class="number">1.</span>字段,别名<span class="number">2.</span>字段 <span class="keyword">from</span> table1 别名<span class="number">1</span> <span class="keyword">join</span> table2 别名<span class="number">2</span> <span class="keyword">on</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>查询不重复的记录：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>排序：默认是升序 </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">order</span> <span class="keyword">by</span> ... <span class="keyword">asc</span>/<span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>limit：主要用于分页 </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">order</span> <span class="keyword">by</span> ... <span class="keyword">asc</span>/<span class="keyword">desc</span> <span class="keyword">limit</span> 起始偏移位置，显示条数</span><br></pre></td></tr></table></figure>
+<ul>
+<li>聚合：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(*)/<span class="keyword">avg</span>(..)/<span class="keyword">sum</span>(...)/<span class="keyword">max</span>(...)/<span class="keyword">min</span>(...) <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> ... <span class="keyword">having</span> ....</span><br></pre></td></tr></table></figure>
 <p>注意这里的having和where的区别：where是对表结果进行筛选，having 是对查询结果进行筛选，与group by 合用</p>
 <ul>
 <li>左连接和右连接<br>左连接意思就是左表中的记录都在，右表没有匹配项就以null显示。记录数等于左表的行数。<br>右连接与之同理，尽量转为左连接做。</li>
 </ul>
 <ul>
-<li>子查询：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where ... in (select ....)</span><br></pre></td></tr></table></figure>
-</li>
+<li>子查询：</li>
 </ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">in</span> (<span class="keyword">select</span> ....)</span><br></pre></td></tr></table></figure>
 <p>所谓子查询就是根据另一个select的结果再进行筛选，常用的是in,not in,=,!=,exits,not exits</p>
-<p>-union<br>主要用于两张表中的数据的合并：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select 字段 from table1 union all select 字段 from table2</span><br></pre></td></tr></table></figure></p>
+<p>-union</p>
+<p>主要用于两张表中的数据的合并：<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> table1 <span class="keyword">union</span> all <span class="keyword">select</span> 字段 <span class="keyword">from</span> table2</span><br></pre></td></tr></table></figure></p>
 <p>要想不重复用union</p>
 
       
@@ -289,7 +298,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 21:26:28</p>
-        <p><span>最后更新:</span>2018-06-06, 21:26:42</p>
+        <p><span>最后更新:</span>2018-06-06, 21:54:12</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/mysql最基础知识小结/" title="mysql最基础知识小结">http://yoursite.com/2018/06/06/mysql最基础知识小结/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/mysql最基础知识小结/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
