@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="掌握mysql基础的语法，是作为web开发的基础要求。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-06T13:08:57.542Z">
+<meta property="og:updated_time" content="2018-06-06T13:11:59.809Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SQL必知必会">
 <meta name="twitter:description" content="掌握mysql基础的语法，是作为web开发的基础要求。">
@@ -312,14 +312,9 @@
 <p><strong>IN</strong>  操作符用于匹配一组值，其后也可以接一个 <code>SELECT</code> 子句，从而匹配子查询得到的一组值。</p>
 <p><strong>NOT</strong>  操作符用于否定一个条件。</p>
 <h1 id="十、通配符"><a href="#十、通配符" class="headerlink" title="十、通配符"></a>十、通配符</h1><p>通配符也是用在过滤语句中，但它只能用于文本字段。</p>
-<ul>
-<li><p><code>%</code>  匹配 &gt;=0 个任意字符；</p>
-</li>
-<li><p><code>\_</code>  匹配 ==1 个任意字符；</p>
-</li>
-<li><p><code>[ ]</code>  可以匹配集合内的字符，例如 [ab] 将匹配字符 a 或者 b。用脱字符 ^ 可以对其进行否定，也就是不匹配集合内的字符。</p>
-</li>
-</ul>
+<p><strong>%</strong>  匹配 &gt;=0 个任意字符；</p>
+<p><strong>_</strong>  匹配 ==1 个任意字符；</p>
+<p><strong>[ ]</strong>  可以匹配集合内的字符，例如 [ab] 将匹配字符 a 或者 b。用脱字符 <code>^</code> 可以对其进行否定，也就是不匹配集合内的字符。</p>
 <p>使用 <code>Like</code> 来进行通配符匹配。</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> *</span><br><span class="line"><span class="keyword">FROM</span> mytable</span><br><span class="line"><span class="keyword">WHERE</span> <span class="keyword">col</span> <span class="keyword">LIKE</span> <span class="string">'[^AB]%'</span>; <span class="comment">-- 不以 A 和 B 开头的任意文本</span></span><br></pre></td></tr></table></figure>
 <p>不要滥用通配符，通配符位于开头处匹配会非常慢。</p>
@@ -771,7 +766,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/SQL必知必会/">SQL必知必会</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 20:34:06</p>
-        <p><span>最后更新:</span>2018-06-06, 21:08:57</p>
+        <p><span>最后更新:</span>2018-06-06, 21:11:59</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/SQL必知必会/" title="SQL必知必会">http://yoursite.com/2018/06/06/SQL必知必会/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/SQL必知必会/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
