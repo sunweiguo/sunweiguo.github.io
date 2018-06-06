@@ -15,18 +15,21 @@
 
 
 
-<meta name="description" content="再来简单回顾一下synchronized关键字。">
-<meta name="keywords" content="java并发进阶">
+<meta name="description" content="今天是2018/6/6号，一个吉祥的日子，记录此时的重量。">
+<meta name="keywords" content="随笔">
 <meta property="og:type" content="article">
-<meta property="og:title" content="3.线程安全性-synchronized">
-<meta property="og:url" content="http://yoursite.com/2018/06/04/3.线程安全性-synchronized/index.html">
+<meta property="og:title" content="她">
+<meta property="og:url" content="http://yoursite.com/2018/06/06/随笔1/index.html">
 <meta property="og:site_name" content="Eureka-Home">
-<meta property="og:description" content="再来简单回顾一下synchronized关键字。">
+<meta property="og:description" content="今天是2018/6/6号，一个吉祥的日子，记录此时的重量。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-04T14:13:58.543Z">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%B0%8F%E5%BE%901.jpg">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%B0%8F%E5%AD%991.jpg">
+<meta property="og:updated_time" content="2018-06-06T08:02:34.278Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="3.线程安全性-synchronized">
-<meta name="twitter:description" content="再来简单回顾一下synchronized关键字。">
+<meta name="twitter:title" content="她">
+<meta name="twitter:description" content="今天是2018/6/6号，一个吉祥的日子，记录此时的重量。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/%E5%B0%8F%E5%BE%901.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -58,7 +61,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>3.线程安全性-synchronized | Eureka-Home</title>
+<title>她 | Eureka-Home</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -186,11 +189,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-3.线程安全性-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-随笔1" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/04/3.线程安全性-synchronized/" class="article-date">
-      <time datetime="2018-06-04T14:13:34.163Z" itemprop="datePublished">2018-06-04</time>
+      <a href="/2018/06/06/随笔1/" class="article-date">
+      <time datetime="2018-06-06T07:36:32.572Z" itemprop="datePublished">2018-06-06</time>
 </a>
 
 
@@ -205,7 +208,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      3.线程安全性-synchronized
+      她
     </h1>
   
 
@@ -216,7 +219,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -226,57 +229,11 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>再来简单回顾一下synchronized关键字。<br><a id="more"></a></p>
-<h2 id="1-synchronized介绍"><a href="#1-synchronized介绍" class="headerlink" title="1. synchronized介绍"></a>1. synchronized介绍</h2><ul>
-<li>修饰代码块：大括号括起来的代码，作用于调用的对象</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输出结果是：两个分别都是0-9，顺序执行</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add1</span><span class="params">(<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="keyword">this</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                System.out.println(j+<span class="string">"---"</span>+i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SyncTest1 test1 = <span class="keyword">new</span> SyncTest1();</span><br><span class="line">        </span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        </span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test1.add2(<span class="number">1</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        </span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test1.add2(<span class="number">2</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>修饰方法：整个方法，作用于调用的对象</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输出结果是：两个分别都是0-9，顺序执行</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncTest1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">add2</span><span class="params">(<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">            System.out.println(j+<span class="string">"---"</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SyncTest1 test1 = <span class="keyword">new</span> SyncTest1();</span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test1.add2(<span class="number">1</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test1.add2(<span class="number">2</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>修饰静态方法：整个静态方法，作用于所有对象</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//输出结果是：两个分别都是0-9，顺序执行</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncTest2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add1</span><span class="params">(<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (SyncTest2.class)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                System.out.println(j+<span class="string">"---"</span>+i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add2</span><span class="params">(<span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">            System.out.println(j+<span class="string">"---"</span>+i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SyncTest2 test1 = <span class="keyword">new</span> SyncTest2();</span><br><span class="line">        SyncTest2 test2 = <span class="keyword">new</span> SyncTest2();</span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test1.add1(<span class="number">1</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        executorService.execute(() -&gt; &#123;</span><br><span class="line">            test2.add2(<span class="number">2</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>修饰类：括号括起来的部分，作用于所有对象</li>
-</ul>
-<p>关于<code>synchronized</code>的用法，另外已经详细学习过了，这里不再赘述。</p>
-<h2 id="2-原子性方案对比"><a href="#2-原子性方案对比" class="headerlink" title="2. 原子性方案对比"></a>2. 原子性方案对比</h2><ul>
-<li><code>synchronized</code>：不可中断锁，适合竞争不激烈，可读性好</li>
-<li><code>lock</code>：可中断锁，多样化同步，竞争激烈时能维持常态</li>
-<li><code>Atomic</code>：竞争激烈时能维持常态，比<code>Lock</code>性能好，但是只能同步一个值</li>
-</ul>
-<h2 id="3-可见性"><a href="#3-可见性" class="headerlink" title="3. 可见性"></a>3. 可见性</h2><h4 id="导致共享变量在线程间不可见的原因"><a href="#导致共享变量在线程间不可见的原因" class="headerlink" title="导致共享变量在线程间不可见的原因"></a>导致共享变量在线程间不可见的原因</h4><ul>
-<li>线程交叉执行</li>
-<li>重排序结合线程交叉执行</li>
-<li>共享变量更新后的值没有在工作内存与主内存之间及时更新</li>
-</ul>
-<h4 id="JMM关于synchronized的两条规定"><a href="#JMM关于synchronized的两条规定" class="headerlink" title="JMM关于synchronized的两条规定"></a>JMM关于synchronized的两条规定</h4><ul>
-<li>线程解锁前，必须将共享变量的最新值刷新到主内存</li>
-<li>线程加锁时，将清空工作内存中共享变量的值，从而使用共享变量时需要从主内存中重新读取最新的值（注意，加锁和解锁是同一把锁）</li>
-</ul>
-<h4 id="可见性-volatile"><a href="#可见性-volatile" class="headerlink" title="可见性-volatile"></a>可见性-volatile</h4><blockquote>
-<p>通过加入内存屏障和进制重排序优化来实现。</p>
-</blockquote>
-<ul>
-<li>对<code>volatile</code>变量写操作时，会在写操作后加入一条<code>store</code>屏障指令，将本地内存中的共享变量值刷新到主内存</li>
-<li>对<code>volatile</code>变量读操作时，会在读操作前加入一条<code>load</code>屏障指令，从主内存中读取共享变量</li>
-</ul>
-<h4 id="volatile不能保证线程安全"><a href="#volatile不能保证线程安全" class="headerlink" title="volatile不能保证线程安全"></a>volatile不能保证线程安全</h4><p>适合作为状态标识。</p>
-<p>关于<code>volatile</code>已经详细学习了，不再赘述。</p>
-<h2 id="4-有序性"><a href="#4-有序性" class="headerlink" title="4. 有序性"></a>4. 有序性</h2><p>java内存模型对执行进行重排序，不会影响单线程执行，但是会影响多线程并发执行的正确性。</p>
-<h4 id="happens-before原则"><a href="#happens-before原则" class="headerlink" title="happens-before原则"></a>happens-before原则</h4><ul>
-<li>程序次序规则：一个线程内，按照代码书写顺序，书写在前面的操作先行发生于书写在后面的操作。（看起来是按照代码顺序执行，虽然JVM会指令进行重排序，但是执行结果是一样的）</li>
-<li>锁定规则：一个unlock操作先行发生于Lock操作（同一个锁，如果锁处于lock状态，只有释放锁，才能再进行lock）</li>
-<li>volatile变量规则：对一个变量的写操作先行发生于后面对这个变量的读操作。</li>
-<li>传递规则</li>
-<li>线程启动规则：start方法最先发生</li>
-<li>线程中断规则：intterrupt()执行之后才能监测到中断事件的发生</li>
-<li>线程终结规则：线程终止是最后发生</li>
-<li>对象终结规则：一个对象的初始化完成先行发生于他的finalize()方法的开始。</li>
-</ul>
+        <p>今天是2018/6/6号，一个吉祥的日子，记录此时的重量。</p>
+<a id="more"></a>
+<p>小徐说她要减肥，减了五年多了吧，果然，越减越肥了。<br><img src="http://p376695fl.bkt.clouddn.com/%E5%B0%8F%E5%BE%901.jpg" width="30%" height="30%"></p>
+<p>我要增肥，今年半年才见成效，目标是180。再去健身房练肌肉。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E5%B0%8F%E5%AD%991.jpg" width="30%" height="30%"></p>
 
       
     </div>
@@ -285,13 +242,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/06/随笔1/">她</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-06-04, 22:13:34</p>
-        <p><span>最后更新:</span>2018-06-04, 22:13:58</p>
+        <p><span>发布时间:</span>2018-06-06, 15:36:32</p>
+        <p><span>最后更新:</span>2018-06-06, 16:02:34</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/06/04/3.线程安全性-synchronized/" title="3.线程安全性-synchronized">http://yoursite.com/2018/06/04/3.线程安全性-synchronized/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/3.线程安全性-synchronized/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/随笔1/" title="她">http://yoursite.com/2018/06/06/随笔1/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/随笔1/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -303,16 +260,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/06/04/4.安全发布对象/">
-                    4.安全发布对象
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/06/04/2.线程安全性-Atomic包/">
-                    2.线程安全性-Atomic包
+                <a href="/2018/06/06/Java虚拟机总概览/">
+                    Java虚拟机总概览
                 </a>
             </div>
         
@@ -324,7 +275,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-synchronized介绍"><span class="toc-number">1.</span> <span class="toc-text">1. synchronized介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-原子性方案对比"><span class="toc-number">2.</span> <span class="toc-text">2. 原子性方案对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-可见性"><span class="toc-number">3.</span> <span class="toc-text">3. 可见性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#导致共享变量在线程间不可见的原因"><span class="toc-number">3.0.1.</span> <span class="toc-text">导致共享变量在线程间不可见的原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JMM关于synchronized的两条规定"><span class="toc-number">3.0.2.</span> <span class="toc-text">JMM关于synchronized的两条规定</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#可见性-volatile"><span class="toc-number">3.0.3.</span> <span class="toc-text">可见性-volatile</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#volatile不能保证线程安全"><span class="toc-number">3.0.4.</span> <span class="toc-text">volatile不能保证线程安全</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-有序性"><span class="toc-number">4.</span> <span class="toc-text">4. 有序性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#happens-before原则"><span class="toc-number">4.0.1.</span> <span class="toc-text">happens-before原则</span></a></li></ol></li></ol></li></ol>
+            
         
     </div>
     <style>
@@ -360,7 +311,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"3.线程安全性-synchronized　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"她　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -380,15 +331,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/04/4.安全发布对象/" title="上一篇: 4.安全发布对象">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/06/04/2.线程安全性-Atomic包/" title="下一篇: 2.线程安全性-Atomic包">
+            <a href="/2018/06/06/Java虚拟机总概览/" title="下一篇: Java虚拟机总概览">
                 <i class="fa fa-angle-right"></i>
             </a>
         
