@@ -24,11 +24,11 @@
 <meta property="og:description" content="mysql最后的一篇我着重来看看索引的原理。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://my.csdn.net/uploads/201205/03/1336034967_9324.png">
-<meta property="og:image" content="https://pic3.zhimg.com/80/v2-2ce9fa4e6d645ed4f105b8334fc2c488_hd.jpg">
-<meta property="og:image" content="https://pic1.zhimg.com/80/v2-19a914d06e25744c8a8e0d1922e379d4_hd.jpg">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1063431-b284c8d29c9fb975.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/664">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1063431-17734d11690d52df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/543">
-<meta property="og:updated_time" content="2018-06-06T13:45:29.015Z">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9521.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%9522.jpg">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9523.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9524.png">
+<meta property="og:updated_time" content="2018-06-06T14:04:26.550Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="数据库索引的实现原理">
 <meta name="twitter:description" content="mysql最后的一篇我着重来看看索引的原理。">
@@ -278,17 +278,17 @@
 <p>事实上， 一个加了主键的表，并不能被称之为「表」。一个没加主键的表，它的数据无序的放置在磁盘存储器上，一行一行的排列的很整齐， 跟我认知中的「表」很接近。</p>
 <p><strong>如果给表上了主键，那么表在磁盘上的存储结构就由整齐排列的结构转变成了树状结构，也就是上面说的「平衡树」结构，换句话说，就是整个表就变成了一个索引</strong>。没错， 再说一遍， 整个表变成了一个索引，也就是所谓的「聚集索引」。 </p>
 <p><strong>这就是为什么一个表只能有一个主键， 一个表只能有一个「聚集索引」，因为主键的作用就是把「表」的数据格式转换成「索引（平衡树）」的格式放置</strong>。</p>
-<p><img src="https://pic3.zhimg.com/80/v2-2ce9fa4e6d645ed4f105b8334fc2c488_hd.jpg" alt="image"></p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9521.png" alt="image"></p>
 <p>上图就是带有主键的表（聚集索引）的结构图。其中树的所有结点（底部除外）的数据都是由主键字段中的数据构成，也就是通常我们指定主键的id字段。最下面部分是真正表中的数据。 假如我们执行一个SQL语句：</p>
 <blockquote>
 <p>select * from table where id = 1256;</p>
 </blockquote>
 <p>首先根据索引定位到1256这个值所在的叶结点，然后再通过叶结点取到id等于1256的数据行。 这里不讲解平衡树的运行细节， 但是从上图能看出，树一共有三层， 从根节点至叶节点只需要经过三次查找就能得到结果。如下图</p>
-<p><img src="https://pic1.zhimg.com/80/v2-19a914d06e25744c8a8e0d1922e379d4_hd.jpg" alt="image"></p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E9%9B%86%E7%B4%A2%E5%BC%9522.jpg" alt="image"></p>
 <h2 id="9-索引"><a href="#9-索引" class="headerlink" title="9. 索引"></a>9. 索引</h2><p><strong><code>MyISAM</code>引擎使用<code>B+Tree</code>作为索引结构，叶节点的<code>data</code>域存放的是数据记录的地址</strong>。因此，<code>MyISAM</code>中索引检索的算法为首先按照<code>B+Tree</code>搜索算法搜索索引，如果指定的Key存在，则取出其<code>data</code>域的值，然后以<code>data</code>域的值为地址，读取相应数据记录。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/1063431-b284c8d29c9fb975.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/664" alt="image"></p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9523.png" alt="image"></p>
 <p><code>InnoDB</code>也使用<code>B+Tree</code>作为索引结构。<code>InnoDB</code>的数据文件本身就是索引文件。<code>MyISAM</code>索引文件和数据文件是分离的，索引文件仅保存数据记录的地址（这一点可以通过在<code>data</code>目录下查看数据库文件验证。<code>Innodb</code>每一个数据库只有一个数据文件，而<code>Myisam</code>则有三个（数据文件、索引文件、表结构文件））。而在<code>InnoDB</code>中，表数据文件本身就是按<code>B+Tree</code>组织的一个索引结构，这棵树的叶节点<code>data</code>域保存了完整的数据记录。这个索引的<code>key</code>是数据表的主键，因此<code>InnoDB</code>表数据文件本身就是主索引。</p>
-<p><img src="https://upload-images.jianshu.io/upload_images/1063431-17734d11690d52df.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/543" alt="image"></p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9524.png" alt="image"></p>
 <p>上图是<code>InnoDB</code>主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。因为<code>InnoDB</code>的数据文件本身要按主键聚集，所以<code>InnoDB</code>要求表必须有主键（<code>MyISAM</code>可以没有），如果没有显式指定，则<code>MySQL</code>系统会自动选择一个可以唯一标识数据记录的列作为主键，如果不存在这种列，则<code>MySQL</code>自动为<code>InnoDB</code>表生成一个隐含字段作为主键，这个字段长度为6个字节，类型为长整形</p>
 <p>第二个与<code>MyISAM</code>索引的不同是<code>InnoDB</code>的辅助索引<code>data</code>域存储相应记录主键的值而不是地址。换句话说，<code>InnoDB</code>的所有辅助索引都引用主键作为<code>data</code>域。例如，图11为定义在<code>Col3</code>上的一个辅助索引：这里以英文字符的<code>ASCII</code>码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了<code>InnoDB</code>的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在<code>InnoDB</code>中不是个好主意，因为<code>InnoDB</code>数据文件本身是一颗<code>B+Tree</code>，非单调的主键会造成在插入新记录时数据文件为了维持<code>B+Tree</code>的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择</p>
 
@@ -302,7 +302,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 21:41:57</p>
-        <p><span>最后更新:</span>2018-06-06, 21:45:29</p>
+        <p><span>最后更新:</span>2018-06-06, 22:04:26</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/数据库索引的实现原理/" title="数据库索引的实现原理">http://yoursite.com/2018/06/06/数据库索引的实现原理/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/数据库索引的实现原理/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
