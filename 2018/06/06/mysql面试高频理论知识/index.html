@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="对比较重要的mysql面试题进行汇总。">
+<meta name="keywords" content="Mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql面试高频理论知识">
+<meta property="og:url" content="http://yoursite.com/2018/06/06/mysql面试高频理论知识/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="对比较重要的mysql面试题进行汇总。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/jdbc%E6%8F%92%E5%85%A5%E7%99%BE%E4%B8%87%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96.png">
+<meta property="og:updated_time" content="2018-06-06T13:41:11.985Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mysql面试高频理论知识">
+<meta name="twitter:description" content="对比较重要的mysql面试题进行汇总。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/jdbc%E6%8F%92%E5%85%A5%E7%99%BE%E4%B8%87%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>mysql面试高频理论知识 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-mysql面试高频理论知识" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/mysql面试高频理论知识/" class="article-date">
+      <time datetime="2018-06-06T13:26:58.175Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mysql面试高频理论知识
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mysql/">Mysql</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>对比较重要的mysql面试题进行汇总。<br><a id="more"></a></p>
+<h2 id="1-数据库三范式"><a href="#1-数据库三范式" class="headerlink" title="1. 数据库三范式"></a>1. 数据库三范式</h2><h3 id="1-1-范式是什么"><a href="#1-1-范式是什么" class="headerlink" title="1.1 范式是什么"></a>1.1 范式是什么</h3><p>范式就是规范，要满足第二范式必须先满足第一范式，要满足第三范式，必须要先满足第二范式。</p>
+<p>1NF(第一范式)：列数据不可分割，即一列不能有多个值<br>2NF(第二范式)：主键(每一行都有唯一标识)<br>3NF(第三范式)：外键(表中不包含已在其他表中包含的非主关键信息)</p>
+<h3 id="1-2-反三范式"><a href="#1-2-反三范式" class="headerlink" title="1.2 反三范式"></a>1.2 反三范式</h3><p>反三范式：有时为了效率，可以设置重复或者推导出的字段，例如：订单总价格订单项的单价，这个订单总价虽然可以由订单项计算出来，但是当订单数目庞大时，效率比较低，所以订单的总价这个字段是必要的。</p>
+<h2 id="2-事务"><a href="#2-事务" class="headerlink" title="2. 事务"></a>2. 事务</h2><h3 id="2-1-含义"><a href="#2-1-含义" class="headerlink" title="2.1 含义"></a>2.1 含义</h3><p>事务时并发控制的单位，是用户定义的一个操作序列，要么都做，要么都不做，是不可分割的工作单位。</p>
+<h3 id="2-2-事务的四个特征-ACID特性"><a href="#2-2-事务的四个特征-ACID特性" class="headerlink" title="2.2 事务的四个特征(ACID特性)"></a>2.2 事务的四个特征(ACID特性)</h3><ul>
+<li>原子性：表示事务内操作不可分割</li>
+<li>一致性：要么成功，要么失败，若后面失败，前面则回滚</li>
+<li>隔离性：一个事务开始了，不被其他事务干扰</li>
+<li>持久性：事务开始了，就不能突然终止</li>
+</ul>
+<h2 id="3-mysql数据库默认最大连接数"><a href="#3-mysql数据库默认最大连接数" class="headerlink" title="3. mysql数据库默认最大连接数"></a>3. mysql数据库默认最大连接数</h2><h3 id="3-1-为什么需要最大连接数"><a href="#3-1-为什么需要最大连接数" class="headerlink" title="3.1 为什么需要最大连接数"></a>3.1 为什么需要最大连接数</h3><p>特定服务器上的数据库只能支持一定数目同时连接，这时需要我们设置最大连接数（最多同时服务多少连接）。在数据库安装时会有一个默认的最大连接数。</p>
+<blockquote>
+<p><code>my.ini</code>中<code>max_connections=100</code></p>
+</blockquote>
+<h2 id="4-分页"><a href="#4-分页" class="headerlink" title="4. 分页"></a>4. 分页</h2><h3 id="4-1-为什么需要分页？"><a href="#4-1-为什么需要分页？" class="headerlink" title="4.1 为什么需要分页？"></a>4.1 为什么需要分页？</h3><p>在很多数据时，不可能完全显示数据。进行分段显示.</p>
+<h3 id="4-2-mysql如何分页"><a href="#4-2-mysql如何分页" class="headerlink" title="4.2 mysql如何分页"></a>4.2 mysql如何分页</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String sql = </span><br><span class="line">"<span class="keyword">select</span> * <span class="keyword">from</span> students <span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">id</span> <span class="keyword">limit</span> <span class="string">" + pageSize*(pageNumber-1) + "</span>,<span class="string">" + pageSize;</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-3-oracle分页"><a href="#4-3-oracle分页" class="headerlink" title="4.3 oracle分页"></a>4.3 oracle分页</h3><p>是使用了三层嵌套查询。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String sql = </span><br><span class="line">	 &quot;select * from &quot; +  </span><br><span class="line">	 (select *,rownum rid from (select * from students order by postime desc) where rid&lt;=&quot; + pagesize*pagenumber + &quot;) as t&quot; + </span><br><span class="line">	 &quot;where t&gt;&quot; + pageSize*(pageNumber-1);</span><br></pre></td></tr></table></figure></p>
+<h2 id="5-触发器"><a href="#5-触发器" class="headerlink" title="5. 触发器"></a>5. 触发器</h2><p>略。</p>
+<h2 id="6-存储过程"><a href="#6-存储过程" class="headerlink" title="6. 存储过程"></a>6. 存储过程</h2><h3 id="6-1-数据库存储过程具有如下优点："><a href="#6-1-数据库存储过程具有如下优点：" class="headerlink" title="6.1 数据库存储过程具有如下优点："></a>6.1 数据库存储过程具有如下优点：</h3><ul>
+<li><p>1、存储过程只在创建时进行编译，以后每次执行存储过程都不需再重新编译，而一般 SQL 语句每执行一次就编译一次，因此使用存储过程可以大大提高数据库执行速度。</p>
+</li>
+<li><p>2、通常，复杂的业务逻辑需要多条 SQL 语句。这些语句要分别地从客户机发送到服务器，当客户机和服务器之间的操作很多时，将产生大量的网络传输。如果将这些操作放在一个存储过程中，那么客户机和服务器之间的网络传输就会大大减少，降低了网络负载。</p>
+</li>
+<li><p>3、存储过程创建一次便可以重复使用，从而可以减少数据库开发人员的工作量。</p>
+</li>
+<li><p>4、安全性高，存储过程可以屏蔽对底层数据库对象的直接访问，使用 EXECUTE 权限调用存储过程，无需拥有访问底层数据库对象的显式权限。</p>
+</li>
+</ul>
+<h3 id="6-2-定义存储过程"><a href="#6-2-定义存储过程" class="headerlink" title="6.2 定义存储过程:"></a>6.2 定义存储过程:</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> insert_Student (_name <span class="built_in">varchar</span>(<span class="number">50</span>),_age <span class="built_in">int</span> ,<span class="keyword">out</span> _id <span class="built_in">int</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">	<span class="keyword">insert</span> <span class="keyword">into</span> student <span class="keyword">value</span>(<span class="literal">null</span>,_name,_age);</span><br><span class="line">	<span class="keyword">select</span> <span class="keyword">max</span>(stuId) <span class="keyword">into</span> _id <span class="keyword">from</span> student;</span><br><span class="line"><span class="keyword">end</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">call</span> insert_Student(<span class="string">'wfz'</span>,<span class="number">23</span>,@<span class="keyword">id</span>);</span><br><span class="line"><span class="keyword">select</span> @<span class="keyword">id</span>;</span><br></pre></td></tr></table></figure>
+<h2 id="7-用jdbc怎么调用存储过程？"><a href="#7-用jdbc怎么调用存储过程？" class="headerlink" title="7. 用jdbc怎么调用存储过程？"></a>7. 用jdbc怎么调用存储过程？</h2><blockquote>
+<p>贾琏欲执事</p>
+<ul>
+<li>加载驱动</li>
+<li>获取连接</li>
+<li>设置参数</li>
+<li>执行</li>
+<li>释放连接</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.sql.CallableStatement;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.SQLException;</span><br><span class="line"><span class="keyword">import</span> java.sql.Types;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		Connection cn = <span class="keyword">null</span>;</span><br><span class="line">		CallableStatement cstmt = <span class="keyword">null</span>;		</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line">			<span class="comment">//这里最好不要这么干，因为驱动名写死在程序中了</span></span><br><span class="line">			Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">			<span class="comment">//实际项目中，这里应用DataSource数据，如果用框架，</span></span><br><span class="line">			<span class="comment">//这个数据源不需要我们编码创建，我们只需Datasource ds = context.lookup()</span></span><br><span class="line">			<span class="comment">//cn = ds.getConnection();			</span></span><br><span class="line">			cn = DriverManager.getConnection(<span class="string">"jdbc:mysql:///test"</span>,<span class="string">"root"</span>,<span class="string">"root"</span>);</span><br><span class="line">			cstmt = cn.prepareCall(<span class="string">"&#123;call insert_Student(?,?,?)&#125;"</span>);</span><br><span class="line">			cstmt.registerOutParameter(<span class="number">3</span>,Types.INTEGER);</span><br><span class="line">			cstmt.setString(<span class="number">1</span>, <span class="string">"wangwu"</span>);</span><br><span class="line">			cstmt.setInt(<span class="number">2</span>, <span class="number">25</span>);</span><br><span class="line">			cstmt.execute();</span><br><span class="line">			<span class="comment">//get第几个，不同的数据库不一样，建议不写</span></span><br><span class="line">			System.out.println(cstmt.getString(<span class="number">3</span>));</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">finally</span></span><br><span class="line">		&#123;</span><br><span class="line"></span><br><span class="line">			<span class="comment">/*try&#123;cstmt.close();&#125;catch(Exception e)&#123;&#125;</span></span><br><span class="line"><span class="comment">			try&#123;cn.close();&#125;catch(Exception e)&#123;&#125;*/</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">if</span>(cstmt != <span class="keyword">null</span>)</span><br><span class="line">					cstmt.close();</span><br><span class="line">				<span class="keyword">if</span>(cn != <span class="keyword">null</span>)				</span><br><span class="line">					cn.close();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">				<span class="comment">// TODO Auto-generated catch block</span></span><br><span class="line">				e.printStackTrace();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="8-对jdbc的理解"><a href="#8-对jdbc的理解" class="headerlink" title="8. 对jdbc的理解"></a>8. 对jdbc的理解</h2><p><code>Java database connection</code> java数据库连接.数据库管理系统(<code>mysql</code> <code>oracle</code>等)是很多，每个数据库管理系统支持的命令是不一样的。</p>
+<p>Java只定义接口，让数据库厂商自己实现接口，对于我们者而言。只需要导入对应厂商开发的实现即可。然后以接口方式进行调用.(<code>mysql</code> + <code>mysql</code>驱动（实现）+<code>jdbc</code>)</p>
+<h2 id="9-写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序"><a href="#9-写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序" class="headerlink" title="9. 写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序"></a>9. 写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序</h2><blockquote>
+<p>贾琏欲执事</p>
+</blockquote>
+<ol>
+<li>加载驱动(<code>com.mysql.jdbc.Driver,oracle.jdbc.driver.OracleDriver</code>)</li>
+<li>取连接(<code>DriverManager.getConnection(url,usernam,passord)</code>)</li>
+<li>设置参数  <code>Statement PreparedStatement</code><pre><code>`cstmt.setXXX(index, value);`
+</code></pre></li>
+<li>执行   <code>executeQuery executeUpdate</code></li>
+<li>释放连接(是否连接要从小到大，必须放到<code>finnaly</code>)</li>
+</ol>
+<h2 id="10-JDBC中的PreparedStatement相比Statement的好处"><a href="#10-JDBC中的PreparedStatement相比Statement的好处" class="headerlink" title="10. JDBC中的PreparedStatement相比Statement的好处"></a>10. JDBC中的PreparedStatement相比Statement的好处</h2><p><strong>大多数我们都使用<code>PreparedStatement</code>代替<code>Statement</code></strong></p>
+<ul>
+<li>1：<code>PreparedStatement</code>是预编译的，比<code>Statement</code>速度快 </li>
+<li>2：代码的可读性和可维护性</li>
+</ul>
+<p>虽然用<code>PreparedStatement</code>来代替<code>Statement</code>会使代码多出几行,但这样的代码无论从可读性还是可维护性上来说.都比直接用<code>Statement</code>的代码高很多档次：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">stmt.executeUpdate(<span class="string">"insert into tb_name (col1,col2,col2,col4) values</span></span><br><span class="line"><span class="string">('"</span>+var1+<span class="string">"','"</span>+var2+<span class="string">"',"</span>+var3+<span class="string">",'"</span>+var4+<span class="string">"')"</span>); </span><br><span class="line"></span><br><span class="line">perstmt = con.prepareStatement(<span class="string">"insert into tb_name (col1,col2,col2,col4) values (?,?,?,?)"</span>);</span><br><span class="line">perstmt.setString(<span class="number">1</span>,var1);</span><br><span class="line">perstmt.setString(<span class="number">2</span>,var2);</span><br><span class="line">perstmt.setString(<span class="number">3</span>,var3);</span><br><span class="line">perstmt.setString(<span class="number">4</span>,var4);</span><br><span class="line">perstmt.executeUpdate();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>3：安全性</li>
+</ul>
+<p><code>PreparedStatement</code>可以防止<code>SQL</code>注入攻击，而<code>Statement</code>却不能。</p>
+<p>比如说：</p>
+<blockquote>
+<p>String sql = “select * from tb_name where name= ‘“+varname+”‘ and passwd=’”+varpasswd+”‘“;</p>
+</blockquote>
+<p>如果我们把<code>[&#39; or &#39;1&#39; = &#39;1]</code>作为varpasswd传入进来.用户名随意,看看会成为什么?</p>
+<blockquote>
+<p>select * from tb_name = ‘随意’ and passwd = ‘’ or ‘1’ = ‘1’;</p>
+</blockquote>
+<p>因为<code>&#39;1&#39;=&#39;1&#39;</code>肯定成立，所以可以任何通过验证。</p>
+<p>更有甚者：把<code>[&#39;;drop table tb_name;]</code>作为<code>varpasswd</code>传入进来,则：</p>
+<blockquote>
+<p>select * from tb_name = ‘随意’ and passwd = ‘’;drop table tb_name;</p>
+</blockquote>
+<p>有些数据库是不会让你成功的，但也有很多数据库就可以使这些语句得到执行。</p>
+<p>而如果你使用预编译语句你传入的任何内容就不会和原来的语句发生任何匹配的关系，只要全使用预编译语句你就用不着对传入的数据做任何过虑。而如果使用普通的<code>statement</code>,有可能要对<code>drop</code>等做费尽心机的判断和过虑。</p>
+<h2 id="11-数据库连接池作用"><a href="#11-数据库连接池作用" class="headerlink" title="11. 数据库连接池作用"></a>11. 数据库连接池作用</h2><ul>
+<li>1、限定数据库的个数，不会导致由于数据库连接过多导致系统运行缓慢或崩溃</li>
+<li>2、数据库连接不需要每次都去创建或销毁，节约了资源</li>
+<li>3、数据库连接不需要每次都去创建，响应时间更快。</li>
+</ul>
+<h2 id="12-选择合适的存储引擎"><a href="#12-选择合适的存储引擎" class="headerlink" title="12. 选择合适的存储引擎"></a>12. 选择合适的存储引擎</h2><p>在开发中，我们经常使用的存储引擎 <code>myisam</code> / <code>innodb</code>/ <code>memory</code></p>
+<blockquote>
+<p>MyISAM存储引擎</p>
+</blockquote>
+<p>如果表对事务要求不高，同时是以查询和添加为主的，我们考虑使用myisam存储引擎. 比如 bbs 中的 发帖表，回复表.</p>
+<blockquote>
+<p>INNODB存储引擎: </p>
+</blockquote>
+<p>对事务要求高，保存的数据都是重要数据，我们建议使用<code>INNODB</code>,比如订单表，账号表.</p>
+<blockquote>
+<p>Memory 存储</p>
+</blockquote>
+<p>我们数据变化频繁，不需要入库，同时又频繁的查询和修改，我们考虑使用<code>memory</code>, 速度极快.</p>
+<p><code>MyISAM</code> 和 <code>INNODB</code>的区别(主要)</p>
+<ol>
+<li>事务安全 <code>myisam</code>不支持事务而<code>innodb</code>支持</li>
+<li>查询和添加速度 <code>myisam</code>不用支持事务就不用考虑同步锁，查找和添加和添加的速度快</li>
+<li>支持全文索引 <code>myisam</code>支持<code>innodb</code>不支持</li>
+<li>锁机制 <code>myisam</code>支持表锁而<code>innodb</code>支持行锁(事务)</li>
+<li>外键 <code>MyISAM</code> 不支持外键， <code>INNODB</code>支持外键. (通常不设置外键，通常是在程序中保证数据的一致)</li>
+</ol>
+<hr>
+<h1 id="下面是数据库的优化手段，但是只是表面，需要以后再好好探究"><a href="#下面是数据库的优化手段，但是只是表面，需要以后再好好探究" class="headerlink" title="下面是数据库的优化手段，但是只是表面，需要以后再好好探究"></a>下面是数据库的优化手段，但是只是表面，需要以后再好好探究</h1><p>在项目自验项目转测试之前，在启动<code>mysql</code>数据库时开启慢查询，并且把执行慢的语句写到日志中，在运行一定时间后。通过查看日志找到慢查询语句。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">show variables like '%slow%';   #查看MySQL慢查询是否开启</span><br><span class="line"></span><br><span class="line">set global slow_query_log=ON;   #开启MySQL慢查询功能</span><br><span class="line"></span><br><span class="line">show variables like "long_query_time";  #查看MySQL慢查询时间设置，默认10秒</span><br><span class="line"></span><br><span class="line">set global long_query_time=5;  #修改为记录5秒内的查询</span><br><span class="line"></span><br><span class="line">select sleep(6);  #测试MySQL慢查询</span><br><span class="line"></span><br><span class="line">show variables like "%slow%";  #查看MySQL慢查询日志路径</span><br><span class="line"></span><br><span class="line">show global status like '%slow%';  #查看MySQL慢查询状态</span><br><span class="line"></span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">vi  /etc/my.cnf  #编辑，在[mysqld]段添加以下代码</span><br><span class="line"></span><br><span class="line">slow-query-log = on  #开启MySQL慢查询功能</span><br><span class="line"></span><br><span class="line">slow_query_log_file =  /var/run/mysqld/mysqld-slow.log #设置MySQL慢查询日志路径</span><br><span class="line"></span><br><span class="line">long_query_time = 5  #修改为记录5秒内的查询，默认不设置此参数为记录10秒内的查询</span><br><span class="line"></span><br><span class="line">log-queries-not-using-indexes = on  #记录未使用索引的查询</span><br><span class="line"></span><br><span class="line">:wq! #保存退出</span><br><span class="line"></span><br><span class="line">service mysqld restart #重启MySQL服务</span><br></pre></td></tr></table></figure>
+<h2 id="13-数据库优化-索引"><a href="#13-数据库优化-索引" class="headerlink" title="13. 数据库优化-索引"></a>13. 数据库优化-索引</h2><h3 id="13-1-索引的概念"><a href="#13-1-索引的概念" class="headerlink" title="13.1 索引的概念"></a>13.1 索引的概念</h3><p>索引（<code>Index</code>）是帮助<code>DBMS</code>高效获取数据的数据结构。</p>
+<h3 id="13-2-索引有哪些"><a href="#13-2-索引有哪些" class="headerlink" title="13.2 索引有哪些"></a>13.2 索引有哪些</h3><blockquote>
+<p>分类：普通索引/唯一索引/主键索引/全文索引</p>
+</blockquote>
+<ul>
+<li><p>普通索引:允许重复的值出现</p>
+</li>
+<li><p>唯一索引:除了不能有重复的记录外，其它和普通索引一样(用户名、用户身份证、email,tel)</p>
+</li>
+<li><p>主键索引：是随着设定主键而创建的，也就是把某个列设为主键的时候，数据库就会給改列创建索引。这就是主键索引.唯一且没有null值</p>
+</li>
+<li><p>全文索引:用来对表中的文本域(<code>char</code>，<code>varchar</code>，<code>text</code>)进行索引， 全文索引针对<code>MyIsam</code><br><code>explain select * from articles where match(title,body) against(‘database’);</code>【会使用全文索引】</p>
+</li>
+</ul>
+<h3 id="13-3-使用索引的注意事项"><a href="#13-3-使用索引的注意事项" class="headerlink" title="13.3 使用索引的注意事项"></a>13.3 使用索引的注意事项</h3><blockquote>
+<p>索引弊端</p>
+<ol>
+<li>占用磁盘空间。</li>
+<li>对<code>dml</code>(插入、修改、删除)操作有影响，变慢。</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>使用场景：</p>
+<ol>
+<li>肯定在<code>where</code>条件经常使用,如果不做查询就没有意义</li>
+<li>该字段的内容不是唯一的几个值(sex) </li>
+<li>字段内容不是频繁变化.</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>注意事项</p>
+</blockquote>
+<ol>
+<li>对于创建的多列索引（复合索引），不是使用的第一部分就不会使用索引。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> dept <span class="keyword">add</span> <span class="keyword">index</span> my_ind (dname,loc); // dname 左边的列,loc就是右边的列</span><br><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname=<span class="string">'aaa'</span>\G 会使用到索引</span><br><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> loc=<span class="string">'aaa'</span>\G 就不会使用到索引</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>对于使用<code>like</code>的查询，查询如果是<code>%aaa</code>不会使用到索引而<code>aaa%</code>会使用到索引。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname <span class="keyword">like</span> <span class="string">'%aaa'</span>\G不能使用索引</span><br><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname <span class="keyword">like</span> <span class="string">'aaa%'</span>\G使用索引.</span><br></pre></td></tr></table></figure>
+<p>所以在<code>like</code>查询时，‘关键字’的最前面不能使用<code>%</code> 或者 <code>_</code>这样的字符，如果一定要前面有变化的值，则考虑使用 全文索引-&gt;sphinx.</p>
+<ol start="3">
+<li>索引列排序</li>
+</ol>
+<p><code>MySQL</code>查询只使用一个索引，因此如果<code>where</code>子句中已经使用了索引的话，那么<code>order by</code>中的列是不会使用索引的。因此数据库默认排序可以符合要求的情况下不要使用排序操作；尽量不要包含多个列的排序，如果需要最好给这些列创建复合索引。</p>
+<ol start="4">
+<li>如果列类型是字符串，那一定要在条件中将数据使用引号引用起来。否则不使用索引。</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">expain <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname=’<span class="number">111</span>’;</span><br><span class="line">expain <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname=<span class="number">111</span>;（数值自动转字符串）</span><br><span class="line">expain <span class="keyword">select</span> * <span class="keyword">from</span> dept <span class="keyword">where</span> dname=qqq;报错</span><br></pre></td></tr></table></figure>
+<p>也就是，如果列是字符串类型，无论是不是字符串数字就一定要用 ‘’ 把它包括起来.</p>
+<ol start="5">
+<li><p>如果<code>mysql</code>估计使用全表扫描要比使用索引快，则不使用索引。<br>表里面只有一条记录</p>
+</li>
+<li><p>索引不会包含有<code>NULL</code>值的列</p>
+</li>
+</ol>
+<p>只要列中包含有<code>NULL</code>值都将不会被包含在<code>MySQL</code>索引中，复合索引中只要有一列含有<code>NULL</code>值，那么这一列对于此复合索引就是无效的。所以我们在数据库设计时不要让字段的默认值为<code>NULL</code>。</p>
+<ol start="7">
+<li>使用短索引</li>
+</ol>
+<p>对串列进行索引，如果可能应该指定一个前缀长度。例如，如果有一个<code>CHAR(255)</code>的列，如果在前10个或20个字符内，多数值是惟一的，那么就不要对整个列进行索引。短索引不仅可以提高查询速度而且可以节省磁盘空间和I/O操作。</p>
+<ol start="8">
+<li>不要在列上进行运算，不使用<code>NOT IN</code>和<code>&lt;&gt;</code>操作，不支持正则表达式。</li>
+</ol>
+<h2 id="14-数据库优化-分表"><a href="#14-数据库优化-分表" class="headerlink" title="14. 数据库优化-分表"></a>14. 数据库优化-分表</h2><p>分表分为水平(按行)分表和垂直(按列)分表</p>
+<p><strong>水平分表情形：</strong></p>
+<p>根据经验，<code>Mysql</code>表数据一般达到百万级别，查询效率会很低，容易造成表锁，甚至堆积很多连接，直接挂掉；水平分表能够很大程度较少这些压力。</p>
+<p><strong>垂直分表情形：</strong></p>
+<p>如果一张表中某个字段值非常多(长文本、二进制等)，而且只有在很少的情况下会查询。这时候就可以把字段多个单独放到一个表，通过外键关联起来。考试详情，一般我们只关注分数，不关注详情。</p>
+<p><strong>水平分表策略：</strong></p>
+<blockquote>
+<p>1.按时间分表</p>
+</blockquote>
+<p>这种分表方式有一定的局限性，当数据有较强的实效性，如微博发送记录、微信消息记录等，这种数据很少有用户会查询几个月前的数据，如需要就可以按月分表。</p>
+<blockquote>
+<p>2.按区间范围分表</p>
+</blockquote>
+<p>一般在有严格的自增id需求上，如按照<code>user_id</code>水平分表：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">table_1  user_id从1~100w  </span><br><span class="line">table_2  user_id从101~200w </span><br><span class="line">table_3  user_id从201~300w</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>3.hash分表</p>
+</blockquote>
+<p>通过一个原始目标的ID或者名称通过一定的<code>hash</code>算法计算出数据存储表的表名，然后访问相应的表。</p>
+<h2 id="15-数据库优化-读写分离"><a href="#15-数据库优化-读写分离" class="headerlink" title="15. 数据库优化-读写分离"></a>15. 数据库优化-读写分离</h2><p>一台数据库支持的最大并发连接数是有限的，如果用户并发访问太多。一台服务器满足不要要求是就可以集群处理。Mysql的集群处理技术最常用的就是读写分离。    </p>
+<p><strong>主从同步</strong></p>
+<p>数据库最终会把数据持久化到磁盘，如果集群必须确保每个数据库服务器的数据是一直的。<strong>能改变数据库数据的操作都往主数据库去写，而其他的数据库从主数据库上同步数据。</strong></p>
+<p><strong>读写分离</strong></p>
+<p>使用负载均衡来实现写的操作都往主数据去，而读的操作往从服务器去。</p>
+<h2 id="16-数据库优化-缓存"><a href="#16-数据库优化-缓存" class="headerlink" title="16. 数据库优化-缓存"></a>16. 数据库优化-缓存</h2><p><strong>什么是缓存</strong></p>
+<p>在持久层(<code>dao</code>)和数据库(<code>db</code>)之间添加一个缓存层，如果用户访问的数据已经缓存起来时，在用户访问时直接从缓存中获取，不用访问数据库。而缓存是在操作内存级，访问速度快。</p>
+<p><strong>作用</strong></p>
+<p>减少数据库服务器压力，减少访问时间。</p>
+<p><strong>Java中常用的缓存有</strong></p>
+<ol>
+<li><code>hibernate</code>的二级缓存。该缓存不能完成分布式缓存。</li>
+<li>可以使用<code>redis</code>(<code>memcahe</code>等)来作为中央缓存。对缓存的数据进行集中处理</li>
+</ol>
+<h2 id="17-数据库优化-sql语句优化的技巧"><a href="#17-数据库优化-sql语句优化的技巧" class="headerlink" title="17. 数据库优化-sql语句优化的技巧"></a>17. 数据库优化-sql语句优化的技巧</h2><h3 id="DDL优化"><a href="#DDL优化" class="headerlink" title="DDL优化"></a>DDL优化</h3><ol>
+<li>通过禁用索引来提供导入数据性能，这个操作主要针对现有数据库的表追加数据</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//去除键</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test3 <span class="keyword">DISABLE</span> <span class="keyword">keys</span>;</span><br><span class="line">//批量插入数据</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> test3 ***</span><br><span class="line">//恢复键</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> test3 <span class="keyword">ENABLE</span> <span class="keyword">keys</span>;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>关闭唯一校验</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> unique_checks=<span class="number">0</span>  关闭</span><br><span class="line"><span class="keyword">set</span> unique_checks=<span class="number">1</span>  开启</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>修改事务提交方式(导入)（变多次提交为一次）</li>
+</ol>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span> autocommit=<span class="number">0</span>   关闭</span><br><span class="line">//批量插入</span><br><span class="line"><span class="keyword">set</span> autocommit=<span class="number">1</span>   开启</span><br></pre></td></tr></table></figure>
+<h3 id="DML优化（变多次提交为一次）"><a href="#DML优化（变多次提交为一次）" class="headerlink" title="DML优化（变多次提交为一次）"></a>DML优化（变多次提交为一次）</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">test</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">test</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">3</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">test</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">4</span>);</span><br><span class="line">//合并多条为一条</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">test</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">2</span>),(<span class="number">1</span>,<span class="number">3</span>),(<span class="number">1</span>,<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="DQL优化"><a href="#DQL优化" class="headerlink" title="DQL优化"></a>DQL优化</h3><blockquote>
+<p>Order by优化</p>
+</blockquote>
+<ol>
+<li>多用索引排序</li>
+<li>普通结果排序（非索引排序）Filesort</li>
+</ol>
+<blockquote>
+<p>group by优化</p>
+</blockquote>
+<p>使用order by null,取消默认排序</p>
+<p>等等等等…</p>
+<h2 id="18-jdbc批量插入几百万数据怎么实现"><a href="#18-jdbc批量插入几百万数据怎么实现" class="headerlink" title="18. jdbc批量插入几百万数据怎么实现"></a>18. jdbc批量插入几百万数据怎么实现</h2><p>1、变多次提交为一次<br>2、使用批量操作<br>3、像这样的批量插入操作能不使用代码操作就不使用，可以使用存储过程来实现</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/jdbc%E6%8F%92%E5%85%A5%E7%99%BE%E4%B8%87%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96.png" alt="image"></p>
+<h2 id="mysql优化手段介绍到这里。"><a href="#mysql优化手段介绍到这里。" class="headerlink" title="mysql优化手段介绍到这里。"></a>mysql优化手段介绍到这里。</h2><h2 id="19-聚簇索引和非聚簇索引"><a href="#19-聚簇索引和非聚簇索引" class="headerlink" title="19. 聚簇索引和非聚簇索引"></a>19. 聚簇索引和非聚簇索引</h2><p>索引分为聚簇索引和非聚簇索引。</p>
+<p><strong>“聚簇索引”</strong></p>
+<p>以一本英文课本为例，要找第8课，直接翻书，若先翻到第5课，则往后翻，再翻到第10课，则又往前翻。这本书本身就是一个索引，即“聚簇索引”。</p>
+<p><strong>“非聚簇索引”</strong></p>
+<p>如果要找”fire”这个单词，会翻到书后面的附录，这个附录是按字母排序的，找到F字母那一块，再找到”fire”，对应的会是它在第几课。这个附录，为“非聚簇索引”。</p>
+<p>由此可见，聚簇索引，索引的顺序就是数据存放的顺序，所以，很容易理解，一张数据表只能有一个聚簇索引。</p>
+<p>聚簇索引要比非聚簇索引查询效率高很多，特别是范围查询的时候。所以，至于聚簇索引到底应该为主键，还是其他字段，这个可以再讨论。</p>
+<h3 id="1、MYSQL的索引"><a href="#1、MYSQL的索引" class="headerlink" title="1、MYSQL的索引"></a>1、MYSQL的索引</h3><p>mysql中，不同的存储引擎对索引的实现方式不同，大致说下<code>MyISAM</code>和<code>InnoDB</code>两种存储引擎。</p>
+<p><strong>MyISAM存储引擎的索引实现</strong></p>
+<p><code>MyISAM</code>的<code>B+Tree</code>的叶子节点上的<code>data</code>，并不是数据本身，而是数据存放的地址。主索引和辅助索引没啥区别，只是主索引中的key一定得是唯一的。这里的索引都是非聚簇索引。<br>MyISAM还采用压缩机制存储索引，比如，第一个索引为“her”，第二个索引为“here”，那么第二个索引会被存储为“3,e”，这样的缺点是同一个节点中的索引只能采用顺序查找。</p>
+<p><strong>InnoDB存储引擎的索引实现</strong></p>
+<p><code>InnoDB</code> 的数据文件本身就是索引文件，<code>B+Tree</code>的叶子节点上的<code>data</code>就是数据本身，<code>key</code>为主键，这是聚簇索引。非聚簇索引，叶子节点上的data是主键 (所以聚簇索引的<code>key</code>，不能过长)。为什么存放的主键，而不是记录所在地址呢，理由相当简单，因为记录所在地址并不能保证一定不会变，但主键可以保证。<br>至于为什么主键通常建议使用自增id呢？</p>
+<h3 id="2-聚簇索引"><a href="#2-聚簇索引" class="headerlink" title="2.聚簇索引"></a>2.聚簇索引</h3><p>聚簇索引的数据的物理存放顺序与索引顺序是一致的，即：只要索引是相邻的，那么对应的数据一定也是相邻地存放在磁盘上的。如果主键不是自增id，那么可以想 象，它会干些什么，不断地调整数据的物理地址、分页，当然也有其他一些措施来减少这些操作，但却无法彻底避免。但，如果是自增的，那就简单了，它只需要一 页一页地写，索引结构相对紧凑，磁盘碎片少，效率也高。</p>
+<p>聚簇索引不但在检索上可以大大滴提高效率，在数据读取上也一样。比如：需要查询f~t的所有单词。</p>
+<p>一个使用<code>MyISAM</code>的主索引，一个使用<code>InnoDB</code>的聚簇索引。两种索引的<code>B+Tree</code>检索时间一样，但读取时却有了差异。</p>
+<p><strong>因为<code>MyISAM</code>的主索引并非聚簇索引</strong>，那么他的数据的物理地址必然是凌乱的，拿到这些物理地址，按照合适的算法进行I/O读取，于是开始不停的寻道不停的旋转。聚簇索引则只需一次I/O。</p>
+<p><strong>不过，如果涉及到大数据量的排序、全表扫描、count之类的操作的话，还是<code>MyISAM</code>占优势些，因为索引所占空间小，这些操作是需要在内存中完成的</strong>。</p>
+<p>鉴于聚簇索引的范围查询效率，很多人认为使用主键作为聚簇索引太多浪费，毕竟几乎不会使用主键进行范围查询。但若再考虑到聚簇索引的存储，就不好定论了。</p>
+<h2 id="20-sql注入问题"><a href="#20-sql注入问题" class="headerlink" title="20. sql注入问题"></a>20. sql注入问题</h2><h3 id="20-1-什么是sql注入"><a href="#20-1-什么是sql注入" class="headerlink" title="20.1 什么是sql注入"></a>20.1 什么是sql注入</h3><p>sql注入大家都不陌生，是一种常见的攻击方式，攻击者在界面的表单信息或url上输入一些奇怪的sql片段，例如“or ‘1’=’1’”这样的语句，有可能入侵参数校验不足的应用程序。所以在我们的应用中需要做一些工作，来防备这样的攻击方式。在一些安全性很高的应用中，比如银行软件，经常使用将sql语句全部替换为存储过程这样的方式，来防止sql注入，这当然是一种很安全的方式，但我们平时开发中，可能不需要这种死板的方式。</p>
+<h3 id="20-2-PrepareStatement解决SQL注入的问题"><a href="#20-2-PrepareStatement解决SQL注入的问题" class="headerlink" title="20.2 PrepareStatement解决SQL注入的问题"></a>20.2 PrepareStatement解决SQL注入的问题</h3><p>在使用<code>JDBC</code>的过程中，可以使用<code>PrepareStatement</code>进行预处理，预处理的优势就是预防绝大多数的SQL注入；而且针对多次操作数据库的情况，可以极大的提高访问数据库的效率。</p>
+<p>那为什么它这样处理就能预防SQL注入提高安全性呢？其实是因为SQL语句在程序运行前已经进行了预编译。在程序运行时第一次操作数据库之前，SQL语句已经被数据库分析，编译和优化，对应的执行计划也会缓存下来并允许数据库以参数化的形式进行查询。当运行时动态地把参数传给<code>PreprareStatement</code>时，即使参数里有敏感字符如 or ‘1=1’，数据库也会作为一个参数一个字段的属性值来处理而不会作为一个SQL指令。如此，就起到了SQL注入的作用了！</p>
+<h3 id="20-3-MyBatis如何防止sql注入"><a href="#20-3-MyBatis如何防止sql注入" class="headerlink" title="20.3 MyBatis如何防止sql注入"></a>20.3 MyBatis如何防止sql注入</h3><p><code>mybatis</code>框架作为一款半自动化的持久层框架，其sql语句都要我们自己来手动编写，这个时候当然需要防止sql注入。其实<code>Mybatis</code>的sql是一个具有“输入+输出”功能，类似于函数的结构，如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=“getBlogById“ resultType=“Blog“ parameterType=”int”&gt;</span><br><span class="line">       <span class="keyword">select</span> <span class="keyword">id</span>,title,author,<span class="keyword">content</span> </span><br><span class="line">　　　　<span class="keyword">from</span> blog </span><br><span class="line">　　　　<span class="keyword">where</span> <span class="keyword">id</span>=#&#123;<span class="keyword">id</span>&#125; </span><br><span class="line">&lt;/<span class="keyword">select</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>这里，<code>parameterType</code>标示了输入的参数类型，<code>resultType</code>标示了输出的参数类型。回应上文，如果我们想防止sql注入，理所当然地要在输入参数上下功夫。上面代码中“#{id}”即输入参数在sql中拼接的部分，传入参数后，打印出执行的sql语句，会看到sql是这样的：</p>
+<blockquote>
+<p>select id,title,author,content from blog where id = ?</p>
+</blockquote>
+<p>不管输入什么参数，打印出的sql都是这样的。这是因为<code>mybatis</code>启用了预编译功能，在sql执行前，会先将上面的sql发送给数据库进行编译，执行时，直接使用编译好的sql，替换占位符“？”就可以了。因为sql注入只能对编译过程起作用，所以这样的方式就很好地避免了sql注入的问题。</p>
+<p><code>mybatis</code>是如何做到sql预编译的呢？其实在框架底层，是<code>jdbc</code>中的<code>PreparedStatement</code>类在起作用，<code>PreparedStatement</code>是我们很熟悉的<code>Statement</code>的子类，它的对象包含了编译好的sql语句。这种“准备好”的方式不仅能提高安全性，而且在多次执行一个sql时，能够提高效率，原因是sql已编译好，再次执行时无需再编译。</p>
+<p>补充</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=“orderBlog“ resultType=“Blog“ parameterType=”map”&gt;</span><br><span class="line"> </span><br><span class="line">       <span class="keyword">select</span> <span class="keyword">id</span>,title,author,<span class="keyword">content</span> <span class="keyword">from</span> blog <span class="keyword">order</span> <span class="keyword">by</span> $&#123;orderParam&#125;</span><br><span class="line"> </span><br><span class="line">&lt;/<span class="keyword">select</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>仔细观察，内联参数的格式由“#{xxx}”变为了${xxx}。如果我们给参数“orderParam”赋值为”id”,将sql打印出来，是这样的：</p>
+<blockquote>
+<p>select id,title,author,content from blog order by id</p>
+</blockquote>
+<p>显然，这样是无法阻止sql注入的。在mybatis中，”${xxx}”这样格式的参数会直接参与sql编译，从而不能避免注入攻击。<strong>但涉及到动态表名和列名时，只能使用“${xxx}”这样的参数格式</strong>，所以，这样的参数需要我们在代码中手工进行处理来防止注入。</p>
+<h2 id="21-mysql悲观锁和乐观锁"><a href="#21-mysql悲观锁和乐观锁" class="headerlink" title="21. mysql悲观锁和乐观锁"></a>21. mysql悲观锁和乐观锁</h2><h2 id="21-1-悲观锁"><a href="#21-1-悲观锁" class="headerlink" title="21.1 悲观锁"></a>21.1 悲观锁</h2><p>悲观锁（<code>Pessimistic Lock</code>），顾名思义，就是很悲观，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会block直到它拿到锁。</p>
+<p>悲观锁：假定会发生并发冲突，屏蔽一切可能违反数据完整性的操作。</p>
+<p><code>Java synchronized</code> 就属于悲观锁的一种实现，每次线程要修改数据时都先获得锁，保证同一时刻只有一个线程能操作数据，其他线程则会被block。</p>
+<h2 id="21-2-乐观锁"><a href="#21-2-乐观锁" class="headerlink" title="21.2 乐观锁"></a>21.2 乐观锁</h2><p>乐观锁（<code>Optimistic Lock</code>），顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，但是在提交更新的时候会判断一下在此期间别人有没有去更新这个数据。乐观锁适用于读多写少的应用场景，这样可以提高吞吐量。</p>
+<p>乐观锁：假设不会发生并发冲突，只在提交操作时检查是否违反数据完整性。</p>
+<p>乐观锁一般来说有以下2种方式：</p>
+<ul>
+<li>使用数据版本（<code>Version</code>）记录机制实现，这是乐观锁最常用的一种实现方式。何谓数据版本？即为数据增加一个版本标识，一般是通过为数据库表增加一个数字类型的 <code>version</code> 字段来实现。当读取数据时，将<code>version</code>字段的值一同读出，数据每更新一次，对此<code>version</code>值加一。当我们提交更新的时候，判断数据库表对应记录的当前版本信息与第一次取出来的<code>version</code>值进行比对，如果数据库表当前版本号与第一次取出来的<code>version</code>值相等，则予以更新，否则认为是过期数据。</li>
+<li>使用时间戳（<code>timestamp</code>）。乐观锁定的第二种实现方式和第一种差不多，同样是在需要乐观锁控制的table中增加一个字段，名称无所谓，字段类型使用时间戳（<code>timestamp</code>）, 和上面的<code>version</code>类似，也是在更新提交的时候检查当前数据库中数据的时间戳和自己更新前取到的时间戳进行对比，如果一致则OK，否则就是版本冲突。<br><code>Java JUC</code>中的<code>atomic</code>包就是乐观锁的一种实现，<code>AtomicInteger</code> 通过<code>CAS</code>（<code>Compare And Set</code>）操作实现线程安全的自增。</li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 21:26:58</p>
+        <p><span>最后更新:</span>2018-06-06, 21:41:11</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/mysql面试高频理论知识/" title="mysql面试高频理论知识">http://yoursite.com/2018/06/06/mysql面试高频理论知识/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/mysql面试高频理论知识/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/数据库索引的实现原理/">
+                    数据库索引的实现原理
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/mysql最基础知识小结/">
+                    mysql最基础知识小结
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-数据库三范式"><span class="toc-number">1.</span> <span class="toc-text">1. 数据库三范式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-范式是什么"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 范式是什么</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-反三范式"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 反三范式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-事务"><span class="toc-number">2.</span> <span class="toc-text">2. 事务</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-含义"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-事务的四个特征-ACID特性"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 事务的四个特征(ACID特性)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-mysql数据库默认最大连接数"><span class="toc-number">3.</span> <span class="toc-text">3. mysql数据库默认最大连接数</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-为什么需要最大连接数"><span class="toc-number">3.1.</span> <span class="toc-text">3.1 为什么需要最大连接数</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-分页"><span class="toc-number">4.</span> <span class="toc-text">4. 分页</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-1-为什么需要分页？"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 为什么需要分页？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-mysql如何分页"><span class="toc-number">4.2.</span> <span class="toc-text">4.2 mysql如何分页</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-oracle分页"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 oracle分页</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-触发器"><span class="toc-number">5.</span> <span class="toc-text">5. 触发器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-存储过程"><span class="toc-number">6.</span> <span class="toc-text">6. 存储过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-数据库存储过程具有如下优点："><span class="toc-number">6.1.</span> <span class="toc-text">6.1 数据库存储过程具有如下优点：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-定义存储过程"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 定义存储过程:</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-用jdbc怎么调用存储过程？"><span class="toc-number">7.</span> <span class="toc-text">7. 用jdbc怎么调用存储过程？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-对jdbc的理解"><span class="toc-number">8.</span> <span class="toc-text">8. 对jdbc的理解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序"><span class="toc-number">9.</span> <span class="toc-text">9. 写一个简单的jdbc的程序。写一个访问oracle数据的jdbc程序</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#10-JDBC中的PreparedStatement相比Statement的好处"><span class="toc-number">10.</span> <span class="toc-text">10. JDBC中的PreparedStatement相比Statement的好处</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#11-数据库连接池作用"><span class="toc-number">11.</span> <span class="toc-text">11. 数据库连接池作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#12-选择合适的存储引擎"><span class="toc-number">12.</span> <span class="toc-text">12. 选择合适的存储引擎</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#下面是数据库的优化手段，但是只是表面，需要以后再好好探究"><span class="toc-number"></span> <span class="toc-text">下面是数据库的优化手段，但是只是表面，需要以后再好好探究</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#13-数据库优化-索引"><span class="toc-number">1.</span> <span class="toc-text">13. 数据库优化-索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#13-1-索引的概念"><span class="toc-number">1.1.</span> <span class="toc-text">13.1 索引的概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-2-索引有哪些"><span class="toc-number">1.2.</span> <span class="toc-text">13.2 索引有哪些</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-3-使用索引的注意事项"><span class="toc-number">1.3.</span> <span class="toc-text">13.3 使用索引的注意事项</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#14-数据库优化-分表"><span class="toc-number">2.</span> <span class="toc-text">14. 数据库优化-分表</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#15-数据库优化-读写分离"><span class="toc-number">3.</span> <span class="toc-text">15. 数据库优化-读写分离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#16-数据库优化-缓存"><span class="toc-number">4.</span> <span class="toc-text">16. 数据库优化-缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#17-数据库优化-sql语句优化的技巧"><span class="toc-number">5.</span> <span class="toc-text">17. 数据库优化-sql语句优化的技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#DDL优化"><span class="toc-number">5.1.</span> <span class="toc-text">DDL优化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DML优化（变多次提交为一次）"><span class="toc-number">5.2.</span> <span class="toc-text">DML优化（变多次提交为一次）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#DQL优化"><span class="toc-number">5.3.</span> <span class="toc-text">DQL优化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#18-jdbc批量插入几百万数据怎么实现"><span class="toc-number">6.</span> <span class="toc-text">18. jdbc批量插入几百万数据怎么实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mysql优化手段介绍到这里。"><span class="toc-number">7.</span> <span class="toc-text">mysql优化手段介绍到这里。</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#19-聚簇索引和非聚簇索引"><span class="toc-number">8.</span> <span class="toc-text">19. 聚簇索引和非聚簇索引</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、MYSQL的索引"><span class="toc-number">8.1.</span> <span class="toc-text">1、MYSQL的索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-聚簇索引"><span class="toc-number">8.2.</span> <span class="toc-text">2.聚簇索引</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#20-sql注入问题"><span class="toc-number">9.</span> <span class="toc-text">20. sql注入问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#20-1-什么是sql注入"><span class="toc-number">9.1.</span> <span class="toc-text">20.1 什么是sql注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20-2-PrepareStatement解决SQL注入的问题"><span class="toc-number">9.2.</span> <span class="toc-text">20.2 PrepareStatement解决SQL注入的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20-3-MyBatis如何防止sql注入"><span class="toc-number">9.3.</span> <span class="toc-text">20.3 MyBatis如何防止sql注入</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-mysql悲观锁和乐观锁"><span class="toc-number">10.</span> <span class="toc-text">21. mysql悲观锁和乐观锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-1-悲观锁"><span class="toc-number">11.</span> <span class="toc-text">21.1 悲观锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#21-2-乐观锁"><span class="toc-number">12.</span> <span class="toc-text">21.2 乐观锁</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"mysql面试高频理论知识　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/数据库索引的实现原理/" title="上一篇: 数据库索引的实现原理">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/mysql最基础知识小结/" title="下一篇: mysql最基础知识小结">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
