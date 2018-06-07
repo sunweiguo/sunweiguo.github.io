@@ -15,20 +15,18 @@
 
 
 
-<meta name="description" content="本系列再对java并发的认识抬高一个台阶！">
-<meta name="keywords" content="java并发进阶">
+<meta name="description" content="支付宝demo测试">
+<meta name="keywords" content="电商项目实战">
 <meta property="og:type" content="article">
-<meta property="og:title" content="1.基础介绍和线程安全性问题展示">
-<meta property="og:url" content="http://yoursite.com/2018/06/04/1.基础介绍和线程安全性问题展示/index.html">
+<meta property="og:title" content="11、支付宝demo测试">
+<meta property="og:url" content="http://yoursite.com/2018/06/07/11、支付宝demo测试/index.html">
 <meta property="og:site_name" content="Eureka-Home">
-<meta property="og:description" content="本系列再对java并发的认识抬高一个台阶！">
+<meta property="og:description" content="支付宝demo测试">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
-<meta property="og:updated_time" content="2018-06-04T14:12:07.580Z">
+<meta property="og:updated_time" content="2018-06-07T08:43:28.356Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="1.基础介绍和线程安全性问题展示">
-<meta name="twitter:description" content="本系列再对java并发的认识抬高一个台阶！">
-<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta name="twitter:title" content="11、支付宝demo测试">
+<meta name="twitter:description" content="支付宝demo测试">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -60,7 +58,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>1.基础介绍和线程安全性问题展示 | Eureka-Home</title>
+<title>11、支付宝demo测试 | Eureka-Home</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -188,11 +186,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-1.基础介绍和线程安全性问题展示" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-11、支付宝demo测试" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/04/1.基础介绍和线程安全性问题展示/" class="article-date">
-      <time datetime="2018-06-04T14:12:07.059Z" itemprop="datePublished">2018-06-04</time>
+      <a href="/2018/06/07/11、支付宝demo测试/" class="article-date">
+      <time datetime="2018-06-07T08:39:59.500Z" itemprop="datePublished">2018-06-07</time>
 </a>
 
 
@@ -207,7 +205,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      1.基础介绍和线程安全性问题展示
+      11、支付宝demo测试
     </h1>
   
 
@@ -218,7 +216,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/电商项目实战/">电商项目实战</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -228,57 +226,45 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>本系列再对java并发的认识抬高一个台阶！<br><a id="more"></a></p>
-<h2 id="基础的概念"><a href="#基础的概念" class="headerlink" title="基础的概念"></a>基础的概念</h2><blockquote>
-<p>并发</p>
-</blockquote>
-<p>多个线程操作相同的资源，保证线程安全，合理使用资源。</p>
-<blockquote>
-<p>高并发</p>
-</blockquote>
-<p>服务能够同时处理很多请求，提高程序性能。</p>
-<blockquote>
-<p>CPU多级缓存</p>
-</blockquote>
+        <p>支付宝demo测试<br><a id="more"></a></p>
 <ul>
-<li><code>cpu</code>速度太快，主内存速度跟不上，<code>cpu</code>常常需要等待主内存，浪费<code>cpu</code>资源。所以<code>cache</code>出现了，缓解了<code>cpu</code>和主内存之间舒服不匹配的问题(<code>cpu</code>-&gt;<code>cache</code>-&gt;<code>memory</code>)</li>
-<li>时间局部性：如果某个数据被访问，那么在不久的将来他很有可能再次被访问。</li>
-<li>空间局部性：如果某个数据被访问，那么与它相邻的数据也可能被访问。</li>
+<li>1、沙箱登陆：<a href="https://openhome.alipay.com/platform/appDaily.htm?tab=info" target="_blank" rel="noopener">https://openhome.alipay.com/platform/appDaily.htm?tab=info</a></li>
+<li>2、沙箱环境使用说明：<a href="https://docs.open.alipay.com/200/105311/" target="_blank" rel="noopener">https://docs.open.alipay.com/200/105311/</a></li>
+<li>3、如何使用沙箱环境：<a href="https://support.open.alipay.com/support/hotProblemDetail.htm?spm=a219a.7386797.0.0.YhIJho&amp;source=search&amp;id=251932" target="_blank" rel="noopener">https://support.open.alipay.com/support/hotProblemDetail.htm?spm=a219a.7386797.0.0.YhIJho&amp;source=search&amp;id=251932</a></li>
+<li>4、当面付产品介绍：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.5HYMFg&amp;treeId=193&amp;articleId=105072&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.5HYMFg&amp;treeId=193&amp;articleId=105072&amp;docType=1</a></li>
+<li>5、扫码支付接入指引：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.eZzwyB&amp;treeId=193&amp;articleId=106078&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.eZzwyB&amp;treeId=193&amp;articleId=106078&amp;docType=1</a></li>
+<li>6、当面付快速接入：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.k84ZRs&amp;treeId=193&amp;articleId=105170&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.k84ZRs&amp;treeId=193&amp;articleId=105170&amp;docType=1</a></li>
+<li>7、当面付接入必读：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.UUf8nV&amp;treeId=193&amp;articleId=105322&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.UUf8nV&amp;treeId=193&amp;articleId=105322&amp;docType=1</a></li>
+<li>8、当面付进阶功能：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.DdxGEd&amp;treeId=193&amp;articleId=105190&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.DdxGEd&amp;treeId=193&amp;articleId=105190&amp;docType=1</a></li>
+<li>9、当面付异步通知-仅用于扫码支付：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.Bj6VoE&amp;treeId=193&amp;articleId=103296&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.Bj6VoE&amp;treeId=193&amp;articleId=103296&amp;docType=1</a></li>
+<li>10、当面付SDK&amp;Demo：<a href="https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.B4OyFM&amp;treeId=193&amp;articleId=105201&amp;docType=1" target="_blank" rel="noopener">https://support.open.alipay.com/docs/doc.htm?spm=a219a.7629140.0.0.B4OyFM&amp;treeId=193&amp;articleId=105201&amp;docType=1</a></li>
+<li>11、服务端SDK：<a href="https://docs.open.alipay.com/54/103419" target="_blank" rel="noopener">https://docs.open.alipay.com/54/103419</a></li>
+<li>12、生成RSA密钥：<a href="https://docs.open.alipay.com/291/105971" target="_blank" rel="noopener">https://docs.open.alipay.com/291/105971</a></li>
+<li>13、创建应用：<a href="https://docs.open.alipay.com/200/105310" target="_blank" rel="noopener">https://docs.open.alipay.com/200/105310</a></li>
+<li>14、签名验签工具：<a href="https://openclub.alipay.com/read.php?tid=955&amp;fid=46" target="_blank" rel="noopener">https://openclub.alipay.com/read.php?tid=955&amp;fid=46</a></li>
 </ul>
-<blockquote>
-<p>CPU乱序执行优化</p>
-</blockquote>
-<p>处理器为提高运算速度而做出违背代码原有顺序的优化。</p>
-<blockquote>
-<p>java内存模型</p>
-</blockquote>
-<p><img src="http://p376695fl.bkt.clouddn.com/java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="image"></p>
-<blockquote>
-<p>并发模拟工具</p>
-</blockquote>
-<ul>
-<li><code>postman</code></li>
-<li><code>apache bench：ab -n 5000(请求总数) -c 200(并发数) url</code></li>
-<li><code>jmeter</code></li>
+<h3 id="支付宝Demo演示"><a href="#支付宝Demo演示" class="headerlink" title="支付宝Demo演示"></a>支付宝Demo演示</h3><ul>
+<li>下载支付宝的当面付demo: <a href="https://docs.open.alipay.com/54/104506/" target="_blank" rel="noopener">https://docs.open.alipay.com/54/104506/</a></li>
+<li>用Idea引入TradePayDemo这个项目</li>
+<li>直接运行Main.java是报错的，我们需要配置zfbinfo.properties文件</li>
 </ul>
-<blockquote>
-<p>springboot项目初始化</p>
-</blockquote>
-<ul>
-<li>需要注意的是需要引入<code>spring-boot-starter-web</code>,要不然项目起不来。</li>
+<h5 id="1-第一个配置支付宝网关即可："><a href="#1-第一个配置支付宝网关即可：" class="headerlink" title="1. 第一个配置支付宝网关即可："></a>1. 第一个配置支付宝网关即可：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open_api_domain = https://openapi.alipaydev.com/gateway.do</span><br></pre></td></tr></table></figure>
+<h5 id="2-第二行的配置不变："><a href="#2-第二行的配置不变：" class="headerlink" title="2. 第二行的配置不变："></a>2. 第二行的配置不变：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mcloud_api_domain = http://mcloudmonitor.com/gateway.do</span><br></pre></td></tr></table></figure>
+<h5 id="3-pid配置就是登陆支付宝沙箱环境之后的-商户UID"><a href="#3-pid配置就是登陆支付宝沙箱环境之后的-商户UID" class="headerlink" title="3. pid配置就是登陆支付宝沙箱环境之后的 商户UID"></a>3. pid配置就是登陆支付宝沙箱环境之后的 商户UID</h5><h5 id="4-appid就是对应的APPID"><a href="#4-appid就是对应的APPID" class="headerlink" title="4. appid就是对应的APPID"></a>4. appid就是对应的APPID</h5><h5 id="5-RSA私钥、公钥和支付宝公钥的配置"><a href="#5-RSA私钥、公钥和支付宝公钥的配置" class="headerlink" title="5. RSA私钥、公钥和支付宝公钥的配置"></a>5. RSA私钥、公钥和支付宝公钥的配置</h5><ul>
+<li>首先需要去下载支付宝的RSA验签工具，见链接14。</li>
+<li>下载对应系统的软件，解压。</li>
+<li>windows下直接运行 RSA签名验签工具.bat ，直接生成即可。</li>
+<li>将私钥放在private_key，公钥放在public_key。</li>
 </ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h5 id="6-SHA256withRsa对应支付宝公钥的配置"><a href="#6-SHA256withRsa对应支付宝公钥的配置" class="headerlink" title="6. #SHA256withRsa对应支付宝公钥的配置"></a>6. #SHA256withRsa对应支付宝公钥的配置</h5><p>将上面生成的公钥放在RSA2(SHA256)密钥(推荐)中，页面刷新，会出现一个 查看支付宝公钥，将其打开复制放到这里来即可。</p>
+<h5 id="7-运行主函数，会出现以下结果："><a href="#7-运行主函数，会出现以下结果：" class="headerlink" title="7. 运行主函数，会出现以下结果："></a>7. 运行主函数，会出现以下结果：</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">一月 06, 2018 10:43:37 上午 com.alipay.demo.trade.config.Configs init</span><br><span class="line">信息: 配置文件名: zfbinfo.properties</span><br><span class="line">一月 06, 2018 10:43:37 上午 com.alipay.demo.trade.config.Configs init</span><br><span class="line">信息: Configs&#123;支付宝openapi网关: https://openapi.alipaydev.com/gateway.do</span><br><span class="line">, 支付宝mcloudapi网关域名: http://mcloudmonitor.com/gateway.do</span><br><span class="line">, pid: 2088102172437193</span><br><span class="line">, appid: 2016082100306095</span><br><span class="line">, 商户RSA私钥: MIIEvQ******dKWxg=</span><br><span class="line">, 商户RSA公钥: MIIBIj******IDAQAB</span><br><span class="line">, 支付宝RSA公钥: MIIBIj******IDAQAB</span><br><span class="line">, 签名类型: RSA2</span><br><span class="line">, 查询重试次数: 5</span><br><span class="line">, 查询间隔(毫秒): 5000</span><br><span class="line">, 撤销尝试次数: 3</span><br><span class="line">, 撤销重试间隔(毫秒): 2000</span><br><span class="line">, 交易保障调度延迟(秒): 5</span><br><span class="line">, 交易保障调度间隔(秒): 900</span><br><span class="line">&#125;</span><br><span class="line">一月 06, 2018 10:43:37 上午 com.alipay.demo.trade.service.impl.AbsAlipayTradeService tradePrecreate</span><br><span class="line">信息: trade.precreate bizContent:</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">    &quot;out_trade_no&quot;: &quot;tradeprecreate15152066176329550113&quot;,</span><br><span class="line">    &quot;seller_id&quot;: &quot;&quot;,</span><br><span class="line">    &quot;total_amount&quot;: &quot;0.01&quot;,</span><br><span class="line">    &quot;undiscountable_amount&quot;: &quot;0&quot;,</span><br><span class="line">    &quot;subject&quot;: &quot;xxx品牌xxx门店当面付扫码消费&quot;,</span><br><span class="line">    &quot;body&quot;: &quot;购买商品3件共20.00元&quot;,</span><br><span class="line">    &quot;goods_detail&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">    &quot;goods_id&quot;: &quot;goods_id001&quot;,</span><br><span class="line">    &quot;goods_name&quot;: &quot;xxx小面包&quot;,</span><br><span class="line">    &quot;quantity&quot;: 1,</span><br><span class="line">    &quot;price&quot;: &quot;10&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">    &quot;goods_id&quot;: &quot;goods_id002&quot;,</span><br><span class="line">    &quot;goods_name&quot;: &quot;xxx牙刷&quot;,</span><br><span class="line">    &quot;quantity&quot;: 2,</span><br><span class="line">    &quot;price&quot;: &quot;5&quot;</span><br><span class="line">    &#125;</span><br><span class="line">    ],</span><br><span class="line">    &quot;operator_id&quot;: &quot;test_operator_id&quot;,</span><br><span class="line">    &quot;store_id&quot;: &quot;test_store_id&quot;,</span><br><span class="line">    &quot;extend_params&quot;: &#123;</span><br><span class="line">    &quot;sys_service_provider_id&quot;: &quot;2088100200300400500&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;timeout_express&quot;: &quot;120m&quot;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">一月 06, 2018 10:43:40 上午 com.alipay.demo.trade.service.impl.AbsAlipayService getResponse</span><br><span class="line">信息: </span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">    &quot;alipay_trade_precreate_response&quot;: &#123;</span><br><span class="line">    &quot;code&quot;: &quot;10000&quot;,</span><br><span class="line">    &quot;msg&quot;: &quot;Success&quot;,</span><br><span class="line">    &quot;out_trade_no&quot;: &quot;tradeprecreate15152066176329550113&quot;,</span><br><span class="line">    &quot;qr_code&quot;: &quot;https://qr.alipay.com/bax06399mdoc95eqlnpk0016&quot;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;sign&quot;: &quot;F63Q9zK0fd0cXUkONm7TcH+1fZgblj2e7GD8p70h0YcgfOPjt0zQktDiCRwljEesGbK2hvS+9gn0ucJP+W6zoBpyABJFcghvrwRF7CPfOPsD9HDqK7FRYGS9siWhQK7jtpRf/vREvg/XTck/gbK1gpjAAi50IJEA2vfppPmiSDuY/e1Jw+0xMiQzXtcRpEO727XkJHmHiSI9VqlilxvdC9hj+u1qXhmNqkFzJG2z3Qc32jwQrPeLIXzT0JgVeTGTVcMB3Mp1501TrbFJTpA7h9QNKBFa0YKBSS6feKrQBz2+OPJ0gAoweBZ4AaCWo/tMhgx164/hNQSvn3IcG9HcdA==&quot;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">一月 06, 2018 10:43:40 上午 com.alipay.demo.trade.Main test_trade_precreate</span><br><span class="line">信息: 支付宝预下单成功: )</span><br><span class="line">一月 06, 2018 10:43:40 上午 com.alipay.demo.trade.Main dumpResponse</span><br><span class="line">信息: code:10000, msg:Success</span><br><span class="line">一月 06, 2018 10:43:40 上午 com.alipay.demo.trade.Main dumpResponse</span><br><span class="line">信息: body:&#123;&quot;alipay_trade_precreate_response&quot;:&#123;&quot;code&quot;:&quot;10000&quot;,&quot;msg&quot;:&quot;Success&quot;,&quot;out_trade_no&quot;:&quot;tradeprecreate15152066176329550113&quot;,&quot;qr_code&quot;:&quot;https:\/\/qr.alipay.com\/bax06399mdoc95eqlnpk0016&quot;&#125;,&quot;sign&quot;:&quot;F63Q9zK0fd0cXUkONm7TcH+1fZgblj2e7GD8p70h0YcgfOPjt0zQktDiCRwljEesGbK2hvS+9gn0ucJP+W6zoBpyABJFcghvrwRF7CPfOPsD9HDqK7FRYGS9siWhQK7jtpRf/vREvg/XTck/gbK1gpjAAi50IJEA2vfppPmiSDuY/e1Jw+0xMiQzXtcRpEO727XkJHmHiSI9VqlilxvdC9hj+u1qXhmNqkFzJG2z3Qc32jwQrPeLIXzT0JgVeTGTVcMB3Mp1501TrbFJTpA7h9QNKBFa0YKBSS6feKrQBz2+OPJ0gAoweBZ4AaCWo/tMhgx164/hNQSvn3IcG9HcdA==&quot;&#125;</span><br><span class="line">一月 06, 2018 10:43:40 上午 com.alipay.demo.trade.Main test_trade_precreate</span><br><span class="line">信息: filePath:/Users/sudo/Desktop/qr-tradeprecreate15152066176329550113.png</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>lombok slf4j</p>
+<p>在第二段格式化的json数据中有一个 “qr_code”: “<a href="https://qr.alipay.com/bax06399mdoc95eqlnpk0016&quot;" target="_blank" rel="noopener">https://qr.alipay.com/bax06399mdoc95eqlnpk0016&quot;</a> ，这就是支付宝生成的付款二维码。</p>
 </blockquote>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;lombok&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
 <blockquote>
-<p>几个注解，注明是否是线程安全以及是否是推荐的写法。以是线程安全为例。</p>
+<p>我们将其复制到二维码生成工具中，即可生成一个二维码，用支付宝沙箱app扫码即可完成支付测试。</p>
 </blockquote>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.annotation.ElementType;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Retention;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.RetentionPolicy;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 标注哪个类是线程安全的</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Target</span>(ElementType.TYPE)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.SOURCE)<span class="comment">//编译时就会被忽略</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> ThreadSafe &#123;</span><br><span class="line">    <span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> ""</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="代码实现并发模拟"><a href="#代码实现并发模拟" class="headerlink" title="代码实现并发模拟"></a>代码实现并发模拟</h2><p>一共有5000个请求，并发请求为200.</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@NotThreadSafe</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConcurrencyTest</span> </span>&#123;</span><br><span class="line">    <span class="comment">//总请求数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> clientTotal = <span class="number">5000</span>;</span><br><span class="line">    <span class="comment">//并发数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> threadTotal = <span class="number">200</span>;</span><br><span class="line">    <span class="comment">//计数值</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//线程池</span></span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        <span class="comment">//信号量，控制并发线程数</span></span><br><span class="line">        Semaphore semaphore = <span class="keyword">new</span> Semaphore(threadTotal);</span><br><span class="line">        <span class="comment">//CountDownLatch，到0就表示线程全部执行完</span></span><br><span class="line">        CountDownLatch countDownLatch = <span class="keyword">new</span> CountDownLatch(clientTotal);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;clientTotal; i++)&#123;</span><br><span class="line">            executorService.execute(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">try</span>&#123;</span><br><span class="line">                    <span class="comment">//达到threadTotal并发数了，就会阻塞add(),等返回之后再继续执行</span></span><br><span class="line">                    semaphore.acquire();</span><br><span class="line">                    add();</span><br><span class="line">                    semaphore.release();</span><br><span class="line">                &#125;<span class="keyword">catch</span> (Exception e)&#123;</span><br><span class="line">                    log.error(<span class="string">"semaphore exception"</span>,e);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">//减一</span></span><br><span class="line">                countDownLatch.countDown();</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//没有减到0，那阻塞在这里；否则执行下面代码</span></span><br><span class="line">            countDownLatch.await();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            log.error(<span class="string">"countDownLatch exception"</span>,e);</span><br><span class="line">        &#125;</span><br><span class="line">        log.info(<span class="string">"result --&gt; &#123;&#125;"</span>,count);</span><br><span class="line">        executorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">()</span></span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>实验结果会出现小于5000的值，说明在并发情况下，出现了线程不安全的问题。</p>
+<h5 id="8、server运行"><a href="#8、server运行" class="headerlink" title="8、server运行"></a>8、server运行</h5><p>因为本身的demo就是一个web项目，所以配置tomcat即可运行。如果发现不能找到 artifact，需要在 Project Structure 中配置一下artifacts。运行起来就可以模拟支付了。</p>
 
       
     </div>
@@ -287,13 +273,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-06-04, 22:12:07</p>
-        <p><span>最后更新:</span>2018-06-04, 22:12:07</p>
+        <p><span>发布时间:</span>2018-06-07, 16:39:59</p>
+        <p><span>最后更新:</span>2018-06-07, 16:43:28</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/06/04/1.基础介绍和线程安全性问题展示/" title="1.基础介绍和线程安全性问题展示">http://yoursite.com/2018/06/04/1.基础介绍和线程安全性问题展示/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/1.基础介绍和线程安全性问题展示/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/07/11、支付宝demo测试/" title="11、支付宝demo测试">http://yoursite.com/2018/06/07/11、支付宝demo测试/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/07/11、支付宝demo测试/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -305,16 +291,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/06/04/2.线程安全性-Atomic包/">
-                    2.线程安全性-Atomic包
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/06/04/九、Lock接口简单体验/">
-                    九、Lock接口简单体验
+                <a href="/2018/06/07/10、收货地址管理模块/">
+                    10、收货地址管理模块
                 </a>
             </div>
         
@@ -326,7 +306,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#基础的概念"><span class="toc-number">1.</span> <span class="toc-text">基础的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#代码实现并发模拟"><span class="toc-number">2.</span> <span class="toc-text">代码实现并发模拟</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#支付宝Demo演示"><span class="toc-number">1.</span> <span class="toc-text">支付宝Demo演示</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1-第一个配置支付宝网关即可："><span class="toc-number">1.0.1.</span> <span class="toc-text">1. 第一个配置支付宝网关即可：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2-第二行的配置不变："><span class="toc-number">1.0.2.</span> <span class="toc-text">2. 第二行的配置不变：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3-pid配置就是登陆支付宝沙箱环境之后的-商户UID"><span class="toc-number">1.0.3.</span> <span class="toc-text">3. pid配置就是登陆支付宝沙箱环境之后的 商户UID</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-appid就是对应的APPID"><span class="toc-number">1.0.4.</span> <span class="toc-text">4. appid就是对应的APPID</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-RSA私钥、公钥和支付宝公钥的配置"><span class="toc-number">1.0.5.</span> <span class="toc-text">5. RSA私钥、公钥和支付宝公钥的配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#6-SHA256withRsa对应支付宝公钥的配置"><span class="toc-number">1.0.6.</span> <span class="toc-text">6. #SHA256withRsa对应支付宝公钥的配置</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#7-运行主函数，会出现以下结果："><span class="toc-number">1.0.7.</span> <span class="toc-text">7. 运行主函数，会出现以下结果：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#8、server运行"><span class="toc-number">1.0.8.</span> <span class="toc-text">8、server运行</span></a></li></ol></li></ol></li></ol>
         
     </div>
     <style>
@@ -362,7 +342,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"1.基础介绍和线程安全性问题展示　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"11、支付宝demo测试　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -382,15 +362,13 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/04/2.线程安全性-Atomic包/" title="上一篇: 2.线程安全性-Atomic包">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/06/04/九、Lock接口简单体验/" title="下一篇: 九、Lock接口简单体验">
+            <a href="/2018/06/07/10、收货地址管理模块/" title="下一篇: 10、收货地址管理模块">
                 <i class="fa fa-angle-right"></i>
             </a>
         
