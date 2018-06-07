@@ -24,7 +24,7 @@
 <meta property="og:description" content="springMVC全局异常+spring包扫描包隔离+spring事务传播">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://img.mukewang.com/5896979a0001f16208060748.png">
-<meta property="og:updated_time" content="2018-06-07T09:15:12.274Z">
+<meta property="og:updated_time" content="2018-06-07T09:17:52.263Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="22、springMVC全局异常+spring包扫描包隔离+spring事务传播">
 <meta name="twitter:description" content="springMVC全局异常+spring包扫描包隔离+spring事务传播">
@@ -287,25 +287,25 @@
 </ul>
 <p>在<code>Spring</code>整体框架的核心概念中，容器是核心思想，就是用来管理<code>Bean</code>的整个生命周期的，而在一个项目中，容器不一定只有一个，<code>Spring</code>中可以包括多个容器，而且容器有上下层关系，目前最常见的一种场景就是在一个项目中引入<code>Spring</code>和<code>SpringMVC</code>这两个框架，那么它其实就是两个容器，<code>Spring</code>是父容器，<code>SpringMVC</code>是其子容器，并且在Spring父容器中注册的<code>Bean</code>对于<code>SpringMVC</code>容器中是可见的，而在<code>SpringMVC</code>容器中注册的<code>Bean</code>对于<code>Spring</code>父容器中是不可见的，也就是子容器可以看见父容器中的注册的<code>Bean</code>，反之就不行。</p>
 <hr>
-<blockquote>
-<p>&lt;context:component-scan base-package=”com.springmvc.test” /&gt;</p>
-</blockquote>
+<ul>
+<li>&lt;context:component-scan base-package=”com.springmvc.test” /&gt;</li>
+</ul>
 <p>我们可以使用统一的如下注解配置来对<code>Bean</code>进行批量注册，而不需要再给每个<code>Bean</code>单独使用<code>xml</code>的方式进行配置。</p>
 <p>从Spring提供的参考手册中我们得知该配置的功能是扫描配置的<code>base-package</code>包下的所有使用了<code>@Component</code>注解的类，并且将它们自动注册到容器中，同时也扫描<code>@Controller</code>，<code>@Service</code>，<code>@Respository</code>这三个注解，因为他们是继承自<code>@Component</code>。</p>
 <hr>
-<blockquote>
-<p><a href="context:annotation-config/" target="_blank" rel="noopener">context:annotation-config/</a></p>
-</blockquote>
+<ul>
+<li><a href="context:annotation-config/" target="_blank" rel="noopener">context:annotation-config/</a></li>
+</ul>
 <p>其实有了上面的配置，这个是可以省略掉的，因为上面的配置会默认打开以下配置。以下配置会默认声明了<code>@Required</code>、<code>@Autowired</code>、 <code>@PostConstruct</code>、<code>@PersistenceContext</code>、<code>@Resource</code>、<code>@PreDestroy</code>等注解。</p>
 <hr>
-<blockquote>
-<p>&lt;mvc:annotation-driven /&gt;</p>
-</blockquote>
+<ul>
+<li>&lt;mvc:annotation-driven /&gt;</li>
+</ul>
 <p>这个是SpringMVC必须要配置的，因为它声明了<code>@RequestMapping</code>、<code>@RequestBody</code>、<code>@ResponseBody</code>等。并且，该配置默认加载很多的参数绑定方法，比如<code>json</code>转换解析器等。</p>
 <hr>
-<blockquote>
-<p>总结</p>
-</blockquote>
+<ul>
+<li>总结</li>
+</ul>
 <p>在实际工程中会包括很多配置，我们按照官方推荐根据不同的业务模块来划分不同容器中注册不同类型的<code>Bean</code>：<code>Spring</code>父容器负责所有其他非<code>@Controller</code>注解的<code>Bean</code>的注册，而<code>SpringMVC</code>只负责<code>@Controller</code>注解的<code>Bean</code>的注册，使得他们各负其责、明确边界。</p>
 
       
@@ -318,7 +318,7 @@
         <p><span>本文标题:</span><a href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-07, 16:57:29</p>
-        <p><span>最后更新:</span>2018-06-07, 17:15:12</p>
+        <p><span>最后更新:</span>2018-06-07, 17:17:52</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/" title="22、springMVC全局异常+spring包扫描包隔离+spring事务传播">http://yoursite.com/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
