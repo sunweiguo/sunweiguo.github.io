@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="整合mongodb获取附近单车以及距离">
+<meta name="keywords" content="单车后台系统实战">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十二、整合mongodb获取附近单车以及距离">
+<meta property="og:url" content="http://yoursite.com/2018/06/07/十二、整合mongodb获取附近单车以及距离/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="整合mongodb获取附近单车以及距离">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-07T06:42:31.107Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="十二、整合mongodb获取附近单车以及距离">
+<meta name="twitter:description" content="整合mongodb获取附近单车以及距离">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>十二、整合mongodb获取附近单车以及距离 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-十二、整合mongodb获取附近单车以及距离" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/" class="article-date">
+      <time datetime="2018-06-07T06:42:19.400Z" itemprop="datePublished">2018-06-07</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      十二、整合mongodb获取附近单车以及距离
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>整合mongodb获取附近单车以及距离<br><a id="more"></a></p>
+<h3 id="1、引入依赖："><a href="#1、引入依赖：" class="headerlink" title="1、引入依赖："></a>1、引入依赖：</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-boot-starter-data-mongodb&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2、yml文件配置："><a href="#2、yml文件配置：" class="headerlink" title="2、yml文件配置："></a>2、yml文件配置：</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">接在spring下：</span><br><span class="line"></span><br><span class="line">  #springdata</span><br><span class="line">  data:</span><br><span class="line">    # mongoDB    #mongodb note:mongo3.x will not use host and port,only use uri</span><br><span class="line">    mongodb:</span><br><span class="line">      uri: mongodb://localhost:27017/bike</span><br></pre></td></tr></table></figure>
+<h3 id="3、实体类"><a href="#3、实体类" class="headerlink" title="3、实体类"></a>3、实体类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//单车的位置集合对应的实体类：</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BikeLocation</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Long bikeNumber;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> status;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Double[] coordinates;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Double distance;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//前台传来的用户位置实体类：</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Point</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Point</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Point</span><span class="params">(Double[] loc)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.longitude = loc[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">this</span>.latitude = loc[<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Point</span><span class="params">(<span class="keyword">double</span> longitude, <span class="keyword">double</span> latitude)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.longitude = longitude;</span><br><span class="line">        <span class="keyword">this</span>.latitude = latitude;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> longitude;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> latitude;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4、给MongoDB一些初始数据："><a href="#4、给MongoDB一些初始数据：" class="headerlink" title="4、给MongoDB一些初始数据："></a>4、给MongoDB一些初始数据：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">形如：</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;_id&quot; : ObjectId(&quot;59fa81910499f31ad0a5e75d&quot;),</span><br><span class="line">    &quot;bike_no&quot; : 28000000,</span><br><span class="line">    &quot;location&quot; : &#123;</span><br><span class="line">        &quot;type&quot; : &quot;Point&quot;,</span><br><span class="line">        &quot;coordinates&quot; : [ </span><br><span class="line">            118.768376, </span><br><span class="line">            32.091533</span><br><span class="line">        ]</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;status&quot; : 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意要增加location字段的索引。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;location&quot; : &quot;2dsphere&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据传来的坐标以及范围进行查询：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db.getCollection(&apos;bike-position&apos;).find(&#123;location:&#123;$nearSphere:&#123;$geometry:&#123;type:&quot;Point&quot;,coordinates:[118.768376,32.091533]&#125;,$maxDistance:5000&#125;&#125;,status:1&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="5、BikeGeoService-程序化上面的查询"><a href="#5、BikeGeoService-程序化上面的查询" class="headerlink" title="5、BikeGeoService 程序化上面的查询"></a>5、BikeGeoService 程序化上面的查询</h3><p>无距离的查询</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> MongoTemplate mongoTemplate;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> collection 指定查询的集合</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> locationField 查询的字段</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> center 上传上来的坐标</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> minDistance 最小的距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> maxDistance 最大的距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> query 查询的条件</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> fields 限制查询出来的字段</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> limit 限制查询出来的个数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 查找某经坐标点附近某范围内坐标点 由近到远 无距离</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;BikeLocation&gt; <span class="title">geoNearSphere</span><span class="params">(String collection,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        String locationField,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        Point center,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">long</span> minDistance,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">long</span> maxDistance,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        DBObject query,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        DBObject fields,</span></span></span><br><span class="line"><span class="function"><span class="params">                                        <span class="keyword">int</span> limit)</span> <span class="keyword">throws</span> BikeException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//先new出来用来存放查询条件</span></span><br><span class="line">        <span class="keyword">if</span> (query == <span class="keyword">null</span>) &#123;</span><br><span class="line">            query = <span class="keyword">new</span> BasicDBObject();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//locationField就是location，与上面的查询时一致的</span></span><br><span class="line">        query.put(locationField,</span><br><span class="line">                <span class="keyword">new</span> BasicDBObject(<span class="string">"$nearSphere"</span>,</span><br><span class="line">                        <span class="keyword">new</span> BasicDBObject(<span class="string">"$geometry"</span>,</span><br><span class="line">                                <span class="keyword">new</span> BasicDBObject(<span class="string">"type"</span>, <span class="string">"Point"</span>)</span><br><span class="line">                                        .append(<span class="string">"coordinates"</span>, <span class="keyword">new</span> <span class="keyword">double</span>[]&#123;center.getLongitude(), center.getLatitude()&#125;))</span><br><span class="line">                                .append(<span class="string">"$minDistance"</span>, minDistance)</span><br><span class="line">                                .append(<span class="string">"$maxDistance"</span>, maxDistance)</span><br><span class="line">                ));</span><br><span class="line">        query.put(<span class="string">"status"</span>, <span class="number">1</span>);</span><br><span class="line">        <span class="comment">//查询结果的集合</span></span><br><span class="line">        List&lt;DBObject&gt; objList = mongoTemplate.getCollection(collection).find(query, fields).limit(limit).toArray();</span><br><span class="line">        <span class="comment">//用List存放到对应的对象中</span></span><br><span class="line">        List&lt;BikeLocation&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span> (DBObject obj : objList) &#123;</span><br><span class="line">            BikeLocation location = <span class="keyword">new</span> BikeLocation();</span><br><span class="line">            <span class="comment">//Integer转到Long</span></span><br><span class="line">            location.setBikeNumber(((Integer) obj.get(<span class="string">"bike_no"</span>)).longValue());</span><br><span class="line">            location.setStatus((Integer) obj.get(<span class="string">"status"</span>));</span><br><span class="line">            BasicDBList coordinates = (BasicDBList) ((BasicDBObject) obj.get(<span class="string">"location"</span>)).get(<span class="string">"coordinates"</span>);</span><br><span class="line">            Double[] temp = <span class="keyword">new</span> Double[<span class="number">2</span>];</span><br><span class="line">            coordinates.toArray(temp);</span><br><span class="line">            location.setCoordinates(temp);</span><br><span class="line">            result.add(location);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">"fail to find around bike"</span>, e);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BikeException(<span class="string">"查找附近单车失败"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以用单元测试对这个<code>service</code>进行测试一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">contextLoads</span><span class="params">()</span> <span class="keyword">throws</span> BikeException </span>&#123;</span><br><span class="line">	List&lt;BikeLocation&gt; lists =  bikeGeoService.geoNearSphere(<span class="string">"bike-position"</span>,<span class="string">"location"</span>,</span><br><span class="line">			<span class="keyword">new</span> Point(<span class="number">118.768376</span>, <span class="number">32.091533</span>),<span class="number">0</span>,<span class="number">5000</span>,<span class="keyword">null</span>,<span class="keyword">null</span>,<span class="number">10</span>);</span><br><span class="line">	<span class="keyword">for</span> (BikeLocation list:lists)&#123;</span><br><span class="line">		System.out.println(<span class="string">"======"</span>+list);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">======BikeLocation(id=null, bikeNumber=28000003, status=1, coordinates=[118.768376, 32.091533], distance=null)</span><br><span class="line">======BikeLocation(id=null, bikeNumber=28000001, status=1, coordinates=[118.772041, 32.093812], distance=null)</span><br></pre></td></tr></table></figure>
+<p>有距离的查询：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> collection 指定查询的集合</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> query 查询的条件</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> point 用户上传的坐标</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> limit 限制查询出来的个数</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> maxDistance 最大的距离</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span> 查找某经坐标点附近某范围内坐标点 由近到远 有距离</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;BikeLocation&gt; <span class="title">geoNear</span><span class="params">(String collection, DBObject query, Point point, <span class="keyword">int</span> limit, <span class="keyword">long</span> maxDistance)</span> <span class="keyword">throws</span> BikeException </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (query == <span class="keyword">null</span>) &#123;</span><br><span class="line">            query = <span class="keyword">new</span> BasicDBObject();</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;DBObject&gt; pipeLine = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        BasicDBObject aggregate = <span class="keyword">new</span> BasicDBObject(<span class="string">"$geoNear"</span>,</span><br><span class="line">                <span class="keyword">new</span> BasicDBObject(<span class="string">"near"</span>, <span class="keyword">new</span> BasicDBObject(<span class="string">"type"</span>, <span class="string">"Point"</span>).append(<span class="string">"coordinates"</span>, <span class="keyword">new</span> <span class="keyword">double</span>[]&#123;point.getLongitude(), point.getLatitude()&#125;))</span><br><span class="line">                        .append(<span class="string">"distanceField"</span>, <span class="string">"distance"</span>)</span><br><span class="line">                        .append(<span class="string">"query"</span>, <span class="keyword">new</span> BasicDBObject())</span><br><span class="line">                        .append(<span class="string">"num"</span>, limit)</span><br><span class="line">                        .append(<span class="string">"maxDistance"</span>, maxDistance)</span><br><span class="line">                        .append(<span class="string">"spherical"</span>, <span class="keyword">true</span>)</span><br><span class="line">                        .append(<span class="string">"query"</span>, <span class="keyword">new</span> BasicDBObject(<span class="string">"status"</span>, <span class="number">1</span>))</span><br><span class="line">        );</span><br><span class="line">        pipeLine.add(aggregate);</span><br><span class="line">        Cursor cursor = mongoTemplate.getCollection(collection).aggregate(pipeLine, AggregationOptions.builder().build());</span><br><span class="line">        List&lt;BikeLocation&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        <span class="keyword">while</span> (cursor.hasNext()) &#123;</span><br><span class="line">            DBObject obj = cursor.next();</span><br><span class="line">            BikeLocation location = <span class="keyword">new</span> BikeLocation();</span><br><span class="line">            location.setBikeNumber(((Integer) obj.get(<span class="string">"bike_no"</span>)).longValue());</span><br><span class="line">            BasicDBList coordinates = (BasicDBList) ((BasicDBObject) obj.get(<span class="string">"location"</span>)).get(<span class="string">"coordinates"</span>);</span><br><span class="line">            Double[] temp = <span class="keyword">new</span> Double[<span class="number">2</span>];</span><br><span class="line">            coordinates.toArray(temp);</span><br><span class="line">            location.setCoordinates(temp);</span><br><span class="line">            location.setDistance((Double) obj.get(<span class="string">"distance"</span>));</span><br><span class="line">            result.add(location);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">"fail to find around bike"</span>, e);</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BikeException(<span class="string">"查找附近单车失败"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">geoNear</span><span class="params">()</span> <span class="keyword">throws</span> BikeException </span>&#123;</span><br><span class="line">	List&lt;BikeLocation&gt; lists =  bikeGeoService.geoNear(<span class="string">"bike-position"</span>,<span class="keyword">null</span>,<span class="keyword">new</span> Point(<span class="number">118.768376</span>, <span class="number">32.091533</span>),<span class="number">10</span>,<span class="number">5000</span>);</span><br><span class="line">	<span class="keyword">for</span> (BikeLocation list:lists)&#123;</span><br><span class="line">		System.out.println(<span class="string">"======"</span>+list);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">======BikeLocation(id=null, bikeNumber=28000003, status=0, coordinates=[118.768376, 32.091533], distance=0.0)</span><br><span class="line">======BikeLocation(id=null, bikeNumber=28000001, status=0, coordinates=[118.772041, 32.093812], distance=428.7518840364588)</span><br><span class="line">======BikeLocation(id=null, bikeNumber=28000000, status=0, coordinates=[118.776591, 32.087816], distance=878.3346245371454)</span><br></pre></td></tr></table></figure>
+<h3 id="6、service层没有问题，下面就是controller了："><a href="#6、service层没有问题，下面就是controller了：" class="headerlink" title="6、service层没有问题，下面就是controller了："></a>6、service层没有问题，下面就是controller了：</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@RequestMapping(&quot;/findAroundBike&quot;)</span><br><span class="line">public ApiResult findAroundBike(@RequestBody Point point )&#123;</span><br><span class="line">    ApiResult&lt;List&lt;BikeLocation&gt;&gt; resp = new ApiResult&lt;&gt;();</span><br><span class="line">    try &#123;</span><br><span class="line">        List&lt;BikeLocation&gt; bikeList = bikeGeoService.geoNear(&quot;bike-position&quot;,null,point,10,500);</span><br><span class="line">        resp.setMessage(&quot;查询附近单车成功&quot;);</span><br><span class="line">        resp.setData(bikeList);</span><br><span class="line">    &#125;catch (BikeException e)&#123;</span><br><span class="line">        resp.setCode(e.getStatusCode());</span><br><span class="line">        resp.setMessage(e.getMessage());</span><br><span class="line">    &#125;catch (Exception e)&#123;</span><br><span class="line">        log.error(&quot;Fail to update bike info&quot;, e);</span><br><span class="line">        resp.setCode(Constants.RESP_STATUS_INTERNAL_ERROR);</span><br><span class="line">        resp.setMessage(&quot;内部错误&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return resp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于这个方法可以不需要授权就能查询，也可以经过登陆授权才能查询。这里假设这个方法是需要授权的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&quot;key&quot;:&quot;user-token&quot;,&quot;value&quot;:&quot;c8c22cd86fa1e9c517efb63c4bc20414&quot;</span><br><span class="line">&quot;key&quot;:&quot;version&quot;,&quot;value&quot;:&quot;1.0&quot;</span><br><span class="line"></span><br><span class="line">请求体是Point,即经纬度坐标：</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">	&quot;longitude&quot;:&quot;118.768376&quot;,</span><br><span class="line">	&quot;latitude&quot;:&quot;32.091533&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">请求的方法为：localhost:8888/bike/findAroundBike</span><br></pre></td></tr></table></figure>
+<p>这里选择500米之内，有两辆车，从进到远排序，一辆是他自己，所以distance是0：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;code&quot;: 200,</span><br><span class="line">    &quot;data&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;bikeNumber&quot;: 28000003,</span><br><span class="line">            &quot;coordinates&quot;: [</span><br><span class="line">                118.768376,</span><br><span class="line">                32.091533</span><br><span class="line">            ],</span><br><span class="line">            &quot;distance&quot;: 0,</span><br><span class="line">            &quot;status&quot;: 0</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">            &quot;bikeNumber&quot;: 28000001,</span><br><span class="line">            &quot;coordinates&quot;: [</span><br><span class="line">                118.772041,</span><br><span class="line">                32.093812</span><br><span class="line">            ],</span><br><span class="line">            &quot;distance&quot;: 428.7518840364588,</span><br><span class="line">            &quot;status&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">    &quot;message&quot;: &quot;查询附近单车成功&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-07, 14:42:19</p>
+        <p><span>最后更新:</span>2018-06-07, 14:42:31</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/" title="十二、整合mongodb获取附近单车以及距离">http://yoursite.com/2018/06/07/十二、整合mongodb获取附近单车以及距离/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/07/十二、整合mongodb获取附近单车以及距离/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/07/十三、整合百度云推送--开锁/">
+                    十三、整合百度云推送--开锁
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/07/十一、整合完成编号连续递增/">
+                    十一、整合完成编号连续递增
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、引入依赖："><span class="toc-number">1.</span> <span class="toc-text">1、引入依赖：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、yml文件配置："><span class="toc-number">2.</span> <span class="toc-text">2、yml文件配置：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、实体类"><span class="toc-number">3.</span> <span class="toc-text">3、实体类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、给MongoDB一些初始数据："><span class="toc-number">4.</span> <span class="toc-text">4、给MongoDB一些初始数据：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、BikeGeoService-程序化上面的查询"><span class="toc-number">5.</span> <span class="toc-text">5、BikeGeoService 程序化上面的查询</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、service层没有问题，下面就是controller了："><span class="toc-number">6.</span> <span class="toc-text">6、service层没有问题，下面就是controller了：</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"十二、整合mongodb获取附近单车以及距离　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/07/十三、整合百度云推送--开锁/" title="上一篇: 十三、整合百度云推送--开锁">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/07/十一、整合完成编号连续递增/" title="下一篇: 十一、整合完成编号连续递增">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共147篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

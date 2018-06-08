@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="本章讲解虚拟机类加载器和双亲委派机制。">
+<meta name="keywords" content="java虚拟机">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十一、类加载器和双亲委派机制">
+<meta property="og:url" content="http://yoursite.com/2018/06/06/十一、类加载器和双亲委派机制/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="本章讲解虚拟机类加载器和双亲委派机制。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://img.blog.csdn.net/20160507202024030?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20160824110727258">
+<meta property="og:image" content="http://static.zybuluo.com/Rico123/e9ag43b7db62jflqoui5wmf9/%E6%A0%87%E5%87%86%E6%89%A9%E5%B1%95%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%BB%A7%E6%89%BF%E5%B1%82%E6%AC%A1%E5%9B%BE">
+<meta property="og:image" content="http://static.zybuluo.com/Rico123/hfqc6huibznnmboxny63f93p/%E7%B3%BB%E7%BB%9F%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%BB%A7%E6%89%BF%E5%B1%82%E6%AC%A1%E5%9B%BE">
+<meta property="og:image" content="https://github.com/kyle-liu/mynote/raw/master/images/classloader2.jpg">
+<meta property="og:image" content="http://img.blog.csdn.net/20160824114352259">
+<meta property="og:image" content="http://img.blog.csdn.net/20160824122551437">
+<meta property="og:image" content="http://img.blog.csdn.net/20160507210300124?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20160507210355859?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://img.blog.csdn.net/20160507210412699?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%E6%98%8E%E7%99%BD.png">
+<meta property="og:updated_time" content="2018-06-06T09:37:53.846Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="十一、类加载器和双亲委派机制">
+<meta name="twitter:description" content="本章讲解虚拟机类加载器和双亲委派机制。">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20160507202024030?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>十一、类加载器和双亲委派机制 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-十一、类加载器和双亲委派机制" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/十一、类加载器和双亲委派机制/" class="article-date">
+      <time datetime="2018-06-06T09:31:42.693Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      十一、类加载器和双亲委派机制
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>本章讲解虚拟机类加载器和双亲委派机制。<br><a id="more"></a></p>
+<p>每个开发人员对<code>java.lang.ClassNotFoundExcetpion</code>这个异常肯定都不陌生，这个异常背后涉及到的是Java技术体系中的类加载机制。本文简述了JVM三种预定义类加载器，即启动类加载器、扩展类加载器和系统类加载器，并介绍和分析它们之间的关系和类加载所采用的双亲委派机制，给出并分析了与Java类加载原理相关的若干问题。</p>
+<h2 id="一-Java-虚拟机类加载器结构简述"><a href="#一-Java-虚拟机类加载器结构简述" class="headerlink" title="一. Java 虚拟机类加载器结构简述"></a>一. Java 虚拟机类加载器结构简述</h2><h3 id="1-什么是类加载器"><a href="#1-什么是类加载器" class="headerlink" title="1. 什么是类加载器"></a>1. 什么是类加载器</h3><p>类加载机制的第一个阶段加载做的工作有：</p>
+<p>1、通过一个类的全限定名（包名与类名）来获取定义此类的二进制字节流（Class文件）。而获取的方式，可以通过jar包、war包、网络中获取、JSP文件生成等方式。</p>
+<p>2、将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。这里只是转化了数据结构，并未合并数据。（方法区就是用来存放已被加载的类信息，常量，静态变量，编译后的代码的运行时内存区域）</p>
+<p>3、在内存中生成一个代表这个类的<code>java.lang.Class</code>对象，作为方法区这个类的各种数据的访问入口。这个Class对象并没有规定是在Java堆内存中，它比较特殊，虽为对象，但存放在方法区中。</p>
+<p>其中，实现第一个工作的代码块就被称为“类加载器”。</p>
+<h3 id="2-类加载器的作用"><a href="#2-类加载器的作用" class="headerlink" title="2. 类加载器的作用"></a>2. 类加载器的作用</h3><p>类加载器的作用不仅仅是实现类的加载，它还与类的的“相等”判定有关，关系着Java“相等”判定方法的返回结果，只有在满足如下三个类“相等”判定条件，才能判定两个类相等。</p>
+<pre><code>1、两个类来自同一个Class文件
+2、两个类是由同一个虚拟机加载
+3、两个类是由同一个类加载器加载
+</code></pre><h3 id="3-JVM三种预定义类型类加载器"><a href="#3-JVM三种预定义类型类加载器" class="headerlink" title="3. JVM三种预定义类型类加载器"></a>3. JVM三种预定义类型类加载器</h3><p>我们首先看一下JVM预定义的三种类加载器，当JVM启动的时候，Java缺省开始使用如下三种类型的类加载器：</p>
+<p>　　启动（<code>Bootstrap</code>）类加载器：引导类加载器是用 本地代码实现的类加载器，它负责将 <code>&lt;JAVA_HOME&gt;/lib</code>下面的核心类库 或 <code>-Xbootclasspath</code>选项指定的jar包等 虚拟机识别的类库 加载到内存中。由于引导类加载器涉及到虚拟机本地实现细节，开发者无法直接获取到启动类加载器的引用，所以 不允许直接通过引用进行操作。</p>
+<p>　　扩展（<code>Extension</code>）类加载器：扩展类加载器是由Sun的<code>ExtClassLoader</code>（<code>sun.misc.Launcher$ExtClassLoader</code>）实现的，它负责将 <code>&lt;JAVA_HOME &gt;/lib/ext</code>或者由系统变量<code>-Djava.ext.dir</code>指定位置中的类库 加载到内存中。开发者可以直接使用标准扩展类加载器。</p>
+<p>　　系统（<code>System/APP</code>）类加载器或称为应用程序类加载器：系统类加载器是由 Sun 的 <code>AppClassLoader</code>（<code>sun.misc.Launcher$AppClassLoader</code>）实现的，它负责将 用户类路径(<code>java -classpath</code>或<code>-Djava.class.path</code>变量所指的目录，即当前类所在路径及其引用的第三方类库的路径，如第四节中的问题6所述)下的类库 加载到内存中。开发者可以直接使用系统类加载器。</p>
+<p>　　Ps: 除了以上列举的三种类加载器，还有一种比较特殊的类型就是线程上下文类加载器。<br>　　<br><img src="http://img.blog.csdn.net/20160507202024030?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image">
+　　</p>
+<h3 id="4-什么是双亲委派模型？"><a href="#4-什么是双亲委派模型？" class="headerlink" title="4. 什么是双亲委派模型？"></a>4. 什么是双亲委派模型？</h3><p>首先，先要知道什么是类加载器。正如上面所说，类加载器就是根据指定全限定名称将class文件加载到JVM内存，转为Class对象。如果站在JVM的角度来看，只存在两种类加载器:</p>
+<pre><code>启动类加载器（Bootstrap ClassLoader）：由C++语言实现（针对HotSpot）,负责将存放在&lt;JAVA_HOME&gt;\lib目录或-Xbootclasspath参数指定的路径中的类库加载到内存中。
+
+其他类加载器：由Java语言实现，继承自抽象类ClassLoader。如：
+
+    扩展类加载器（Extension ClassLoader）：
+    负责加载&lt;JAVA_HOME&gt;\lib\ext目录或java.ext.dirs系统变量指定的路径中的所有类库。
+
+    应用程序类加载器（Application ClassLoader）。
+    负责加载用户类路径（classpath）上的指定类库，我们可以直接使用这个类加载器。
+    一般情况，如果我们没有自定义类加载器默认就是用这个加载器。
+</code></pre><h3 id="5-双亲委派模型工作过程？"><a href="#5-双亲委派模型工作过程？" class="headerlink" title="5. 双亲委派模型工作过程？"></a>5. 双亲委派模型工作过程？</h3><p>如果一个类加载器收到类加载的请求，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器完成。每个类加载器都是如此，只有当父加载器在自己的搜索范围内找不到指定的类时（即<code>ClassNotFoundException</code>），子加载器才会尝试自己去加载。</p>
+<p><img src="http://img.blog.csdn.net/20160824110727258" alt="image"></p>
+<h3 id="6-为什么需要双亲委派模型？"><a href="#6-为什么需要双亲委派模型？" class="headerlink" title="6. 为什么需要双亲委派模型？"></a>6. 为什么需要双亲委派模型？</h3><p>为什么需要双亲委派模型呢？假设没有双亲委派模型，试想一个场景：</p>
+<pre><code>黑客自定义一个java.lang.String类，该String类具有系统的String类一样的功能，只
+是在某个函数稍作修改。比如equals函数，这个函数经常使用，如果在这这个函数中，
+黑客加入一些“病毒代码”。并且通过自定义类加载器加入到JVM中。此时，如果没有双亲
+委派模型，那么JVM就可能误以为黑客自定义的java.lang.String类是系统的String类，
+导致“病毒代码”被执行。
+</code></pre><p>而有了双亲委派模型，黑客自定义的<code>java.lang.String</code>类永远都不会被加载进内存。因为首先是最顶端的类加载器加载系统的<code>java.lang.String</code>类，最终自定义的类加载器无法加载<code>java.lang.String</code>类。</p>
+<p>或许你会想，我在自定义的类加载器里面强制加载自定义的<code>java.lang.String</code>类，不去通过调用父加载器不就好了吗?确实，这样是可行。但是，在JVM中，判断一个对象是否是某个类型时，如果该对象的实际类型与待比较的类型的类加载器不同，那么会返回false。</p>
+<p>举个简单例子：</p>
+<pre><code>ClassLoader1、ClassLoader2都加载java.lang.String类，对应Class1、Class2对象。
+那么Class1对象不属于ClassLoad2对象加载的java.lang.String类型。
+</code></pre><p>委托机制的意义 — 防止内存中出现多份同样的字节码 </p>
+<p>比如两个类A和类B都要加载<code>System</code>类：</p>
+<p>如果不用委托而是自己加载自己的，那么类A就会加载一份System字节码，然后类B又会加载一份<code>System</code>字节码，这样内存中就出现了两份<code>System</code>字节码。</p>
+<p>如果使用委托机制，会递归的向父类查找，也就是首选用Bootstrap尝试加载，如果找不到再向下。这里的<code>System</code>就能在<code>Bootstrap</code>中找到然后加载，如果此时类B也要加载<code>System</code>，也从<code>Bootstrap</code>开始，此时<code>Bootstrap</code>发现已经加载过了<code>System</code>那么直接返回内存中的<code>System</code>即可而不需要重新加载，这样内存中就只有一份<code>System</code>的字节码了。</p>
+<h3 id="7-如何实现双亲委派模型？"><a href="#7-如何实现双亲委派模型？" class="headerlink" title="7. 如何实现双亲委派模型？"></a>7. 如何实现双亲委派模型？</h3><p>通俗的讲，就是某个特定的类加载器在接到加载类的请求时，首先将加载任务委托给父类加载器，依次递归 (本质上就是<code>loadClass</code>函数的递归调用)。因此，所有的加载请求最终都应该传送到顶层的启动类加载器中。如果父类加载器可以完成这个类加载请求，就成功返回；只有当父类加载器无法完成此加载请求时，子加载器才会尝试自己去加载。事实上，大多数情况下，越基础的类由越上层的加载器进行加载，因为这些基础类之所以称为“基础”，是因为它们总是作为被用户代码调用的API（当然，也存在基础类回调用户用户代码的情形）。 关于虚拟机默认的双亲委派机制，我们可以从系统类加载器和扩展类加载器为例作简单分析。</p>
+<p><img src="http://static.zybuluo.com/Rico123/e9ag43b7db62jflqoui5wmf9/%E6%A0%87%E5%87%86%E6%89%A9%E5%B1%95%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%BB%A7%E6%89%BF%E5%B1%82%E6%AC%A1%E5%9B%BE" alt="image"></p>
+<p><img src="http://static.zybuluo.com/Rico123/hfqc6huibznnmboxny63f93p/%E7%B3%BB%E7%BB%9F%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%BB%A7%E6%89%BF%E5%B1%82%E6%AC%A1%E5%9B%BE" alt="image"></p>
+<p>上面两张图分别是标准扩展类加载器继承层次图和系统类加载器继承层次图。通过这两张图我们可以看出，扩展类加载器和系统类加载器均是继承自 <code>java.lang.ClassLoader</code>抽象类。我们就可以从<code>java.lang.ClassLoader</code>中的<code>loadClass</code>（<code>String name</code>）方法的代码中分析出虚拟机默认采用的双亲委派机制到底是什么模样：</p>
+<blockquote>
+<p><code>loadClass</code>默认实现如下：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Class&lt;?&gt; loadClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">return</span> loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>再看看<code>loadClass(String name, boolean resolve)</code>函数：</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">        <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">            <span class="comment">// First, check if the class has already been loaded</span></span><br><span class="line">            Class c = findLoadedClass(name);</span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                        c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        c = findBootstrapClassOrNull(name);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                    <span class="comment">// ClassNotFoundException thrown if class not found</span></span><br><span class="line">                    <span class="comment">// from the non-null parent class loader</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// If still not found, then invoke findClass in order</span></span><br><span class="line">                    <span class="comment">// to find the class.</span></span><br><span class="line">                    <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                    c = findClass(name);</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// this is the defining class loader; record the stats</span></span><br><span class="line">                    sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                    sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                    sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">                resolveClass(c);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<pre><code>1. 首先，检查一下指定名称的类是否已经加载过，如果加载过了，就不需要再加载，直接返回。
+2. 如果此类没有加载过，那么，再判断一下是否有父加载器；如果有父加载器，则由父加载器加载（即调用parent.loadClass(name, false);）.或者是调用bootstrap类加载器来加载。
+3. 如果父加载器及bootstrap类加载器都没有找到指定的类，那么调用当前类加载器的findClass方法来完成类加载。
+</code></pre><p>上面说的比较啰嗦，其实简单点，JVM类加载器的步骤模型为：</p>
+<pre><code>1.先检查需要加载的类是否已经被加载，这个过程是从下-------&gt; 上;
+2.如果没有被加载，则委托父加载器加载，如果加载不了再由自己加载，这个过程是从上 ------&gt; 下;
+</code></pre><p><img src="https://github.com/kyle-liu/mynote/raw/master/images/classloader2.jpg" alt="image"></p>
+<p>话句话说，如果自定义类加载器，就必须重写<code>findClass</code>方法！</p>
+<p><code>findClass</code>的默认实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ClassNotFoundException(name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出，抽象类<code>ClassLoader</code>的<code>findClass</code>函数默认是抛出异常的。而前面我们知道，<code>loadClass</code>在父加载器无法加载类的时候，就会调用我们自定义的类加载器中的<code>findeClass</code>函数，因此我们必须要在<code>loadClass</code>这个函数里面实现将一个指定类名称转换为<code>Class</code>对象.</p>
+<p>如果是是读取一个指定的名称的类为字节数组的话，这很好办。但是如何将字节数组转为<code>Class</code>对象呢？很简单，Java提供了<code>defineClass</code>方法，通过这个方法，就可以把一个字节数组转为<code>Class</code>对象啦~</p>
+<p><code>defineClass</code>主要的功能是：</p>
+<pre><code>将一个字节数组转为Class对象，这个字节数组是class文件读取后最终的字节数组。
+如，假设class文件是加密过的，则需要解密后作为形参传入defineClass函数。
+</code></pre><p><code>defineClass</code>默认实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="keyword">final</span> Class&lt;?&gt; defineClass(String name, <span class="keyword">byte</span>[] b, <span class="keyword">int</span> off, <span class="keyword">int</span> len)</span><br><span class="line">        <span class="keyword">throws</span> ClassFormatError  &#123;</span><br><span class="line">        <span class="keyword">return</span> defineClass(name, b, off, len, <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160824114352259" alt="image"></p>
+<h3 id="8-示例"><a href="#8-示例" class="headerlink" title="8. 示例"></a>8. 示例</h3><p>首先，我们定义一个待加载的普通Java类:Test.java。放在com.huachao.cl包下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.huachao.cl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"恩，是的，我是由 "</span> + getClass().getClassLoader().getClass()</span><br><span class="line">                + <span class="string">" 加载进来的"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果你是直接在当前项目里面创建，待<code>Test.java</code>编译后，请把<code>Test.class</code>文件拷贝走，再将<code>Test.java</code>删除。因为如果<code>Test.class</code>存放在当前项目中，<strong>根据双亲委派模型可知，会通过<code>sun.misc.Launcher$AppClassLoader</code> 类加载器加载。为了让我们自定义的类加载器加载</strong>，我们把<code>Test.class</code>文件放入到其他目录。</p>
+<p>在本例中，我们<code>Test.class</code>文件存放的目录如下：</p>
+<p><img src="http://img.blog.csdn.net/20160824122551437" alt="image"></p>
+<p>接下来就是自定义我们的类加载器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line">    <span class="comment">//继承ClassLoader重写findClass方法</span></span><br><span class="line">    <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClassLoader</span> <span class="keyword">extends</span> <span class="title">ClassLoader</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String classPath;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MyClassLoader</span><span class="params">(String classPath)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.classPath = classPath;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//class文件读取后最终的字节数组</span></span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">byte</span>[] loadByte(String name) <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            name = name.replaceAll(<span class="string">"\\."</span>, <span class="string">"/"</span>);</span><br><span class="line">            FileInputStream fis = <span class="keyword">new</span> FileInputStream(classPath + <span class="string">"/"</span> + name</span><br><span class="line">                    + <span class="string">".class"</span>);</span><br><span class="line">            <span class="keyword">int</span> len = fis.available();</span><br><span class="line">            <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[len];</span><br><span class="line">            fis.read(data);</span><br><span class="line">            fis.close();</span><br><span class="line">            <span class="keyword">return</span> data;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">protected</span> Class&lt;?&gt; findClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">byte</span>[] data = loadByte(name);</span><br><span class="line">                <span class="comment">//将一个字节数组转为Class对象</span></span><br><span class="line">                <span class="keyword">return</span> defineClass(name, data, <span class="number">0</span>, data.length);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> ClassNotFoundException();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        MyClassLoader classLoader = <span class="keyword">new</span> MyClassLoader(<span class="string">"D:/test"</span>);</span><br><span class="line">        Class clazz = classLoader.loadClass(<span class="string">"com.huachao.cl.Test"</span>);</span><br><span class="line">        Object obj = clazz.newInstance();</span><br><span class="line">        Method helloMethod = clazz.getDeclaredMethod(<span class="string">"hello"</span>, <span class="keyword">null</span>);</span><br><span class="line">        helloMethod.invoke(obj, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后运行结果如下：</p>
+<blockquote>
+<p>恩，是的，我是由 <code>class Main$MyClassLoader</code> 加载进来的</p>
+</blockquote>
+<p>这样，就实现了由自定义类加载器加载指定路径下的<code>class</code>文件，然后实例化和得到类中的方法。</p>
+<p>下面再看一个简单的双亲委派模型代码实例验证：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassLoaderTest</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;  </span><br><span class="line">        <span class="comment">//输出ClassLoaderText的类加载器名称  </span></span><br><span class="line">        System.out.println(<span class="string">"ClassLoaderText类的加载器的名称:"</span>+ClassLoaderTest.class.getClassLoader().getClass().getName());  </span><br><span class="line">        System.out.println(<span class="string">"System类的加载器的名称:"</span>+System.class.getClassLoader());  </span><br><span class="line">        System.out.println(<span class="string">"List类的加载器的名称:"</span>+List.class.getClassLoader());  </span><br><span class="line">  </span><br><span class="line">        ClassLoader cl = ClassLoaderTest.class.getClassLoader();  </span><br><span class="line">        <span class="keyword">while</span>(cl != <span class="keyword">null</span>)&#123;  </span><br><span class="line">                System.out.print(cl.getClass().getName()+<span class="string">"-&gt;"</span>);  </span><br><span class="line">                cl = cl.getParent();  </span><br><span class="line">        &#125;  </span><br><span class="line">        System.out.println(cl);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<p><img src="http://img.blog.csdn.net/20160507210300124?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>解释一下：</p>
+<ul>
+<li><code>ClassLoaderTest</code>类是用户定义的类，位于<code>CLASSPATH</code>下，由系统/应用程序类加载器加载。</li>
+<li><code>System</code>类与<code>List</code>类都属于Java核心类，由祖先类启动类加载器加载，而启动类加载器是在JVM内部通过<code>C/C++</code>实现的，并不是Java，自然也就不能继承<code>ClassLoader</code>类，自然就不能输出其名称。</li>
+<li>而箭头项代表的就是类加载的流程，层级委托，从祖先类加载器开始，直到系统/应用程序类加载器处才被加载。</li>
+</ul>
+<p>那么我们做个测试，把类打成jar包，拷贝入<code>%JAVA_HOME%/jre/lib/ext</code>目录下，再次运行<code>ClassLoaderTest</code>类：</p>
+<p><img src="http://img.blog.csdn.net/20160507210355859?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p><img src="http://img.blog.csdn.net/20160507210412699?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>解释一下，因为类的Jar包放到了<code>ExtClassLoader</code>的加载目录下，所以在根目录找不到相应类后，在<code>ExtClassLoader</code>处就完成了类加载，而忽略了<code>APPClassLoader</code>阶段。</p>
+<p>这两个例子，第一个例子实现了自定义的类加载器，可以自己指定加载位置；第二个例子证明了如果<code>ExtClassLoader</code>可以处理，那么就忽略了<code>APPClassLoader</code>阶段。</p>
+<p>对于《深入理解java虚拟机》的228页的代码7-8，演示了不同类加载器对<code>instanceof</code>关键字运算的结果的影响，证明了两个类，即使来自于同一个<code>Class</code>文件，但是由于类加载器的不同，这两个类仍然为独立的类。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B%E6%98%8E%E7%99%BD.png" alt="image"></p>
+<ol>
+<li><p>沿用双亲委派机制自定义类加载器很简单，只需继承<code>ClassLoader</code>类并重写<code>findClass</code>方法即可。</p>
+</li>
+<li><p>打破双亲委派机制则不仅要继承<code>ClassLoader</code>类，还要重写<code>loadClass</code>和<code>findClass</code>方法（默认的<code>loadClass</code>方法是实现了双亲委派机制的逻辑，即会先让父类加载器加载，当无法加载时才由自己加载）</p>
+</li>
+</ol>
+<p>参考：</p>
+<ul>
+<li><a href="http://blog.csdn.net/zhangliangzi/article/details/51338291" target="_blank" rel="noopener">http://blog.csdn.net/zhangliangzi/article/details/51338291</a></li>
+<li><a href="http://blog.csdn.net/huachao1001/article/details/52297075" target="_blank" rel="noopener">http://blog.csdn.net/huachao1001/article/details/52297075</a></li>
+<li><a href="http://blog.csdn.net/justloveyou_/article/details/72217806" target="_blank" rel="noopener">http://blog.csdn.net/justloveyou_/article/details/72217806</a></li>
+<li><a href="http://blog.csdn.net/u013256816/article/details/50829656" target="_blank" rel="noopener">http://blog.csdn.net/u013256816/article/details/50829656</a></li>
+<li><a href="https://github.com/kyle-liu/mynote/blob/master/classloader.md" target="_blank" rel="noopener">https://github.com/kyle-liu/mynote/blob/master/classloader.md</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 17:31:42</p>
+        <p><span>最后更新:</span>2018-06-06, 17:37:53</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/十一、类加载器和双亲委派机制/" title="十一、类加载器和双亲委派机制">http://yoursite.com/2018/06/06/十一、类加载器和双亲委派机制/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/十一、类加载器和双亲委派机制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/十二、虚拟机字节码执行引擎/">
+                    十二、虚拟机字节码执行引擎
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/十、虚拟机类加载机制/">
+                    十、虚拟机类加载机制
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-Java-虚拟机类加载器结构简述"><span class="toc-number">1.</span> <span class="toc-text">一. Java 虚拟机类加载器结构简述</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是类加载器"><span class="toc-number">1.1.</span> <span class="toc-text">1. 什么是类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-类加载器的作用"><span class="toc-number">1.2.</span> <span class="toc-text">2. 类加载器的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-JVM三种预定义类型类加载器"><span class="toc-number">1.3.</span> <span class="toc-text">3. JVM三种预定义类型类加载器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-什么是双亲委派模型？"><span class="toc-number">1.4.</span> <span class="toc-text">4. 什么是双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-双亲委派模型工作过程？"><span class="toc-number">1.5.</span> <span class="toc-text">5. 双亲委派模型工作过程？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-为什么需要双亲委派模型？"><span class="toc-number">1.6.</span> <span class="toc-text">6. 为什么需要双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-如何实现双亲委派模型？"><span class="toc-number">1.7.</span> <span class="toc-text">7. 如何实现双亲委派模型？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-示例"><span class="toc-number">1.8.</span> <span class="toc-text">8. 示例</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"十一、类加载器和双亲委派机制　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/十二、虚拟机字节码执行引擎/" title="上一篇: 十二、虚拟机字节码执行引擎">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/十、虚拟机类加载机制/" title="下一篇: 十、虚拟机类加载机制">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共147篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

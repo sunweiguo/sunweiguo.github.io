@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="spring面试知识点重灾区。">
+<meta name="keywords" content="面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.Spring知识点提炼">
+<meta property="og:url" content="http://yoursite.com/2018/06/08/1.Spring知识点提炼/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="spring面试知识点重灾区。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/spring%E6%9E%84%E6%88%90.png">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/SpringMVC%E5%8E%9F%E7%90%86">
+<meta property="og:updated_time" content="2018-06-08T03:39:46.206Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1.Spring知识点提炼">
+<meta name="twitter:description" content="spring面试知识点重灾区。">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/spring%E6%9E%84%E6%88%90.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>1.Spring知识点提炼 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-1.Spring知识点提炼" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/08/1.Spring知识点提炼/" class="article-date">
+      <time datetime="2018-06-08T03:38:11.662Z" itemprop="datePublished">2018-06-08</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      1.Spring知识点提炼
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>spring面试知识点重灾区。<br><a id="more"></a></p>
+<h3 id="1-Spring框架的作用"><a href="#1-Spring框架的作用" class="headerlink" title="1. Spring框架的作用"></a>1. Spring框架的作用</h3><ul>
+<li>轻量：<code>Spring</code>是轻量级的，基本的版本大小为2MB</li>
+<li>控制反转：<code>Spring</code>通过控制反转实现了松散耦合，对象们给出它们的依赖，而不是创建或查找依赖的对象们。</li>
+<li>面向切面的编程<code>AOP</code>:<code>Spring</code>支持面向切面的编程，并且把应用业务逻辑和系统服务分开。</li>
+<li>容器：<code>Spring</code>包含并管理应用中对象的生命周期和配置</li>
+<li>MVC框架： <code>Spring-MVC</code></li>
+<li>事务管理：<code>Spring</code>提供一个持续的事务管理接口，可以扩展到上至本地事务下至全局事务<code>JTA</code></li>
+<li>异常处理：<code>Spring</code>提供方便的<code>API</code>把具体技术相关的异常</li>
+</ul>
+<h3 id="2-Spring的组成"><a href="#2-Spring的组成" class="headerlink" title="2. Spring的组成"></a>2. Spring的组成</h3><p><img src="http://p9l5rzdf0.bkt.clouddn.com/spring%E6%9E%84%E6%88%90.png" alt="image"></p>
+<p><code>Spring</code>由7个模块组成：</p>
+<ul>
+<li><code>Spring Core</code>: 核心容器提供 <code>Spring</code> 框架的基本功能。核心容器的主要组件是<code>BeanFactory</code>，它是工厂模式的实现。<code>BeanFactory</code> 使用控制反转 （<code>IOC</code>） 模式将应用程序的配置和依赖性规范与实际的应用程序代码分开。</li>
+<li><code>Spring</code> 上下文：<code>Spring</code> 上下文是一个配置文件，向 <code>Spring</code> 框架提供上下文信息。<code>Spring</code> 上下文包括企业服务，例如 JNDI、EJB、电子邮件、国际化、校验和调度功能。</li>
+<li><code>Spring AOP</code>：通过配置管理特性，<code>Spring AOP</code> 模块直接将面向方面的编程功能集成到了 <code>Spring</code> 框架中。所以，可以很容易地使 <code>Spring</code> 框架管理的任何对象支持 <code>AOP</code>。<code>Spring AOP</code> 模块为基于 <code>Spring</code> 的应用程序中的对象提供了事务管理服务。通过使用 <code>Spring AOP</code>，不用依赖 <code>EJB</code> 组件，就可以将声明性事务管理集成到应用程序中。</li>
+<li><code>Spring DAO</code>：<code>JDBC DAO</code> 抽象层提供了有意义的异常层次结构，可用该结构来管理异常处理和不同数据库供应商抛出的错误消息。异常层次结构简化了错误处理，并且极大地降低了需要编写的异常代码数量（例如打开和关闭连接）。<code>Spring DAO</code> 的面向 <code>JDBC</code> 的异常遵从通用的 <code>DAO</code> 异常层次结构。</li>
+<li><code>Spring ORM</code>：<code>Spring</code> 框架插入了若干个 <code>ORM</code> 框架，从而提供了 <code>ORM</code> 的对象关系工具，其中包括 <code>JDO</code>、<code>Hibernate</code> 和 <code>iBatis SQL Map</code>。所有这些都遵从 <code>Spring</code> 的通用事务和 <code>DAO</code> 异常层次结构。</li>
+<li><code>Spring Web</code> 模块：<code>Web`</code> 上下文模块建立在应用程序上下文模块之上，为基于 <code>Web</code> 的应用程序提供了上下文。所以，<code>Spring</code> 框架支持与 <code>Jakarta Struts</code> 的集成。<code>Web</code> 模块还简化了处理多部分请求以及将请求参数绑定到域对象的工作。</li>
+<li><code>Spring MVC</code> 框架：<code>MVC</code> 框架是一个全功能的构建 <code>Web</code> 应用程序的 <code>MVC</code> 实现。通过策略接口，<code>MVC</code> 框架变成为高度可配置的，<code>MVC</code> 容纳了大量视图技术，其中包括 <code>JSP</code>、<code>Velocity</code>、<code>Tiles</code>、<code>iText</code> 和 <code>POI</code>。</li>
+</ul>
+<h3 id="3-Spring容器"><a href="#3-Spring容器" class="headerlink" title="3. Spring容器"></a>3. Spring容器</h3><p><code>Spring</code>的容器可以分为两种类型 </p>
+<ol>
+<li><code>BeanFactory</code>：（<code>org.springframework.beans.factory.BeanFactory</code>接口定义）是最简答的容器，提供了基本的DI支持。最常用的<code>BeanFactory</code>实现就是<code>XmlBeanFactory</code>类，它根据<code>XML</code>文件中的定义加载<code>beans</code>，该容器从<code>XML</code>文件读取配置元数据并用它去创建一个完全配置的系统或应用。 </li>
+<li><code>ApplicationContext</code>应用上下文：（<code>org.springframework.context.ApplicationContext</code>）基于<code>BeanFactory</code>之上构建，并提供面向应用的服务。</li>
+</ol>
+<h3 id="4-ApplicationContext通常的实现"><a href="#4-ApplicationContext通常的实现" class="headerlink" title="4. ApplicationContext通常的实现"></a>4. ApplicationContext通常的实现</h3><ul>
+<li><code>ClassPathXmlApplicationContext</code>：从类路径下的<code>XML</code>配置文件中加载上下文定义，把应用上下文定义文件当做类资源。</li>
+<li><code>FileSystemXmlApplicationContext</code>：读取文件系统下的<code>XML</code>配置文件并加载上下文定义。</li>
+<li><code>XmlWebApplicationContext</code>：读取<code>Web</code>应用下的<code>XML</code>配置文件并装载上下文定义。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ApplicationContext context = <span class="keyword">new</span> ClassPathXmlApplicationContext(<span class="string">"applicationContext.xml"</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="5-IOC-amp-DI"><a href="#5-IOC-amp-DI" class="headerlink" title="5. IOC &amp; DI"></a>5. IOC &amp; DI</h3><p><code>Inversion of Control</code>， 一般分为两种类型：依赖注入<code>DI</code>(<code>Dependency Injection</code>)和依赖查找（<code>Dependency Lookup</code>）.依赖注入应用比较广泛。</p>
+<p><code>Spring IOC</code>负责创建对象，管理对象（<code>DI</code>），装配对象，配置对象，并且管理这些对象的整个生命周期。</p>
+<p>优点：把应用的代码量降到最低。容器测试，最小的代价和最小的侵入性使松散耦合得以实现。<code>IOC</code>容器支持加载服务时的饿汉式初始化和懒加载。 </p>
+<p><code>DI</code>依赖注入是<code>IOC</code>的一个方面，是个通常的概念，它有多种解释。这概念是说你不用床架对象，而只需要描述它如何被创建。你不在代码里直接组装你的组件和服务，但是要在配置文件里描述组件需要哪些服务，之后一个<code>IOC</code>容器辅助把他们组装起来。<br><code>IOC</code>的注入方式：1. 构造器依赖注入；2. <code>Setter</code>方法注入。</p>
+<h3 id="6-如何给spring容器提供配置元数据"><a href="#6-如何给spring容器提供配置元数据" class="headerlink" title="6. 如何给spring容器提供配置元数据"></a>6. 如何给spring容器提供配置元数据</h3><ul>
+<li><code>XML</code>配置文件</li>
+<li>基于注解的配置</li>
+<li>基于<code>Java</code>的配置<code>@Configuration</code>, <code>@Bean</code></li>
+</ul>
+<h3 id="7-bean标签中的属性"><a href="#7-bean标签中的属性" class="headerlink" title="7. bean标签中的属性"></a>7. bean标签中的属性</h3><ul>
+<li><code>id</code></li>
+<li><code>name</code></li>
+<li><code>class</code> </li>
+<li><code>init-method</code>：<code>Bean</code>实例化后会立刻调用的方法 </li>
+<li><code>destory-method</code>:<code>Bean</code>从容器移除和销毁前，会调用的方法 </li>
+<li><code>factory-method</code>:运行我们调用一个指定的静态方法，从而代替构造方法来创建一个类的实例。 </li>
+<li><code>scope</code>：<code>Bean</code>的作用域，包括<code>singleton</code>(默认)，<code>prototype</code>(每次调用都创建一个实例), <code>request</code>,<code>session</code>,<code>global-session</code>（注意<code>spring</code>中的单例<code>bean</code>不是线程安全的） </li>
+<li><code>autowired</code>:自动装配 <code>byName</code>, <code>byType</code>, <code>constructor</code>, <code>autodetect</code>(首先阐释使用<code>constructor</code>自动装配，如果没有发现与构造器相匹配的<code>Bean</code>时，<code>Spring</code>将尝试使用<code>byType</code>自动装配)</li>
+</ul>
+<h3 id="8-beans标签中相关属性"><a href="#8-beans标签中相关属性" class="headerlink" title="8. beans标签中相关属性"></a>8. beans标签中相关属性</h3><ul>
+<li><code>default-init-method</code></li>
+<li><code>default-destory-method</code></li>
+<li><code>default-autowire</code>：默认为<code>none</code>，应用于<code>Spring</code>配置文件中的所有<code>Bean</code>，注意这里不是指<code>Spring</code>应用上下文，因为你可以定义多个配置文件</li>
+</ul>
+<h3 id="Bean的生命周期"><a href="#Bean的生命周期" class="headerlink" title="Bean的生命周期"></a>Bean的生命周期</h3><ol>
+<li>创建Bean的实例(<code>factory-method</code>, <code>autowireConstrutor</code>) </li>
+<li>属性注入(<code>autowireByName</code>, <code>autowireByType</code>) </li>
+<li>初始化<code>Bean</code></li>
+</ol>
+<p>3.1 激活<code>Aware</code>方法：（<code>invokeAwaresMethods</code>）<code>Spring</code>中提供了一些<code>Aware</code>相关接口，比如<code>BeanNameAware</code>, <code>BeanFactoryAware</code>, <code>ApplicationContextAware</code>等，实现这些<code>Aware</code>接口的<code>bean</code>在被初始化之后，可以取得一些相对应的资源。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">invokeAwareMethods</span><span class="params">(<span class="keyword">final</span> String beanName, <span class="keyword">final</span> Object bean)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(bean <span class="keyword">instanceof</span> Aware)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span>(bean <span class="keyword">instanceof</span> BeanNameAware)&#123;</span><br><span class="line">            ((BeanNameAware) bean).setBeanName(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(bean <span class="keyword">instanceof</span> BeanClassLoaderAware)&#123;</span><br><span class="line">            ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(bean <span class="keyword">instanceof</span> BeanFactoryAware)&#123;</span><br><span class="line">            ((BeanFactoryAware) bean).setBeanFactory(AbstactAutowire CapableBeanFactory.<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.2 处理器的应用(<code>BeanPostProcessor</code>接口)：调用客户自定义初始化方法前以及调用自定义初始化方法后分别会调用<code>BeanPostProcessor</code>的<code>postProcessBeforeInitialization</code>和<code>postProcessAfterInitialization</code>方法，使用户可以根据自己的业务需求进行响应的处理。 </p>
+<p>3.3 激活自定义的<code>init</code>方法（<code>init-method</code> &amp; 自定义实现<code>InitializingBean</code>接口）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">initializeBean</span><span class="params">(<span class="keyword">final</span> String beanName, <span class="keyword">final</span> Object bean, RootBeanDefinetion mbd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(System.getSecurityManager() != <span class="keyword">null</span>)&#123;</span><br><span class="line">        AccessController.doPrivileged(<span class="keyword">new</span> PrivilegedAction&lt;Object&gt;()&#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                invokeAwareMethods(beanName,bean);</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">//对特殊的bean处理：Aware, BeanClassLoaderAware, BeanFactoryAware</span></span><br><span class="line">        invokeAwareMethods(beanName,bean);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Object wrappedBean = bean;</span><br><span class="line">    <span class="keyword">if</span>(mbd == <span class="keyword">null</span> !! !mbd.isSynthetic())&#123;</span><br><span class="line">        wrappedBean = applyBeanPostProcessorsBeforeInitialization(wappedBean,beanName);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        invokeInitMethods(beanName, wappedBean, mbd);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span>(Throwable ex)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> BeanCreationException((mbd != <span class="keyword">null</span> ? mbd.getResourceDescription():<span class="keyword">null</span>),beanName,<span class="string">"Invocation of init method failed"</span>,ex);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(mbd == <span class="keyword">null</span> || ！mbd.isSynthetic())&#123;</span><br><span class="line">        wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> wappedBean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>使用<code>Bean</code>。 驻留在应用的上下文中，直到该应用上下文被销毁。 </li>
+<li>销毁(<code>destory-mthod</code> &amp; 实现<code>DisposableBean</code>接口)</li>
+</ol>
+<h3 id="10-Spring中注入集合"><a href="#10-Spring中注入集合" class="headerlink" title="10. Spring中注入集合"></a>10. Spring中注入集合</h3><ul>
+<li><code>&lt;list&gt;</code>允许值相同</li>
+<li><code>&lt;set&gt;</code>不允许值相同</li>
+<li><code>&lt;map&gt;&lt;entry key=&quot;&quot; value=&quot;&quot;&gt;&lt;/map&gt;</code>键和值都可以为任意类型，<code>key</code>, <code>key-ref</code>, <code>value-ref</code>, <code>value</code>可以任意搭配</li>
+<li><code>&lt;props&gt;&lt;prop key=&quot;&quot;&gt;XXX&lt;/prop&gt;&lt;/props&gt;</code>键和值都只能是<code>String</code>类型</li>
+</ul>
+<h3 id="11-装配空值"><a href="#11-装配空值" class="headerlink" title="11. 装配空值"></a>11. 装配空值</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"xxx"</span>&gt;</span><span class="tag">&lt;<span class="name">null</span>/&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="12-自动装配-autowiring"><a href="#12-自动装配-autowiring" class="headerlink" title="12. 自动装配(autowiring)"></a>12. 自动装配(autowiring)</h3><p>有助于减少甚至消除配置<code>&lt;property&gt;</code>和<code>&lt;constructor-arg&gt;</code>元素，让<code>Spring</code>自动识别如何装配<code>Bean</code>的依赖关系。<code>&lt;context:annotation-config/&gt;</code></p>
+<p>与之对应的是：自动检测(<code>autodiscovery</code>)，比自动装配更近了一步，让<code>Spring</code>能够自动识别哪些类需要被配置成<code>SpringBean</code>，从而减少对<code>&lt;bean&gt;</code>元素的使用。<code>&lt;context:component-scan&gt;</code></p>
+<h3 id="13-注解"><a href="#13-注解" class="headerlink" title="13. 注解"></a>13. 注解</h3><p><code>Spring</code>容器默认禁用注解装配。最简单的开启方式<code>&lt;context:annotation-config/&gt;</code>。 </p>
+<p><code>Spring</code>支持的几种不同的用于自动装配的注解：</p>
+<ul>
+<li><code>Spring</code>自带的<code>@Autowired</code>注解</li>
+<li><code>JSR-330</code>的<code>@Inject</code>注解</li>
+<li><code>JSR-250</code>的<code>@Resource</code>注解</li>
+</ul>
+<h3 id="14-Autowired"><a href="#14-Autowired" class="headerlink" title="14. @Autowired"></a>14. @Autowired</h3><p><code>@Autowired</code>具有强契约特征，其所标注的属性或参数必须是可装配的。如果没有<code>Bean</code>可以装配到<code>@Autowired</code>所标注的属性或参数中，自动装配就会失败，抛出<code>NoSuchBeanDefinitionException</code>. </p>
+<p>属性不一定非要装配，<code>null</code>值也是可以接受的。在这种场景下可以通过设置<code>@Autowired</code>的<code>required</code>属性为<code>false</code>来配置自动装配是可选的，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span>(required=<span class="keyword">false</span>)</span><br><span class="line"><span class="keyword">private</span> Object obj;</span><br></pre></td></tr></table></figure>
+<p>注意<code>required</code>属性可以用于<code>@Autowired</code>注解所使用的任意地方。但是当使用构造器装配时，只有一个构造器可以将<code>@Autowired</code>的<code>required</code>属性设置为<code>true</code>。其他使用<code>@Autowired</code>注解所标注的构造器只能将<code>required</code>属性设置为<code>false</code>。此外，当使用<code>@Autowired</code>标注多个构造器时，<code>Spring</code>就会从所有满足装配条件的构造器中选择入参最多的那个构造器。 </p>
+<p>可以使用<code>@Qualifier</code>明确指定要装配的<code>Bean</code>.如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="meta">@Qualifier</span>(<span class="string">"objName"</span>)</span><br><span class="line"><span class="keyword">private</span> Object obj;</span><br></pre></td></tr></table></figure>
+<h3 id="15-自定义的限定器"><a href="#15-自定义的限定器" class="headerlink" title="15. 自定义的限定器"></a>15. 自定义的限定器</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target</span>(&#123;ElementType.FIELF, ElementType.PARAMETER, ElementType.TYPE&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Qualifier</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@Interface</span> SpecialQualifier&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>此时，可以通过自定义的<code>@SpecialQualifier</code>注解来代替<code>@Qualifier</code>来标注，也可以和<code>@Autowired</code>一起使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="meta">@SpecialQualifier</span></span><br><span class="line"><span class="keyword">private</span> Object obj;</span><br></pre></td></tr></table></figure>
+<p>此时,<code>Spring</code>会把自动装配的范围缩小到被<code>@SpecialQualifier</code>标注的<code>Bean</code>中。如果被<code>@SpecialQualifier</code>标注的<code>Bean</code>有多个，我们还可以通过自定义的另一个限定器<code>@SpecialQualifier2</code>来进一步缩小范围。</p>
+<h3 id="16-Autowired优缺点"><a href="#16-Autowired优缺点" class="headerlink" title="16. @Autowired优缺点"></a>16. @Autowired优缺点</h3><p><code>Spring</code>的<code>@Autowired</code>注解是减少<code>Spring</code> <code>XML</code>配置的一种方式。但是它的类会映入对<code>Spring</code>的特定依赖（即使依赖只是一个注解）。</p>
+<h3 id="17-Inject"><a href="#17-Inject" class="headerlink" title="17. @Inject"></a>17. @Inject</h3><p>和<code>@Autowired</code>注解一样，<code>@Inject</code>可以用来自动装配属性、方法和构造器；与<code>@Autowired</code>不同的是，<code>@Inject</code>没有<code>required</code>属性。因此<code>@Inject</code>注解所标注的依赖关系必须存在，如果不存在，则会抛出异常。</p>
+<h3 id="18-Named"><a href="#18-Named" class="headerlink" title="18. @Named"></a>18. @Named</h3><p>相对于<code>@Autowired</code>对应的<code>Qualifier</code>，<code>@Inject</code>所对应的是<code>@Named</code>注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Inject</span></span><br><span class="line"><span class="meta">@Named</span>(<span class="string">"objName"</span>)</span><br><span class="line"><span class="keyword">private</span> Object obj;</span><br></pre></td></tr></table></figure>
+<h3 id="19-SpEL表达式"><a href="#19-SpEL表达式" class="headerlink" title="19. SpEL表达式"></a>19. SpEL表达式</h3><p>语法形式在<code>#{}</code>中使用表达式,如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"count"</span> <span class="attr">value</span>=<span class="string">"#&#123;5&#125;"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="20-Value"><a href="#20-Value" class="headerlink" title="20. @Value"></a>20. @Value</h3><p><code>@Value</code>是一个新的装配注解，可以让我们使用注解装配<code>String</code>类型的值和基本类型的值，如<code>int</code>, <code>boolean</code>。我们可以通过<code>@Value</code>直接标注某个属性，方法或者方法参数，并传入一个<code>String</code>类型的表达式来装配属性，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value</span>(<span class="string">"Eruption"</span>)</span><br><span class="line"><span class="keyword">private</span> String song;</span><br></pre></td></tr></table></figure>
+<p><code>@Value</code>可以配合<code>SpEL</code>表达式一起使用，譬如有些情况下需要读取<code>properties</code>文件中的内容，可以使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;configProperties['ora_driver']&#125;"</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="21-自动检测Bean"><a href="#21-自动检测Bean" class="headerlink" title="21. 自动检测Bean"></a>21. 自动检测Bean</h3><p><code>&lt;context:component-scan&gt;</code>元素除了完成与<code>&lt;context:annotation-config&gt;</code>一样的工作，还允许<code>Spring</code>自动检测<code>Bean</code>和定义<code>Bean</code>.<code>&lt;context:component-scan&gt;</code>元素会扫描指定的包和其所有子包，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;context:component-scan base-<span class="keyword">package</span>=<span class="string">"com.zzh.dao"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="22-为自动检测标注Bean"><a href="#22-为自动检测标注Bean" class="headerlink" title="22. 为自动检测标注Bean"></a>22. 为自动检测标注Bean</h3><p>默认情况下，查找使用构造型（<code>stereotype</code>）注解所标注的类，这些特殊的注解如下： </p>
+<ul>
+<li><code>@Component</code>：通用的构造型注解，标志此类为<code>Spring</code>组件 </li>
+<li><code>@Controller</code>：标识将该类定义为<code>SpringMVC controller</code></li>
+<li><code>@Repository</code>：标识将该类定义为数据仓库 </li>
+<li><code>@Service</code>：标识将该类定义为服务 </li>
+</ul>
+<p>以<code>@Component</code>为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Guitar</span> <span class="keyword">implements</span> <span class="title">Intrument</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>这里<code>@Component</code>会自动注册<code>Guitar</code> 为<code>Spring Bean</code>，并设置默认的<code>Bean</code>的<code>Id</code>为<code>guitar</code>，首字母大写变小写。注意如果第一个和第二个字母都是大写，默认的<code>Bean</code>的<code>id</code>会有特殊处理。<br>也可以指定<code>Bean</code>的<code>Id</code>如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"guitarOne"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Guitar</span> <span class="keyword">implements</span> <span class="title">Intrument</span></span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="23-AOP"><a href="#23-AOP" class="headerlink" title="23. AOP"></a>23. AOP</h3><p><code>AOP</code>的核心是切面，它将多个类的通用行为封装成可重用的模块，该模块含有一组API提供横切功能。比如，一个日志模块可以被称作日志的<code>AOP</code>切面。根据需求的不同，一个应用程序可以有若干切面。在<code>SpringAOP</code>中，切面通过带有<code>@Aspect</code>注解的类实现。</p>
+<ul>
+<li><strong>关注点</strong>是应用中的一个模块的行为，一个关注点可能会被定义成一个我们想实现的一个功能。</li>
+<li><strong>横切关注点</strong>是一个关注点，此关注点是整个应用都会使用的功能，并影响整个应用，比如日志，安全和数据传输，几乎应用的每个模块都需要的功能。因此这些都属于横切关注点。</li>
+<li><strong>连接点</strong>代表一个应用程序的某个位置，在这个位置我们可以插入一个<code>AOP</code>切面，它实际上是个应用程序执行<code>Spring AOP</code>的位置。</li>
+<li><strong>切点</strong>是一个或一组连接点，通知将在这些位置执行。可以通过表达式或匹配的方式指明切入点。</li>
+</ul>
+<h3 id="24-AOP通知"><a href="#24-AOP通知" class="headerlink" title="24. AOP通知"></a>24. AOP通知</h3><p>通知是个在方法执行前后要做的动作，实际上是程序执行时要通过<code>SpringAOP</code>框架触发的代码 </p>
+<p><code>Spring</code>切面可以应用五种类型的通知：</p>
+<ul>
+<li><code>before</code>：前置通知，在一个方法执行前被调用。<code>@Before</code> </li>
+<li><code>after</code>: 在方法执行之后调用的通知，无论方法执行是否成功。<code>@After</code></li>
+<li><code>after-returning</code>: 仅当方法成功完成后执行的通知。<code>@AfterReturning</code></li>
+<li><code>after-throwing</code>: 在方法抛出异常退出时执行的通知。<code>@AfterThrowing</code></li>
+<li><code>around</code>: 在方法执行之前和之后调用的通知。<code>@Around</code></li>
+</ul>
+<h3 id="25-Spring的事务类型"><a href="#25-Spring的事务类型" class="headerlink" title="25. Spring的事务类型"></a>25. Spring的事务类型</h3><p>编程式事务管理：这意味你通过编程的方式管理事务，给你带来极大的灵活性，但是难维护。 </p>
+<p>声明式事务管理：这意味着你可以将业务代码和事务管理分离，你只需用注解和XML配置来管理事务。</p>
+<h3 id="26-ACID"><a href="#26-ACID" class="headerlink" title="26. ACID"></a>26. ACID</h3><ul>
+<li><code>Atomic</code>原子性：事务是由一个或多个活动所组成的一个工作单元。原子性确保事务中的所有操作全部发生或者全部不发生。</li>
+<li><code>Consistent</code>一致性：一旦事务完成，系统必须确保它所建模的业务处于一致的状态</li>
+<li><code>Isolated</code>隔离性：事务允许多个用户对象头的数据进行操作，每个用户的操作不会与其他用户纠缠在一起。</li>
+<li><code>Durable</code>持久性：一旦事务完成，事务的结果应该持久化，这样就能从任何的系统崩溃中恢复过来。</li>
+</ul>
+<h3 id="27-JDBC事务"><a href="#27-JDBC事务" class="headerlink" title="27. JDBC事务"></a>27. JDBC事务</h3><p>如果在应用程序中直接使用<code>JDBC</code>来进行持久化，譬如博主采用的是<code>Mybatis</code>，<code>DataSourceTransactionManager</code>会为你处理事务边界。譬如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;bean id=&quot;dataSource&quot; class=&quot;org.apache.commons.dbcp.BasicDataSource&quot;</span><br><span class="line">    destroy-method=&quot;close&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;driverClassName&quot; value=&quot;$&#123;driver&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;url&quot; value=&quot;$&#123;url&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;username&quot; value=&quot;zzh&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;password&quot; value=&quot;zzh&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;validationQuery&quot; value=&quot;SELECT 1&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;dataSource&quot; ref=&quot;dataSource&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="28-JTA事务"><a href="#28-JTA事务" class="headerlink" title="28. JTA事务"></a>28. JTA事务</h3><p>如果你的事务需要跨多个事务资源（例如：两个或多个数据库；或者如<code>Sping+ActiveMQ</code>整合需要将<code>ActiveMQ</code>和数据库的事务整合起来），就需要使用<code>JtaTransactionManager</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"jtaTransactionManager"</span><span class="attr">class</span>=<span class="string">"org.springframework.transaction.jta.JtaTransactionManager"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>JtaTransactionManager</code>将事务管理的职责委托给了一个<code>JTA</code>的实现。<code>JTA</code>规定了应用程序与一个或多个数据源之间协调事务的标准<code>API</code>。<code>transactionManagerName</code>属性指明了要在<code>JNDI</code>上查找的<code>JTA</code>事务管理器。 </p>
+<p><code>JtaTransactionManager</code>将事务管理的职责委托给<code>javax.transaction.UserTransaction</code>和<code>javax.transaction.TransactionManager</code>对象。通过<code>UserTransaction.commit()</code>方法来提交事务。类似地，如果事务失败，<code>UserTransaction的rollback()</code>方法将会被调用。</p>
+<h3 id="29-声明式事务"><a href="#29-声明式事务" class="headerlink" title="29. 声明式事务"></a>29. 声明式事务</h3><p>尽管<code>Spring</code>提供了多种声明式事务的机制，但是所有的方式都依赖这五个参数来控制如何管理事务策略。因此，如果要在<code>Spring</code>中声明事务策略，就要理解这些参数。(<code>@Transactional</code>)</p>
+<ol>
+<li>隔离级别(<code>isolation</code>)</li>
+</ol>
+<ul>
+<li><code>ISOLATION_DEFAULT</code>: 使用底层数据库预设的隔离层级</li>
+<li><code>ISOLATION_READ_COMMITTED</code>: 允许事务读取其他并行的事务已经送出（<code>Commit</code>）的数据字段，可以防止<code>Dirty read</code>问题</li>
+<li><code>ISOLATION_READ_UNCOMMITTED</code>: 允许事务读取其他并行的事务还没送出的数据，会发生<code>Dirty</code>、<code>Nonrepeatable</code>、<code>Phantom read</code>等问题</li>
+<li><code>ISOLATION_REPEATABLE_READ</code>: 要求多次读取的数据必须相同，除非事务本身更新数据，可防止<code>Dirty</code>、<code>Nonrepeatable read</code>问题</li>
+<li><code>ISOLATION_SERIALIZABLE</code>: 完整的隔离层级，可防止<code>Dirty</code>、<code>Nonrepeatable</code>、<code>Phantom read</code>等问题，会锁定对应的数据表格，因而有效率问题</li>
+</ul>
+<ol start="2">
+<li>传播行为(<code>propagation</code>)</li>
+</ol>
+<ul>
+<li><code>PROPAGATION_REQUIRED</code>–支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。</li>
+<li><code>PROPAGATION_SUPPORTS</code>–支持当前事务，如果当前没有事务，就以非事务方式执行。</li>
+<li><code>PROPAGATION_MANDATORY</code>–支持当前事务，如果当前没有事务，就抛出异常。</li>
+<li><code>PROPAGATION_REQUIRES_NEW</code>–新建事务，如果当前存在事务，把当前事务挂起。</li>
+<li><code>PROPAGATION_NOT_SUPPORTED</code>–以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</li>
+<li><code>PROPAGATION_NEVER</code>–以非事务方式执行，如果当前存在事务，则抛出异常。</li>
+<li><code>PROPAGATION_NESTED</code>–如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与<code>PROPAGATION_REQUIRED</code>类似的操作。</li>
+</ul>
+<ol start="3">
+<li>只读(<code>read-only</code>)</li>
+</ol>
+<p>如果事务只进行读取的动作，则可以利用底层数据库在只读操作时发生的一些最佳化动作，由于这个动作利用到数据库在只读的事务操作最佳化，因而必须在事务中才有效，也就是说要搭配传播行为<code>PROPAGATION_REQUIRED</code>、<code>PROPAGATION_REQUIRES_NEW</code>、<code>PROPAGATION_NESTED</code>来设置。</p>
+<ol start="4">
+<li>事务超时(<code>timeout</code>)</li>
+</ol>
+<p>有的事务操作可能延续很长一段的时间，事务本身可能关联到数据表的锁定，因而长时间的事务操作会有效率上的问题，对于过长的事务操作，考虑<code>Roll back</code>事务并要求重新操作，而不是无限时的等待事务完成。 可以设置事务超时期间，计时是从事务开始时，所以这个设置必须搭配传播行为<code>PROPAGATION_REQUIRED</code>、<code>PROPAGATION_REQUIRES_NEW</code>、<code>PROPAGATION_NESTED</code>来设置。</p>
+<ol start="5">
+<li>回滚规则(<code>rollback-for</code>, <code>no-rollback-for</code>)：<code>rollback-for</code>指事务对于那些检查型异常应当回滚而不提交；<code>no-rollback-for</code>指事务对于那些异常应当继续运行而不回滚。默认情况下，<code>Spring</code>声明事务对所有的运行时异常都进行回滚。</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;tx:advice id=&quot;txAdvice&quot; transaction-manager=&quot;transactionManager&quot;&gt;</span><br><span class="line">    &lt;tx:attributes&gt;</span><br><span class="line">        &lt;tx:method name=&quot;*&quot; /&gt;</span><br><span class="line">    &lt;/tx:attributes&gt;</span><br><span class="line">&lt;/tx:advice&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="30-SpringMVC"><a href="#30-SpringMVC" class="headerlink" title="30. SpringMVC"></a>30. SpringMVC</h3><p><img src="http://p9l5rzdf0.bkt.clouddn.com/SpringMVC%E5%8E%9F%E7%90%86" alt="image"></p>
+<p>核心架构的具体流程：</p>
+<ul>
+<li>首先用户发送请求——&gt;<code>DispatcherServlet</code>，前端控制器收到请求后自己不进行处理，而是委托给其他的解析器进行处理，作为统一访问点，进行全局的流程控制；</li>
+<li><code>DispatcherServlet</code>——&gt;<code>HandlerMapping</code>， <code>HandlerMapping</code>将会把请求映射为<code>HandlerExecutionChain</code>对象（包含一个<code>Handler</code>处理器（页面控制器）对象、多个<code>HandlerInterceptor</code>拦截器）对象，通过这种策略模式，很容易添加新的映射策略；</li>
+<li><code>DispatcherServlet</code>——&gt;<code>HandlerAdapter</code>，<code>HandlerAdapter</code>将会把处理器包装为适配器，从而支持多种类型的处理器，即适配器设计模式的应用，从而很容易支持很多类型的处理器；</li>
+<li><code>HandlerAdapter</code>——&gt;处理器功能处理方法的调用，<code>HandlerAdapter</code>将会根据适配的结果调用真正的处理器的功能处理方法，完成功能处理；并返回一个<code>ModelAndView</code>对象（包含模型数据、逻辑视图名）；</li>
+<li><code>ModelAndView</code>的逻辑视图名——&gt; <code>ViewResolver</code>， <code>ViewResolver</code>将把逻辑视图名解析为具体的<code>View</code>，通过这种策略模式，很容易更换其他视图技术；</li>
+<li><code>View</code>——&gt;渲染，<code>View</code>会根据传进来的<code>Model</code>模型数据进行渲染，此处的<code>Model</code>实际是一个<code>Map</code>数据结构，因此很容易支持其他视图技术；</li>
+<li>返回控制权给<code>DispatcherServlet</code>，由<code>DispatcherServlet</code>返回响应给用户，到此一个流程结束。</li>
+</ul>
+<h3 id="31-DispatcherServlet"><a href="#31-DispatcherServlet" class="headerlink" title="31. DispatcherServlet"></a>31. DispatcherServlet</h3><p><code>SpringMVC</code>的核心是<code>DispatcherServlet</code>，这个<code>Servlet</code>充当<code>SpringMVC</code>的前端控制器。与其他<code>Servlet</code>一样，<code>DispatcherServlet</code>必须在<code>Web</code>应用程序的<code>web.xml</code>文件中进行配置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>viewspace<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>2<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>默认情况下，<code>DispatcherServlet</code>在加载时会从一个基于这个<code>Servlet</code>名字的<code>XML</code>文件中加载<code>Spring</code>应用上下文。因为<code>servlet</code>的名字是<code>viewspace</code>，所以配置文件的名称为<code>viewspace-servlet.xml</code>。<br>接下来，必须申明<code>DispatcherServlet</code>处理哪些<code>URL</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>viewspace<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>通过将<code>DispatcherServlet</code>映射到/，声明了它会作为默认的<code>servlet</code>并且会处理所有的请求，包括对静态资源的请求。<br>可以配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:resources</span> <span class="attr">mapping</span>=<span class="string">"/images/**"</span> <span class="attr">location</span>=<span class="string">"/images/"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">cache-period</span>=<span class="string">"31556926"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:resources</span> <span class="attr">mapping</span>=<span class="string">"/js/**"</span> <span class="attr">location</span>=<span class="string">"/js/"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">cache-period</span>=<span class="string">"31556926"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:resources</span> <span class="attr">mapping</span>=<span class="string">"/css/**"</span> <span class="attr">location</span>=<span class="string">"/css/"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">cache-period</span>=<span class="string">"31556926"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>处理静态资源。</p>
+<h3 id="32-配置HandlerMapping"><a href="#32-配置HandlerMapping" class="headerlink" title="32. 配置HandlerMapping"></a>32. 配置HandlerMapping</h3><p><code>Spring</code>自带了多个处理器映射实现：</p>
+<ul>
+<li><code>BeanNameUrlHandlerMapping</code>：根据控制器<code>Bean</code>的名字将控制器映射到<code>URL</code>。</li>
+<li><code>ControllerBeanNameHandlerMapping</code>：与<code>BeanNameUrlHandlerMapping</code>类似，根据控制器<code>Bean</code>的名字将控制器映射到<code>URL</code>。使用该处理器映射实现，<code>Bean</code>的名字不需要遵循<code>URL</code>的约定。</li>
+<li><code>ControllerClassNameHandlerMapping</code>：通过使用控制器的类名作为<code>URL</code>基础将控制器映射到<code>URL</code>。</li>
+<li><code>DefaultAnnotationHandlerMapping</code>：将请求映射给使用<code>@RequestingMapping</code>注解的控制器和控制器方法。</li>
+<li><code>SimpleUrlHandlerMapping</code>：使用定义在<code>Spring</code>应用上下文的熟悉集合将控制器映射到<code>URL</code>。 </li>
+</ul>
+<p>使用如上这些处理器映射通常只需在<code>Spring</code>中配置一个<code>Bean</code>。如果没有找到处理器映射<code>Bean</code>,<code>DisapatchServlet</code>将创建并使用<code>BeanNameUrlHandlerMapping</code>和<code>DefaultAnnotationHandlerMapping</code>。我们一般使用基于注解的控制器类。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"defaultAnnotationHandlerMapping"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在构建控制器的时候，我们还需要使用注解将请求参数绑定到控制器的方法参数上进行校验以及信息转换。提供注解驱动的特性。</p>
+<h3 id="33-配置HandlerAdapter"><a href="#33-配置HandlerAdapter" class="headerlink" title="33. 配置HandlerAdapter"></a>33. 配置HandlerAdapter</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"annotationMethodHandlerAdapter"</span></span></span><br><span class="line"><span class="tag"><span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="34-配置视图"><a href="#34-配置视图" class="headerlink" title="34. 配置视图"></a>34. 配置视图</h3><p>在<code>SpringMVC</code>中大量使用了约定优于配置的开发模式。<code>InternalResourceViewResolver</code>就是一个面向约定的元素。它将逻辑视图名称解析为<code>View</code>对象，而该对象将渲染的任务委托给<code>Web</code>应用程序上下文中的一个模板。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 配置视图解析器，将ModelAndView及字符串解析为具体的页面 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"viewClass"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">value</span>=<span class="string">"org.springframework.web.servlet.view.JstlView"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"prefix"</span> <span class="attr">value</span>=<span class="string">"/WEB-INF/jsp/"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"suffix"</span> <span class="attr">value</span>=<span class="string">".jsp"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>当<code>DispatcherServlet</code>要求<code>InternalResourceViewResolver</code>解析视图的时候，它将获取一个逻辑视图名称，添加<code>/WEB-INF/jsp/</code>前缀和<code>.jsp</code>后缀。等待的结果就是渲染输出的JSP路径。在内部，<code>InternalResourceViewResolver</code>接下来会将这个路径传递给<code>View</code>对象，<code>View</code>对象将请求传递给<code>JSP</code>.</p>
+<p>转自：<a href="https://blog.csdn.net/u013256816/article/details/51386182" target="_blank" rel="noopener">https://blog.csdn.net/u013256816/article/details/51386182</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-08, 11:38:11</p>
+        <p><span>最后更新:</span>2018-06-08, 11:39:46</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/08/1.Spring知识点提炼/" title="1.Spring知识点提炼">http://yoursite.com/2018/06/08/1.Spring知识点提炼/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/08/1.Spring知识点提炼/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/08/2.Mybatis面试问题集锦/">
+                    2.Mybatis面试问题集锦
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/07/26、前端在windows本地下的部署/">
+                    26、前端在windows本地下的部署
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Spring框架的作用"><span class="toc-number">1.</span> <span class="toc-text">1. Spring框架的作用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Spring的组成"><span class="toc-number">2.</span> <span class="toc-text">2. Spring的组成</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Spring容器"><span class="toc-number">3.</span> <span class="toc-text">3. Spring容器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-ApplicationContext通常的实现"><span class="toc-number">4.</span> <span class="toc-text">4. ApplicationContext通常的实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-IOC-amp-DI"><span class="toc-number">5.</span> <span class="toc-text">5. IOC &amp; DI</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-如何给spring容器提供配置元数据"><span class="toc-number">6.</span> <span class="toc-text">6. 如何给spring容器提供配置元数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-bean标签中的属性"><span class="toc-number">7.</span> <span class="toc-text">7. bean标签中的属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-beans标签中相关属性"><span class="toc-number">8.</span> <span class="toc-text">8. beans标签中相关属性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bean的生命周期"><span class="toc-number">9.</span> <span class="toc-text">Bean的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-Spring中注入集合"><span class="toc-number">10.</span> <span class="toc-text">10. Spring中注入集合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-装配空值"><span class="toc-number">11.</span> <span class="toc-text">11. 装配空值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-自动装配-autowiring"><span class="toc-number">12.</span> <span class="toc-text">12. 自动装配(autowiring)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-注解"><span class="toc-number">13.</span> <span class="toc-text">13. 注解</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-Autowired"><span class="toc-number">14.</span> <span class="toc-text">14. @Autowired</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-自定义的限定器"><span class="toc-number">15.</span> <span class="toc-text">15. 自定义的限定器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-Autowired优缺点"><span class="toc-number">16.</span> <span class="toc-text">16. @Autowired优缺点</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-Inject"><span class="toc-number">17.</span> <span class="toc-text">17. @Inject</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-Named"><span class="toc-number">18.</span> <span class="toc-text">18. @Named</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-SpEL表达式"><span class="toc-number">19.</span> <span class="toc-text">19. SpEL表达式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20-Value"><span class="toc-number">20.</span> <span class="toc-text">20. @Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#21-自动检测Bean"><span class="toc-number">21.</span> <span class="toc-text">21. 自动检测Bean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-为自动检测标注Bean"><span class="toc-number">22.</span> <span class="toc-text">22. 为自动检测标注Bean</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-AOP"><span class="toc-number">23.</span> <span class="toc-text">23. AOP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#24-AOP通知"><span class="toc-number">24.</span> <span class="toc-text">24. AOP通知</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#25-Spring的事务类型"><span class="toc-number">25.</span> <span class="toc-text">25. Spring的事务类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#26-ACID"><span class="toc-number">26.</span> <span class="toc-text">26. ACID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#27-JDBC事务"><span class="toc-number">27.</span> <span class="toc-text">27. JDBC事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#28-JTA事务"><span class="toc-number">28.</span> <span class="toc-text">28. JTA事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#29-声明式事务"><span class="toc-number">29.</span> <span class="toc-text">29. 声明式事务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#30-SpringMVC"><span class="toc-number">30.</span> <span class="toc-text">30. SpringMVC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#31-DispatcherServlet"><span class="toc-number">31.</span> <span class="toc-text">31. DispatcherServlet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#32-配置HandlerMapping"><span class="toc-number">32.</span> <span class="toc-text">32. 配置HandlerMapping</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#33-配置HandlerAdapter"><span class="toc-number">33.</span> <span class="toc-text">33. 配置HandlerAdapter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#34-配置视图"><span class="toc-number">34.</span> <span class="toc-text">34. 配置视图</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"1.Spring知识点提炼　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/08/2.Mybatis面试问题集锦/" title="上一篇: 2.Mybatis面试问题集锦">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/07/26、前端在windows本地下的部署/" title="下一篇: 26、前端在windows本地下的部署">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共147篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

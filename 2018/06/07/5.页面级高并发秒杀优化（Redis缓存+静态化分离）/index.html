@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="在页面级别进行性能提升，比如用缓存和页面静态化技术。">
+<meta name="keywords" content="秒杀系统实战">
+<meta property="og:type" content="article">
+<meta property="og:title" content="5.页面级高并发秒杀优化（Redis缓存+静态化分离）">
+<meta property="og:url" content="http://yoursite.com/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="在页面级别进行性能提升，比如用缓存和页面静态化技术。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-07T05:24:38.610Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="5.页面级高并发秒杀优化（Redis缓存+静态化分离）">
+<meta name="twitter:description" content="在页面级别进行性能提升，比如用缓存和页面静态化技术。">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>5.页面级高并发秒杀优化（Redis缓存+静态化分离） | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-5.页面级高并发秒杀优化（Redis缓存+静态化分离）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/" class="article-date">
+      <time datetime="2018-06-07T05:11:45.051Z" itemprop="datePublished">2018-06-07</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      5.页面级高并发秒杀优化（Redis缓存+静态化分离）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/秒杀系统实战/">秒杀系统实战</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>在页面级别进行性能提升，比如用缓存和页面静态化技术。<br><a id="more"></a></p>
+<h2 id="1-页面缓存"><a href="#1-页面缓存" class="headerlink" title="1. 页面缓存"></a>1. 页面缓存</h2><p>这里以商品列表页面为例。</p>
+<p>原来的商品列表页面是这样写的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"to_list"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toList</span><span class="params">(Model model,MiaoshaUser user)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"login"</span>;</span><br><span class="line">    model.addAttribute(<span class="string">"user"</span>,user);</span><br><span class="line">    List&lt;GoodsVo&gt; goodsVoList = goodsService.getGoodsVoList();</span><br><span class="line">    model.addAttribute(<span class="string">"goodsList"</span>,goodsVoList);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"goods_list"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>给他添加页面缓存：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"to_list"</span>,produces = <span class="string">"text/html"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toList</span><span class="params">(Model model, MiaoshaUser user, HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)&#123;</span><br><span class="line">        response.sendRedirect(<span class="string">"/login/to_login"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    model.addAttribute(<span class="string">"user"</span>,user);</span><br><span class="line">    <span class="comment">//先尝试从缓存中取</span></span><br><span class="line">    String html = redisService.get(GoodsKey.getGoodsList,<span class="string">""</span>,String.class);</span><br><span class="line">    <span class="keyword">if</span>(!StringUtils.isEmpty(html))&#123;</span><br><span class="line">        <span class="keyword">return</span> html;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//取不到，则手动渲染，再保存到redis</span></span><br><span class="line">    List&lt;GoodsVo&gt; goodsVoList = goodsService.getGoodsVoList();</span><br><span class="line">    model.addAttribute(<span class="string">"goodsList"</span>,goodsVoList);</span><br><span class="line">    SpringWebContext ctx = <span class="keyword">new</span> SpringWebContext(request,response,request.getServletContext(),</span><br><span class="line">                                                request.getLocale(), model.asMap(),applicationContext);</span><br><span class="line">    html = thymeleafViewResolver.getTemplateEngine().process(<span class="string">"goods_list"</span>,ctx);</span><br><span class="line">    <span class="keyword">if</span>(!StringUtils.isEmpty(html))&#123;</span><br><span class="line">        redisService.set(GoodsKey.getGoodsList,<span class="string">""</span>,html);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> html;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于商品详情页面的缓存，原来是这样写的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/to_detail/&#123;goodsId&#125;"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toDetail</span><span class="params">(@PathVariable(<span class="string">"goodsId"</span>)</span> <span class="keyword">long</span> goodsId,Model model, MiaoshaUser user)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"login"</span>;</span><br><span class="line">    model.addAttribute(<span class="string">"user"</span>,user);</span><br><span class="line"></span><br><span class="line">    GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line">    model.addAttribute(<span class="string">"goods"</span>,goodsVo);</span><br><span class="line">    <span class="keyword">long</span> startAt = goodsVo.getStartDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> endAt = goodsVo.getEndDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> now = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">int</span> miaoshaStatus = <span class="number">0</span>;<span class="comment">//秒杀活动的状态，0-秒杀前；1-正在秒杀；2-秒杀结束</span></span><br><span class="line">    <span class="keyword">int</span> remainSeconds = <span class="number">0</span>;<span class="comment">//秒杀活动还剩多少秒</span></span><br><span class="line">    <span class="keyword">if</span>(now &lt; startAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.BEFORE_START;</span><br><span class="line">        remainSeconds = (<span class="keyword">int</span>)(startAt-now)/<span class="number">1000</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (now &gt; endAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.AFTER_MIAOSHA;</span><br><span class="line">        remainSeconds = -<span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.ON_MIAOSHA;</span><br><span class="line">        remainSeconds = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    model.addAttribute(<span class="string">"miaoshaStatus"</span>,miaoshaStatus);</span><br><span class="line">    model.addAttribute(<span class="string">"remainSeconds"</span>,remainSeconds);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"goods_detail"</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>现在改为如下，以<code>goodsid</code>作为区别：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/to_detail/&#123;goodsId&#125;"</span>,produces = <span class="string">"text/html"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toDetail</span><span class="params">(@PathVariable(<span class="string">"goodsId"</span>)</span> <span class="keyword">long</span> goodsId,Model model, MiaoshaUser user, HttpServletRequest request,</span></span><br><span class="line"><span class="function">                       HttpServletResponse response) <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)&#123;</span><br><span class="line">        response.sendRedirect(<span class="string">"/login/to_login"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    model.addAttribute(<span class="string">"user"</span>,user);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//先尝试从缓存中取</span></span><br><span class="line">    String html = redisService.get(GoodsKey.getGoodsDetail,<span class="string">""</span>+goodsId,String.class);</span><br><span class="line">    <span class="keyword">if</span>(!StringUtils.isEmpty(html))&#123;</span><br><span class="line">        <span class="keyword">return</span> html;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line">    model.addAttribute(<span class="string">"goods"</span>,goodsVo);</span><br><span class="line">    <span class="keyword">long</span> startAt = goodsVo.getStartDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> endAt = goodsVo.getEndDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> now = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">int</span> miaoshaStatus = <span class="number">0</span>;<span class="comment">//秒杀活动的状态，0-秒杀前；1-正在秒杀；2-秒杀结束</span></span><br><span class="line">    <span class="keyword">int</span> remainSeconds = <span class="number">0</span>;<span class="comment">//秒杀活动还剩多少秒</span></span><br><span class="line">    <span class="keyword">if</span>(now &lt; startAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.BEFORE_START;</span><br><span class="line">        remainSeconds = (<span class="keyword">int</span>)(startAt-now)/<span class="number">1000</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (now &gt; endAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.AFTER_MIAOSHA;</span><br><span class="line">        remainSeconds = -<span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.ON_MIAOSHA;</span><br><span class="line">        remainSeconds = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    model.addAttribute(<span class="string">"miaoshaStatus"</span>,miaoshaStatus);</span><br><span class="line">    model.addAttribute(<span class="string">"remainSeconds"</span>,remainSeconds);</span><br><span class="line"></span><br><span class="line">    SpringWebContext ctx = <span class="keyword">new</span> SpringWebContext(request,response,request.getServletContext(),</span><br><span class="line">            request.getLocale(), model.asMap(),applicationContext);</span><br><span class="line">    html = thymeleafViewResolver.getTemplateEngine().process(<span class="string">"goods_detail"</span>,ctx);</span><br><span class="line">    <span class="keyword">if</span>(!StringUtils.isEmpty(html))&#123;</span><br><span class="line">        redisService.set(GoodsKey.getGoodsDetail,<span class="string">""</span>+goodsId,html);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> html;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-对象缓存"><a href="#2-对象缓存" class="headerlink" title="2. 对象缓存"></a>2. 对象缓存</h2><p>就是对一个对象进行缓存，比如这里可以对<code>MiaoshaUser</code>这个对象进行缓存：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> MiaoshaUser <span class="title">getById</span><span class="params">(<span class="keyword">long</span> id)</span></span>&#123;</span><br><span class="line">    <span class="comment">//先去缓存取</span></span><br><span class="line">    MiaoshaUser user = redisService.get(MiaoshaUserKey.getById,<span class="string">""</span>+id,MiaoshaUser.class);</span><br><span class="line">    <span class="keyword">if</span>(user != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> user;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//缓存没有则去数据库取</span></span><br><span class="line">    user = miaoshaUserDao.getById(id);</span><br><span class="line">    <span class="keyword">if</span>(user != <span class="keyword">null</span>)&#123;</span><br><span class="line">        redisService.set(MiaoshaUserKey.getById,<span class="string">""</span>+user.getId(),user);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个逻辑是十分清晰的，但是如果我是更新一个信息呢？比如更新登录的用户的<code>Nickname</code>。那么就要注意，先更新数据库，在更新好数据库之后，一定要注意处理相关的缓存。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">updateUsername</span><span class="params">(String token,<span class="keyword">long</span> id,String newUsername)</span></span>&#123;</span><br><span class="line">    MiaoshaUser user = getById(id);</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> GlobalException(CodeMsg.MOBILE_NOT_EXIST);</span><br><span class="line">    <span class="comment">//更新数据库</span></span><br><span class="line">    MiaoshaUser toBeUpdate = <span class="keyword">new</span> MiaoshaUser();</span><br><span class="line">    toBeUpdate.setId(id);</span><br><span class="line">    toBeUpdate.setNickname(newUsername);</span><br><span class="line">    miaoshaUserDao.update(toBeUpdate);</span><br><span class="line">    <span class="comment">//处理缓存</span></span><br><span class="line">    redisService.del(MiaoshaUserKey.getById,<span class="string">""</span>+id);</span><br><span class="line">    user.setNickname(newUsername);</span><br><span class="line">    redisService.set(MiaoshaUserKey.token,token,user);<span class="comment">//token不能直接删除，否则会要求重新登录</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-商品详情页面静态化"><a href="#3-商品详情页面静态化" class="headerlink" title="3. 商品详情页面静态化"></a>3. 商品详情页面静态化</h2><p>之前我们队商品详情页面进行了<code>redis</code>缓存，因为这个接口只是展示相应产品详情和秒杀倒计时等信息，只要显示几个关键信息即可，其他的都可以进行静态化。</p>
+<p>这种技术，我们其实已经做过了，在之前的电商项目中，前端用<code>vue.js</code>等其他js框架或者不用框架，直接<code>jquery</code>。前端分为两部分，一部分是不改变的<code>html</code>块，还有一块就是数据，他只要后端传数据到前端即可，用到<code>ajax</code>技术。</p>
+<p>确定哪些是需要传到前端的数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DetailVo</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> miaoshaStatus = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> remainSeconds = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> GoodsVo goods;</span><br><span class="line">    <span class="keyword">private</span> MiaoshaUser user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将<code>detail</code>这个接口改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/detail/&#123;goodsId&#125;"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Result&lt;DetailVo&gt; <span class="title">toDetail</span><span class="params">(@PathVariable(<span class="string">"goodsId"</span>)</span> <span class="keyword">long</span> goodsId, MiaoshaUser user, HttpServletRequest request,</span></span><br><span class="line"><span class="function">                                 HttpServletResponse response) <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)&#123;</span><br><span class="line">        response.sendRedirect(<span class="string">"/login/to_login"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">long</span> startAt = goodsVo.getStartDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> endAt = goodsVo.getEndDate().getTime();</span><br><span class="line">    <span class="keyword">long</span> now = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">int</span> miaoshaStatus = <span class="number">0</span>;<span class="comment">//秒杀活动的状态，0-秒杀前；1-正在秒杀；2-秒杀结束</span></span><br><span class="line">    <span class="keyword">int</span> remainSeconds = <span class="number">0</span>;<span class="comment">//秒杀活动还剩多少秒</span></span><br><span class="line">    <span class="keyword">if</span>(now &lt; startAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.BEFORE_START;</span><br><span class="line">        remainSeconds = (<span class="keyword">int</span>)(startAt-now)/<span class="number">1000</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span> (now &gt; endAt)&#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.AFTER_MIAOSHA;</span><br><span class="line">        remainSeconds = -<span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        miaoshaStatus = Constants.MiaoshaStatus.ON_MIAOSHA;</span><br><span class="line">        remainSeconds = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    DetailVo detailVo = <span class="keyword">new</span> DetailVo();</span><br><span class="line">    detailVo.setUser(user);</span><br><span class="line">    detailVo.setGoods(goodsVo);</span><br><span class="line">    detailVo.setMiaoshaStatus(miaoshaStatus);</span><br><span class="line">    detailVo.setRemainSeconds(remainSeconds);</span><br><span class="line">    <span class="keyword">return</span> Result.success(detailVo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>后端的数据已经有了，那么前端只要接收这些数据即可。</p>
+<p>首先是在<code>static</code>目录下新建<code>goods_detail.htm</code>页面，里面讲<code>themeleaf</code>的动态获取的对象全部去除。改为最普通的<code>html</code>，只要用<code>id</code>来标识一下，然后在<code>js</code>中赋值即可。比如：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">tr</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span>&gt;</span>商品原价<span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span> <span class="attr">colspan</span>=<span class="string">"3"</span> <span class="attr">id</span>=<span class="string">"goodsPrice"</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">tr</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span>&gt;</span>秒杀价<span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span> <span class="attr">colspan</span>=<span class="string">"3"</span>  <span class="attr">id</span>=<span class="string">"miaoshaPrice"</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">tr</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span>&gt;</span>库存数量<span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line">   <span class="tag">&lt;<span class="name">td</span> <span class="attr">colspan</span>=<span class="string">"3"</span>  <span class="attr">id</span>=<span class="string">"stockCount"</span>&gt;</span><span class="tag">&lt;/<span class="name">td</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>js</code>部分，首先是打开页面就执行这个方法：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="comment">//countDown();</span></span><br><span class="line">	getDetail();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>里面的<code>getDetail</code>方法为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getDetail</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> goodsId = g_getQueryString(<span class="string">"goodsId"</span>);</span><br><span class="line">	$.ajax(&#123;</span><br><span class="line">		url:<span class="string">"/goods/detail/"</span>+goodsId,</span><br><span class="line">		type:<span class="string">"GET"</span>,</span><br><span class="line">		success:<span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(data.code == <span class="number">0</span>)&#123;</span><br><span class="line">				render(data.data);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				layer.msg(data.msg);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		error:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">			layer.msg(<span class="string">"客户端请求有误"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取<code>goods_id</code>，因为<code>list</code>页面的商品详情请求是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;td&gt;&lt;a th:href=&quot;&apos;/goods_detail.htm?goodsId=&apos;+$&#123;goods.id&#125;&quot;&gt;详情&lt;/a&gt;&lt;/td&gt;</span><br></pre></td></tr></table></figure>
+<p>所以下面要获取这个参数：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">g_getQueryString</span>(<span class="params">name</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> reg = <span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"(^|&amp;)"</span> + name + <span class="string">"=([^&amp;]*)(&amp;|$)"</span>);</span><br><span class="line"><span class="keyword">var</span> r = <span class="built_in">window</span>.location.search.substr(<span class="number">1</span>).match(reg);</span><br><span class="line"><span class="keyword">if</span>(r != <span class="literal">null</span>) <span class="keyword">return</span> <span class="built_in">unescape</span>(r[<span class="number">2</span>]);</span><br><span class="line"><span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<p>获取到之后就请求后端接口，获取数据去渲染：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">detail</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> miaoshaStatus = detail.miaoshaStatus;</span><br><span class="line">	<span class="keyword">var</span>  remainSeconds = detail.remainSeconds;</span><br><span class="line">	<span class="keyword">var</span> goods = detail.goods;</span><br><span class="line">	<span class="keyword">var</span> user = detail.user;</span><br><span class="line">	<span class="keyword">if</span>(user)&#123;</span><br><span class="line">		$(<span class="string">"#userTip"</span>).hide();</span><br><span class="line">	&#125;</span><br><span class="line">	$(<span class="string">"#goodsName"</span>).text(goods.goodsName);</span><br><span class="line">	$(<span class="string">"#goodsImg"</span>).attr(<span class="string">"src"</span>, goods.goodsImg);</span><br><span class="line">	$(<span class="string">"#startTime"</span>).text(<span class="keyword">new</span> <span class="built_in">Date</span>(goods.startDate).format(<span class="string">"yyyy-MM-dd hh:mm:ss"</span>));</span><br><span class="line">	$(<span class="string">"#remainSeconds"</span>).val(remainSeconds);</span><br><span class="line">	$(<span class="string">"#goodsId"</span>).val(goods.id);</span><br><span class="line">	$(<span class="string">"#goodsPrice"</span>).text(goods.goodsPrice);</span><br><span class="line">	$(<span class="string">"#miaoshaPrice"</span>).text(goods.miaoshaPrice);</span><br><span class="line">	$(<span class="string">"#stockCount"</span>).text(goods.stockCount);</span><br><span class="line">	countDown();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>倒计时<code>countDown()</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">countDown</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> remainSeconds = $(<span class="string">"#remainSeconds"</span>).val();</span><br><span class="line">	<span class="keyword">var</span> timeout;</span><br><span class="line">	<span class="keyword">if</span>(remainSeconds &gt; <span class="number">0</span>)&#123;<span class="comment">//秒杀还没开始，倒计时</span></span><br><span class="line">		$(<span class="string">"#buyButton"</span>).attr(<span class="string">"disabled"</span>, <span class="literal">true</span>);</span><br><span class="line">	   $(<span class="string">"#miaoshaTip"</span>).html(<span class="string">"秒杀倒计时："</span>+remainSeconds+<span class="string">"秒"</span>);</span><br><span class="line">		timeout = setTimeout(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">			$(<span class="string">"#countDown"</span>).text(remainSeconds - <span class="number">1</span>);</span><br><span class="line">			$(<span class="string">"#remainSeconds"</span>).val(remainSeconds - <span class="number">1</span>);</span><br><span class="line">			countDown();</span><br><span class="line">		&#125;,<span class="number">1000</span>);</span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="keyword">if</span>(remainSeconds == <span class="number">0</span>)&#123;<span class="comment">//秒杀进行中</span></span><br><span class="line">		$(<span class="string">"#buyButton"</span>).attr(<span class="string">"disabled"</span>, <span class="literal">false</span>);</span><br><span class="line">		<span class="keyword">if</span>(timeout)&#123;</span><br><span class="line">			clearTimeout(timeout);</span><br><span class="line">		&#125;</span><br><span class="line">		$(<span class="string">"#miaoshaTip"</span>).html(<span class="string">"秒杀进行中"</span>);</span><br><span class="line">	&#125;<span class="keyword">else</span>&#123;<span class="comment">//秒杀已经结束</span></span><br><span class="line">		$(<span class="string">"#buyButton"</span>).attr(<span class="string">"disabled"</span>, <span class="literal">true</span>);</span><br><span class="line">		$(<span class="string">"#miaoshaTip"</span>).html(<span class="string">"秒杀已经结束"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的日期格式化为：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设定时间格式化函数，使用new Date().format("yyyyMMddhhmmss");</span></span><br><span class="line"><span class="built_in">Date</span>.prototype.format = <span class="function"><span class="keyword">function</span> (<span class="params">format</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> args = &#123;</span><br><span class="line">        <span class="string">"M+"</span>: <span class="keyword">this</span>.getMonth() + <span class="number">1</span>,</span><br><span class="line">        <span class="string">"d+"</span>: <span class="keyword">this</span>.getDate(),</span><br><span class="line">        <span class="string">"h+"</span>: <span class="keyword">this</span>.getHours(),</span><br><span class="line">        <span class="string">"m+"</span>: <span class="keyword">this</span>.getMinutes(),</span><br><span class="line">        <span class="string">"s+"</span>: <span class="keyword">this</span>.getSeconds(),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="regexp">/(y+)/</span>.test(format))</span><br><span class="line">        format = format.replace(<span class="built_in">RegExp</span>.$<span class="number">1</span>, (<span class="keyword">this</span>.getFullYear() + <span class="string">""</span>).substr(<span class="number">4</span> - <span class="built_in">RegExp</span>.$<span class="number">1.</span>length));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i <span class="keyword">in</span> args) &#123;</span><br><span class="line">        <span class="keyword">var</span> n = args[i];</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">new</span> <span class="built_in">RegExp</span>(<span class="string">"("</span> + i + <span class="string">")"</span>).test(format))</span><br><span class="line">            format = format.replace(<span class="built_in">RegExp</span>.$<span class="number">1</span>, <span class="built_in">RegExp</span>.$<span class="number">1.</span>length == <span class="number">1</span> ? n : (<span class="string">"00"</span> + n).substr((<span class="string">""</span> + n).length));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> format;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h2 id="4-订单详情页面静态化"><a href="#4-订单详情页面静态化" class="headerlink" title="4. 订单详情页面静态化"></a>4. 订单详情页面静态化</h2><p>之前的<code>do_miaosha</code>要进行修改，不能再返回<code>String</code>了，而是要返回<code>Json</code>数据，原来是这样写的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/do_miaosha"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">do_miaosha</span><span class="params">(Model model, MiaoshaUser user, @RequestParam(<span class="string">"goodsId"</span>)</span> <span class="keyword">long</span> goodsId)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"login"</span>;</span><br><span class="line">    model.addAttribute(<span class="string">"user"</span>,user);</span><br><span class="line">    <span class="comment">//判断库存</span></span><br><span class="line">    GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line">    <span class="keyword">if</span>(goodsVo.getStockCount() &lt;= <span class="number">0</span>)&#123;</span><br><span class="line">        model.addAttribute(<span class="string">"errmsg"</span>, CodeMsg.MIAO_SHA_OVER.getMsg());</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"miaosha_fail"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//判断是否已经秒杀到了</span></span><br><span class="line">    MiaoshaOrder miaoshaOrder = orderService.getMiaoshaOrderByUserIdGoodsId(user.getId(),goodsId);</span><br><span class="line">    <span class="keyword">if</span>(miaoshaOrder != <span class="keyword">null</span>)&#123;</span><br><span class="line">        model.addAttribute(<span class="string">"errmsg"</span>, CodeMsg.REPEATE_MIAOSHA.getMsg());</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"miaosha_fail"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//减库存、下订单、写入秒杀订单,需要在一个事务中执行</span></span><br><span class="line">    OrderInfo orderInfo = miaoshaService.miaosha(user,goodsVo);</span><br><span class="line">    model.addAttribute(<span class="string">"orderInfo"</span>, orderInfo);</span><br><span class="line">    model.addAttribute(<span class="string">"goods"</span>, goodsVo);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">"order_detail"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/do_miaosha"</span>,method = RequestMethod.POST)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Result&lt;OrderInfo&gt; <span class="title">do_miaosha</span><span class="params">(Model model, MiaoshaUser user, @RequestParam(<span class="string">"goodsId"</span>)</span> <span class="keyword">long</span> goodsId)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(user == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> Result.error(CodeMsg.SESSION_ERROR);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//判断库存</span></span><br><span class="line">    GoodsVo goodsVo = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line">    <span class="keyword">if</span>(goodsVo.getStockCount() &lt;= <span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> Result.error(CodeMsg.MIAO_SHA_OVER);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//判断是否已经秒杀到了</span></span><br><span class="line">    MiaoshaOrder miaoshaOrder = orderService.getMiaoshaOrderByUserIdGoodsId(user.getId(),goodsId);</span><br><span class="line">    <span class="keyword">if</span>(miaoshaOrder != <span class="keyword">null</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> Result.error(CodeMsg.REPEATE_MIAOSHA);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//减库存、下订单、写入秒杀订单,需要在一个事务中执行</span></span><br><span class="line">    OrderInfo orderInfo = miaoshaService.miaosha(user,goodsVo);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Result.success(orderInfo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面按秒杀按钮：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">td</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">button</span> <span class="attr">class</span>=<span class="string">"btn btn-primary btn-block"</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">id</span>=<span class="string">"buyButton"</span><span class="attr">onclick</span>=<span class="string">"doMiaosha()"</span>&gt;</span>立即秒杀<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"hidden"</span> <span class="attr">name</span>=<span class="string">"goodsId"</span>  <span class="attr">id</span>=<span class="string">"goodsId"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>下面进行处理：<br><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doMiaosha</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	$.ajax(&#123;</span><br><span class="line">		url:<span class="string">"/miaosha/do_miaosha"</span>,</span><br><span class="line">		type:<span class="string">"POST"</span>,</span><br><span class="line">		data:&#123;</span><br><span class="line">			goodsId:$(<span class="string">"#goodsId"</span>).val(),</span><br><span class="line">		&#125;,</span><br><span class="line">		success:<span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(data.code == <span class="number">0</span>)&#123;</span><br><span class="line">				<span class="built_in">window</span>.location.href=<span class="string">"/order_detail.htm?orderId="</span>+data.data.id;</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				layer.msg(data.msg);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		error:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">			layer.msg(<span class="string">"客户端请求有误"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一旦抢到商品，那么就跳转到订单详情页面，<code>order_detail.htm</code>中的处理与上面的一样：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">detail</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> goods = detail.goods;</span><br><span class="line">	<span class="keyword">var</span> order = detail.order;</span><br><span class="line">	$(<span class="string">"#goodsName"</span>).text(goods.goodsName);</span><br><span class="line">	$(<span class="string">"#goodsImg"</span>).attr(<span class="string">"src"</span>, goods.goodsImg);</span><br><span class="line">	$(<span class="string">"#orderPrice"</span>).text(order.goodsPrice);</span><br><span class="line">	$(<span class="string">"#createDate"</span>).text(<span class="keyword">new</span> <span class="built_in">Date</span>(order.createDate).format(<span class="string">"yyyy-MM-dd hh:mm:ss"</span>));</span><br><span class="line">	<span class="keyword">var</span> status = <span class="string">""</span>;</span><br><span class="line">	<span class="keyword">if</span>(order.status == <span class="number">0</span>)&#123;</span><br><span class="line">		status = <span class="string">"未支付"</span></span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="keyword">if</span>(order.status == <span class="number">1</span>)&#123;</span><br><span class="line">		status = <span class="string">"待发货"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	$(<span class="string">"#orderStatus"</span>).text(status);</span><br><span class="line">	</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	getOrderDetail();</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getOrderDetail</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> orderId = g_getQueryString(<span class="string">"orderId"</span>);</span><br><span class="line">	$.ajax(&#123;</span><br><span class="line">		url:<span class="string">"/order/detail"</span>,</span><br><span class="line">		type:<span class="string">"GET"</span>,</span><br><span class="line">		data:&#123;</span><br><span class="line">			orderId:orderId</span><br><span class="line">		&#125;,</span><br><span class="line">		success:<span class="function"><span class="keyword">function</span>(<span class="params">data</span>)</span>&#123;</span><br><span class="line">			<span class="keyword">if</span>(data.code == <span class="number">0</span>)&#123;</span><br><span class="line">				render(data.data);</span><br><span class="line">			&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">				layer.msg(data.msg);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;,</span><br><span class="line">		error:<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">			layer.msg(<span class="string">"客户端请求有误"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>要显示<code>order_detail</code>,他请求<code>/order/detail</code>这个接口，需要<code>order</code>和<code>goods</code>两个对象，所以新建一个<code>vo</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderDetailVo</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> GoodsVo goods;</span><br><span class="line">	<span class="keyword">private</span> OrderInfo order;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对<code>OrderController</code>增加接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/detail"</span>)</span><br><span class="line"><span class="meta">@ResponseBody</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Result&lt;OrderDetailVo&gt; <span class="title">info</span><span class="params">(MiaoshaUser user,</span></span></span><br><span class="line"><span class="function"><span class="params">								  @RequestParam(<span class="string">"orderId"</span>)</span> <span class="keyword">long</span> orderId) </span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(user == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> Result.error(CodeMsg.SESSION_ERROR);</span><br><span class="line">	&#125;</span><br><span class="line">	OrderInfo order = orderService.getOrderById(orderId);</span><br><span class="line">	<span class="keyword">if</span>(order == <span class="keyword">null</span>) &#123;</span><br><span class="line">		<span class="keyword">return</span> Result.error(CodeMsg.ORDER_NOT_EXIST);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">long</span> goodsId = order.getGoodsId();</span><br><span class="line">	GoodsVo goods = goodsService.getGoodsVoByGoodsId(goodsId);</span><br><span class="line">	OrderDetailVo vo = <span class="keyword">new</span> OrderDetailVo();</span><br><span class="line">	vo.setOrder(order);</span><br><span class="line">	vo.setGoods(goods);</span><br><span class="line">	<span class="keyword">return</span> Result.success(vo);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就ok了，对于商品详情和订单详情两个页面完成了静态化。</p>
+<h2 id="5-页面缓存"><a href="#5-页面缓存" class="headerlink" title="5. 页面缓存"></a>5. 页面缓存</h2><p><code>Cache-Control</code>:指定缓存有多少时间</p>
+<p>为了在浏览器端进行缓存，以及控制缓存时间，这里可以添加一些配置：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">    resources:</span><br><span class="line">        <span class="keyword">static</span>-locations: classpath:/<span class="keyword">static</span>/</span><br><span class="line">        add-mappings: <span class="keyword">true</span></span><br><span class="line">        cache-period: <span class="number">3600</span></span><br><span class="line">        chain:</span><br><span class="line">          cache: <span class="keyword">true</span></span><br><span class="line">          enabled: <span class="keyword">true</span></span><br><span class="line">          gzipped: <span class="keyword">true</span></span><br><span class="line">          html-application-cache: <span class="keyword">true</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="6-解决超卖"><a href="#6-解决超卖" class="headerlink" title="6. 解决超卖"></a>6. 解决超卖</h2><p>先解决卖成负数的问题：</p>
+<p>在<code>reduceStock(MiaoshaGoods g);</code>这个方法里，<code>sql</code>要多加一个<code>stock_count &gt; 0</code>即：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> miaosha_goods <span class="keyword">set</span> stock_count = stock_count<span class="number">-1</span> <span class="keyword">where</span> goods_id=#&#123;goodsId&#125; <span class="keyword">and</span> stock_count &gt; <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>给<code>miaosha_order</code>中的<code>user_id</code>和<code>goods_id</code>建立唯一联合索引。保证同一个人不能秒杀都两个商品。</p>
+<p>但是从压测结果来看，虽然解决了上面两个问题。但是仍然发生了超卖现象，即比如只有10件秒杀商品，但是有22个人抢到了。这个解决只能靠锁来解决了。</p>
+<h2 id="7-静态资源优化"><a href="#7-静态资源优化" class="headerlink" title="7. 静态资源优化"></a>7. 静态资源优化</h2><ul>
+<li>js/css压缩</li>
+<li>多个js/css组合，减少连接数</li>
+<li>CDN就近访问</li>
+<li>nginx加缓存，页面缓存，对象缓存</li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-07, 13:11:45</p>
+        <p><span>最后更新:</span>2018-06-07, 13:24:38</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/" title="5.页面级高并发秒杀优化（Redis缓存+静态化分离）">http://yoursite.com/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">
+                    6.服务级高并发秒杀优化（RabbitMQ+接口优化）
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/07/4.JMeter压测/">
+                    4.JMeter压测
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-页面缓存"><span class="toc-number">1.</span> <span class="toc-text">1. 页面缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-对象缓存"><span class="toc-number">2.</span> <span class="toc-text">2. 对象缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-商品详情页面静态化"><span class="toc-number">3.</span> <span class="toc-text">3. 商品详情页面静态化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-订单详情页面静态化"><span class="toc-number">4.</span> <span class="toc-text">4. 订单详情页面静态化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-页面缓存"><span class="toc-number">5.</span> <span class="toc-text">5. 页面缓存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-解决超卖"><span class="toc-number">6.</span> <span class="toc-text">6. 解决超卖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-静态资源优化"><span class="toc-number">7.</span> <span class="toc-text">7. 静态资源优化</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"5.页面级高并发秒杀优化（Redis缓存+静态化分离）　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/" title="上一篇: 6.服务级高并发秒杀优化（RabbitMQ+接口优化）">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/07/4.JMeter压测/" title="下一篇: 4.JMeter压测">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共147篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

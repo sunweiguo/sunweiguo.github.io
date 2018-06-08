@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
+<meta name="keywords" content="java基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.java反射">
+<meta property="og:url" content="http://yoursite.com/2018/05/31/2.java反射/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%8F%8D%E5%B0%84%E5%BC%82%E5%B8%B8.png">
+<meta property="og:updated_time" content="2018-06-01T02:09:47.483Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="2.java反射">
+<meta name="twitter:description" content="反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%8F%8D%E5%B0%84%E5%BC%82%E5%B8%B8.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>2.java反射 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-2.java反射" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/05/31/2.java反射/" class="article-date">
+      <time datetime="2018-05-31T13:55:58.704Z" itemprop="datePublished">2018-05-31</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2.java反射
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java基础/">java基础</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>反射这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，再来理一理反射的知识。<br><a id="more"></a></p>
+<h2 id="1-反射的作用"><a href="#1-反射的作用" class="headerlink" title="1. 反射的作用"></a>1. 反射的作用</h2><p>我理解的java反射机制就是： 提供一套完善而强大的API“反射“类的结构。</p>
+<p>打个比方，反射机制就像是一面镜子，而类就像是一个在照着镜子的人。</p>
+<p>镜子（反射机制）照出（反射）了人的全貌（类的全方位的信息，例如方法，成员变量和构造器等的相关信息）</p>
+<p>为什么要照镜子？ 因为不照镜子看不清楚自己的全貌，“镜子”就是为了解决这个问题出现的（为我们提供全面分析类的能力）</p>
+<h2 id="2-Class对象和实例对象"><a href="#2-Class对象和实例对象" class="headerlink" title="2. Class对象和实例对象"></a>2. Class对象和实例对象</h2><p>想要理解反射首先需要知道Class这个类，它的全称是java.lang.Class类。java是面向对象的语言，讲究万物皆对象，即使强大到一个类，它依然是另一个类（Class类）的对象，换句话说，普通类是Class类的对象，即Class是所有类的类（There is a class named Class）。</p>
+<p>我们知道java世界是运行在JVM之上的，我们编写的类代码，在经过编译器编译之后，会为每个类生成对应的.class文件，这个就是JVM可以加载执行的字节码。运行时期间，当我们需要实例化任何一个类时，JVM会首先尝试看看在内存中是否有这个类，如果有，那么会直接创建类实例；如果没有，那么就会根据类名去加载这个类，当加载一个类，或者当加载器(class loader)的<code>defineClass()</code>被JVM调用，便会为这个类产生一个Class对象（一个Class类的实例），用来表达这个类，该类的所有实例都共同拥有着这个Class对象，而且是唯一的。</p>
+<h2 id="3-取得Class对象的三种方式"><a href="#3-取得Class对象的三种方式" class="headerlink" title="3. 取得Class对象的三种方式"></a>3. 取得Class对象的三种方式</h2><p>我们假设有这么一个类叫<code>MyClass</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过“类名.class”的方式取得</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class classInstance= MyClass.class;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = Car.class;</span><br><span class="line">Class cls1 = int.class;</span><br><span class="line">Class cls2 = String.class;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过类创建的实例对象的<code>getClass</code>方法取得</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MyClass myClass = <span class="keyword">new</span> MyClass();</span><br><span class="line">Class classInstance = myClass.getClass();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>通过<code>Class</code>类的静态方法<code>forName</code>方法取得（参数是带包名的完整的类名）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  Class classInstance = Class.forName(<span class="string">"mypackage.MyClass"</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">  e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面三种方法取得的对象都是相同的，所以效果上等价。</p>
+<p>上面说MyClass是Class的对象，而这里又说classInstance也是Class的对象，而classInstance是MyClass的对象，是不是矛盾呢？这里只是说法而已，我们不要纠结那么多，其实classInstance是类类型，通过类类型可以得到一个类的属性和方法等参数，这是反射的基础。</p>
+<h2 id="4-利用反射API全面分析类的信息——方法，成员变量，构造器"><a href="#4-利用反射API全面分析类的信息——方法，成员变量，构造器" class="headerlink" title="4. 利用反射API全面分析类的信息——方法，成员变量，构造器"></a>4. 利用反射API全面分析类的信息——方法，成员变量，构造器</h2><p>反射的一大作用是用于分析类的结构，或者说用于分析和这个类有关的所有信息。而这些信息就是类的基本的组成： 方法，成员变量和构造器。</p>
+<p>事实上，和我们上面所介绍的Class类和Class对象相似的是，一个类中的方法，成员变量和构造器也分别对应着一个对象</p>
+<ol>
+<li>每个方法都对应有一个保存和该方法有关信息的<strong>Method对象</strong>， 这个对象所属的类是<code>java.lang.reflect.Method</code>;</li>
+<li>每个成员变量都对应有一个保存和该变量有关信息的<strong>Field对象</strong>，这个对象所属的类是 <code>java.lang.reflect.Field</code></li>
+<li>每个构造器都对应有一个保存和该构造器有关信息的<strong>Constructor对象</strong>，这个对象所属的类是<code>java.lang.reflect.Constructor</code></li>
+</ol>
+<p>假设c是一个类的Class对象：</p>
+<ul>
+<li>通过 <code>c.getDeclaredMethods()</code>可取得这个类中所有声明方法对应的Method对象组成的数组</li>
+<li>通过 <code>c.getDeclaredFields()</code>可取得这个类中所有声明的成员变量对应的Field对象组成的数组</li>
+<li>通过 <code>c.getConstructors()</code>; 可取得这个类中所有构造函数所对应的Constructor对象所组成的数组</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Method [] methods = c.getDeclaredMethods(); <span class="comment">// 获取方法对象列表</span></span><br><span class="line"> </span><br><span class="line">Field [] fields = c.getDeclaredFields();   <span class="comment">// 获取成员变量对象列表</span></span><br><span class="line"></span><br><span class="line">Constructor [] constructors = c.getConstructors();  <span class="comment">// 获取构造函数对象列表</span></span><br><span class="line"></span><br><span class="line">xxx.getName()就可以打印出对应的名字了。</span><br></pre></td></tr></table></figure>
+<h2 id="5-更多的反射api"><a href="#5-更多的反射api" class="headerlink" title="5. 更多的反射api"></a>5. 更多的反射api</h2><h4 id="getMethods和getDeclaredMethods方法"><a href="#getMethods和getDeclaredMethods方法" class="headerlink" title="getMethods和getDeclaredMethods方法"></a>getMethods和getDeclaredMethods方法</h4><ul>
+<li><code>getMethods</code>取得的method对应的方法<strong>包括从父类中继承的那一部分</strong>，而</li>
+<li><code>getDeclaredMethods</code>取得的method对应的方法<strong>不包括从父类中继承的那一部分</strong></li>
+</ul>
+<p>一个普通的类，他们的基类都是Object，那么如果用getMethods，遍历得到的结果，会发现Object中的基础方法名都会被打印出来。诸如<code>wait()</code>,<code>equals()</code>,<code>toString()</code>,<code>getClass()</code>,<code>notify()</code>,<code>notifyAll()</code>,<code>hashCode()</code>等等。</p>
+<h4 id="通过method-getReturnType-获取方法返回值对应的Class对象"><a href="#通过method-getReturnType-获取方法返回值对应的Class对象" class="headerlink" title="通过method.getReturnType()获取方法返回值对应的Class对象"></a>通过method.getReturnType()获取方法返回值对应的Class对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class returnClass = method.getReturnType(); <span class="comment">// 获取方法返回值对应的Class对象</span></span><br><span class="line">String returnName = returnClass.getName();  <span class="comment">//获取返回值所属类的类名——也即返回值类型</span></span><br></pre></td></tr></table></figure>
+<h4 id="通过method-getParameterTypes-获取方法各参数的Class对象组成的数组"><a href="#通过method-getParameterTypes-获取方法各参数的Class对象组成的数组" class="headerlink" title="通过method.getParameterTypes()获取方法各参数的Class对象组成的数组"></a>通过method.getParameterTypes()获取方法各参数的Class对象组成的数组</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class [] paramsClasses = method.getParameterTypes();</span><br><span class="line"><span class="keyword">for</span> (Class pc: paramsClasses) &#123;</span><br><span class="line">    String paramStr = pc.getName(); <span class="comment">// 获取当前参数类型</span></span><br><span class="line">    paramsStr+=paramStr + <span class="string">"  "</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="获取成员变量类型对应的的Class对象"><a href="#获取成员变量类型对应的的Class对象" class="headerlink" title="获取成员变量类型对应的的Class对象"></a>获取成员变量类型对应的的Class对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Field field = c.getDeclaredField(<span class="string">"name"</span>);  <span class="comment">// 取得名称为name的field对象</span></span><br><span class="line">field.setAccessible(<span class="keyword">true</span>); <span class="comment">// 这一步很重要！！！设置为true才能访问私有成员变量name的值！</span></span><br><span class="line">String nameValue = (String) field.get(obj); <span class="comment">// 获取obj中name成员变量的值</span></span><br></pre></td></tr></table></figure>
+<h4 id="通过getType方法读取成员变量类型的Class对象"><a href="#通过getType方法读取成员变量类型的Class对象" class="headerlink" title="通过getType方法读取成员变量类型的Class对象"></a>通过getType方法读取成员变量类型的Class对象</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Field field = class1.getDeclaredField(number<span class="string">");</span></span><br><span class="line"><span class="string">System.out.print(field.getType().getName());</span></span><br></pre></td></tr></table></figure>
+<p>因为java权限的原因，直接读取私有成员变量的值是非法的（加了<code>field.setAccessible(true)</code>后就可以了），但仍可以直接读取私有成员变量的类型</p>
+<h4 id="利用反射API分析类中构造器信息"><a href="#利用反射API分析类中构造器信息" class="headerlink" title="利用反射API分析类中构造器信息"></a>利用反射API分析类中构造器信息</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> a, String str)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printContructorsMessage</span> <span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">Class c = obj.getClass();  <span class="comment">// 取得obj所属类对应的Class对象</span></span><br><span class="line">Constructor [] constructors = c.getDeclaredConstructors();</span><br><span class="line"><span class="keyword">for</span> (Constructor constructor : constructors) &#123;</span><br><span class="line">  Class [] paramsClasses =  constructor.getParameterTypes();</span><br><span class="line">  String paramsStr = <span class="string">""</span>;</span><br><span class="line">  <span class="keyword">for</span> (Class pc : paramsClasses) &#123;</span><br><span class="line">    String paramStr = pc.getName();</span><br><span class="line">    paramsStr+=paramStr + <span class="string">"  "</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  System.out.println(<span class="string">"构造函数的所有参数的类型列表："</span> + paramsStr);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造函数的所有参数的类型列表：<span class="keyword">int</span>  java.lang.String</span><br></pre></td></tr></table></figure>
+<h2 id="6-利用反射动态加载类，并用该类创建实例对象"><a href="#6-利用反射动态加载类，并用该类创建实例对象" class="headerlink" title="6. 利用反射动态加载类，并用该类创建实例对象"></a>6. 利用反射动态加载类，并用该类创建实例对象</h2><p>我们用普通的方式使用一个类的时候，类是静态加载的<br>，<strong>而使用Class.forName(“XXX”)这种方式，则属于动态加载一个类</strong></p>
+<p>静态加载的类在编译的时候就能确定该类是否存在，但动态加载一个类的时候却无法在编译阶段确定是否存在该类，而是在运行时候才能够确定是否有这个类，所以要捕捉可能发生的异常</p>
+<p>Class对象有一个<code>newInstance</code>方法，我们可以用它来创建实例对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class classInstance = Class.forName(<span class="string">"mypackage.MyClass"</span>);</span><br><span class="line">MyClass myClass = (MyClass) classInstance.newInstance();</span><br></pre></td></tr></table></figure>
+<h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a>7. 总结</h2><ul>
+<li>反射为我们提供了全面的分析类信息的能力，例如类的方法，成员变量和构造器等的相关信息，反射能够让我们很方便的获取这些信息， 而实现这个获取过程的关键是取得类的Class对象，然后根据Class对象取得相应的Method对象，Field对象和Constructor对象，再分别根据各自的API取得信息。</li>
+<li>反射还为我们提供动态加载类的能力</li>
+<li>API中getDeclaredXXX和getXXX的区别在于前者只获取本类声明的XXX（如成员变量或方法），而不获取超类中继承的XXX， 后者相反</li>
+<li>API中， getXXXs（注意后面的s）返回的是一个数组， 而对应的 getXXX（”键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try*catch语句包裹）</li>
+<li>私有成员变量是不能直接获取到值的！因为java本身的保护机制，允许你取得私有成员变量的类型，但是不允许直接获取值，所以要对对应的field对象调用field.setAccessible(true) 放开权限</li>
+</ul>
+<h2 id="8-面试"><a href="#8-面试" class="headerlink" title="8. 面试"></a>8. 面试</h2><h4 id="什么是反射"><a href="#什么是反射" class="headerlink" title="什么是反射"></a>什么是反射</h4><p>反射是一种能够在程序运行时动态访问、修改某个类中任意属性（状态）和方法（行为）的机制</p>
+<h4 id="反射机制能做什么"><a href="#反射机制能做什么" class="headerlink" title="反射机制能做什么"></a>反射机制能做什么</h4><ul>
+<li>在运行时判断任意一个对象所属的类(父类和接口都可以)</li>
+<li>在运行时构造任意一个类的对象</li>
+<li>在运行时判断任意一个类所具有的成员变量和方法</li>
+<li>在运行时调用任意一个对象的方法</li>
+<li>生成动态代理</li>
+</ul>
+<h4 id="反射到底有什么具体的用处"><a href="#反射到底有什么具体的用处" class="headerlink" title="反射到底有什么具体的用处"></a>反射到底有什么具体的用处</h4><ul>
+<li>操作因访问权限限制的属性和方法；</li>
+<li>实现自定义注解；</li>
+<li>动态加载第三方jar包，解决android开发中方法数不能超过65536个的问题；</li>
+<li>按需加载类，节省编译和初始化APK的时间；</li>
+</ul>
+<h4 id="反射的原理是什么"><a href="#反射的原理是什么" class="headerlink" title="反射的原理是什么"></a>反射的原理是什么</h4><p>当我们编写完一个Java项目之后，每个java文件都会被编译成一个.class文件，这些Class对象承载了这个类的所有信息，包括父类、接口、构造函数、方法、属性等，这些class文件在程序运行时会被ClassLoader加载到虚拟机中。当一个类被加载以后，Java虚拟机就会在内存中自动产生一个Class对象。我们通过new的形式创建对象实际上就是通过这些Class来创建，只是这个过程对于我们是透明的而已。</p>
+<p>反射的工作原理就是借助Class.java、Constructor.java、Method.java、Field.java这四个类在程序运行时动态访问和修改任何类的行为和状态。</p>
+<h4 id="如何获取Class对象"><a href="#如何获取Class对象" class="headerlink" title="如何获取Class对象"></a>如何获取Class对象</h4><ul>
+<li>Class的forName()方法的返回值就是Class类型，也就是动态导入类的Class对象的引用<blockquote>
+<p>public static Class&lt;?&gt; forName(String className) throws ClassNotFoundException</p>
+</blockquote>
+</li>
+<li>每个类都会有一个名称为Class的静态属性，通过它也是可以获取到Class对象<blockquote>
+<p>Class<student> clazz = Student.class;</student></p>
+</blockquote>
+</li>
+<li>Object类中有一个名为getClass的成员方法，它返回的是对象的运行时类的Class对象。因为Object类是所有类的父类，所以，所有的对象都可以使用该方法得到它运行时类的Class对象<blockquote>
+<p>Student stu = new Student();</p>
+<p>Class<student> clazz = stu.getClass();</student></p>
+</blockquote>
+</li>
+</ul>
+<h4 id="反射的特点"><a href="#反射的特点" class="headerlink" title="反射的特点"></a>反射的特点</h4><blockquote>
+<p>优点</p>
+</blockquote>
+<ul>
+<li>灵活、自由度高：不受类的访问权限限制，想对类做啥就做啥</li>
+</ul>
+<blockquote>
+<p>缺点</p>
+</blockquote>
+<ul>
+<li>性能问题</li>
+</ul>
+<p>通过反射访问、修改类的属性和方法时会远慢于直接操作，但性能问题的严重程度取决于在程序中是如何使用反射的。如果使用得很少，不是很频繁，性能将不会是什么问题；</p>
+<ul>
+<li>安全性问题</li>
+</ul>
+<p>反射可以随意访问和修改类的所有状态和行为，破坏了类的封装性，如果不熟悉被反射类的实现原理，随意修改可能导致潜在的逻辑问题；</p>
+<ul>
+<li>兼容性问题</li>
+</ul>
+<p>因为反射会涉及到直接访问类的方法名和实例名，不同版本的API如果有变动，反射时找不到对应的属性和方法时会报异常；</p>
+<p>另外，反射还有许多异常需要处理：</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%8F%8D%E5%B0%84%E5%BC%82%E5%B8%B8.png" alt="image"></p>
+<h4 id="如何提高反射性能"><a href="#如何提高反射性能" class="headerlink" title="如何提高反射性能"></a>如何提高反射性能</h4><p>java应用反射的时候，性能往往是java程序员担心的地方，那么在大量运用反射的时候，性能的微弱提升，对这个系统而言都是如旱地逢甘霖。</p>
+<ul>
+<li>setAccessible(true),可以防止安全性检查（做这个很费时）</li>
+<li>做缓存，把要经常访问的元数据信息放入内存中，class.forName 太耗时</li>
+<li>getMethods() 等方法尽量少用，尽量调用getMethod(name)指定方法的名称，减少遍历次数</li>
+</ul>
+<h4 id="java面试中面试官让你讲讲反射，应该从何讲起？"><a href="#java面试中面试官让你讲讲反射，应该从何讲起？" class="headerlink" title="java面试中面试官让你讲讲反射，应该从何讲起？"></a>java面试中面试官让你讲讲反射，应该从何讲起？</h4><p>先讲反射机制，反射就是程序运行期间JVM会对任意一个类洞悉它的属性和方法，对任意一个对象都能够访问它的属性和方法。依靠此机制，可以动态的创建一个类的对象和调用对象的方法。</p>
+<p>其次就是反射相关的API，只讲一些常用的，比如获取一个Class对象。Class.forName(完整类名)。通过Class对象获取类的构造方法，class.getConstructor。根据class对象获取类的方法，getMethod和getMethods。使用class对象创建一个对象，class.newInstance等。</p>
+<p>最后可以说一下反射的优点和缺点，优点就是增加灵活性，可以在运行时动态获取对象实例。缺点是反射的效率很低，而且会破坏封装，通过反射可以访问类的私有方法，不安全。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/05/31/2.java反射/">2.java反射</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-05-31, 21:55:58</p>
+        <p><span>最后更新:</span>2018-06-01, 10:09:47</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/05/31/2.java反射/" title="2.java反射">http://yoursite.com/2018/05/31/2.java反射/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/05/31/2.java反射/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/05/31/3.java动态代理/">
+                    3.java动态代理
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/05/31/1.Java基础/">
+                    1.Java基础
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-反射的作用"><span class="toc-number">1.</span> <span class="toc-text">1. 反射的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-Class对象和实例对象"><span class="toc-number">2.</span> <span class="toc-text">2. Class对象和实例对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-取得Class对象的三种方式"><span class="toc-number">3.</span> <span class="toc-text">3. 取得Class对象的三种方式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-利用反射API全面分析类的信息——方法，成员变量，构造器"><span class="toc-number">4.</span> <span class="toc-text">4. 利用反射API全面分析类的信息——方法，成员变量，构造器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-更多的反射api"><span class="toc-number">5.</span> <span class="toc-text">5. 更多的反射api</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#getMethods和getDeclaredMethods方法"><span class="toc-number">5.0.1.</span> <span class="toc-text">getMethods和getDeclaredMethods方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过method-getReturnType-获取方法返回值对应的Class对象"><span class="toc-number">5.0.2.</span> <span class="toc-text">通过method.getReturnType()获取方法返回值对应的Class对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过method-getParameterTypes-获取方法各参数的Class对象组成的数组"><span class="toc-number">5.0.3.</span> <span class="toc-text">通过method.getParameterTypes()获取方法各参数的Class对象组成的数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#获取成员变量类型对应的的Class对象"><span class="toc-number">5.0.4.</span> <span class="toc-text">获取成员变量类型对应的的Class对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#通过getType方法读取成员变量类型的Class对象"><span class="toc-number">5.0.5.</span> <span class="toc-text">通过getType方法读取成员变量类型的Class对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#利用反射API分析类中构造器信息"><span class="toc-number">5.0.6.</span> <span class="toc-text">利用反射API分析类中构造器信息</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-利用反射动态加载类，并用该类创建实例对象"><span class="toc-number">6.</span> <span class="toc-text">6. 利用反射动态加载类，并用该类创建实例对象</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-总结"><span class="toc-number">7.</span> <span class="toc-text">7. 总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-面试"><span class="toc-number">8.</span> <span class="toc-text">8. 面试</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#什么是反射"><span class="toc-number">8.0.1.</span> <span class="toc-text">什么是反射</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反射机制能做什么"><span class="toc-number">8.0.2.</span> <span class="toc-text">反射机制能做什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反射到底有什么具体的用处"><span class="toc-number">8.0.3.</span> <span class="toc-text">反射到底有什么具体的用处</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反射的原理是什么"><span class="toc-number">8.0.4.</span> <span class="toc-text">反射的原理是什么</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何获取Class对象"><span class="toc-number">8.0.5.</span> <span class="toc-text">如何获取Class对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#反射的特点"><span class="toc-number">8.0.6.</span> <span class="toc-text">反射的特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#如何提高反射性能"><span class="toc-number">8.0.7.</span> <span class="toc-text">如何提高反射性能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#java面试中面试官让你讲讲反射，应该从何讲起？"><span class="toc-number">8.0.8.</span> <span class="toc-text">java面试中面试官让你讲讲反射，应该从何讲起？</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"2.java反射　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/05/31/3.java动态代理/" title="上一篇: 3.java动态代理">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/05/31/1.Java基础/" title="下一篇: 1.Java基础">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共147篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
