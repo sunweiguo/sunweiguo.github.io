@@ -226,7 +226,389 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-7.redis cluster理论详解" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/05/7.redis cluster理论详解/" class="article-date">
+      <time datetime="2018-06-05T03:06:05.414Z" itemprop="datePublished">2018-06-05</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      7.redis cluster理论详解
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>上一篇我们学习了<code>redis sentinel</code>，知道了它是<code>redis</code>高可用的一种实现方案。但是面对要求很高的场景，一台<code>master</code>是一定不能解决问题的，<code>redis 3.0</code>给我们带来了服务端集群方案，解决了这个问题。<br><a id="more"></a></p>
+<h2 id="1-数据分区"><a href="#1-数据分区" class="headerlink" title="1. 数据分区"></a>1. 数据分区</h2><p>集群，那么就会涉及到数据是如何分片的。有两种方式：顺序分区和哈希分区</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/75952046.jpg" alt="image"></p>
+<p>两者对比：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/86878706.jpg" alt="image"></p>
+<p>直接<code>hash</code>取模进行数据分片时，当节点增加，会有很多数据命中不了，需要重新映射。如果大多数数据在增加或者减少节点之后进行迁移的话，对于性能影响是很大的，因为数据迁移，那么缓存中现在是无法命中的，必须去数据库取，是灾难性的行为。</p>
+<p>早期的做法就是这样，在客户端<code>hash%节点个数</code>进行数据分片。如果非要这样，采取翻倍扩容会稍微好一点，迁移数据量会小一点。不过无论如何，这种方式在大数据量情况下是不可行的。</p>
+<h2 id="2-一致性hash算法"><a href="#2-一致性hash算法" class="headerlink" title="2. 一致性hash算法"></a>2. 一致性hash算法</h2><p>对于上面提到的直接hash取余的方式，会导致大量数据的迁移。那么有没有一种方式，在增加或减少节点时，只有少部分数据迁移呢？</p>
+<p>针对一致性<code>hash</code>算法，在实战项目–电商中已经详细介绍了。不再赘述。</p>
+<p>对于redis 3.0之前，客户端可以用这种方式来实现数据分片。在redis 3.0之后，就不需要客户端来实现分片算法了，而是直接给我们提供了服务端集群方案<code>redis cluster</code>.</p>
+<h2 id="3-虚拟槽"><a href="#3-虚拟槽" class="headerlink" title="3. 虚拟槽"></a>3. 虚拟槽</h2><p><code>redis cluster</code>引入槽的概念，一定要与一致性<code>hash</code>的槽区分！这里每一个槽映射一个数据集。</p>
+<blockquote>
+<p>CRC16(key) &amp; 16383</p>
+</blockquote>
+<p>这里计算结果发送给<code>redis cluster</code>任意一个<code>redis</code>节点，这个<code>redis</code>节点发现他是属于自己管辖范围的，那就将它放进去；不属于他的槽范围的话，由于<code>redis</code>之间是相互通信的，这个节点是知道其他<code>redis</code>节点的槽的信息，那么会告诉他去那个<code>redis</code>节点去看看。</p>
+<p>那么就实现了服务端对于槽、节点、数据的管理。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/92222837.jpg" alt="image"></p>
+<p> 当<code>master</code>节点增加时，即扩容时，对于以上两种方案，都会出现数据迁移，那么只能作为缓存场景使用。但是<code>redis cluster</code>，由于每个节点维护的槽的范围是固定的，当有新加入的节点时，是不会干扰到其他节点的槽的，必须是以前的节点将使用槽的权利分配给你，并且将数据分配给你，这样，新的节点才会真正拥有这些槽和数据。这种实现还处于半自动状态，需要人工介入。—–主要的思想是：槽到集群节点的映射关系要改变，不变的是键到槽的映射关系.</p>
+<p><code>Redis</code>集群，要保证16384个槽对应的<code>node</code>都正常工作，<strong>如果某个<code>node</code>发生故障，那它负责的<code>slots</code>也就失效，整个集群将不能工作</strong>。为了增加集群的可访问性，官方推荐的方案是将<code>node</code>配置成主从结构，即一个<code>master</code>主节点，挂n个<code>slave</code>从节点。这时，如果主节点失效，<code>Redis Cluster</code>会根据选举算法从<code>slave</code>节点中选择一个上升为主节点，整个集群继续对外提供服务。</p>
+<h4 id="某个Master又怎么知道某个槽自己是不是拥有呢？"><a href="#某个Master又怎么知道某个槽自己是不是拥有呢？" class="headerlink" title="某个Master又怎么知道某个槽自己是不是拥有呢？"></a>某个Master又怎么知道某个槽自己是不是拥有呢？</h4><p><code>Master</code>节点维护着一个16384/8字节的位序列，<code>Master</code>节点用bit来标识对于某个槽自己是否拥有。比如对于编号为1的槽，<code>Master</code>只要判断序列的第二位（索引从0开始）是不是为1即可。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/45417990.jpg" alt="image"></p>
+<p>如上面的序列，表示当前<code>Master</code>拥有编号为1，134的槽。集群同时还维护着槽到集群节点的映射，是由长度为16384类型为节点的数组实现的，槽编号为数组的下标，数组内容为集群节点，这样就可以很快地通过槽编号找到负责这个槽的节点。位序列这个结构很精巧，即不浪费存储空间，操作起来又很便捷。</p>
+<p>具体参照：<a href="http://blog.jobbole.com/103258/,还提到了`slot`迁移的一些细节。" target="_blank" rel="noopener">http://blog.jobbole.com/103258/,还提到了`slot`迁移的一些细节。</a></p>
+<h4 id="redis节点之间如何通信的？"><a href="#redis节点之间如何通信的？" class="headerlink" title="redis节点之间如何通信的？"></a>redis节点之间如何通信的？</h4><p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/14610782.jpg" alt="image"></p>
+<ul>
+<li><code>gossip</code>协议：节点之间彼此不断通信交换信息，一段时间后所有节点都会知道集群完整的信息。</li>
+<li>节点与节点之间通过二进制协议进行通信。</li>
+<li>客户端和集群节点之间通信和通常一样，通过文本协议进行。</li>
+<li>集群节点不会代理查询。</li>
+</ul>
+<h2 id="4-集群伸缩"><a href="#4-集群伸缩" class="headerlink" title="4. 集群伸缩"></a>4. 集群伸缩</h2><p>这里6385为新加入的节点，一开始是没有槽的，所以进行<code>slot</code>的迁移。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/10996863.jpg" alt="image"></p>
+<p>集群伸缩：槽和数据在节点之间的移动。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/8930549.jpg" alt="image"></p>
+<p>迁移数据的流程图：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/7140273.jpg" alt="image"></p>
+<p><strong>迁移key可以用<code>pipeline</code>进行批量的迁移。</strong></p>
+<p>对于扩容，原理已经很清晰了，至于具体操作，网上很多。至于缩容，也是先手动完成数据迁移，再关闭<code>redis</code>。</p>
+<h2 id="5-客户端路由"><a href="#5-客户端路由" class="headerlink" title="5. 客户端路由"></a>5. 客户端路由</h2><h4 id="5-1-moved重定向"><a href="#5-1-moved重定向" class="headerlink" title="5.1 moved重定向"></a>5.1 moved重定向</h4><p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/69037262.jpg" alt="image"></p>
+<p>其中，槽直接命中的话，就直接返回槽编号：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/48809003.jpg" alt="image"></p>
+<p>槽不命中，返回带提示信息的异常，客户端需要重新发送一条命令：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/38968206.jpg" alt="image"></p>
+<p>对于命令行的实验，用<code>redis-cli</code>去连接集群：</p>
+<p><code>redis -c -p 7000</code>:加上<code>-c</code>，表示使用集群模式，帮助我们在第一次不命中的情况下自动跳转到对应的节点上：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/53223278.jpg" alt="image"></p>
+<p>如果不加-c的话，会返回moved异常，不会自动跳转：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/7791978.jpg" alt="image"></p>
+<h4 id="5-2-ask重定向"><a href="#5-2-ask重定向" class="headerlink" title="5.2 ask重定向"></a>5.2 ask重定向</h4><p>在扩容缩容的时候，由于需要遍历这个节点上的所有的<code>key</code>然后进行迁移，是比较慢的，对客户端是一个挑战。因为假设一个场景，客户端访问某个key，节点告诉客户端这个<code>key</code>在源节点，当我们再去源节点访问的时候，却发现<code>key</code>已经迁移到目标节点。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/35563321.jpg" alt="image"></p>
+<h4 id="5-3-moved重定向和ask重定向对比"><a href="#5-3-moved重定向和ask重定向对比" class="headerlink" title="5.3 moved重定向和ask重定向对比"></a>5.3 moved重定向和ask重定向对比</h4><ul>
+<li>两者都是客户端单重定向</li>
+<li>moved：槽已经确定转移</li>
+<li>ask:槽还在迁移中</li>
+</ul>
+<p>问题：如果节点众多，那么让客户端随机访问节点，那么直接命中的概率只有百分之一，还有就是发生<code>ask</code>异常时（即节点正在迁移时）客户端如何还能高效运转？</p>
+<p>总结一句话就是<code>redis cluster</code>的客户端的实现会更复杂。</p>
+<h2 id="6-smart客户端"><a href="#6-smart客户端" class="headerlink" title="6. smart客户端"></a>6. smart客户端</h2><h4 id="6-1-追求目标"><a href="#6-1-追求目标" class="headerlink" title="6.1 追求目标"></a>6.1 追求目标</h4><p>追求性能，不会使用代理模式，而是直连对应节点。需要对<code>moved</code>异常和ask异常做兼容。也就是说，需要有一个这个语言对应的客户端来高效实现查找等操作。</p>
+<h4 id="6-2-smart原理"><a href="#6-2-smart原理" class="headerlink" title="6.2 smart原理"></a>6.2 smart原理</h4><ul>
+<li>从集群中选一个可运行节点，使用<code>cluster slots</code>初始化槽和节点映射</li>
+<li>将<code>cluster cluster</code>的结果映射到本地，为每个节点创建<code>JedisPool</code></li>
+<li>准备执行命令</li>
+</ul>
+<p>第一步中将<code>slot</code>与<code>node</code>节点的对应关系放在了<code>map</code>中，形成一个映射关系；<code>key</code>是通过<code>CRC16</code>算法再取余得到<code>slot</code>，所以<code>key</code>与<code>slot</code>的映射关系也是确定的。我们就可以直接发送命令。只要后面集群没有发生数据迁移，那么就会连接成功。但是如果在连接的时候出现了连接出错，说明这个<code>key</code>已经迁移到其他的<code>node</code>上了。如果发现<code>key</code>不停地迁移，超过5次就报错。</p>
+<p>在发生<code>move</code>异常的时候，则需要刷新缓存，即一开始维护的<code>map</code>。<br><img src="http://p376695fl.bkt.clouddn.com/18-5-12/49065180.jpg" alt="image"></p>
+<p>有一个情况比较全的图：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/16371398.jpg" alt="image"></p>
+<p><code>java redis cluster</code>客户端：<code>jedisCluster</code>基本使用–伪代码</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/31666045.jpg" alt="image"></p>
+<p><code>jedisCluster</code>内部已经封装好池的借还操作等。</p>
+<p>先写一个<code>JedisClusterFactory</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> redis.clients.jedis.HostAndPort;</span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.JedisCluster;</span><br><span class="line"><span class="keyword">import</span> redis.clients.jedis.JedisPoolConfig;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.HashSet;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JedisClusterFactory</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> JedisCluster jedisCluster;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; hostPortList;</span><br><span class="line">    <span class="comment">//超时时间</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> timeout;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">//这里可以设置相关参数</span></span><br><span class="line">        JedisPoolConfig jedisPoolConfig = <span class="keyword">new</span> JedisPoolConfig();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//从配置文件中读取ip:port的参数放进Set中</span></span><br><span class="line">        Set&lt;HostAndPort&gt; nodeSet = <span class="keyword">new</span> HashSet&lt;HostAndPort&gt;();</span><br><span class="line">        <span class="keyword">for</span>(String hostPort : hostPortList)&#123;</span><br><span class="line">            String[] arr = hostPort.split(<span class="string">":"</span>);</span><br><span class="line">            <span class="keyword">if</span>(arr.length != <span class="number">2</span>)&#123;</span><br><span class="line">                <span class="keyword">continue</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            nodeSet.add(<span class="keyword">new</span> HostAndPort(arr[<span class="number">0</span>],Integer.parseInt(arr[<span class="number">1</span>])));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            jedisCluster = <span class="keyword">new</span> JedisCluster(nodeSet,timeout,jedisPoolConfig);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destory</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(jedisCluster != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                jedisCluster.close();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> JedisCluster <span class="title">getJedisCluster</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> jedisCluster;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//spring注入hostPortList和timeout</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setHostPortList</span><span class="params">(List&lt;String&gt; hostPortList)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hostPortList = hostPortList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTimeout</span><span class="params">(<span class="keyword">int</span> timeout)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.timeout = timeout;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>hostPortList</code> 放入<code>spring bean</code>中，<code>spring</code>自动完成注入。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/83900230.jpg" alt="image"></p>
+<h4 id="6-3-多节点命令实现"><a href="#6-3-多节点命令实现" class="headerlink" title="6.3 多节点命令实现"></a>6.3 多节点命令实现</h4><p>有的时候我们想操作所有节点的数据。如何实现呢？</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/68192871.jpg" alt="image"></p>
+<h4 id="6-4-批量操作"><a href="#6-4-批量操作" class="headerlink" title="6.4 批量操作"></a>6.4 批量操作</h4><p><strong><code>mget</code>,<code>mset</code>必须在一个槽</strong>。这个条件比较苛刻，一般是不能保证的，那么如何实现批量的操作呢？</p>
+<blockquote>
+<p><code>Redis Cluster</code>的行为和<code>Redis</code> 的单节点不同，甚至和一个<code>Sentinel</code> 监控的主从模式也不一样。主要原因是集群自动分片，将一个<code>key</code> 映射到16384个槽中的一个，这些槽分布在多个节点上。因此操作多个<code>key</code> 的命令必须保证所有的<code>key</code> 都映射到同一个槽上，避免跨槽执行错误。更进一步说，今后一个单独的集群节点，只服务于一组专用的<code>keys</code>，请求一个命令到一个<code>Server</code>，只能得到该<code>Server</code> 上拥有<code>keys</code> 的对应结果。一个非常简单的例子是执行<code>KEYS</code>命令，当发布该命令到集群环境中的某个节点是，只能得到该节点上拥有的<code>keys</code>，而不是集群中所有的<code>keys</code>。所以要得到集群中所有的<code>keys</code>，必须从集群的所有主节点上获取所有的<code>keys</code>。</p>
+</blockquote>
+<p>对于分散在<code>redis</code>集群中不同节点的数据，我们如何比较高效地批量获取数据呢？？？？</p>
+<ol>
+<li>串行mget–原始方案，整一个for循环</li>
+</ol>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/58584180.jpg" alt="image"></p>
+<ol start="2">
+<li>串行IO</li>
+</ol>
+<p>对key进行RCR16和取余操作得到<code>slot</code>，将<code>slots</code>按照节点进行分批传送：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/35132332.jpg" alt="image"></p>
+<ol start="3">
+<li>并行IO</li>
+</ol>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/42467098.jpg" alt="image"></p>
+<ol start="4">
+<li>hash_tag</li>
+</ol>
+<p>不做任何改变的话，<code>hash</code>之后就比较均匀地散在每个节点上：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/67459261.jpg" alt="image"></p>
+<p>那么我们能不能像使用单机<code>redis</code>一样，一次IO将所有的<code>key</code>取出来呢？<code>hash-tag</code>提供了这样的功能，如果将上述的<code>key</code>改为如下，也就是用大括号括起来相同的内容，那么这些key就会到指定的一个节点上。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/77254754.jpg" alt="image"></p>
+<p>在<code>mget</code>的时候只需要在一台机器上去即可。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/77494164.jpg" alt="image"></p>
+<ol start="5">
+<li>对比</li>
+</ol>
+<p>方案三比较复杂，一般不用；方案四可能会出现数据倾斜，也不用。方案一在key小的时候可以用；方案二相对来说有一点优势；</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/2180496.jpg" alt="image"></p>
+<p>为什么说是一点优势呢？<code>pipeline</code>批量处理不应该比单挑处理好很多吗？</p>
+<ul>
+<li><a href="http://xiezefan.me/2015/12/13/redis_cluster_research_2/" target="_blank" rel="noopener">http://xiezefan.me/2015/12/13/redis_cluster_research_2/</a></li>
+<li><a href="http://trumandu.github.io/2016/05/09/RedisCluster%E6%9E%84%E5%BB%BA%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%8E%A2%E8%AE%A8/" target="_blank" rel="noopener">http://trumandu.github.io/2016/05/09/RedisCluster%E6%9E%84%E5%BB%BA%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%8E%A2%E8%AE%A8/</a></li>
+</ul>
+<h2 id="7-故障转移"><a href="#7-故障转移" class="headerlink" title="7. 故障转移"></a>7. 故障转移</h2><h4 id="7-1-故障发现"><a href="#7-1-故障发现" class="headerlink" title="7.1 故障发现"></a>7.1 故障发现</h4><ul>
+<li>通过<code>ping/pong</code>消息实现故障发现：不需要<code>sentinel</code></li>
+<li>分为主观下线和客观下线</li>
+</ul>
+<p>主观下线：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/34676048.jpg" alt="image"></p>
+<p>客观下线：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/16678200.jpg" alt="image"></p>
+<p>pfail消息就是主观下线的信息，，维护在一个链表中，链表中包含了所有其他节点对其他节点所有的主观信息，是有时间周期的，为了防止很早以前的主观下线信息还残留在这里。对这个链表进行分析，符合条件就尝试客观下线。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/42802351.jpg" alt="image"></p>
+<h4 id="7-2-故障恢复"><a href="#7-2-故障恢复" class="headerlink" title="7.2 故障恢复"></a>7.2 故障恢复</h4><p>从节点接收到他的主节点客观下线的通知，则进行故障恢复的操作。</p>
+<ul>
+<li>资格检查</li>
+</ul>
+<p>选取出符合条件的从节点：当从节点和故障主节点的断线时间太长，会被取消资格。</p>
+<ul>
+<li>准备选举时间</li>
+</ul>
+<p>就是为了保证偏移量大的从节点优先被选举投票</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/46928842.jpg" alt="image"> </p>
+<ul>
+<li>选举投票</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/64039470.jpg" alt="image"></p>
+<ul>
+<li>替换主节点</li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/70736400.jpg" alt="image"></p>
+<p>这些所有步骤加起来，差不多十几秒左右。最后如果故障节点又恢复功能了，就称为新的<code>Master</code>的<code>slave</code>节点。</p>
+<h2 id="8-常见问题"><a href="#8-常见问题" class="headerlink" title="8. 常见问题"></a>8. 常见问题</h2><h4 id="8-1-集群完整性"><a href="#8-1-集群完整性" class="headerlink" title="8.1 集群完整性"></a>8.1 集群完整性</h4><p><code>cluster-require-full-coverage</code>默认为yes</p>
+<pre><code>- 要求所有节点都在服务，集群中16384个槽全部可用：保证集群完整性
+- 节点故障或者正在故障转移：`(error)CLUSTERDOWN the cluster is down`
+</code></pre><p><strong>但是大多数业务都无法容忍。需要将<code>cluster-require-full-coverage</code>设置为<code>no</code></strong></p>
+<h4 id="8-2-带宽消耗"><a href="#8-2-带宽消耗" class="headerlink" title="8.2 带宽消耗"></a>8.2 带宽消耗</h4><p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/18544066.jpg" alt="image"></p>
+<ul>
+<li>消息发送频率：节点发现与其他节点最后通信时间超过<code>cluster-node-timeout/2</code>时会直接发送<code>Ping</code>消息</li>
+<li>消息数据量：<code>slots</code>槽数组(2k空间)和整个集群1、10的状态数据(10个节点状态数据约10k)</li>
+<li>节点部署的机器规模：进去分布的机器越多且每台机器划分的节点数越均匀，则集群内整体的可用带宽越高。</li>
+<li>优化：避免“大”集群，：避免多业务使用一个集群，大业务可用多集群；<code>cluster-node-timeout</code>时间设置要注意是带宽和故障转移速度的均衡；尽量均匀分配到多机器上：保证高可用和带宽。</li>
+</ul>
+<h4 id="8-3-PubSub广播"><a href="#8-3-PubSub广播" class="headerlink" title="8.3 PubSub广播"></a>8.3 PubSub广播</h4><p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/49491067.jpg" alt="image"></p>
+<ul>
+<li>问题：<code>publish</code>在集群中每个节点广播：加重带宽。</li>
+<li>解决：单独“走”一套<code>redis sentinel</code>。</li>
+</ul>
+<h4 id="8-4-数据倾斜"><a href="#8-4-数据倾斜" class="headerlink" title="8.4 数据倾斜"></a>8.4 数据倾斜</h4><ul>
+<li>节点和槽分配不均匀<ul>
+<li><code>./redis-trib.rb info ip:port</code>查看节点、槽、键值分布</li>
+<li>慎用<code>rebalance</code>命令</li>
+</ul>
+</li>
+<li>不同槽位对应键数量差异较大<ul>
+<li>CRC16正常情况下比较均匀 </li>
+<li>可能存在<code>hash_tag</code></li>
+<li><code>cluster countKeysinslot {slot}</code>获取槽对应键值个数</li>
+</ul>
+</li>
+<li>包含<code>bigkey</code><ul>
+<li>例如大字符串、几百万的元素的<code>hash</code>、<code>set</code>等</li>
+<li>在从节点上执行:<code>redis-cli --bigkeys</code>来查看<code>bigkey</code>情况</li>
+<li>优化：优化数据结构</li>
+</ul>
+</li>
+<li>内存相关配置不一致<ul>
+<li>因为某种情况下，某个节点对<code>hash</code>或者<code>Set</code>这种数据结构进行了单独的优化，而其他节点都没有配置，会出现配置不一致的情况。</li>
+</ul>
+</li>
+</ul>
+<h4 id="8-5-请求倾斜"><a href="#8-5-请求倾斜" class="headerlink" title="8.5 请求倾斜"></a>8.5 请求倾斜</h4><ul>
+<li>热点key：重要的<code>key</code>或者<code>bigkey</code></li>
+<li>优化：避免<code>bigkey</code>;热键不使用<code>hash_tag</code>；当一致性不高时，可以用本地缓存+MQ</li>
+</ul>
+<h4 id="8-6-读写分离"><a href="#8-6-读写分离" class="headerlink" title="8.6 读写分离"></a>8.6 读写分离</h4><ul>
+<li>只读连接：集群模式的从节点不接受任何读写请求</li>
+</ul>
+<blockquote>
+<p>重定向到负责槽的主节点(对从节点进行读，都是重定向到主节点再返回信息)</p>
+<p>readonly命令可以读：连接级别命令(每次重新连接都要写一次)</p>
+</blockquote>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/57749242.jpg" alt="image"></p>
+<p>上图可以看出，<code>redis cluster</code> 默认<code>slave</code> 也是不能读的，如果要读取，需要执行 <code>readonly</code>，就可以了。</p>
+<ul>
+<li>读写分离：更加复杂（成本很高，尽量不要使用）<blockquote>
+<p>同样的问题：复制延迟、读取过期数据、从节点故障</p>
+<p>修改客户端</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="8-7-数据迁移"><a href="#8-7-数据迁移" class="headerlink" title="8.7 数据迁移"></a>8.7 数据迁移</h4><p>分为离线迁移和在线迁移(唯品会<code>redis-migrate-tool</code>和豌豆荚<code>redis-port</code>)。</p>
+<p>官方的方式：只能从单机迁移到集群、不支持在线迁移、不支持断点续传、单线程迁移影响速度</p>
+<blockquote>
+<p><code>./redis-trib.rb import --from 源ip:port --copy 目标ip:port</code></p>
+</blockquote>
+<p>加入在迁移时再往源<code>redis</code>插入几条数据，这几条数据会丢失(丢失一部分)</p>
+<h4 id="8-8-集群vs单机"><a href="#8-8-集群vs单机" class="headerlink" title="8.8 集群vs单机"></a>8.8 集群vs单机</h4><p>集群也有一定的限制：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/73133214.jpg" alt="image"></p>
+<p>分布式<code>redis</code>不一定是好的：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/6295367.jpg" alt="image"></p>
+<h2 id="9-简单总结"><a href="#9-简单总结" class="headerlink" title="9. 简单总结"></a>9. 简单总结</h2><p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/415428.jpg" alt="image"> </p>
+<p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/24688449.jpg" alt="image"></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-05, 11:06:05</p>
+        <p><span>最后更新:</span>2018-06-05, 13:33:02</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/05/7.redis cluster理论详解/" title="7.redis cluster理论详解">http://yoursite.com/2018/06/05/7.redis cluster理论详解/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/7.redis cluster理论详解/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">
+                    8.redis cluster实践--淘淘商城的某一节
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/05/6.redis sentinel实现高可用读写分离/">
+                    6.redis sentinel实现高可用读写分离
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-数据分区"><span class="toc-number">1.</span> <span class="toc-text">1. 数据分区</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-一致性hash算法"><span class="toc-number">2.</span> <span class="toc-text">2. 一致性hash算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-虚拟槽"><span class="toc-number">3.</span> <span class="toc-text">3. 虚拟槽</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#某个Master又怎么知道某个槽自己是不是拥有呢？"><span class="toc-number">3.0.1.</span> <span class="toc-text">某个Master又怎么知道某个槽自己是不是拥有呢？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#redis节点之间如何通信的？"><span class="toc-number">3.0.2.</span> <span class="toc-text">redis节点之间如何通信的？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-集群伸缩"><span class="toc-number">4.</span> <span class="toc-text">4. 集群伸缩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-客户端路由"><span class="toc-number">5.</span> <span class="toc-text">5. 客户端路由</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#5-1-moved重定向"><span class="toc-number">5.0.1.</span> <span class="toc-text">5.1 moved重定向</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-2-ask重定向"><span class="toc-number">5.0.2.</span> <span class="toc-text">5.2 ask重定向</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5-3-moved重定向和ask重定向对比"><span class="toc-number">5.0.3.</span> <span class="toc-text">5.3 moved重定向和ask重定向对比</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-smart客户端"><span class="toc-number">6.</span> <span class="toc-text">6. smart客户端</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1-追求目标"><span class="toc-number">6.0.1.</span> <span class="toc-text">6.1 追求目标</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2-smart原理"><span class="toc-number">6.0.2.</span> <span class="toc-text">6.2 smart原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-多节点命令实现"><span class="toc-number">6.0.3.</span> <span class="toc-text">6.3 多节点命令实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-4-批量操作"><span class="toc-number">6.0.4.</span> <span class="toc-text">6.4 批量操作</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-故障转移"><span class="toc-number">7.</span> <span class="toc-text">7. 故障转移</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#7-1-故障发现"><span class="toc-number">7.0.1.</span> <span class="toc-text">7.1 故障发现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7-2-故障恢复"><span class="toc-number">7.0.2.</span> <span class="toc-text">7.2 故障恢复</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-常见问题"><span class="toc-number">8.</span> <span class="toc-text">8. 常见问题</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#8-1-集群完整性"><span class="toc-number">8.0.1.</span> <span class="toc-text">8.1 集群完整性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-2-带宽消耗"><span class="toc-number">8.0.2.</span> <span class="toc-text">8.2 带宽消耗</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-3-PubSub广播"><span class="toc-number">8.0.3.</span> <span class="toc-text">8.3 PubSub广播</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-4-数据倾斜"><span class="toc-number">8.0.4.</span> <span class="toc-text">8.4 数据倾斜</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-5-请求倾斜"><span class="toc-number">8.0.5.</span> <span class="toc-text">8.5 请求倾斜</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-6-读写分离"><span class="toc-number">8.0.6.</span> <span class="toc-text">8.6 读写分离</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-7-数据迁移"><span class="toc-number">8.0.7.</span> <span class="toc-text">8.7 数据迁移</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8-8-集群vs单机"><span class="toc-number">8.0.8.</span> <span class="toc-text">8.8 集群vs单机</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-简单总结"><span class="toc-number">9.</span> <span class="toc-text">9. 简单总结</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"7.redis cluster理论详解　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/" title="上一篇: 8.redis cluster实践--淘淘商城的某一节">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/05/6.redis sentinel实现高可用读写分离/" title="下一篇: 6.redis sentinel实现高可用读写分离">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

@@ -208,7 +208,296 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-分布式问题分析" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/分布式问题分析/" class="article-date">
+      <time datetime="2018-06-06T03:59:44.187Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      分布式问题分析
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/计算机网络及其他/">计算机网络及其他</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>本篇讲述分布式问题分析。<br><a id="more"></a></p>
+<h1 id="一、分布式事务"><a href="#一、分布式事务" class="headerlink" title="一、分布式事务"></a>一、分布式事务</h1><p>指事务的操作位于不同的节点上，需要保证事务的 AICD 特性。例如在下单场景下，库存和订单如果不在同一个节点上，就需要涉及分布式事务。</p>
+<h2 id="两阶段提交协议"><a href="#两阶段提交协议" class="headerlink" title="两阶段提交协议"></a>两阶段提交协议</h2><p>Two-phase Commit（2PC）。</p>
+<p>两类节点：协调者（Coordinator）和参与者（Participants），协调者只有一个，参与者可以有多个。</p>
+<h3 id="1-运行过程"><a href="#1-运行过程" class="headerlink" title="1. 运行过程"></a>1. 运行过程</h3><p>① 准备阶段：协调者询问参与者事务是否执行成功；</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B1.jpg" alt="image"></p>
+<p>② 提交阶段：如果事务在每个参与者上都执行成功，协调者发送通知让参与者提交事务；否则，协调者发送通知让参与者回滚事务。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B2.jpg" alt="image"></p>
+<p>需要注意的是，在准备阶段，参与者执行了事务，但是还未提交。只有在提交阶段接收到协调者发来的通知后，才进行提交或者回滚。</p>
+<h3 id="2-分析"><a href="#2-分析" class="headerlink" title="2. 分析"></a>2. 分析</h3><p>2PC 可以保证强一致性，但是因为在准备阶段协调者需要等待所有参与者的结果才能进入提交阶段，因此可用性差。</p>
+<h3 id="3-存在的问题"><a href="#3-存在的问题" class="headerlink" title="3. 存在的问题"></a>3. 存在的问题</h3><ul>
+<li>参与者发生故障。解决方案：可以给事务设置一个超时时间，如果某个参与者一直不响应，那么认为事务执行失败。</li>
+<li>协调者发生故障。解决方案：将操作日志同步到备用协调者，让备用协调者接替后续工作。</li>
+</ul>
+<h3 id="4-XA-协议"><a href="#4-XA-协议" class="headerlink" title="4. XA 协议"></a>4. XA 协议</h3><p>XA 协议是多数数据库的 2PC 协议的实现，包含了事务管理器和本地资源管理器。</p>
+<h2 id="本地消息"><a href="#本地消息" class="headerlink" title="本地消息"></a>本地消息</h2><h3 id="1-原理"><a href="#1-原理" class="headerlink" title="1. 原理"></a>1. 原理</h3><p>本地消息表与业务数据表处于同一个数据库中，这样就能利用本地事务来保证在对这两个表的操作满足事务特性。</p>
+<ol>
+<li>在分布式事务操作的一方，它完成写业务数据的操作之后向本地消息表发送一个消息，本地事务能保证这个消息一定会被写入本地消息表中。</li>
+<li>之后将本地消息表中的消息转发到 Kafka 等消息队列（MQ）中，如果转发成功则将消息从本地消息表中删除，否则继续重新转发。</li>
+<li>在分布式事务操作的另一方从消息队列中读取一个消息，并执行消息中的操作。</li>
+</ol>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E6%9C%AC%E5%9C%B0%E6%B6%88%E6%81%AF.jpg" alt="image"></p>
+<h3 id="2-分析-1"><a href="#2-分析-1" class="headerlink" title="2. 分析"></a>2. 分析</h3><p>本地消息表利用了本地事务来实现分布式事务，并且使用了消息队列来保证最终一致性。</p>
+<h1 id="二、分布式锁"><a href="#二、分布式锁" class="headerlink" title="二、分布式锁"></a>二、分布式锁</h1><p>可以使用 Java 提供的内置锁来实现进程同步：由 JVM 实现的 synchronized 和 JDK 提供的 Lock。但是在分布式场景下，需要同步的进程可能位于不同的节点上，那么就需要使用分布式锁来同步。</p>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>锁可以有阻塞锁和乐观锁两种实现方式，这里主要探讨阻塞锁实现。阻塞锁通常使用互斥量来实现，互斥量为 1 表示有其它进程在使用锁，此时处于锁定状态，互斥量为 0 表示未锁定状态。1 和 0 可以用一个整型值来存储，也可以用某个数据存在或者不存在来存储，某个数据存在表示互斥量为 1，也就是锁定状态。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><h3 id="1-数据库的唯一索引"><a href="#1-数据库的唯一索引" class="headerlink" title="1. 数据库的唯一索引"></a>1. 数据库的唯一索引</h3><p>当想要获得锁时，就向表中插入一条记录，释放锁时就删除这条记录。唯一索引可以保证该记录只被插入一次，那么就可以用这个记录是否存在来判断是否存于锁定状态。</p>
+<p>这种方式存在以下几个问题：</p>
+<ul>
+<li>锁没有失效时间，解锁失败会导致死锁，其他线程无法再获得锁。</li>
+<li>只能是非阻塞锁，插入失败直接就报错了，无法重试。</li>
+<li>不可重入，同一线程在没有释放锁之前无法再获得锁。</li>
+</ul>
+<h3 id="2-Redis-的-SETNX-指令"><a href="#2-Redis-的-SETNX-指令" class="headerlink" title="2. Redis 的 SETNX 指令"></a>2. Redis 的 SETNX 指令</h3><p>使用 SETNX（set if not exist）指令插入一个键值对，如果 Key 已经存在，那么会返回 False，否则插入成功并返回 True。</p>
+<p>SETNX 指令和数据库的唯一索引类似，可以保证只存在一个 Key 的键值对，可以用一个 Key 的键值对是否存在来判断是否存于锁定状态。</p>
+<p>EXPIRE 指令可以为一个键值对设置一个过期时间，从而避免了死锁的发生。</p>
+<h3 id="3-Redis-的-RedLock-算法"><a href="#3-Redis-的-RedLock-算法" class="headerlink" title="3. Redis 的 RedLock 算法"></a>3. Redis 的 RedLock 算法</h3><p>使用了多个 Redis 实例来实现分布式锁，这是为了保证在发生单点故障时仍然可用。</p>
+<ul>
+<li>尝试从 N 个相互独立 Redis 实例获取锁，如果一个实例不可用，应该尽快尝试下一个。</li>
+<li>计算获取锁消耗的时间，只有当这个时间小于锁的过期时间，并且从大多数（N/2+1）实例上获取了锁，那么就认为锁获取成功了。</li>
+<li>如果锁获取失败，会到每个实例上释放锁。</li>
+</ul>
+<h3 id="4-Zookeeper-的有序节点"><a href="#4-Zookeeper-的有序节点" class="headerlink" title="4. Zookeeper 的有序节点"></a>4. Zookeeper 的有序节点</h3><p>Zookeeper 是一个为分布式应用提供一致性服务的软件，例如配置管理、分布式协同以及命名的中心化等，这些都是分布式系统中非常底层而且是必不可少的基本功能，但是如果自己实现这些功能而且要达到高吞吐、低延迟同时还要保持一致性和可用性，实际上非常困难。</p>
+<p><strong>（一）抽象模型</strong> </p>
+<p>Zookeeper 提供了一种树形结构级的命名空间，/app1/p_1 节点表示它的父节点为 /app1。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E6%8A%BD%E8%B1%A1%E6%A8%A1%E5%9E%8B.jpg" alt="image"></p>
+<p><strong>（二）节点类型</strong> </p>
+<ul>
+<li>永久节点：不会因为会话结束或者超时而消失；</li>
+<li>临时节点：如果会话结束或者超时就会消失；</li>
+<li>有序节点：会在节点名的后面加一个数字后缀，并且是有序的，例如生成的有序节点为 /lock/node-0000000000，它的下一个有序节点则为 /lock/node-0000000001，依次类推。</li>
+</ul>
+<p><strong>（三）监听器</strong> </p>
+<p>为一个节点注册监听器，在节点状态发生改变时，会给客户端发送消息。</p>
+<p><strong>（四）分布式锁实现</strong> </p>
+<ul>
+<li>创建一个锁目录 /lock；</li>
+<li>在 /lock 下创建临时的且有序的子节点，第一个客户端对应的子节点为 /lock/lock-0000000000，第二个为 /lock/lock-0000000001，以此类推；</li>
+<li>客户端获取 /lock 下的子节点列表，判断自己创建的子节点是否为当前子节点列表中序号最小的子节点，如果是则认为获得锁；否则监听自己的前一个子节点，获得子节点的变更通知后重复此步骤直至获得锁；</li>
+<li>执行业务代码，完成后，删除对应的子节点。</li>
+</ul>
+<p><strong>（五）会话超时</strong> </p>
+<p>如果一个已经获得锁的会话超时了，因为创建的是临时节点，所以该会话对应的临时节点会被删除，其它会话就可以获得锁了。可以看到，Zookeeper 分布式锁不会出现数据库的唯一索引实现分布式锁的死锁问题。</p>
+<p><strong>（六）羊群效应</strong> </p>
+<p>一个节点未获得锁，需要监听自己的前一个子节点，这是因为如果监听所有的子节点，那么任意一个子节点状态改变，其它所有子节点都会收到通知（羊群效应），而我们只希望它的后一个子节点收到通知。</p>
+<h1 id="三、分布式-Session"><a href="#三、分布式-Session" class="headerlink" title="三、分布式 Session"></a>三、分布式 Session</h1><p>在分布式场景下，一个用户的 Session 如果只存储在一个服务器上，那么当负载均衡器把用户的下一个请求转发到另一个服务器上，该服务器没有用户的 Session，就可能导致用户需要重新进行登录等操作。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8FSession.png" alt="image"></p>
+<h3 id="1-Sticky-Sessions"><a href="#1-Sticky-Sessions" class="headerlink" title="1. Sticky Sessions"></a>1. Sticky Sessions</h3><p>需要配置负载均衡器，使得一个用户的所有请求都路由到一个服务器节点上，这样就可以把用户的 Session 存放在该服务器节点中。</p>
+<p>缺点：当服务器节点宕机时，将丢失该服务器节点上的所有 Session。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8FSession2.jpg" alt="image"></p>
+<h3 id="2-Session-Replication"><a href="#2-Session-Replication" class="headerlink" title="2. Session Replication"></a>2. Session Replication</h3><p>在服务器节点之间进行 Session 同步操作，这样的话用户可以访问任何一个服务器节点。</p>
+<p>缺点：需要更好的服务器硬件条件；需要对服务器进行配置。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8FSession3.jpg" alt="image"></p>
+<h3 id="3-Persistent-DataStore"><a href="#3-Persistent-DataStore" class="headerlink" title="3. Persistent DataStore"></a>3. Persistent DataStore</h3><p>将 Session 信息持久化到一个数据库中。</p>
+<p>缺点：有可能需要去实现存取 Session 的代码。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%88%86%E5%B8%83%E5%BC%8FSession4.jpg" alt="image"></p>
+<h3 id="4-In-Memory-DataStore"><a href="#4-In-Memory-DataStore" class="headerlink" title="4. In-Memory DataStore"></a>4. In-Memory DataStore</h3><p>可以使用 Redis 和 Memcached 这种内存型数据库对 Session 进行存储，可以大大提高 Session 的读写效率。内存型数据库同样可以持久化数据到磁盘中来保证数据的安全性。</p>
+<h1 id="四、负载均衡"><a href="#四、负载均衡" class="headerlink" title="四、负载均衡"></a>四、负载均衡</h1><h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><h3 id="1-轮询（Round-Robin）"><a href="#1-轮询（Round-Robin）" class="headerlink" title="1. 轮询（Round Robin）"></a>1. 轮询（Round Robin）</h3><p>轮询算法把每个请求轮流发送到每个服务器上。下图中，一共有 6 个客户端产生了 6 个请求，这 6 个请求按 (1, 2, 3, 4, 5, 6) 的顺序发送。最后，(1, 3, 5) 的请求会被发送到服务器 1，(2, 4, 6) 的请求会被发送到服务器 2。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A11.jpg" alt="image"></p>
+<p>该算法比较适合每个服务器的性能差不多的场景，如果有性能存在差异的情况下，那么性能较差的服务器可能无法承担过大的负载（下图的 Server 2）。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A12.jpg" alt="image"></p>
+<h3 id="2-加权轮询（Weighted-Round-Robbin）"><a href="#2-加权轮询（Weighted-Round-Robbin）" class="headerlink" title="2. 加权轮询（Weighted Round Robbin）"></a>2. 加权轮询（Weighted Round Robbin）</h3><p>加权轮询是在轮询的基础上，根据服务器的性能差异，为服务器赋予一定的权值。例如下图中，服务器 1 被赋予的权值为 5，服务器 2 被赋予的权值为 1，那么 (1, 2, 3, 4, 5) 请求会被发送到服务器 1，(6) 请求会被发送到服务器 2。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A13.jpg" alt="image"></p>
+<h3 id="3-最少连接（least-Connections）"><a href="#3-最少连接（least-Connections）" class="headerlink" title="3. 最少连接（least Connections）"></a>3. 最少连接（least Connections）</h3><p>由于每个请求的连接时间不一样，使用轮询或者加权轮询算法的话，可能会让一台服务器当前连接数过大，而另一台服务器的连接过小，造成负载不均衡。例如下图中，(1, 3, 5) 请求会被发送到服务器 1，但是 (1, 3) 很快就断开连接，此时只有 (5) 请求连接服务器 1；(2, 4, 6) 请求被发送到服务器 2，只有 (2) 的连接断开。该系统继续运行时，服务器 2 会承担过大的负载。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A14.jpg" alt="image"></p>
+<p>最少连接算法就是将请求发送给当前最少连接数的服务器上。例如下图中，服务器 1 当前连接数最小，那么新到来的请求 6 就会被发送到服务器 1 上。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A15.jpg" alt="image"></p>
+<h3 id="4-加权最少连接（Weighted-Least-Connection）"><a href="#4-加权最少连接（Weighted-Least-Connection）" class="headerlink" title="4. 加权最少连接（Weighted Least Connection）"></a>4. 加权最少连接（Weighted Least Connection）</h3><p>在最少连接的基础上，根据服务器的性能为每台服务器分配权重，再根据权重计算出每台服务器能处理的连接数。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A16.jpg" alt="image"></p>
+<h3 id="5-随机算法（Random）"><a href="#5-随机算法（Random）" class="headerlink" title="5. 随机算法（Random）"></a>5. 随机算法（Random）</h3><p>把请求随机发送到服务器上。和轮询算法类似，该算法比较适合服务器性能差不多的场景。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A17.jpg" alt="image"></p>
+<h3 id="6-源地址哈希法-IP-Hash"><a href="#6-源地址哈希法-IP-Hash" class="headerlink" title="6. 源地址哈希法 (IP Hash)"></a>6. 源地址哈希法 (IP Hash)</h3><p>源地址哈希通过对客户端 IP 哈希计算得到的一个数值，用该数值对服务器数量进行取模运算，取模结果便是目标服务器的序号。</p>
+<ul>
+<li>优点：保证同一 IP 的客户端都会被 hash 到同一台服务器上。</li>
+<li>缺点：不利于集群扩展，后台服务器数量变更都会影响 hash 结果。可以采用一致性 Hash 改进。</li>
+</ul>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A18.jpg" alt="image"></p>
+<h2 id="实现-1"><a href="#实现-1" class="headerlink" title="实现"></a>实现</h2><h3 id="1-HTTP-重定向"><a href="#1-HTTP-重定向" class="headerlink" title="1. HTTP 重定向"></a>1. HTTP 重定向</h3><p>HTTP 重定向负载均衡服务器收到 HTTP 请求之后会返回服务器的地址，并将该地址写入 HTTP 重定向响应中返回给浏览器，浏览器收到后需要再次发送请求。</p>
+<p>缺点：</p>
+<ul>
+<li>用户访问的延迟会增加；</li>
+<li>如果负载均衡器宕机，就无法访问该站点。</li>
+</ul>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/HTTP%E9%87%8D%E5%AE%9A%E5%90%91.png" alt="image"></p>
+<h3 id="2-DNS-重定向"><a href="#2-DNS-重定向" class="headerlink" title="2. DNS 重定向"></a>2. DNS 重定向</h3><p>使用 DNS 作为负载均衡器，根据负载情况返回不同服务器的 IP 地址。大型网站基本使用了这种方式做为第一级负载均衡手段，然后在内部使用其它方式做第二级负载均衡。</p>
+<p>缺点：</p>
+<ul>
+<li>DNS 查找表可能会被客户端缓存起来，那么之后的所有请求都会被重定向到同一个服务器。</li>
+</ul>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/DNS%E9%87%8D%E5%AE%9A%E5%90%91.png" alt="image"></p>
+<h3 id="3-修改-MAC-地址"><a href="#3-修改-MAC-地址" class="headerlink" title="3. 修改 MAC 地址"></a>3. 修改 MAC 地址</h3><p>使用 LVS（Linux Virtual Server）这种链路层负载均衡器，根据负载情况修改请求的 MAC 地址。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E4%BF%AE%E6%94%B9MAC%E5%9C%B0%E5%9D%80.png" alt="image"></p>
+<h3 id="4-修改-IP-地址"><a href="#4-修改-IP-地址" class="headerlink" title="4. 修改 IP 地址"></a>4. 修改 IP 地址</h3><p>在网络层修改请求的目的 IP 地址。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E4%BF%AE%E6%94%B9IP%E5%9C%B0%E5%9D%80.png" alt="image"></p>
+<h3 id="5-代理自动配置"><a href="#5-代理自动配置" class="headerlink" title="5. 代理自动配置"></a>5. 代理自动配置</h3><p>正向代理与反向代理的区别：</p>
+<ul>
+<li>正向代理：发生在客户端，是由用户主动发起的。比如翻墙，客户端通过主动访问代理服务器，让代理服务器获得需要的外网数据，然后转发回客户端。</li>
+<li>反向代理：发生在服务器端，用户不知道代理的存在。</li>
+</ul>
+<p>PAC 服务器是用来判断一个请求是否要经过代理。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E4%BB%A3%E7%90%86%E8%87%AA%E5%8A%A8%E9%85%8D%E7%BD%AE.jpg" alt="image"></p>
+<p>转自：</p>
+<ul>
+<li><a href="https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E5%88%86%E5%B8%83%E5%BC%8F%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90.md" target="_blank" rel="noopener">分布式问题分析</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/分布式问题分析/">分布式问题分析</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 11:59:44</p>
+        <p><span>最后更新:</span>2018-06-06, 11:59:54</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/分布式问题分析/" title="分布式问题分析">http://yoursite.com/2018/06/06/分布式问题分析/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/分布式问题分析/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/计算机操作系统/">
+                    计算机操作系统
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/分布式基础/">
+                    分布式基础
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一、分布式事务"><span class="toc-number">1.</span> <span class="toc-text">一、分布式事务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#两阶段提交协议"><span class="toc-number">1.1.</span> <span class="toc-text">两阶段提交协议</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-运行过程"><span class="toc-number">1.1.1.</span> <span class="toc-text">1. 运行过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-分析"><span class="toc-number">1.1.2.</span> <span class="toc-text">2. 分析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-存在的问题"><span class="toc-number">1.1.3.</span> <span class="toc-text">3. 存在的问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-XA-协议"><span class="toc-number">1.1.4.</span> <span class="toc-text">4. XA 协议</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#本地消息"><span class="toc-number">1.2.</span> <span class="toc-text">本地消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-原理"><span class="toc-number">1.2.1.</span> <span class="toc-text">1. 原理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-分析-1"><span class="toc-number">1.2.2.</span> <span class="toc-text">2. 分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#二、分布式锁"><span class="toc-number">2.</span> <span class="toc-text">二、分布式锁</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#原理"><span class="toc-number">2.1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现"><span class="toc-number">2.2.</span> <span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-数据库的唯一索引"><span class="toc-number">2.2.1.</span> <span class="toc-text">1. 数据库的唯一索引</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Redis-的-SETNX-指令"><span class="toc-number">2.2.2.</span> <span class="toc-text">2. Redis 的 SETNX 指令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Redis-的-RedLock-算法"><span class="toc-number">2.2.3.</span> <span class="toc-text">3. Redis 的 RedLock 算法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-Zookeeper-的有序节点"><span class="toc-number">2.2.4.</span> <span class="toc-text">4. Zookeeper 的有序节点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#三、分布式-Session"><span class="toc-number">3.</span> <span class="toc-text">三、分布式 Session</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Sticky-Sessions"><span class="toc-number">3.0.1.</span> <span class="toc-text">1. Sticky Sessions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Session-Replication"><span class="toc-number">3.0.2.</span> <span class="toc-text">2. Session Replication</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Persistent-DataStore"><span class="toc-number">3.0.3.</span> <span class="toc-text">3. Persistent DataStore</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-In-Memory-DataStore"><span class="toc-number">3.0.4.</span> <span class="toc-text">4. In-Memory DataStore</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#四、负载均衡"><span class="toc-number">4.</span> <span class="toc-text">四、负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#算法"><span class="toc-number">4.1.</span> <span class="toc-text">算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-轮询（Round-Robin）"><span class="toc-number">4.1.1.</span> <span class="toc-text">1. 轮询（Round Robin）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-加权轮询（Weighted-Round-Robbin）"><span class="toc-number">4.1.2.</span> <span class="toc-text">2. 加权轮询（Weighted Round Robbin）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-最少连接（least-Connections）"><span class="toc-number">4.1.3.</span> <span class="toc-text">3. 最少连接（least Connections）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-加权最少连接（Weighted-Least-Connection）"><span class="toc-number">4.1.4.</span> <span class="toc-text">4. 加权最少连接（Weighted Least Connection）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-随机算法（Random）"><span class="toc-number">4.1.5.</span> <span class="toc-text">5. 随机算法（Random）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-源地址哈希法-IP-Hash"><span class="toc-number">4.1.6.</span> <span class="toc-text">6. 源地址哈希法 (IP Hash)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现-1"><span class="toc-number">4.2.</span> <span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-HTTP-重定向"><span class="toc-number">4.2.1.</span> <span class="toc-text">1. HTTP 重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-DNS-重定向"><span class="toc-number">4.2.2.</span> <span class="toc-text">2. DNS 重定向</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-修改-MAC-地址"><span class="toc-number">4.2.3.</span> <span class="toc-text">3. 修改 MAC 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-修改-IP-地址"><span class="toc-number">4.2.4.</span> <span class="toc-text">4. 修改 IP 地址</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-代理自动配置"><span class="toc-number">4.2.5.</span> <span class="toc-text">5. 代理自动配置</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"分布式问题分析　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/计算机操作系统/" title="上一篇: 计算机操作系统">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/分布式基础/" title="下一篇: 分布式基础">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

@@ -189,7 +189,311 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-12、深入fail-fast" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/04/12、深入fail-fast/" class="article-date">
+      <time datetime="2018-06-04T07:30:40.514Z" itemprop="datePublished">2018-06-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      12、深入fail-fast
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java容器/">java容器</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>本文分析fail-fast机制.<br><a id="more"></a></p>
+<h2 id="一、什么是fail-fast"><a href="#一、什么是fail-fast" class="headerlink" title="一、什么是fail-fast"></a>一、什么是fail-fast</h2><p>由<code>iterator()</code>和<code>listIterator()</code>返回的迭代器是<code>fail-fast</code>的。<strong>在于程序在对<code>list</code>进行迭代时，某个线程对该<code>collection</code>在结构上对其做了修改，这时迭代器就会抛出<code>ConcurrentModificationException</code>异常信息。因此，面对并发的修改，迭代器快速而干净利落地失败，而不是在不确定的情况下冒险</strong>。由<code>elements()</code>返回的<code>Enumerations</code>不是<code>fail-fast</code>的。需要注意的是，迭代器的<code>fail-fast</code>并不能得到保证，<strong>它不能够保证一定出现该错误</strong>。一般来说，<code>fail-fast</code>会尽最大努力抛出<code>ConcurrentModificationException</code>异常。因此，为提高此类操作的正确性而编写一个依赖于此异常的程序是错误的做法，正确做法是：<code>ConcurrentModificationException</code> 应该仅用于检测 bug。</p>
+<p>大意为在遍历一个集合时，当集合结构被修改，很有可能会抛出<code>Concurrent Modification Exception</code>。为什么说是很有可能呢？从下文中我们可以知道，迭代器的<code>remove</code>操作（注意是迭代器的<code>remove</code>方法而不是集合的<code>remove</code>方法）修改集合结构就不会导致这个异常。</p>
+<p>看到这里我们就明白了，<strong><code>fail-fast</code> 机制是java容器（<code>Collection</code>和<code>Map</code>都存在<code>fail-fast</code>机制）中的一种错误机制</strong>。在遍历一个容器对象时，当容器结构被修改，很有可能会抛出<code>ConcurrentModificationException</code>，产生<code>fail-fast</code>。</p>
+<h2 id="二、什么时候会出现fail-fast以及解决思路"><a href="#二、什么时候会出现fail-fast以及解决思路" class="headerlink" title="二、什么时候会出现fail-fast以及解决思路"></a>二、什么时候会出现fail-fast以及解决思路</h2><p>在以下两种情况下会导致<code>fail-fast</code>，抛出<code>ConcurrentModificationException</code></p>
+<p><strong>单线程环境</strong> </p>
+<p>遍历一个集合过程中，集合结构被修改。注意，<code>listIterator.remove()</code>方法修改集合结构不会抛出这个异常。</p>
+<p>这里就提示了单线程下在更改容器<code>(add, delete….)</code>，那么迭代的时候采用<code>iterator.remove()</code>方法可以确保迭代器在查找<code>next</code>的时候，指针不会丢失。</p>
+<p><strong>多线程环境</strong> </p>
+<p>当一个线程遍历集合过程中，而另一个线程对集合结构进行了修改。</p>
+<p>如果当前有多个线程在对容器进行操作，例如一个线程正在向容器中写数据，而另一个线程在迭代此容器，这时候就必须考虑并发下的线程安全问题。<code>ConcurrentModificationException</code>官方文档第一句就指出：</p>
+<blockquote>
+<p>This exception may be thrown by methods that have detected concurrent modification of an object when such modification is not permissible.</p>
+</blockquote>
+<p>这时候可以采用<code>java.util.concurrent</code>包下面的线程安全的容器解决此异常。</p>
+<h2 id="三、关于listIterator补充"><a href="#三、关于listIterator补充" class="headerlink" title="三、关于listIterator补充"></a>三、关于listIterator补充</h2><p>Java的<code>Iterator</code>的只能单向移动。</p>
+<p><code>ListIterator</code>是一个更加强大的<code>Iterator</code>的子类型。它只能用于各种<code>List</code>类的访问。它最大的优点是可以双向移动。它还可以产生相对于迭代器在列表中指向的当前位置的前一个和后一个元素的索引，并且可以使用<code>set()</code>方法替换它访问过的最后一个元素。</p>
+<p><code>ListIterator</code>只能用于<code>List</code>，<code>Iterator</code>是通用的</p>
+<p><code>Iterator</code>容易引起并发修改异常问题，而<code>ListIterator</code>可以避免线程安全问题的发生，因为其有内置的<code>add()</code>等修改集合的方法。</p>
+<p><strong>示例</strong><br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	List&lt;String&gt; list = <span class="keyword">new</span> ArrayList();</span><br><span class="line">    list.add(<span class="string">"0"</span>);</span><br><span class="line">    list.add(<span class="string">"1"</span>);</span><br><span class="line">    list.add(<span class="string">"2"</span>);</span><br><span class="line">    list.add(<span class="string">"3"</span>);</span><br><span class="line">    ListIterator&lt;String&gt; iterator = list.listIterator();</span><br><span class="line">    System.out.println(<span class="string">"--------------------向下遍历--------------------"</span>);</span><br><span class="line">    <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">        <span class="keyword">int</span> nextIndex = iterator.nextIndex();</span><br><span class="line">        String next = (String) iterator.next();</span><br><span class="line">        System.out.println(<span class="string">"当前元素："</span>+next+<span class="string">"，当前元素索引："</span>+nextIndex);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"--------------------向上遍历--------------------"</span>);</span><br><span class="line">    <span class="keyword">while</span> (iterator.hasPrevious()) &#123;</span><br><span class="line">        <span class="keyword">int</span> previousIndex = iterator.previousIndex();</span><br><span class="line">        String previous = (String) iterator.previous();</span><br><span class="line">        System.out.println(<span class="string">"当前元素："</span>+previous+<span class="string">"，当前元素索引："</span>+previousIndex);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"-----------测试set()和listIterator(n)----------"</span>);</span><br><span class="line">    System.out.println(list);</span><br><span class="line">    iterator = list.listIterator(<span class="number">3</span>);</span><br><span class="line">    <span class="keyword">while</span>(iterator.hasNext())&#123;</span><br><span class="line">        iterator.next();</span><br><span class="line">        iterator.set(<span class="string">"5"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果：</p>
+<blockquote>
+<p>——————–向下遍历——————–</p>
+</blockquote>
+<blockquote>
+<p>当前元素：0，当前元素索引：0</p>
+</blockquote>
+<blockquote>
+<p>当前元素：1，当前元素索引：1</p>
+</blockquote>
+<blockquote>
+<p>当前元素：2，当前元素索引：2</p>
+</blockquote>
+<blockquote>
+<p>当前元素：3，当前元素索引：3</p>
+</blockquote>
+<blockquote>
+<p>——————–向上遍历——————–</p>
+</blockquote>
+<blockquote>
+<p>当前元素：3，当前元素索引：3</p>
+</blockquote>
+<blockquote>
+<p>当前元素：2，当前元素索引：2</p>
+</blockquote>
+<blockquote>
+<p>当前元素：1，当前元素索引：1</p>
+</blockquote>
+<blockquote>
+<p>当前元素：0，当前元素索引：0</p>
+</blockquote>
+<blockquote>
+<p>———–测试set()和listIterator(n)———-</p>
+</blockquote>
+<blockquote>
+<p>[0, 1, 2, 3]</p>
+</blockquote>
+<blockquote>
+<p>[0, 1, 2, 5]</p>
+</blockquote>
+<p>对于最后几行代码有一些小疑惑，发现是我对于迭代的<code>next()</code>和<code>hasNext()</code>方法还是有一些误区，下面的解释让我豁然开朗：</p>
+<p>关于<code>Iterator</code>主要有三个方法：<code>hasNext()</code>、<code>next()</code>、<code>remove()</code></p>
+<ul>
+<li><p><code>hasNext</code>:没有指针下移操作，只是判断是否存在下一个元素</p>
+</li>
+<li><p><code>next</code>：指针下移，返回该指针所指向的元素</p>
+</li>
+<li><p><code>remove</code>：删除当前指针所指向的元素，一般和<code>next</code>方法一起用，这时候的作用就是删除<code>next</code>方法返回的元素</p>
+</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20170306091143066?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvemh1amlhbmd0YW90YWlzZQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="image"></p>
+<ol>
+<li><p>当创建完成指向某个集合或者容器的<code>Iterator</code>对象时，这是的指针其实指向的是第一个元素的上方，即指向一个空</p>
+</li>
+<li><p>当调用<code>hasNext</code>方法的时候，只是判断下一个元素的有无，并不移动指针</p>
+</li>
+<li><p>当调用<code>next</code>方法的时候，向下移动指针，并且返回指针指向的元素，如果指针指向的内存中没有元素，会报异常。</p>
+</li>
+<li><p><code>remove</code>方法删除的元素是指针指向的元素。如果当前指针指向的内存中没有元素，那么会抛出异常。</p>
+</li>
+</ol>
+<p>验证一下上面个图，仍然借用上面的一个程序，增加下面几句查看结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iterator = list.listIterator();<span class="comment">//指向开始,即0的前一个位置，效果同list.listIterator(0);</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//0,即下一个索引为0,指针和hasNext()方法一样不移动</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//0,即下一个索引位置0的元素是0,指针后移一个</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//1,即下一个索引为1</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//1,即下一个索引位置1的元素是1,指针后移一个</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iterator = list.listIterator(<span class="number">1</span>);<span class="comment">//指向开始1前面一个</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//1,即下一个索引为1,指针和hasNext()方法一样不移动</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//1,即下一个索引位置1的元素是1</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//2,即下一个索引为2</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//2,下一个索引位置2的元素是2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">iterator = list.listIterator(<span class="number">3</span>);<span class="comment">//指向开始3前面一个</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//3,即下一个索引为3,指针和hasNext()方法一样不移动</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//3,即下一个索引位置3的元素是3</span></span><br><span class="line">System.out.println(iterator.nextIndex());<span class="comment">//4,即下一个索引为4</span></span><br><span class="line">System.out.println(iterator.next());<span class="comment">//java.util.NoSuchElementException</span></span><br></pre></td></tr></table></figure>
+<p>那么执行<code>iterator = list.listIterator(3);</code>这一句时，其实指针仍然是指向索引为3的前一个元素2的，只有下面执行<code>next()</code>了之后才会读取到3。</p>
+<p><img src="http://img.blog.csdn.net/20141127192847281?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvbG9uZ3NoZW5nZ3Vvamk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="image"></p>
+<p>总结一下就是，<code>list.listIterator(n)</code>代表此时指针指向的是n-1，只有<code>next()</code>后会指向n。<code>remove</code>之前一定要查询一下元素，因为<code>remove</code>（注意是迭代器的<code>remove</code>方法而不是集合的<code>remove</code>方法）的是从列表中删除<code>next()</code>或<code>previous()</code>返回的最后一个元素。</p>
+<p>上面穿插了一下迭代器的原理。</p>
+<h2 id="四、单线程环境例子"><a href="#四、单线程环境例子" class="headerlink" title="四、单线程环境例子"></a>四、单线程环境例子</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">try</span>&#123;</span><br><span class="line">		ItrRemoveTest01();</span><br><span class="line">		System.out.println(<span class="string">"============"</span>);</span><br><span class="line">		ItrRemoveTest02();</span><br><span class="line">	&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ItrRemoveTest01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"1"</span>);</span><br><span class="line">    list.add(<span class="string">"2"</span>);</span><br><span class="line">    list.add(<span class="string">"3"</span>);</span><br><span class="line">    ListIterator&lt;String&gt; itr = list.listIterator();</span><br><span class="line">    <span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">        System.out.println(itr.next());</span><br><span class="line">        <span class="comment">//迭代器的remove方法修改集合结构</span></span><br><span class="line">        <span class="comment">//在遍历的同时删除元素,避免ConcurrentModificationException</span></span><br><span class="line">        itr.remove();<span class="comment">//itr.add("aaa")也不报错</span></span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(<span class="string">"--list长度为--"</span>+list.size());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ItrRemoveTest02</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="string">"1"</span>);</span><br><span class="line">    list.add(<span class="string">"2"</span>);</span><br><span class="line">    list.add(<span class="string">"3"</span>);</span><br><span class="line">    ListIterator&lt;String&gt; itr = list.listIterator();</span><br><span class="line">    <span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">        System.out.println(itr.next());<span class="comment">//1</span></span><br><span class="line">        <span class="comment">//迭代器的remove方法修改集合结构</span></span><br><span class="line">        <span class="comment">//抛出ConcurrentModificationException</span></span><br><span class="line">        list.remove(<span class="string">"2"</span>);<span class="comment">//list.add("aaa")也报错</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果是：</p>
+<blockquote>
+<p>1</p>
+</blockquote>
+<blockquote>
+<p>2</p>
+</blockquote>
+<blockquote>
+<p>3</p>
+</blockquote>
+<blockquote>
+<p>–list长度为–0</p>
+</blockquote>
+<blockquote>
+<p>============</p>
+</blockquote>
+<blockquote>
+<p>1</p>
+</blockquote>
+<blockquote>
+<p>java.util.ConcurrentModificationException</p>
+</blockquote>
+<p>说明： <code>ItrRemoveTest01</code>循环遍历<code>list</code>中所有元素，并且逐一删除。所以最后打印出长度为0，这种删除是不会报出异常，因为如果当前单个线程在更改容器<code>(add, delete….)</code>，那么迭代的时候采用<code>iterator.remove()</code>方法可以确保迭代器在查找next的时候，指针不会丢失；<code>ItrRemoveTest02</code>用了集合的<code>remove</code>方法，也就是更改<code>Collection</code>（容器）的内容，那么<code>Iterator</code>就会抛出<code>ConcurrentModificationException</code>。</p>
+<h2 id="五、多线程环境例子"><a href="#五、多线程环境例子" class="headerlink" title="五、多线程环境例子"></a>五、多线程环境例子</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> List&lt;String&gt; list = <span class="keyword">new</span> Vector&lt;String&gt;();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	list.add(<span class="string">"1"</span>);</span><br><span class="line">    list.add(<span class="string">"2"</span>);</span><br><span class="line">    list.add(<span class="string">"3"</span>);</span><br><span class="line">    <span class="comment">// 同时启动两个线程对list进行操作！</span></span><br><span class="line">    <span class="keyword">new</span> ErgodicThread().start();</span><br><span class="line">    <span class="keyword">new</span> ModifyThread().start();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 遍历集合的线程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ErgodicThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt; <span class="number">10</span>) &#123;</span><br><span class="line">            printAll();</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 修改集合的线程</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ModifyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        list.add(String.valueOf(<span class="string">"5"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 遍历集合</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printAll</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Iterator iter = list.iterator();</span><br><span class="line">    <span class="keyword">while</span> (iter.hasNext()) &#123;</span><br><span class="line">        System.out.print((String) iter.next() + <span class="string">", "</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动之后报错：</p>
+<blockquote>
+<p>1, Exception in thread “Thread-0” java.util.ConcurrentModificationException</p>
+</blockquote>
+<p>从结果中可以看出当一个线程遍历集合，而另一个线程对这个集合的结构进行了修改，确实有可能触发<code>ConcurrentModificationException</code>异常。</p>
+<h2 id="六、fail-fast实现原理"><a href="#六、fail-fast实现原理" class="headerlink" title="六、fail-fast实现原理"></a>六、fail-fast实现原理</h2><p>下面是<code>Vector</code>中迭代器Itr的部分源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">Itr</span> <span class="keyword">implements</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> expectedModCount = modCount;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//省略的部分代码</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (lastRet == -<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</span><br><span class="line">        <span class="keyword">synchronized</span> (Vector.<span class="keyword">this</span>) &#123;</span><br><span class="line">            checkForComodification();</span><br><span class="line">            Vector.<span class="keyword">this</span>.remove(lastRet);</span><br><span class="line">            expectedModCount = modCount;</span><br><span class="line">        &#125;</span><br><span class="line">        cursor = lastRet;</span><br><span class="line">        lastRet = -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">forEachRemaining</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> E&gt; action)</span> </span>&#123;</span><br><span class="line">            <span class="comment">//省略的部分代码</span></span><br><span class="line">            checkForComodification();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">final</span> <span class="keyword">void</span> <span class="title">checkForComodification</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (modCount != expectedModCount)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ConcurrentModificationException();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码中可以看到，每次初始化一个迭代器都会执行<code>int expectedModCount = modCount;</code>。<code>modcount</code>意为<code>moderate count</code>，即修改次数，对集合内容的修改都将增大这个值，如<code>modCount++;</code>。在迭代器初始化过程中会执行<code>int expectedModCount = modCount;</code>来记录迭会通过<code>checkForComodification()</code>方法判断<code>modCount</code>和<code>expectedModCount</code> 是否相等，如果不相等就表示已经有线程修改了集合结构。</p>
+<p>使用迭代器的<code>remove()</code>方法修改集合结构不会触发<code>ConcurrentModificationException</code>，现在可以在源码中看出来是为什么。在<code>remove()</code>方法的最后会执行<code>expectedModCount = modCount;</code>，这样<code>itr.remove</code>操作后<code>modCount</code>和<code>expectedModCount</code>依然相等，就不会触发<code>ConcurrentModificationException</code>了。</p>
+<h2 id="七、如何避免fail-fast"><a href="#七、如何避免fail-fast" class="headerlink" title="七、如何避免fail-fast"></a>七、如何避免fail-fast</h2><p>使用<code>java.util.concurrent</code>包下的类去取代<code>java.util</code>包下的类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">try</span> &#123;</span><br><span class="line">        List list = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</span><br><span class="line">        list.add(<span class="string">"1"</span>);</span><br><span class="line">        list.add(<span class="string">"2"</span>);</span><br><span class="line">        list.add(<span class="string">"3"</span>);</span><br><span class="line">        ListIterator itr = list.listIterator();</span><br><span class="line">        <span class="keyword">while</span> (itr.hasNext()) &#123;</span><br><span class="line">            System.out.println(itr.next());</span><br><span class="line">            list.add(<span class="string">"5"</span>);</span><br><span class="line">            list.remove(<span class="string">"2"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(list.toString());</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<blockquote>
+<p>1</p>
+</blockquote>
+<blockquote>
+<p>2</p>
+</blockquote>
+<blockquote>
+<p>3</p>
+</blockquote>
+<blockquote>
+<p>[1, 3, 5, 5, 5]</p>
+</blockquote>
+<p>从运行结果中不难发现，在遍历过程中，使用支持并发集合的<code>remove()</code>方法修改集合结构并没有产生<code>ConcurrentModificationException</code>。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-04, 15:30:40</p>
+        <p><span>最后更新:</span>2018-06-04, 15:31:00</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/04/12、深入fail-fast/" title="12、深入fail-fast">http://yoursite.com/2018/06/04/12、深入fail-fast/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/12、深入fail-fast/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/04/13、HashMap死循环问题/">
+                    13、HashMap死循环问题
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/04/11、LinkedHashSet源码解析/">
+                    11、LinkedHashSet源码解析
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、什么是fail-fast"><span class="toc-number">1.</span> <span class="toc-text">一、什么是fail-fast</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、什么时候会出现fail-fast以及解决思路"><span class="toc-number">2.</span> <span class="toc-text">二、什么时候会出现fail-fast以及解决思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、关于listIterator补充"><span class="toc-number">3.</span> <span class="toc-text">三、关于listIterator补充</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、单线程环境例子"><span class="toc-number">4.</span> <span class="toc-text">四、单线程环境例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、多线程环境例子"><span class="toc-number">5.</span> <span class="toc-text">五、多线程环境例子</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#六、fail-fast实现原理"><span class="toc-number">6.</span> <span class="toc-text">六、fail-fast实现原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#七、如何避免fail-fast"><span class="toc-number">7.</span> <span class="toc-text">七、如何避免fail-fast</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"12、深入fail-fast　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/04/13、HashMap死循环问题/" title="上一篇: 13、HashMap死循环问题">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/04/11、LinkedHashSet源码解析/" title="下一篇: 11、LinkedHashSet源码解析">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

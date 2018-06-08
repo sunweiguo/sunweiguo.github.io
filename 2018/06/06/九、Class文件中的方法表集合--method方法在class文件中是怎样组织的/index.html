@@ -204,7 +204,375 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-九、Class文件中的方法表集合--method方法在class文件中是怎样组织的" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/" class="article-date">
+      <time datetime="2018-06-06T09:14:30.930Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      九、Class文件中的方法表集合--method方法在class文件中是怎样组织的
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>继续讲class文件中的字段表集合。<br><a id="more"></a></p>
+<h2 id="1-方法表集合概述"><a href="#1-方法表集合概述" class="headerlink" title="1. 方法表集合概述"></a>1. 方法表集合概述</h2><p>方法表集合是指由若干个方法表（<code>method_info</code>）组成的集合。对于在类中定义的若干个经过JVM编译成<code>class</code>文件后，会将相应的<code>method</code>方法信息组织到一个叫做方法表集合的结构中，字段表集合是一个类数组结构，如下图所示：</p>
+<p><img src="http://img.blog.csdn.net/20141114104145226" alt="image"></p>
+<h2 id="2-method方法的描述-方法表集合在class文件中的位置"><a href="#2-method方法的描述-方法表集合在class文件中的位置" class="headerlink" title="2. method方法的描述-方法表集合在class文件中的位置"></a>2. method方法的描述-方法表集合在class文件中的位置</h2><p><code>method</code>方法的描述-方法表集合紧跟在字段表集合的后面，如下图所示：</p>
+<p><img src="http://img.blog.csdn.net/20141114104728083" alt="image"></p>
+<h2 id="3-一个类中的method方法应该包含哪些信息？—-method-info结构体的定义"><a href="#3-一个类中的method方法应该包含哪些信息？—-method-info结构体的定义" class="headerlink" title="3. 一个类中的method方法应该包含哪些信息？—-method_info结构体的定义"></a>3. 一个类中的method方法应该包含哪些信息？—-method_info结构体的定义</h2><p>对于一个方法的表示，我们根据我们可以概括的信息如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20141114150716551" alt="image"></p>
+<p>实际上JVM还会对<code>method</code>方法的描述添加其他信息，我们将在后面详细讨论。如上图中的<code>method_info</code>结构体的定义，该结构体的定义跟描述<code>field</code>字段 的<code>field_info</code>结构体的结构几乎完全一致,如下图所示。</p>
+<p><img src="http://img.blog.csdn.net/20141114144708625" alt="image"></p>
+<p>方法表的结构体由：访问标志(<code>access_flags</code>)、名称索引(<code>name_index</code>)、描述索引(<code>descriptor_index</code>)、属性表(<code>attribute_info</code>)集合组成。</p>
+<p><strong>访问标志(access_flags)：</strong></p>
+<p><code>method_info</code>结构体最前面的两个字节表示的访问标志（<code>access_flags</code>），记录这这个方法的作用域、静态or非静态、可变性、是否可同步、是否本地方法、是否抽象等信息，实际上不止这些信息，我们后面会详细介绍访问标志这两个字节的每一位具体表示什么意思。</p>
+<p><strong>名称索引(name_index)：</strong></p>
+<p>紧跟在访问标志（<code>access_flags</code>）后面的两个字节称为名称索引，这两个字节中的值指向了常量池中的某一个常量池项，这个方法的名称以UTF-8格式的字符串存储在这个常量池项中。如<code>public void methodName()</code>,很显然，<code>“methodName”</code>则表示着这个方法的名称，那么在常量池中会有一个<code>CONSTANT_Utf8_info</code>格式的常量池项，里面存储着<code>“methodName”</code>字符串，而<code>mehodName()</code>方法的方法表中的名称索引则指向了这个常量池项。</p>
+<p><strong>描述索引(descriptor_index)：</strong></p>
+<p>描述索引表示的是这个方法的特征或者说是签名，一个方法会有若干个参数和返回值，而若干个参数的数据类型和返回值的数据类型构成了这个方法的描述，其基本格式为：     (参数数据类型描述列表)返回值数据类型   。我们将在后面继续讨论。</p>
+<p><strong>属性表(attribute_info)集合：</strong></p>
+<p>这个属性表集合非常重要，方法的实现被JVM编译成JVM的机器码指令，机器码指令就存放在一个<code>Code</code>类型的属性表中；如果方法声明要抛出异常，那么异常信息会在一个<code>Exceptions</code>类型的属性表中予以展现。<code>Code</code>类型的属性表可以说是非常复杂的内容，也是本文最难的地方。</p>
+<h2 id="4-访问标志-access-flags-—记录着method方法的访问信息"><a href="#4-访问标志-access-flags-—记录着method方法的访问信息" class="headerlink" title="4. 访问标志(access_flags)—记录着method方法的访问信息"></a>4. 访问标志(access_flags)—记录着method方法的访问信息</h2><p>访问标志（<code>access_flags</code>）共占有2 个字节，分为 16 位，这 16位 表示的含义如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20141114161151578" alt="image"></p>
+<p><strong>举例：某个类中定义了如下方法：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">greeting</span><span class="params">()</span></span>&#123;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>greeting()</code>方法的修饰符有：<code>public、static、synchronized、final</code>这几个修饰符修饰，那么相对应地，<code>greeting()</code>方法的访问标志中的<code>ACC_PUBLIC、ACC_STATIC、ACC_SYNCHRONIZED、ACC_FINAL</code>标志位都应该是1，即：</p>
+<p><img src="http://img.blog.csdn.net/20141114170949140" alt="image"></p>
+<p>从上图中可以看出访问标志的值应该是二进制00000000 00111001,即十六进制0x0039。我们将在文章的最后一个例子中证实这点。</p>
+<h2 id="5-名称索引和描述符索引—-一个方法的签名"><a href="#5-名称索引和描述符索引—-一个方法的签名" class="headerlink" title="5. 名称索引和描述符索引—-一个方法的签名"></a>5. 名称索引和描述符索引—-一个方法的签名</h2><p>紧接着访问标志（<code>access_flags</code>）后面的两个字节，叫做<strong>名称索引(<code>name_index</code>)</strong>，这两个字节中的值是指向了常量池中某个常量池项的索引，该常量池项表示这这个方法名称的字符串。</p>
+<p><strong>方法描述符索引</strong>(<code>descrptor_index</code>)是紧跟在名称索引后面的两个字节，这两个字节中的值跟名称索引中的值性质一样，都是指向了常量池中的某个常量池项。这两个字节中的指向的常量池项，是表示了方法描述符的字符串。</p>
+<p><strong>所谓的方法描述符，实质上就是指用一个什么样的字符串来描述一个方法</strong>，方法描述符的组成如下图所示：</p>
+<p><img src="http://img.blog.csdn.net/20141114180514489" alt="image"></p>
+<p>举例：对于如下定义的的<code>greeting()</code>方法，我们来看一下对应的<code>method_info</code>结构体中的名称索引和描述符索引信息是怎样组织的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">greeting</span><span class="params">()</span></span>&#123;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如下图所示,<code>method_info</code>结构体的名称索引中存储了一个索引值x，指向了常量池中的第x项，第 x项表示的是字符串<code>&quot;greeting&quot;</code>,即表示该方法名称是<code>&quot;greeting&quot;</code>；描述符索引中的y 值指向了常量池的第y项，该项表示字符串<code>&quot;()V&quot;</code>，即表示该方法没有参数，返回值是<code>void</code>类型。</p>
+<p><img src="http://img.blog.csdn.net/20141115094626151" alt="image"></p>
+<h2 id="6-属性表集合–记录方法的机器指令和抛出异常等信息"><a href="#6-属性表集合–记录方法的机器指令和抛出异常等信息" class="headerlink" title="6. 属性表集合–记录方法的机器指令和抛出异常等信息"></a>6. 属性表集合–记录方法的机器指令和抛出异常等信息</h2><p>属性表集合记录了某个方法的一些属性信息，这些信息包括：</p>
+<blockquote>
+<ol>
+<li>这个方法的代码实现，即方法的可执行的机器指令</li>
+<li>这个方法声明的要抛出的异常信息</li>
+<li>这个方法是否被<code>@deprecated</code>注解表示</li>
+<li>这个方法是否是编译器自动生成的</li>
+</ol>
+</blockquote>
+<p>属性表（<code>attribute_info</code>）结构体的一般结构如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20141115145825045" alt="image"></p>
+<p><strong>修正：属性长度为4个字节。</strong></p>
+<h3 id="6-1-Code类型的属性表–method方法中的机器指令的信息"><a href="#6-1-Code类型的属性表–method方法中的机器指令的信息" class="headerlink" title="6.1 Code类型的属性表–method方法中的机器指令的信息"></a>6.1 Code类型的属性表–method方法中的机器指令的信息</h3><p><code>Code</code>类型的属性表(<code>attribute_info</code>)可以说是<code>class</code>文件中最为重要的部分，因为它包含的是JVM可以运行的机器码指令，JVM能够运行这个类，就是从这个属性中取出机器码的。除了要执行的机器码，它还包含了一些其他信息，如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20141116114625218" alt="image"></p>
+<p><strong>Code属性表的组成部分</strong>：</p>
+<blockquote>
+<p>机器指令—-code：</p>
+</blockquote>
+<p>目前的JVM使用一个字节表示机器操作码，即对JVM底层而言，它能表示的机器操作码不多于2的 8 次方，即 256个。<code>class</code>文件中的机器指令部分是<code>class</code>文件中最重要的部分，并且非常复杂，本文的重点不止介绍它</p>
+<blockquote>
+<p>异常处理跳转信息—exception_table：</p>
+</blockquote>
+<p>如果代码中出现了<code>try{}catch{}</code>块，那么<code>try{}</code>块内的机器指令的地址范围记录下来，并且记录对应的<code>catch{}</code>块中的起始机器指令地址，当运行时在<code>try</code>块中有异常抛出的话，JVM会将<code>catch{}</code>块对应懂得其实机器指令地址传递给PC寄存器，从而实现指令跳转；</p>
+<blockquote>
+<p>Java源码行号和机器指令的对应关系—LineNumberTable属性表：</p>
+</blockquote>
+<p>编译器在将java源码编译成<code>class</code>文件时，会将源码中的语句行号跟编译好的机器指令关联起来，这样的<code>class</code>文件加载到内存中并运行时，如果抛出异常，JVM可以根据这个对应关系，抛出异常信息，告诉我们我们的源码的多少行有问题，方便我们定位问题。这个信息不是运行时必不可少的信息，但是默认情况下，编译器会生成这一项信息，如果你项取消这一信息，你可以使用<code>-g:none</code> 或<code>-g:lines</code>来取消或者要求设置这一项信息。如果使用了<code>-g:none</code>来生成<code>class</code>文件，<code>class</code>文件中将不会有<code>LineNumberTable</code>属性表，造成的影响就是 将来如果代码报错，将无法定位错误信息报错的行，并且如果项调试代码，将不能在此类中打断点（因为没有指定行号。）</p>
+<blockquote>
+<p>局部变量表描述信息—-LocalVariableTable属性表：</p>
+</blockquote>
+<p>局部变量表信息会记录栈帧局部变量表中的变量和java源码中定义的变量之间的关系，这个信息不是运行时必须的属性，默认情况下不会生成到<code>class</code>文件中。你可以根据javac指令的<code>-g:none</code>或者<code>-g:vars</code>选项来取消或者设置这一项信息。<br>它有什么作用呢？  当我们使用IDE进行开发时，最喜欢的莫过于它们的代码提示功能了。如果在项目中引用到了第三方的jar包，而第三方的包中的<code>class</code>文件中有无<code>LocalVariableTable</code>属性表的区别如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20141116221304421" alt="image"></p>
+<p><strong>Code属性表结构体的解释：</strong></p>
+<ol>
+<li><p><code>attribute_name_index</code>,属性名称索引，占有2个字节，其内的值指向了常量池中的某一项，该项表示字符串“Code”;</p>
+</li>
+<li><p><code>attribute_length</code>,属性长度，占有 4个字节，其内的值表示后面有多少个字节是属于此Code属性表的；</p>
+</li>
+<li><p><code>max_stack</code>,操作数栈深度的最大值，占有 2 个字节，在方法执行的任意时刻，操作数栈都不应该超过这个值，虚拟机的运行的时候，会根据这个值来设置该方法对应的栈帧(<code>Stack Frame</code>)中的操作数栈的深度；</p>
+</li>
+<li><p><code>max_locals</code>,最大局部变量数目，占有 2个字节，其内的值表示局部变量表所需要的存储空间大小；</p>
+</li>
+<li><p><code>code_length</code>,机器指令长度，占有 4 个字节，表示跟在其后的多少个字节表示的是机器指令；</p>
+</li>
+<li><p><code>code</code>,机器指令区域，该区域占有的字节数目由 <code>code_length</code>中的值决定。JVM最底层的要执行的机器指令就存储在这里；</p>
+</li>
+<li><p><code>exception_table_length</code>,显式异常表长度，占有2个字节，如果在方法代码中出现了<code>try{} catch()</code>形式的结构，该值不会为空，紧跟其后会跟着若干个<code>exception_table</code>结构体，以表示异常捕获情况；</p>
+</li>
+<li><p><code>exception_table</code>，显式异常表，占有8 个字节，<code>start_pc,end_pc,handler_pc</code>中的值都表示的是PC计数器中的指令地址。<code>exception_table</code>表示的意思是：如果字节码从第<code>start_pc</code>行到第<code>end_pc</code>行之间出现了<code>catch_type</code>所描述的异常类型，那么将跳转到<code>handler_pc</code>行继续处理。</p>
+</li>
+<li><p><code>attribute_count</code>,属性计数器，占有 2 个字节，表示<code>Code</code>属性表的其他属性的数目</p>
+</li>
+<li><p><code>attribute_info</code>,表示<code>Code</code>属性表具有的属性表，它主要分为两个类型的属性表：<code>“LineNumberTable”</code>类型和<code>“LocalVariableTable”</code>类型。<br><code>“LineNumberTable”</code>类型的属性表记录着Java源码和机器指令之间的对应关系<br><code>“LocalVariableTable”</code>类型的属性表记录着局部变量描述</p>
+</li>
+</ol>
+<p><strong>举例：</strong></p>
+<p>如下定义<code>Simple</code>类，使用<code>javac -g:none Simple.java</code> 编译出<code>Simple.class</code> 文件，并使用<code>javap -v Simple &gt; Simple.txt</code> 查看反编译的信息，然后看<code>Simple.class</code>文件中的方法表集合是怎样组织的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Simple</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">greeting</span><span class="params">()</span></span>&#123;  </span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">10</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="1-Simple-class文件组织信息如下所示："><a href="#1-Simple-class文件组织信息如下所示：" class="headerlink" title="1. Simple.class文件组织信息如下所示："></a>1. Simple.class文件组织信息如下所示：</h4><p><img src="http://img.blog.csdn.net/20141117100511124" alt="image"></p>
+<p>如上所示，方法表集合使用了蓝色线段圈了起来。<br>请注意：方法表集合的头两个字节，即方法表计数器（<code>method_count</code>）的值是0x0002，它表示该类中有2 个方法。细心的读者会注意到，我们的<code>Simple.java</code>中就定义了一个<code>greeting()</code>方法，为什么<code>class</code>文件中会显示有两个方法呢？？</p>
+<blockquote>
+<p>JVM为没有显式定义实例化构造方法的类，自动生成默认的实例化构造方法”<init>()”</init></p>
+</blockquote>
+<p>除了实例化构造方法，JVM还会在特殊的情况下生成一个叫类构造方法”<cinit>()”。如果我们在类中使用到了static修饰的代码块，那么，JVM会在class文件中生成一个“<cinit>()”构造方法。关于它们的具体细节，我将在后续的文章中详细讨论，在这里就不展开了。</cinit></cinit></p>
+<blockquote>
+<ol start="2">
+<li>Simple.class 中的<init>() 方法:</init></li>
+</ol>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20141117111623566" alt="image"></p>
+<p>解释：</p>
+<ol>
+<li><p>方法访问标志(<code>access_flags</code>)： 占有 2个字节，值为0x0001,即标志位的第 16 位为 1，所以该<init>()方法的修饰符是：<code>ACC_PUBLIC</code>;</init></p>
+</li>
+<li><p>名称索引(<code>name_index</code>)： 占有 2 个字节，值为 0x0004，指向常量池的第 4项，该项表示字符串“<init>”，即该方法的名称是“<init>”;</init></init></p>
+</li>
+<li><p>描述符索引(<code>descriptor_index</code>): 占有 2 个字节，值为0x0005,指向常量池的第 5 项，该项表示字符串“()V”，即表示该方法不带参数，并且无返回值（构造函数确实也没有返回值）；</p>
+</li>
+<li><p>属性计数器（<code>attribute_count</code>): 占有 2 个字节，值为0x0001,表示该方法表中含有一个属性表，后面会紧跟着一个属性表；</p>
+</li>
+<li><p>属性表的名称索引(<code>attribute_name_index</code>)：占有 2 个字节，值为0x0006,指向常量池中的第6 项，该项表示字符串“Code”，表示这个属性表是Code类型的属性表；</p>
+</li>
+<li><p>属性长度（<code>attribute_length</code>）：占有4个字节，值为0x0000 0011，即十进制的 17，表明后续的 17 个字节可以表示这个Code属性表的属性信息；</p>
+</li>
+<li><p>操作数栈的最大深度（<code>max_stack</code>）：占有2个字节，值为0x0001,表示栈帧中操作数栈的最大深度是1；</p>
+</li>
+<li><p>局部变量表的最大容量（<code>max_variable</code>）：占有2个字节，值为0x0001, JVM在调用该方法时，根据这个值设置栈帧中的局部变量表的大小；</p>
+</li>
+<li><p>机器指令数目(<code>code_length</code>)：占有4个字节，值为0x0000 0005,表示后续的5 个字节 0x2A 、0xB7、 0x00、0x01、0xB1表示机器指令;</p>
+</li>
+<li><p>机器指令集(<code>code[code_length]</code>)：这里共有  5个字节，值为0x2A 、0xB7、 0x00、0x01、0xB1；</p>
+</li>
+<li><p>显式异常表集合（<code>exception_table_count</code>）： 占有2 个字节，值为0x0000,表示方法中没有需要处理的异常信息；</p>
+</li>
+<li><p><code>Code</code>属性表的属性表集合（<code>attribute_count</code>）： 占有2 个字节，值为0x0000，表示它没有其他的属性表集合，因为我们使用了-g:none 禁止编译器生成<code>Code</code>属性表的 <code>LineNumberTable</code> 和<code>LocalVariableTable</code>;</p>
+</li>
+</ol>
+<blockquote>
+<p>B. Simple.class 中的greeting() 方法:</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20141117123854641" alt="image"></p>
+<p>解释：</p>
+<ol>
+<li><p>方法访问标志(access_flags)： 占有 2个字节，值为 0x0039 ,即二进制的00000000 00111001,即标志位的第11、12、13、16位为1，根据上面讲的方法标志位的表示，可以得到该greeting()方法的修饰符有：ACC_SYNCHRONIZED、ACC_FINAL、ACC_STATIC、ACC_PUBLIC;</p>
+</li>
+<li><p>名称索引(<code>name_index</code>)： 占有 2 个字节，值为 0x0007，指向常量池的第 7 项，该项表示字符串“greeting”，即该方法的名称是“greeting”;</p>
+</li>
+<li><p>描述符索引(<code>descriptor_index</code>): 占有 2 个字节，值为0x0005,指向常量池的第 5 项，该项表示字符串“()V”，即表示该方法不带参数，并且无返回值；</p>
+</li>
+<li><p>属性计数器（<code>attribute_count</code>): 占有 2 个字节，值为0x0001,表示该方法表中含有一个属性表，后面会紧跟着一个属性表；</p>
+</li>
+<li><p>属性表的名称索引(<code>attribute_name_index</code>)：占有 2 个字节，值为0x0006,指向常量池中的第6 项，该项表示字符串“Code”，表示这个属性表是Code类型的属性表；</p>
+</li>
+<li><p>属性长度（<code>attribute_length</code>）：占有4个字节，值为0x0000 0010，即十进制的16，表明后续的16个字节可以表示这个Code属性表的属性信息；</p>
+</li>
+<li><p>操作数栈的最大深度（<code>max_stack</code>）：占有2个字节，值为0x0001,表示栈帧中操作数栈的最大深度是1；</p>
+</li>
+<li><p>局部变量表的最大容量（<code>max_variable</code>）：占有2个字节，值为0x0001, JVM在调用该方法时，根据这个值设置栈帧中的局部变量表的大小；</p>
+</li>
+<li><p>机器指令数目(<code>code_length</code>)：占有4 个字节，值为0x0000 0004,表示后续的4个字节0x10、 0x0A、 0x3B、0xB1的是表示机器指令;</p>
+</li>
+<li><p>机器指令集(<code>code[code_length]</code>)：这里共有4 个字节，值为0x10、 0x0A、 0x3B、0xB1 ；</p>
+</li>
+<li><p>显式异常表集合（<code>exception_table_count</code>）： 占有2 个字节，值为0x0000,表示方法中没有需要处理的异常信息；</p>
+</li>
+<li><p>Code属性表的属性表集合（<code>attribute_count</code>）： 占有2 个字节，值为0x0000，表示它没有其他的属性表集合，因为我们使用了-g:none 禁止编译器生成Code属性表的 LineNumberTable 和LocalVariableTable;</p>
+</li>
+</ol>
+<h3 id="6-2-Exceptions类型的属性表—-method方法声明的要抛出的异常信息"><a href="#6-2-Exceptions类型的属性表—-method方法声明的要抛出的异常信息" class="headerlink" title="6.2 Exceptions类型的属性表—-method方法声明的要抛出的异常信息"></a>6.2 Exceptions类型的属性表—-method方法声明的要抛出的异常信息</h3><p>有些方法在定义的时候，会声明该方法会抛出什么类型的异常，如下定义一个<code>Interface</code>接口，它声明了<code>sayHello()</code>方法，抛出<code>Exception</code>异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Interface</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span>  <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在让我们看一下<code>Exceptions</code>类型的属性表(<code>attribute_info</code>)结构体是怎样组织的：</p>
+<p><img src="http://img.blog.csdn.net/20141115154139486" alt="image"></p>
+<p>如上图所示，<code>Exceptions</code>类型的属性表(<code>attribute_info</code>)结构体由一下元素组成：</p>
+<p>属性名称索引(<code>attribute_name_index</code>)：占有 2个字节，其中的值指向了常量池中的表示”<code>Exceptions</code>“字符串的常量池项；</p>
+<p>属性长度(<code>attribute_length</code>)：它比较特殊，占有4个字节，它的值表示跟在其后面多少个字节表示异常信息；</p>
+<p>异常数量(<code>number_of_exceptions</code>)：占有2 个字节，它的值表示方法声明抛出了多少个异常，即表示跟在其后有多少个异常名称索引；</p>
+<p>异常名称索引(<code>exceptions_index_table</code>)：占有2个字节，它的值指向了常量池中的某一项，该项是一个<code>CONSTANT_Class_info</code>类型的项，表示这个异常的完全限定名称；</p>
+<p><strong>Exceptions类型的属性表的长度计算</strong></p>
+<p>如果某个方法定义中，没有声明抛出异常，那么，表示该方法的方法表(<code>method_info</code>)结构体中的属性表集合中不会有<code>Exceptions</code>类型的属性表；换句话说，如果方法声明了要抛出的异常，方法表(<code>method_info</code>)结构体中的属性表集合中必然会有<code>Exceptions</code>类型的属性表，并且该属性表中的异常数量不小于1。<br>我们假设异常数量中的值为 N，那么后面的异常名称索引的数量就为N，它们总共占有的字节数为N*2，而异常数量占有2个字节，那么将有下面的这个关系式：</p>
+<blockquote>
+<p>属性长度(<code>attribute_length</code>)中的值= 2  + 2*异常数量(<code>number_of_exceptions</code>)中的值</p>
+</blockquote>
+<blockquote>
+<p><code>Exceptions</code>类型的属性表（<code>attribute_info</code>）的长度=2+4+属性长度(<code>attribute_length</code>)中的值</p>
+</blockquote>
+<p><strong>举例：</strong><br>将上面定义的<code>Interface</code>接口类编译成<code>class</code>文件，然后我们查看<code>Interface.class</code>文件，找出方法表集合所在位置和相应的数据，并辅助<code>javap -v  Inerface</code> 查看</p>
+<p><img src="http://img.blog.csdn.net/20141115114030609" alt="image"></p>
+<p>由于<code>sayHello()</code>方法是在的<code>Interface</code>接口类中声明的，它没有被实现，所以它对应的方法表(<code>method_info</code>)结构体中的属性表集合中没有<code>Code</code>类型的属性表。</p>
+<ol>
+<li><p>方法计数器（<code>methods_count</code>）中的值为0x0001，表明其后的方法表(<code>method_info</code>)就一个,即我们就定义了一个方法，其后会紧跟着一个方法表(<code>method_info</code>)结构体；</p>
+</li>
+<li><p>方法的访问标志（<code>access_flags</code>）的值是0x0401，二进制是00000100 00000001,第6位和第16位是1，对应上面的标志位信息，可以得出它的访问标志符有：<code>ACC_ABSTRACT</code>、<code>ACC_PUBLIC</code>。细心的读者可能会发现，在上面声明的<code>sayHello()</code>方法中并没有声明为<code>abstract</code>类型啊。确实如此，这是因为编译器对于接口内声明的方法自动加上<code>ACC_ABSTRACT</code>标志。</p>
+</li>
+<li><p>名称索引（<code>name_index</code>）中的值为0x0005，0x0005指向了常量池的第5项，第五项表示的字符串为“sayHello”，即表示的方法名称是sayHello</p>
+</li>
+<li><p>描述符索引(<code>descriptor_index</code>)中的值为0x0006,0x0006指向了常量池中的第6项，第6项表示的字符串为“()V” 表示这个方法的无入参，返回值为void类型</p>
+</li>
+<li><p>属性表计数器(<code>attribute_count</code>)中的值为0x0001,表示后面的属性表的个数就1个，后面紧跟着一个<code>attribute_info</code>结构体；</p>
+</li>
+<li><p>属性表（<code>attribute_info</code>）中的属性名称索引(<code>attribute_name_index</code>)中的值为0x0007，0x0007指向了常量池中的第7 项，第 7项指向字符串“Exceptions”，即表示该属性表表示的异常信息；</p>
+</li>
+<li><p>属性长度（<code>attribute_length</code>）中的值为：0x00000004,即后续的4个字节将会被解析成属性值；</p>
+</li>
+<li><p>异常数量（<code>number_of_exceptions</code>）中的值为0x0001,表示这个方法声明抛出的异常个数是1个；</p>
+</li>
+<li><p>异常名称索引(<code>exception_index_table</code>)中的值为0x0008,指向了常量池中的第8项，第8项表示的是<code>CONSTANT_Class_info</code>类型的常量池项，表示<code>java/lang/Exception</code>，即表示此方法抛出了<code>java.lang.Exception</code>异常。</p>
+</li>
+</ol>
+<h2 id="7-IDE代码提示功能实现的基本原理"><a href="#7-IDE代码提示功能实现的基本原理" class="headerlink" title="7. IDE代码提示功能实现的基本原理"></a>7. IDE代码提示功能实现的基本原理</h2><p>每个IDE都提供了代码提示功能，它们实现的基本原理其实就是IDE针对它们项目下的包中所有的<code>class</code>文件进行建模，解析出它们的方法信息，当我们一定的条件时，IDE会自动地将合适条件的方法列表展示给开发者，供开发者使用。</p>
+<p><img src="http://img.blog.csdn.net/20141117142215355" alt="image"></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 17:14:30</p>
+        <p><span>最后更新:</span>2018-06-06, 20:03:10</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/" title="九、Class文件中的方法表集合--method方法在class文件中是怎样组织的">http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/十、虚拟机类加载机制/">
+                    十、虚拟机类加载机制
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">
+                    八、Class文件中的字段表集合--field字段在class文件中是怎样组织的
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-方法表集合概述"><span class="toc-number">1.</span> <span class="toc-text">1. 方法表集合概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-method方法的描述-方法表集合在class文件中的位置"><span class="toc-number">2.</span> <span class="toc-text">2. method方法的描述-方法表集合在class文件中的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-一个类中的method方法应该包含哪些信息？—-method-info结构体的定义"><span class="toc-number">3.</span> <span class="toc-text">3. 一个类中的method方法应该包含哪些信息？—-method_info结构体的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-访问标志-access-flags-—记录着method方法的访问信息"><span class="toc-number">4.</span> <span class="toc-text">4. 访问标志(access_flags)—记录着method方法的访问信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-名称索引和描述符索引—-一个方法的签名"><span class="toc-number">5.</span> <span class="toc-text">5. 名称索引和描述符索引—-一个方法的签名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-属性表集合–记录方法的机器指令和抛出异常等信息"><span class="toc-number">6.</span> <span class="toc-text">6. 属性表集合–记录方法的机器指令和抛出异常等信息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-Code类型的属性表–method方法中的机器指令的信息"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 Code类型的属性表–method方法中的机器指令的信息</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-Simple-class文件组织信息如下所示："><span class="toc-number">6.1.1.</span> <span class="toc-text">1. Simple.class文件组织信息如下所示：</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-Exceptions类型的属性表—-method方法声明的要抛出的异常信息"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 Exceptions类型的属性表—-method方法声明的要抛出的异常信息</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-IDE代码提示功能实现的基本原理"><span class="toc-number">7.</span> <span class="toc-text">7. IDE代码提示功能实现的基本原理</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"九、Class文件中的方法表集合--method方法在class文件中是怎样组织的　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/十、虚拟机类加载机制/" title="上一篇: 十、虚拟机类加载机制">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/" title="下一篇: 八、Class文件中的字段表集合--field字段在class文件中是怎样组织的">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

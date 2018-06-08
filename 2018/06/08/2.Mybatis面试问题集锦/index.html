@@ -186,7 +186,217 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-2.Mybatis面试问题集锦" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/08/2.Mybatis面试问题集锦/" class="article-date">
+      <time datetime="2018-06-08T03:39:25.961Z" itemprop="datePublished">2018-06-08</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      2.Mybatis面试问题集锦
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>mybatis面试知识点重灾区。<br><a id="more"></a></p>
+<h3 id="1、-和-的区别是什么？"><a href="#1、-和-的区别是什么？" class="headerlink" title="1、#{}和${}的区别是什么？"></a>1、#{}和${}的区别是什么？</h3><p><code>${}</code>是<code>Properties</code>文件中的变量占位符，它可以用于标签属性值和<code>sql</code>内部，属于静态文本替换，比如<code>${driver}</code>会被静态替换为<code>com.mysql.jdbc.Driver</code>。</p>
+<p><code>#{}</code>是<code>sql</code>的参数占位符，<code>Mybatis</code>会将<code>sql</code>中的<code>#{}</code>替换为<code>?</code>号，在<code>sql</code>执行前会使用<code>PreparedStatement</code>的参数设置方法，按序给<code>sql</code>的<code>?</code>号占位符设置参数值，比如<code>ps.setInt(0, parameterValue)</code>，<code>#{item.name}</code>的取值方式为使用反射从参数对象中获取<code>item</code>对象的<code>name</code>属性值，相当于<code>param.getItem().getName()</code>。</p>
+<p>更加通俗的回答是：</p>
+<ul>
+<li>#{}是预编译处理，${}是字符串替换。</li>
+<li>Mybatis在处理#{}时，会将sql中的#{}替换为?号，调用PreparedStatement的set方法来赋值；</li>
+<li>Mybatis在处理${}时，就是把${}替换成变量的值。</li>
+<li>使用#{}可以有效的防止SQL注入，提高系统安全性。</li>
+</ul>
+<h3 id="2、Xml映射文件中，除了常见的select-insert-updae-delete标签之外，还有哪些标签？"><a href="#2、Xml映射文件中，除了常见的select-insert-updae-delete标签之外，还有哪些标签？" class="headerlink" title="2、Xml映射文件中，除了常见的select|insert|updae|delete标签之外，还有哪些标签？"></a>2、Xml映射文件中，除了常见的select|insert|updae|delete标签之外，还有哪些标签？</h3><p>还有很多其他的标签，<code>&lt;resultMap&gt;</code>、<code>&lt;parameterMap&gt;</code>、<code>&lt;sql&gt;</code>、<code>&lt;include&gt;</code>、<code>&lt;selectKey&gt;</code>，加上动态<code>sql</code>的9个标签，<code>trim|where|set|foreach|if|choose|when|otherwise|bind</code>等，其中<code>&lt;sql&gt;</code>为<code>sql</code>片段标签，通过<code>&lt;include&gt;</code>标签引入sql片段，<code>&lt;selectKey&gt;</code>为不支持自增的主键生成策略标签。</p>
+<h3 id="3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？"><a href="#3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？" class="headerlink" title="3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？"></a>3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？</h3><p><code>Dao</code>接口，就是人们常说的<code>Mapper</code>接口，接口的全限名，就是映射文件中的<code>namespace</code>的值，接口的方法名，就是映射文件中<code>MappedStatement</code>的<code>id</code>值，接口方法内的参数，就是传递给<code>sql</code>的参数。</p>
+<p><code>Mapper</code>接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为<code>key</code>值，可唯一定位一个<code>MappedStatement</code>:</p>
+<p><code>com.mybatis3.mappers.StudentDao.findStudentById</code>，可以唯一找到<code>namespace</code>为<code>com.mybatis3.mappers.StudentDao</code>下面<code>id = findStudentById</code>的<code>MappedStatement</code>.</p>
+<p>在<code>Mybatis</code>中，每一个<code>&lt;select&gt;</code>、<code>&lt;insert&gt;</code>、<code>&lt;update&gt;</code>、<code>&lt;delete&gt;</code>标签，都会被解析为一个<code>MappedStatement</code>对象。</p>
+<p><code>Dao</code>接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。</p>
+<p><code>Dao</code>接口的工作原理是<code>JDK</code>动态代理，<code>Mybatis</code>运行时会使用<code>JDK</code>动态代理为<code>Dao</code>接口生成代理<code>proxy</code>对象，代理对象<code>proxy</code>会拦截接口方法，转而执行<code>MappedStatement</code>所代表的<code>sql</code>，然后将<code>sql</code>执行结果返回。</p>
+<h3 id="4、Mybatis是如何进行分页的？分页插件的原理是什么？"><a href="#4、Mybatis是如何进行分页的？分页插件的原理是什么？" class="headerlink" title="4、Mybatis是如何进行分页的？分页插件的原理是什么？"></a>4、Mybatis是如何进行分页的？分页插件的原理是什么？</h3><p><code>Mybatis</code>使用<code>RowBounds</code>对象进行分页，它是针对<code>ResultSet</code>结果集执行的内存分页，而非物理分页，可以在sql内直接书写带有物理分页的参数来完成物理分页功能，也可以使用分页插件来完成物理分页。</p>
+<p>分页插件的基本原理是使用<code>Mybatis</code>提供的插件接口，实现自定义插件，在插件的拦截方法内拦截待执行的<code>sql</code>，然后重写<code>sql</code>，根据<code>dialect</code>方言，添加对应的物理分页语句和物理分页参数。</p>
+<p>举例：<code>select * from student</code>，拦截sql后重写为：<code>select t.* from （select * from student）t limit 0，10</code></p>
+<h3 id="5、简述Mybatis的插件运行原理，以及如何编写一个插件。"><a href="#5、简述Mybatis的插件运行原理，以及如何编写一个插件。" class="headerlink" title="5、简述Mybatis的插件运行原理，以及如何编写一个插件。"></a>5、简述Mybatis的插件运行原理，以及如何编写一个插件。</h3><p><code>Mybatis</code>仅可以编写针对<code>ParameterHandler</code>、<code>ResultSetHandler</code>、<code>StatementHandler</code>、<code>Executor</code>这4种接口的插件，<code>Mybatis</code>使用<code>JDK</code>的动态代理，为需要拦截的接口生成代理对象以实现接口方法拦截功能，每当执行这4种接口对象的方法时，就会进入拦截方法，具体就是<code>InvocationHandler</code>的<code>invoke()</code>方法，当然，只会拦截那些你指定需要拦截的方法。</p>
+<p>实现<code>Mybatis</code>的<code>Interceptor</code>接口并复写<code>intercept()</code>方法，然后在给插件编写注解，指定要拦截哪一个接口的哪些方法即可，记住，别忘了在配置文件中配置你编写的插件。</p>
+<h3 id="6、Mybatis执行批量插入，能返回数据库主键列表吗？"><a href="#6、Mybatis执行批量插入，能返回数据库主键列表吗？" class="headerlink" title="6、Mybatis执行批量插入，能返回数据库主键列表吗？"></a>6、Mybatis执行批量插入，能返回数据库主键列表吗？</h3><p>能，JDBC都能，Mybatis当然也能。</p>
+<h3 id="7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？"><a href="#7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？" class="headerlink" title="7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？"></a>7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？</h3><p><code>Mybatis</code>动态<code>sql</code>可以让我们在<code>Xml</code>映射文件内，以标签的形式编写动态<code>sql</code>，完成逻辑判断和动态拼接<code>sql</code>的功能，<code>Mybatis</code>提供了9种动态<code>sql</code>标签<code>trim|where|set|foreach|if|choose|when|otherwise|bind</code>。</p>
+<p>其执行原理为，使用<code>OGNL</code>从<code>sql</code>参数对象中计算表达式的值，根据表达式的值动态拼接<code>sql</code>，以此来完成动态<code>sql</code>的功能。</p>
+<h3 id="8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？"><a href="#8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？" class="headerlink" title="8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？"></a>8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？</h3><p>第一种是使用<code>&lt;resultMap&gt;</code>标签，逐一定义列名和对象属性名之间的映射关系。</p>
+<p>第二种是使用<code>sql</code>列的别名功能，将列别名书写为对象属性名，比如<code>T_NAME AS NAME</code>，对象属性名一般是<code>name</code>，小写，但是列名不区分大小写，<code>Mybatis</code>会忽略列名大小写，智能找到与之对应对象属性名，你甚至可以写成<code>T_NAME AS NaMe</code>，<code>Mybatis</code>一样可以正常工作。</p>
+<p>有了列名与属性名的映射关系后，<code>Mybatis</code>通过反射创建对象，同时使用反射给对象的属性逐一赋值并返回，那些找不到映射关系的属性，是无法完成赋值的。</p>
+<h3 id="9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。"><a href="#9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。" class="headerlink" title="9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。"></a>9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。</h3><p>能，<code>Mybatis</code>不仅可以执行一对一、一对多的关联查询，还可以执行多对一，多对多的关联查询，多对一查询，其实就是一对一查询，只需要把<code>selectOne()</code>修改为<code>selectList()</code>即可；多对多查询，其实就是一对多查询，只需要把<code>selectOne()</code>修改为<code>selectList()</code>即可。</p>
+<p>关联对象查询，有两种实现方式，一种是单独发送一个sql去查询关联对象，赋给主对象，然后返回主对象。另一种是使用嵌套查询，嵌套查询的含义为使用<code>join</code>查询，一部分列是A对象的属性值，另外一部分列是关联对象B的属性值，好处是只发一个<code>sql</code>查询，就可以把主对象和其关联对象查出来。</p>
+<p>那么问题来了，<code>join</code>查询出来100条记录，如何确定主对象是5个，而不是100个？其去重复的原理是<code>&lt;resultMap&gt;</code>标签内的<code>&lt;id&gt;</code>子标签，指定了唯一确定一条记录的id列，<code>Mybatis</code>根据<code>&lt;id&gt;</code>列值来完成100条记录的去重复功能，<code>&lt;id&gt;</code>可以有多个，代表了联合主键的语意。</p>
+<p>同样主对象的关联对象，也是根据这个原理去重复的，尽管一般情况下，只有主对象会有重复记录，关联对象一般不会重复。</p>
+<h3 id="10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？"><a href="#10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？" class="headerlink" title="10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？"></a>10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？</h3><p><code>Mybatis</code>仅支持<code>association</code>关联对象和<code>collection</code>关联集合对象的延迟加载，<code>association</code>指的就是一对一，<code>collection</code>指的就是一对多查询。在<code>Mybatis</code>配置文件中，可以配置是否启用延迟加载<code>lazyLoadingEnabled=true|false</code>。</p>
+<p>它的原理是，使用<code>CGLIB</code>创建目标对象的代理对象，当调用目标方法时，进入拦截器方法，比如调用a<code>.getB().getName()</code>，拦截器<code>invoke()</code>方法发现<code>a.getB()</code>是<code>null</code>值，那么就会单独发送事先保存好的查询关联B对象的sql，把B查询上来，然后调用<code>a.setB(b)</code>，于是a的对象b属性就有值了，接着完成<code>a.getB().getName()</code>方法的调用。这就是延迟加载的基本原理。</p>
+<p>当然了，不光是<code>Mybatis</code>，几乎所有的包括<code>Hibernate</code>，支持延迟加载的原理都是一样的。</p>
+<h3 id="11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？"><a href="#11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？" class="headerlink" title="11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？"></a>11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？</h3><p>不同的<code>Xml</code>映射文件，如果配置了<code>namespace</code>，那么<code>id</code>可以重复；如果没有配置<code>namespace</code>，那么<code>id</code>不能重复；毕竟<code>namespace</code>不是必须的，只是最佳实践而已。</p>
+<p>原因就是<code>namespace+id</code>是作为<code>Map&lt;String, MappedStatement&gt;</code>的<code>key</code>使用的，如果没有<code>namespace</code>，就剩下<code>id</code>，那么，<code>id</code>重复会导致数据互相覆盖。有了<code>namespace</code>，自然<code>id</code>就可以重复，<code>namespace</code>不同，<code>namespace+id</code>自然也就不同。</p>
+<h3 id="12、Mybatis中如何执行批处理？"><a href="#12、Mybatis中如何执行批处理？" class="headerlink" title="12、Mybatis中如何执行批处理？"></a>12、Mybatis中如何执行批处理？</h3><p>使用<code>BatchExecutor</code>完成批处理。</p>
+<h3 id="13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？"><a href="#13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？" class="headerlink" title="13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？"></a>13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？</h3><p><code>Mybatis</code>有三种基本的<code>Executor</code>执行器，<code>SimpleExecutor</code>、<code>ReuseExecutor</code>、<code>BatchExecutor</code>。</p>
+<ul>
+<li><code>SimpleExecutor</code>：每执行一次<code>update</code>或<code>select</code>，就开启一个<code>Statement</code>对象，用完立刻关闭<code>Statement</code>对象。</li>
+<li><code>ReuseExecutor</code>：执行<code>update</code>或<code>select</code>，以<code>sql</code>作为<code>key</code>查找<code>Statement</code>对象，存在就使用，不存在就创建，用完后，不关闭<code>Statement</code>对象，而是放置于<code>Map&lt;String, Statement&gt;</code>内，供下一次使用。简言之，就是重复使用<code>Statement</code>对象。</li>
+<li><code>BatchExecutor</code>：执行<code>update</code>（没有<code>select</code>，<code>JDBC</code>批处理不支持<code>select</code>），将所有<code>sql</code>都添加到批处理中（<code>addBatch()</code>），等待统一执行（<code>executeBatch()</code>），它缓存了多个<code>Statement</code>对象，每个<code>Statement</code>对象都是<code>addBatch()</code>完毕后，等待逐一执行<code>executeBatch()</code>批处理。与<code>JDBC</code>批处理相同。</li>
+</ul>
+<p>作用范围：<code>Executor</code>的这些特点，都严格限制在<code>SqlSession</code>生命周期范围内。</p>
+<h3 id="14、Mybatis中如何指定使用哪一种Executor执行器？"><a href="#14、Mybatis中如何指定使用哪一种Executor执行器？" class="headerlink" title="14、Mybatis中如何指定使用哪一种Executor执行器？"></a>14、Mybatis中如何指定使用哪一种Executor执行器？</h3><p>在<code>Mybatis</code>配置文件中，可以指定默认的<code>ExecutorType</code>执行器类型，也可以手动给<code>DefaultSqlSessionFactory</code>的创建<code>SqlSession</code>的方法传递<code>ExecutorType</code>类型参数。</p>
+<h3 id="15、Mybatis是否可以映射Enum枚举类？"><a href="#15、Mybatis是否可以映射Enum枚举类？" class="headerlink" title="15、Mybatis是否可以映射Enum枚举类？"></a>15、Mybatis是否可以映射Enum枚举类？</h3><p><code>Mybatis</code>可以映射枚举类，不单可以映射枚举类，<code>Mybatis</code>可以映射任何对象到表的一列上。映射方式为自定义一个<code>TypeHandler</code>，实现<code>TypeHandler</code>的<code>setParameter()</code>和<code>getResult()</code>接口方法。T<code>ypeHandler</code>有两个作用，一是完成从<code>javaType</code>至<code>jdbcType</code>的转换，二是完成<code>jdbcType</code>至<code>javaType</code>的转换，体现为<code>setParameter()</code>和<code>getResult()</code>两个方法，分别代表设置<code>sql</code>问号占位符参数和获取列查询结果。</p>
+<h3 id="16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？"><a href="#16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？" class="headerlink" title="16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？"></a>16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？</h3><p>虽然<code>Mybatis</code>解析<code>Xml</code>映射文件是按照顺序解析的，但是，被引用的B标签依然可以定义在任何地方，<code>Mybatis</code>都可以正确识别。</p>
+<p>原理是，<code>Mybatis</code>解析A标签，发现A标签引用了B标签，但是B标签尚未解析到，尚不存在，此时，<code>Mybatis</code>会将A标签标记为未解析状态，然后继续解析余下的标签，包含B标签，待所有标签解析完毕，<code>Mybatis</code>会重新解析那些被标记为未解析的标签，此时再解析A标签时，B标签已经存在，A标签也就可以正常解析完成了。</p>
+<h3 id="17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？"><a href="#17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？" class="headerlink" title="17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？"></a>17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？</h3><p><code>Mybatis</code>将所有<code>Xml</code>配置信息都封装到<code>All-In-One</code>重量级对象<code>Configuration</code>内部。在<code>Xml</code>映射文件中，<code>&lt;parameterMap&gt;</code>标签会被解析为<code>ParameterMap</code>对象，其每个子元素会被解析为<code>ParameterMapping</code>对象。<code>&lt;resultMap&gt;</code>标签会被解析为<code>ResultMap</code>对象，其每个子元素会被解析为<code>ResultMapping</code>对象。每一个<code>&lt;select&gt;</code>、<code>&lt;insert&gt;</code>、<code>&lt;update&gt;</code>、<code>&lt;delete&gt;</code>标签均会被解析为<code>MappedStatement</code>对象，标签内的sql会被解析为<code>BoundSql</code>对象。</p>
+<h3 id="18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？"><a href="#18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？" class="headerlink" title="18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？"></a>18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？</h3><p><code>Hibernate</code>属于全自动<code>ORM</code>映射工具，使用<code>Hibernate</code>查询关联对象或者关联集合对象时，可以根据对象关系模型直接获取，所以它是全自动的。而<code>Mybatis</code>在查询关联对象或关联集合对象时，需要手动编写<code>sql</code>来完成，所以，称之为半自动<code>ORM</code>映射工具。</p>
+<p>转自：<a href="https://my.oschina.net/zudajun/blog/747682" target="_blank" rel="noopener">https://my.oschina.net/zudajun/blog/747682</a></p>
+<p>还有一个博客，先留着：<a href="https://blog.csdn.net/eaphyy/article/details/71190441" target="_blank" rel="noopener">https://blog.csdn.net/eaphyy/article/details/71190441</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-08, 11:39:25</p>
+        <p><span>最后更新:</span>2018-06-08, 11:39:42</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/08/2.Mybatis面试问题集锦/" title="2.Mybatis面试问题集锦">http://yoursite.com/2018/06/08/2.Mybatis面试问题集锦/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/08/2.Mybatis面试问题集锦/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/08/1.Spring知识点提炼/">
+                    1.Spring知识点提炼
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1、-和-的区别是什么？"><span class="toc-number">1.</span> <span class="toc-text">1、#{}和${}的区别是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2、Xml映射文件中，除了常见的select-insert-updae-delete标签之外，还有哪些标签？"><span class="toc-number">2.</span> <span class="toc-text">2、Xml映射文件中，除了常见的select|insert|updae|delete标签之外，还有哪些标签？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？"><span class="toc-number">3.</span> <span class="toc-text">3、最佳实践中，通常一个Xml映射文件，都会写一个Dao接口与之对应，请问，这个Dao接口的工作原理是什么？Dao接口里的方法，参数不同时，方法能重载吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4、Mybatis是如何进行分页的？分页插件的原理是什么？"><span class="toc-number">4.</span> <span class="toc-text">4、Mybatis是如何进行分页的？分页插件的原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5、简述Mybatis的插件运行原理，以及如何编写一个插件。"><span class="toc-number">5.</span> <span class="toc-text">5、简述Mybatis的插件运行原理，以及如何编写一个插件。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6、Mybatis执行批量插入，能返回数据库主键列表吗？"><span class="toc-number">6.</span> <span class="toc-text">6、Mybatis执行批量插入，能返回数据库主键列表吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？"><span class="toc-number">7.</span> <span class="toc-text">7、Mybatis动态sql是做什么的？都有哪些动态sql？能简述一下动态sql的执行原理不？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？"><span class="toc-number">8.</span> <span class="toc-text">8、Mybatis是如何将sql执行结果封装为目标对象并返回的？都有哪些映射形式？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。"><span class="toc-number">9.</span> <span class="toc-text">9、Mybatis能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？"><span class="toc-number">10.</span> <span class="toc-text">10、Mybatis是否支持延迟加载？如果支持，它的实现原理是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？"><span class="toc-number">11.</span> <span class="toc-text">11、Mybatis的Xml映射文件中，不同的Xml映射文件，id是否可以重复？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12、Mybatis中如何执行批处理？"><span class="toc-number">12.</span> <span class="toc-text">12、Mybatis中如何执行批处理？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？"><span class="toc-number">13.</span> <span class="toc-text">13、Mybatis都有哪些Executor执行器？它们之间的区别是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14、Mybatis中如何指定使用哪一种Executor执行器？"><span class="toc-number">14.</span> <span class="toc-text">14、Mybatis中如何指定使用哪一种Executor执行器？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15、Mybatis是否可以映射Enum枚举类？"><span class="toc-number">15.</span> <span class="toc-text">15、Mybatis是否可以映射Enum枚举类？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？"><span class="toc-number">16.</span> <span class="toc-text">16、Mybatis映射文件中，如果A标签通过include引用了B标签的内容，请问，B标签能否定义在A标签的后面，还是说必须定义在A标签的前面？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？"><span class="toc-number">17.</span> <span class="toc-text">17、简述Mybatis的Xml映射文件和Mybatis内部数据结构之间的映射关系？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？"><span class="toc-number">18.</span> <span class="toc-text">18、为什么说Mybatis是半自动ORM映射工具？它与全自动的区别在哪里？</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"2.Mybatis面试问题集锦　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/08/1.Spring知识点提炼/" title="下一篇: 1.Spring知识点提炼">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

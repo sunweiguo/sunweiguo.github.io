@@ -194,7 +194,269 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-11.多线程并发拓展" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/04/11.多线程并发拓展/" class="article-date">
+      <time datetime="2018-06-04T14:20:07.661Z" itemprop="datePublished">2018-06-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      11.多线程并发拓展
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>这里着重探讨spring与线程安全的关系以及HashMap死锁问题。<br><a id="more"></a></p>
+<h2 id="1-死锁"><a href="#1-死锁" class="headerlink" title="1. 死锁"></a>1. 死锁</h2><p>在之前已经整理过死锁相关的知识，这里不再赘述。</p>
+<h2 id="2-回顾总结"><a href="#2-回顾总结" class="headerlink" title="2. 回顾总结"></a>2. 回顾总结</h2><blockquote>
+<p>多线程并发最佳实践</p>
+</blockquote>
+<ul>
+<li>使用本地变量</li>
+<li>使用不可变类</li>
+<li>最小化锁的作用域范围</li>
+<li>使用线程池的<code>Excutor</code>，而不是直接<code>new Thread</code>执行</li>
+<li>宁可使用同步(<code>countdownLatch</code>,<code>BlockingQueue</code>等)也不要使用线程的<code>wait</code>和<code>notify</code></li>
+<li>使用<code>BlockingQueue</code>实现生产-消费模型</li>
+<li>使用并发集合而不是加了锁的同步集合<code>Collections.synchronized</code></li>
+<li>使用<code>Semaphore</code>创建有界的访问</li>
+<li>宁可使用同步代码块，也不使用同步方法</li>
+<li>避免使用静态变量</li>
+</ul>
+<h2 id="3-spring与线程安全"><a href="#3-spring与线程安全" class="headerlink" title="3. spring与线程安全"></a>3. spring与线程安全</h2><h4 id="3-1-spring保证对象的线程安全吗？"><a href="#3-1-spring保证对象的线程安全吗？" class="headerlink" title="3.1 spring保证对象的线程安全吗？"></a>3.1 spring保证对象的线程安全吗？</h4><blockquote>
+<p><code>Spring</code>作为一个IOC/DI容器，帮助我们管理了许许多多的<code>bean</code>。但其实，<code>Spring</code>并没有保证这些对象的线程安全，需要由开发者自己编写解决线程安全问题的代码。</p>
+</blockquote>
+<h4 id="3-2-bean的作用域？"><a href="#3-2-bean的作用域？" class="headerlink" title="3.2 bean的作用域？"></a>3.2 bean的作用域？</h4><blockquote>
+<p><code>Spring</code>对每个<code>bean</code>提供了一个<code>scope</code>属性来表示该<code>bean</code>的作用域。它是<code>bean</code>的生命周期。例如，一个<code>scope</code>为<code>singleton</code>的<code>bean</code>，在第一次被注入时，会创建为一个单例对象，该对象会一直被复用到应用结束。</p>
+</blockquote>
+<ul>
+<li><code>singleton</code>：默认的<code>scope</code>，每个<code>scope</code>为<code>singleton</code>的<code>bean</code>都会被定义为一个单例对象，该对象的生命周期是与Spring IOC容器一致的（但在第一次被注入时才会创建）。</li>
+<li><code>prototype</code>：<code>bean</code>被定义为在每次注入时都会创建一个新的对象。</li>
+<li><code>request</code>：<code>bean</code>被定义为在每个HTTP请求中创建一个单例对象，也就是说在单个请求中都会复用这一个单例对象。</li>
+<li><code>session</code>：<code>bean</code>被定义为在一个<code>session</code>的生命周期内创建一个单例对象。</li>
+<li><code>application</code>：<code>bean</code>被定义为在<code>ServletContext</code>的生命周期中复用一个单例对象。</li>
+<li><code>websocket</code>：<code>bean</code>被定义为在<code>websocket</code>的生命周期中复用一个单例对象。</li>
+<li><blockquote>
+<p>我们交由<code>Spring</code>管理的大多数对象其实都是一些无状态的对象，这种不会因为多线程而导致状态被破坏的对象很适合<code>Spring</code>的默认<code>scope</code>，每个单例的无状态对象都是线程安全的（也可以说只要是无状态的对象，不管单例多例都是线程安全的，不过单例毕竟节省了不断创建对象与GC的开销）。</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="3-3-什么是无状态的对象？为什么是线程安全的？、"><a href="#3-3-什么是无状态的对象？为什么是线程安全的？、" class="headerlink" title="3.3 什么是无状态的对象？为什么是线程安全的？、"></a>3.3 什么是无状态的对象？为什么是线程安全的？、</h4><blockquote>
+<p>无状态的对象即是自身没有状态的对象，自然也就不会因为多个线程的交替调度而破坏自身状态导致线程安全问题。无状态对象包括我们经常使用的DO、DTO、VO这些只作为数据的实体模型的贫血对象，还有Service、DAO和Controller，这些对象并没有自己的状态，它们只是用来执行某些操作的。例如，每个DAO提供的函数都只是对数据库的CRUD，而且每个数据库Connection都作为函数的局部变量（局部变量是在用户栈中的，而且用户栈本身就是线程私有的内存区域，所以不存在线程安全问题），用完即关（或交还给连接池）。</p>
+</blockquote>
+<p>更加通俗的理解无状态对象：</p>
+<blockquote>
+<p>无状态的对象，是一个对象，并且这个对象没有状态！</p>
+<p>通常情况，几乎所有对象都有状态，</p>
+<p>比如一个人，按照不同的情况有多种状态，比如高矮、胖瘦、黑白、高富帅穷矮挫。</p>
+<p>比如一个杯子，玻璃的还是塑料，圆的还是方的。</p>
+<p>你可以想一下，生活中哪些对象是无状态的？</p>
+<p>抽象到程序设计中，无状态的对象，我们往往仅仅考虑对象的一个切面，</p>
+<p>比如一个User，有多个属性，Name，Age等等，只要你认为这些属性的变化对User的唯一认定没有影响，那这些属性，就不会影响User的状态，意思是说这个User的状态我不关心这些属性，那这些属性的变更不能成为影响User的状态的必要因素。</p>
+<p>比如User一个Age达到18岁了，我认为这个User的状态变化了，是成年人了，那么这个User是有状态的，状态就是是否成年，活着你认为Age多少岁无关紧要，那么这个User就是没有状态的。</p>
+<p>对象状态的变化一般是由你关心的某属性变化引起的，<strong>无状态的对象一般是不可变对象，不可变对象是线程安全的</strong>。</p>
+<p>如Service层、Dao层用默认singleton就行，虽然Service类也有dao这样的属性，但dao这些类都是没有状态信息的，也就是相当于不变(immutable)类，所以不影响。</p>
+</blockquote>
+<blockquote>
+<p>有人可能会认为，我使用<code>request</code>作用域不就可以避免每个请求之间的安全问题了吗？这是完全错误的，因为<code>Controller</code>默认是单例的，一个HTTP请求是会被多个线程执行的，这就又回到了线程的安全问题。当然，你也可以把<code>Controller</code>的<code>scope</code>改成<code>prototype</code>，实际上<code>Struts2</code>就是这么做的，但有一点要注意，<code>Spring MVC</code>对请求的拦截粒度是基于每个方法的，而<code>Struts2</code>是基于每个类的，所以把<code>Controller</code>设为多例将会频繁的创建与回收对象，严重影响到了性能。</p>
+</blockquote>
+<blockquote>
+<p><strong><code>Spring</code>根本就没有对<code>bean</code>的多线程安全问题做出任何保证与措施。对于每个<code>bean</code>的线程安全问题，根本原因是每个<code>bean</code>自身的设计。不要在<code>bean</code>中声明任何有状态的实例变量或类变量，如果必须如此，那么就使用<code>ThreadLocal</code>把变量变为线程私有的，如果<code>bean</code>的实例变量或类变量需要在多个线程之间共享，那么就只能使用<code>synchronized</code>、<code>lock</code>、<code>CAS</code>等这些实现线程同步的方法了。</strong></p>
+</blockquote>
+<blockquote>
+<p><code>ThreadLocal</code>是一个很好用的工具类，它在某些情况下解决了线程安全问题（在变量不需要被多个线程共享时）。<code>ThreadLocal</code>会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突。因为每一个线程都拥有自己的变量副本，从而也就没有必要对该变量进行同步了。<code>ThreadLocal</code>提供了线程安全的共享对象，在编写多线程代码时，可以把不安全的变量封装进<code>ThreadLocal</code>。</p>
+</blockquote>
+<ul>
+<li><a href="http://www.importnew.com/27440.html" target="_blank" rel="noopener">http://www.importnew.com/27440.html</a></li>
+</ul>
+<h4 id="3-4-spring的controller默认是单例还是多例"><a href="#3-4-spring的controller默认是单例还是多例" class="headerlink" title="3.4 spring的controller默认是单例还是多例?"></a>3.4 spring的controller默认是单例还是多例?</h4><p><code>spring</code>的<code>controller</code>默认是单例:</p>
+<ul>
+<li>为了性能:单例不用每次都new，当然快</li>
+<li>不需要多例:只要<code>controller</code>中不定义属性，那么单例完全是安全的,否则就要进行同步机制来保证线程安全。</li>
+</ul>
+<p><strong><code>spring</code>默认的注入也是单例的，所以也存在线程安全问题。</strong></p>
+<h4 id="3-5-springMVC与struts2的区别"><a href="#3-5-springMVC与struts2的区别" class="headerlink" title="3.5 springMVC与struts2的区别"></a>3.5 springMVC与struts2的区别</h4><ul>
+<li>机制：<code>spring mvc</code>的入口是<code>servlet</code>，而<code>struts2</code>是<code>filter</code>，这样就导致了二者的机制不同。 </li>
+<li>性能：<code>spring</code>会稍微比<code>struts</code>快。<code>spring mvc</code>是基于方法的设计，而<code>sturts</code>是基于类。</li>
+</ul>
+<blockquote>
+<p><code>sturts</code>:每次发一次请求都会实例一个<code>action</code>，每个<code>action</code>都会被注入属性，而<code>spring</code>基于方法，粒度更细，但要小心把握像在<code>servlet</code>控制数据一样。</p>
+</blockquote>
+<ul>
+<li>参数传递：<code>struts</code>是在接受参数的时候，可以用属性来接受参数，这就说明参数是让多个方法共享的。</li>
+<li><code>intercepter</code>的实现机制：<code>struts</code>有以自己的<code>interceptor</code>机制，<code>spring mvc</code>用的是独立的<code>AOP</code>方式。</li>
+</ul>
+<h2 id="4-HashMap和ConcurrentHashMap"><a href="#4-HashMap和ConcurrentHashMap" class="headerlink" title="4. HashMap和ConcurrentHashMap"></a>4. HashMap和ConcurrentHashMap</h2><h4 id="4-1-HashMap在多线程环境下的死循环问题"><a href="#4-1-HashMap在多线程环境下的死循环问题" class="headerlink" title="4.1 HashMap在多线程环境下的死循环问题"></a>4.1 HashMap在多线程环境下的死循环问题</h4><p>单线程下<code>rehash</code>：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/hashMap%E6%89%A9%E5%AE%B9.png" alt="image"></p>
+<p>多线程下就会出现问题：</p>
+<p>第一个阶段：</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%981.png" alt="image"></p>
+<p>第二个阶段：线程1继续往下执行</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%982.png" alt="image"></p>
+<p>那么此时数组索引1处指向了5.</p>
+<p>第三个阶段：线程1继续往下执行，由于第一个阶段，<code>next</code>是指向9的，此时数组索引1指向了9。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%983.png" alt="image"></p>
+<p>第四个阶段：线程1继续往下执行，上一个阶段<code>next</code>指向5，所以此时数组索引1指向了<code>5.next</code>指向null.</p>
+<p>此时，由于上面是9指向5，现在5又指向了9，构成了死循环。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%984.png" alt="image"></p>
+<p>有点绕，但是简单来说，就是，一开始槽1指向5，next指向9；下面，槽1指向9，但是因为另一个线程9的next是5，所以next指向5，即9.next=5；最后，槽1又指向5，即5插在上一步的槽1和9中间，此时5.next=9；那么死循环就形成了。</p>
+<h4 id="4-2-ConcurrentHashMap-jdk7实现"><a href="#4-2-ConcurrentHashMap-jdk7实现" class="headerlink" title="4.2  ConcurrentHashMap-jdk7实现"></a>4.2  ConcurrentHashMap-jdk7实现</h4><p><img src="http://p376695fl.bkt.clouddn.com/ConcurrentHashMap7.png" alt="image"></p>
+<h4 id="4-3-ConcurrentHashMap-jdk8实现"><a href="#4-3-ConcurrentHashMap-jdk8实现" class="headerlink" title="4.3  ConcurrentHashMap-jdk8实现"></a>4.3  ConcurrentHashMap-jdk8实现</h4><p><img src="http://p376695fl.bkt.clouddn.com/ConcurrentHashMap8.png" alt="image"></p>
+<p>具体的原理在jdk源码分析中详细探讨。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-04, 22:20:07</p>
+        <p><span>最后更新:</span>2018-06-04, 22:20:09</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/04/11.多线程并发拓展/" title="11.多线程并发拓展">http://yoursite.com/2018/06/04/11.多线程并发拓展/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/11.多线程并发拓展/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/04/12.高并发处理之缓存思路/">
+                    12.高并发处理之缓存思路
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/04/10.线程池/">
+                    10.线程池
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-死锁"><span class="toc-number">1.</span> <span class="toc-text">1. 死锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-回顾总结"><span class="toc-number">2.</span> <span class="toc-text">2. 回顾总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-spring与线程安全"><span class="toc-number">3.</span> <span class="toc-text">3. spring与线程安全</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#3-1-spring保证对象的线程安全吗？"><span class="toc-number">3.0.1.</span> <span class="toc-text">3.1 spring保证对象的线程安全吗？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-2-bean的作用域？"><span class="toc-number">3.0.2.</span> <span class="toc-text">3.2 bean的作用域？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-3-什么是无状态的对象？为什么是线程安全的？、"><span class="toc-number">3.0.3.</span> <span class="toc-text">3.3 什么是无状态的对象？为什么是线程安全的？、</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-4-spring的controller默认是单例还是多例"><span class="toc-number">3.0.4.</span> <span class="toc-text">3.4 spring的controller默认是单例还是多例?</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-5-springMVC与struts2的区别"><span class="toc-number">3.0.5.</span> <span class="toc-text">3.5 springMVC与struts2的区别</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-HashMap和ConcurrentHashMap"><span class="toc-number">4.</span> <span class="toc-text">4. HashMap和ConcurrentHashMap</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-HashMap在多线程环境下的死循环问题"><span class="toc-number">4.0.1.</span> <span class="toc-text">4.1 HashMap在多线程环境下的死循环问题</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-2-ConcurrentHashMap-jdk7实现"><span class="toc-number">4.0.2.</span> <span class="toc-text">4.2  ConcurrentHashMap-jdk7实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-ConcurrentHashMap-jdk8实现"><span class="toc-number">4.0.3.</span> <span class="toc-text">4.3  ConcurrentHashMap-jdk8实现</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"11.多线程并发拓展　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/04/12.高并发处理之缓存思路/" title="上一篇: 12.高并发处理之缓存思路">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/04/10.线程池/" title="下一篇: 10.线程池">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">

@@ -197,7 +197,327 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"></div>
+      <div class="body-wrap"><article id="post-十三、实例说明类加载过程（对十、十一的补充和加深理解）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/" class="article-date">
+      <time datetime="2018-06-06T09:32:14.538Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      十三、实例说明类加载过程（对十、十一的补充和加深理解）
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>本章对虚拟机的类加载过程进行一个补充。<br><a id="more"></a></p>
+<h2 id="1-Java虚拟机启动、加载类过程分析"><a href="#1-Java虚拟机启动、加载类过程分析" class="headerlink" title="1. Java虚拟机启动、加载类过程分析"></a>1. Java虚拟机启动、加载类过程分析</h2><p>下面我将定义一个非常简单的java程序并运行它，来逐步分析java虚拟机启动的过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.luanlouis.jvm.load;  </span><br><span class="line"><span class="keyword">import</span> sun.security.pkcs11.P11Util;  </span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span></span>&#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        System.out.println(<span class="string">"Hello,World!"</span>);  </span><br><span class="line">  </span><br><span class="line">        ClassLoader loader = P11Util.class.getClassLoader();  </span><br><span class="line">  </span><br><span class="line">        System.out.println(loader);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在windows命令行下输入： <code>java    org.luanlouis.jvm.load.Main</code></p>
+<p>当输入上述的命令时： windows开始运行<code>{JRE_HOME}/bin/java.exe</code>程序，java.exe 程序将完成以下步骤： </p>
+<blockquote>
+<ol>
+<li>根据JVM内存配置要求，为JVM申请特定大小的内存空间；</li>
+<li><p>创建一个引导类加载器实例，初步加载系统类到内存方法区区域中；</p>
+</li>
+<li><p>创建JVM 启动器实例 <code>Launcher</code>,并取得类加载器<code>ClassLoader</code>；</p>
+</li>
+<li><p>使用上述获取的<code>ClassLoader</code>实例加载我们定义的 <code>org.luanlouis.jvm.load.Main</code>类；</p>
+</li>
+<li><p>加载完成时候JVM会执行Main类的<code>main</code>方法入口，执行Main类的<code>main</code>方法；</p>
+</li>
+<li><p>结束，java程序运行结束，JVM销毁。</p>
+</li>
+</ol>
+</blockquote>
+<p>下面逐一分析一下这几个步骤。</p>
+<h3 id="1-1-根据JVM内存配置要求，为JVM申请特定大小的内存空间"><a href="#1-1-根据JVM内存配置要求，为JVM申请特定大小的内存空间" class="headerlink" title="1.1 根据JVM内存配置要求，为JVM申请特定大小的内存空间"></a>1.1 根据JVM内存配置要求，为JVM申请特定大小的内存空间</h3><p>JVM内存按照功能上的划分，可以粗略地划分为方法区(<code>Method Area</code>) 和堆(<code>Heap</code>),而所有的类的定义信息都会被加载到方法区中。</p>
+<p><img src="http://img.blog.csdn.net/20160116190623705" alt="image"></p>
+<h3 id="1-2-创建一个引导类加载器实例，初步加载系统类到内存方法区区域中"><a href="#1-2-创建一个引导类加载器实例，初步加载系统类到内存方法区区域中" class="headerlink" title="1.2 创建一个引导类加载器实例，初步加载系统类到内存方法区区域中"></a>1.2 创建一个引导类加载器实例，初步加载系统类到内存方法区区域中</h3><p>JVM申请好内存空间后，JVM会创建一个<strong>引导类加载器</strong>（<code>Bootstrap Classloader</code>）实例，引导类加载器是使用C++语言实现的，负责加载JVM虚拟机运行时所需的基本系统级别的类，如<code>java.lang.String</code>, <code>java.lang.Object</code>等等。<br>引导类加载器(<code>Bootstrap Classloader</code>)会读取 <code>{JRE_HOME}/lib</code> 下的jar包和配置，然后将这些系统类加载到方法区内。</p>
+<p>本例中，引导类加载器是用 <code>{JRE_HOME}/lib</code>加载类的，不过，你也可以使用参数 <code>-Xbootclasspath</code> 或 系统变量<code>sun.boot.class.path</code>来指定的目录来加载类。</p>
+<p>一般而言，<code>{JRE_HOME}/lib</code>下存放着JVM正常工作所需要的系统类，如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>rt.jar</td>
+<td>运行环境包，rt即runtime，J2SE 的类定义都在这个包内</td>
+</tr>
+<tr>
+<td>charsets.jar</td>
+<td>字符集支持包</td>
+</tr>
+<tr>
+<td>jce.jar</td>
+<td>是一组包，它们提供用于加密、密钥生成和协商以及 Message Authentication Code（MAC）</td>
+</tr>
+<tr>
+<td>jsse.jar</td>
+<td>安全套接字拓展包Java(TM) Secure Socket Extension</td>
+</tr>
+<tr>
+<td>classlist</td>
+<td>该文件内表示是引导类加载器应该加载的类的清单</td>
+</tr>
+<tr>
+<td>net.properties</td>
+<td>JVM 网络配置信息</td>
+</tr>
+</tbody>
+</table>
+<p>引导类加载器(<code>Bootstrap ClassLoader</code>） 加载系统类后，JVM内存会呈现如下格局：</p>
+<p><img src="http://img.blog.csdn.net/20160116204532583" alt="image"></p>
+<ul>
+<li>引导类加载器将类信息加载到方法区中，以特定方式组织，对于某一个特定的类而言，在方法区中它应该有 运行时常量池、类型信息、字段信息、方法信息、类加载器的引用，对应class实例的引用等信息。</li>
+<li>类加载器的引用,由于这些类是由引导类加载器(<code>Bootstrap Classloader</code>)进行加载的，而 引导类加载器是有C++语言实现的，所以是无法访问的，故而该引用为NULL</li>
+<li>对应class实例的引用， 类加载器在加载类信息放到方法区中后，会创建一个对应的Class 类型的实例放到堆(Heap)中, 作为开发人员访问方法区中类定义的入口和切入点。</li>
+</ul>
+<p>当我们在代码中尝试获取系统类如<code>java.lang.Object</code>的类加载器时，你会始终得到NULL：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(String.class.getClassLoader());<span class="comment">//null  </span></span><br><span class="line">System.out.println(Object.class.getClassLoader());<span class="comment">//null  </span></span><br><span class="line">System.out.println(Math.class.getClassLoader());<span class="comment">//null  </span></span><br><span class="line">System.out.println(System.class.getClassLoader());<span class="comment">//null</span></span><br></pre></td></tr></table></figure>
+<h3 id="1-3-创建JVM-启动器实例-Launcher-并取得类加载器ClassLoader"><a href="#1-3-创建JVM-启动器实例-Launcher-并取得类加载器ClassLoader" class="headerlink" title="1.3 创建JVM 启动器实例 Launcher,并取得类加载器ClassLoader"></a>1.3 创建JVM 启动器实例 Launcher,并取得类加载器ClassLoader</h3><p>上述步骤完成，JVM基本运行环境就准备就绪了。接着，我们要让JVM工作起来了：运行我们定义的程序 <code>org.luanlouis,jvm.load.Main</code>。</p>
+<p>此时，JVM虚拟机调用已经加载在方法区的类<code>sun.misc.Launcher</code> 的静态方法<code>getLauncher()</code>,  获取<code>sun.misc.Launcher</code> 实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sun.misc.Launcher launcher = sun.misc.Launcher.getLauncher(); <span class="comment">//获取Java启动器  </span></span><br><span class="line">ClassLoader classLoader = launcher.getClassLoader();          <span class="comment">//获取类加载器ClassLoader用来加载class到内存来</span></span><br></pre></td></tr></table></figure>
+<p><code>sun.misc.Launcher</code> 使用了单例模式设计，保证一个JVM虚拟机内只有一个<code>sun.misc.Launcher</code>实例。</p>
+<p>在<code>Launcher</code>的内部，其定义了两个类加载器(<code>ClassLoader</code>),分别是<code>sun.misc.Launcher.ExtClassLoader</code>和<code>sun.misc.Launcher.AppClassLoader</code>，这两个类加载器分别被称为拓展类加载器(<code>Extension ClassLoader</code>) 和 应用类加载器(<code>Application ClassLoader</code>).如下图所示：</p>
+<p><img src="http://img.blog.csdn.net/20160117105550022" alt="image"></p>
+<p>图例注释：除了引导类加载器(<code>Bootstrap Class Loader</code> )的所有类加载器，都有一个能力，就是判断某一个类是否被引导类加载器加载过，如果加载过，可以直接返回对应的<code>Class&lt;T&gt; instance</code>，如果没有，则返回null.  图上的指向引导类加载器的虚线表示类加载器的这个有限的访问 引导类加载器的功能。</p>
+<p> 此时的  <code>launcher.getClassLoader()</code> 方法将会返回 <code>AppClassLoader</code> 实例，<code>AppClassLoader</code>将<code>ExtClassLoader</code>作为自己的父加载器。</p>
+<p> 当<code>AppClassLoader</code>加载类时，会首先尝试让父加载器<code>ExtClassLoader</code>进行加载，如果父加载器<code>ExtClassLoader</code>加载成功，则<code>AppClassLoader</code>直接返回父加载器<code>ExtClassLoader</code>加载的结果；如果父加载器<code>ExtClassLoader</code>加载失败，<code>AppClassLoader</code>则会判断该类是否是引导的系统类(即是否是通过<code>Bootstrap</code>类加载器加载，这会调用<code>Native</code>方法进行查找)；若要加载的类不是系统引导类，那么<code>ClassLoader</code>将会尝试自己加载，加载失败将会抛出<code>ClassNotFoundException</code>。</p>
+<p>具体<code>AppClassLoader</code>的工作流程如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20160119193940660" alt="image"></p>
+<p>上面讨论的应用类加载器<code>AppClassLoader</code>的加载类的模式就是我们常说的<strong>双亲委派模型</strong>(<code>parent-delegation model</code>).<br>对于某个特定的类加载器而言，应该为其指定一个父类加载器，当用其进行加载类的时候：</p>
+<ol>
+<li>委托父类加载器帮忙加载；</li>
+<li>父类加载器加载不了，则查询引导类加载器有没有加载过该类；</li>
+<li>如果引导类加载器没有加载过该类，则当前的类加载器应该自己加载该类；</li>
+<li>若加载成功，返回 对应的<code>Class&lt;T&gt;</code> 对象；若失败，抛出异常<code>ClassNotFoundException</code>。</li>
+</ol>
+<p><strong>请注意：</strong><br><strong>双亲委派模型中的”双亲”并不是指它有两个父类加载器的意思，一个类加载器只应该有一个父加载器</strong>。上面的步骤中，有两个角色：</p>
+<ol>
+<li>父类加载器(<code>parent classloader</code>)：它可以替子加载器尝试加载类</li>
+<li>引导类加载器（<code>bootstrap classloader</code>）: 子类加载器只能判断某个类是否被引导类加载器加载过，而不能委托它加载某个类；换句话说，就是子类加载器不能接触到引导类加载器，引导类加载器对其他类加载器而言是透明的。</li>
+</ol>
+<p><img src="http://img.blog.csdn.net/20160117130521757" alt="image"></p>
+<h3 id="1-4-使用类加载器ClassLoader加载Main类"><a href="#1-4-使用类加载器ClassLoader加载Main类" class="headerlink" title="1.4 使用类加载器ClassLoader加载Main类"></a>1.4 使用类加载器ClassLoader加载Main类</h3><p>通过 <code>launcher.getClassLoader()</code>方法返回<code>AppClassLoader</code>实例，接着就是<code>AppClassLoader</code>加载 <code>org.luanlouis.jvm.load.Main</code>类的时候了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lassLoader classloader = launcher.getClassLoader();<span class="comment">//取得AppClassLoader类  </span></span><br><span class="line">classLoader.loadClass(<span class="string">"org.luanlouis.jvm.load.Main"</span>);<span class="comment">//加载自定义类</span></span><br></pre></td></tr></table></figure>
+<p>上述定义的<code>org.luanlouis.jvm.load.Main</code>类被编译成<code>org.luanlouis.jvm.load.Main class</code>二进制文件，这个class文件中有一个叫常量池(<code>Constant Pool</code>)的结构体来存储该class的常亮信息。常量池中有<code>CONSTANT_CLASS_INFO</code>类型的常量，表示该class中声明了要用到那些类：</p>
+<p><img src="http://img.blog.csdn.net/20160117135740987" alt="image"></p>
+<p>当<code>AppClassLoader</code>要加载 <code>org.luanlouis.jvm.load.Main</code>类时，会去查看该类的定义，发现它内部声明使用了其它的类： <code>sun.security.pkcs11.P11Util</code>、<code>java.lang.Object</code>、<code>java.lang.System</code>、<code>java.io.PrintStream</code>、<code>java.lang.Class</code>；<code>org.luanlouis.jvm.load.Main</code>类要想正常工作，首先要能够保证这些其内部声明的类加载成功。所以<code>AppClassLoader</code>要先将这些类加载到内存中。（注：为了理解方便，这里没有考虑懒加载的情况，事实上的JVM加载类过程比这复杂的多）</p>
+<p><strong>加载顺序：</strong></p>
+<ol>
+<li><p>加载<code>java.lang.Object</code>、<code>java.lang.System</code>、<code>java.io.PrintStream</code>、<code>java,lang.Class</code></p>
+<pre><code>AppClassLoader尝试加载这些类的时候，会先委托ExtClassLoader进行加载；
+
+而ExtClassLoader发现不是其加载范围，其返回null；
+
+AppClassLoader发现父类加载器ExtClassLoader无法加载，
+则会查询这些类是否已经被BootstrapClassLoader加载过，
+结果表明这些类已经被BootstrapClassLoader加载过，
+则无需重复加载，直接返回对应的Class&lt;T&gt;实例；
+</code></pre></li>
+<li><p>加载<code>sun.security.pkcs11.P11Util</code></p>
+<pre><code>此在{JRE_HOME}/lib/ext/sunpkcs11.jar包内，属于ExtClassLoader负责加载的范畴。
+
+AppClassLoader尝试加载这些类的时候，会先委托ExtClassLoader进行加载；
+
+而ExtClassLoader发现其正好属于加载范围，故ExtClassLoader负责将其加载到内存中。
+
+ExtClassLoader在加载sun.security.pkcs11.P11Util时也分析这个类内都使用了哪些类，
+并将这些类先加载内存后，才开始加载sun.security.pkcs11.P11Util，
+加载成功后直接返回对应的Class&lt;sun.security.pkcs11.P11Util&gt;实例；
+</code></pre></li>
+<li><p>加载<code>org.luanlouis.jvm.load.Main</code></p>
+<pre><code>  AppClassLoader尝试加载这些类的时候，会先委托ExtClassLoader进行加载；
+  而ExtClassLoader发现不是其加载范围，其返回null；
+
+AppClassLoader发现父类加载器ExtClassLoader无法加载，
+则会查询这些类是否已经被BootstrapClassLoader加载过。
+而结果表明BootstrapClassLoader 没有加载过它，
+这时候AppClassLoader只能自己动手负责将其加载到内存中，
+然后返回对应的Class&lt;org.luanlouis.jvm.load.Main&gt;实例引用；
+</code></pre></li>
+</ol>
+<p>以上三步骤都成功，才表示<code>classLoader.loadClass(&quot;org.luanlouis.jvm.load.Main&quot;)</code>完成，上述操作完成后，JVM内存方法区的格局会如下所示：</p>
+<p><img src="http://img.blog.csdn.net/20160117150008559" alt="image"></p>
+<p>如上图所示：</p>
+<ul>
+<li>JVM方法区的类信息区是按照类加载器进行划分的，每个类加载器会维护自己加载类信息；</li>
+<li>某个类加载器在加载相应的类时，会相应地在JVM内存堆（Heap）中创建一个对应的Class<t>，用来表示访问该类信息的入口</t></li>
+</ul>
+<h3 id="1-5-使用Main类的main方法作为程序入口运行程序"><a href="#1-5-使用Main类的main方法作为程序入口运行程序" class="headerlink" title="1.5 使用Main类的main方法作为程序入口运行程序"></a>1.5 使用Main类的main方法作为程序入口运行程序</h3><h3 id="1-6-方法执行完毕，JVM销毁，释放内存"><a href="#1-6-方法执行完毕，JVM销毁，释放内存" class="headerlink" title="1.6 方法执行完毕，JVM销毁，释放内存"></a>1.6 方法执行完毕，JVM销毁，释放内存</h3><h2 id="2-再来回顾回顾java类加载器相关的概念吧"><a href="#2-再来回顾回顾java类加载器相关的概念吧" class="headerlink" title="2. 再来回顾回顾java类加载器相关的概念吧"></a>2. 再来回顾回顾java类加载器相关的概念吧</h2><p>类加载器(<code>Class Loader</code>)：顾名思义，指的是可以加载类的工具。JVM自身定义了三个类加载器：引导类加载器(<code>Bootstrap Class</code> Loader)、拓展类加载器(<code>Extension Class Loader</code> )、应用加载器(<code>Application Class Loader</code>)。当然，我们有时候也会自己定义一些类加载器来满足自身的需要。</p>
+<p>引导类加载器(<code>Bootstrap Class Loader</code>): 该类加载器使JVM使用C++/C底层代码实现的加载器，用以加载JVM运行时所需要的系统类，这些系统类在<code>{JRE_HOME}/lib</code>目录下。<strong>由于类加载器是使用平台相关的底层<code>C++/C</code>语言实现的， 所以该加载器不能被Java代码访问到。但是，我们可以查询某个类是否被引导类加载器加载过</strong>。我们经常使用的系统类如：<code>java.lang.String</code>,<code>java.lang.Object</code>,<code>java.lang*</code>……. 这些都被放在 <code>{JRE_HOME}/lib/rt.jar</code>包内， 当JVM系统启动的时候，引导类加载器会将其加载到 JVM内存的方法区中。</p>
+<p>拓展类加载器(<code>Extension Class Loader</code>): 该加载器是用于加载 java 的拓展类 ，拓展类一般会放在<code>{JRE_HOME}/lib/ext/</code> 目录下，用来提供除了系统类之外的额外功能。拓展类加载器是是整个JVM加载器的Java代码可以访问到的类加载器的最顶端，即是超级父加载器，拓展类加载器是没有父类加载器的。</p>
+<p>应用类加载器(<code>Applocatoin Class Loader</code>): 该类加载器是用于加载用户代码，是用户代码的入口。我经常执行指令 <code>java   xxx.x.xxx.x.x.XClass</code> , 实际上，JVM就是使用的<code>AppClassLoader</code>加载 <code>xxx.x.xxx.x.x.XClass</code> 类的。<strong>应用类加载器将拓展类加载器当成自己的父类加载器，当其尝试加载类的时候，首先尝试让其父加载器-拓展类加载器加载；如果拓展类加载器加载成功，则直接返回加载结果<code>Class&lt;T&gt;</code> instance,加载失败，则会询问是否引导类加载器已经加载了该类；只有没有加载的时候，应用类加载器才会尝试自己加载</strong>。由于<code>xxx.x.xxx.x.x.XClass</code>是整个用户代码的入口，在Java虚拟机规范中，称其为 初始类(<code>Initial Class</code>).</p>
+<p>用户自定义类加载器（<code>Customized Class Loader</code>）：用户可以自己定义类加载器来加载类。所有的类加载器都要继承<code>java.lang.ClassLoader</code>类。</p>
+<p><img src="http://img.blog.csdn.net/20160117130521757" alt="image"></p>
+<p>双亲模型的工作流程图：</p>
+<p><img src="http://img.blog.csdn.net/20160119193940660" alt="image"></p>
+<p>代码注释：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//提供class类的二进制名称表示，加载对应class，加载成功，则返回表示该类对应的Class&lt;T&gt; instance 实例  </span></span><br><span class="line"><span class="keyword">public</span> Class&lt;?&gt; loadClass(String name) <span class="keyword">throws</span> ClassNotFoundException &#123;  </span><br><span class="line">    <span class="keyword">return</span> loadClass(name, <span class="keyword">false</span>);  </span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)  </span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;  </span><br><span class="line">        <span class="comment">// 首先，检查是否已经被当前的类加载器记载过了，如果已经被加载，直接返回对应的Class&lt;T&gt;实例  </span></span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);  </span><br><span class="line">            <span class="comment">//初次加载  </span></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;  </span><br><span class="line">            <span class="keyword">long</span> t0 = System.nanoTime();  </span><br><span class="line">            <span class="keyword">try</span> &#123;  </span><br><span class="line">                <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;  </span><br><span class="line">                    <span class="comment">//如果有父类加载器，则先让父类加载器加载  </span></span><br><span class="line">                    c = parent.loadClass(name, <span class="keyword">false</span>);  </span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;  </span><br><span class="line">                    <span class="comment">// 没有父加载器，则查看是否已经被引导类加载器加载，有则直接返回  </span></span><br><span class="line">                    c = findBootstrapClassOrNull(name);  </span><br><span class="line">                &#125;  </span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;  </span><br><span class="line">                <span class="comment">// ClassNotFoundException thrown if class not found  </span></span><br><span class="line">                <span class="comment">// from the non-null parent class loader  </span></span><br><span class="line">            &#125;  </span><br><span class="line">            <span class="comment">// 父加载器加载失败，并且没有被引导类加载器加载，则尝试该类加载器自己尝试加载  </span></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;  </span><br><span class="line">                <span class="comment">// If still not found, then invoke findClass in order  </span></span><br><span class="line">                <span class="comment">// to find the class.  </span></span><br><span class="line">                <span class="keyword">long</span> t1 = System.nanoTime();  </span><br><span class="line">                <span class="comment">// 自己尝试加载  </span></span><br><span class="line">                c = findClass(name);  </span><br><span class="line">  </span><br><span class="line">                <span class="comment">// this is the defining class loader; record the stats  </span></span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);  </span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);  </span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="comment">//是否解析类   </span></span><br><span class="line">        <span class="keyword">if</span> (resolve) &#123;  </span><br><span class="line">            resolveClass(c);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> c;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-线程上下文加载器"><a href="#3-线程上下文加载器" class="headerlink" title="3. 线程上下文加载器"></a>3. 线程上下文加载器</h2><p>Java 任何一段代码的执行，都有对应的线程上下文。如果我们在代码中，想看当前是哪一个线程在执行当前代码，我们经常是使用如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thread  thread = Thread.currentThread();<span class="comment">//返回对当当前运行线程的引用</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20160123173750315" alt="image"></p>
+<p>相应地，我们可以为当前的线程指定类加载器。在上述的例子中， 当执行   <code>java    org.luanlouis.jvm.load.Main</code> 的时候，JVM会创建一个Main线程，而创建应用类加载器<code>AppClassLoader</code>的时候，会将<code>AppClassLoader</code>设置成Main线程的上下文类加载器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Launcher</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">  Launcher.ExtClassLoader var1;  </span><br><span class="line">  <span class="keyword">try</span> &#123;  </span><br><span class="line">      var1 = Launcher.ExtClassLoader.getExtClassLoader();  </span><br><span class="line">  &#125; <span class="keyword">catch</span> (IOException var10) &#123;  </span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> InternalError(<span class="string">"Could not create extension class loader"</span>, var10);  </span><br><span class="line">  &#125;  </span><br><span class="line"></span><br><span class="line">  <span class="keyword">try</span> &#123;  </span><br><span class="line">      <span class="keyword">this</span>.loader = Launcher.AppClassLoader.getAppClassLoader(var1);  </span><br><span class="line">  &#125; <span class="keyword">catch</span> (IOException var9) &#123;  </span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> InternalError(<span class="string">"Could not create application class loader"</span>, var9);  </span><br><span class="line">  &#125;  </span><br><span class="line"><span class="comment">//将AppClassLoader设置成当前线程的上下文加载器  </span></span><br><span class="line">  Thread.currentThread().setContextClassLoader(<span class="keyword">this</span>.loader);  </span><br><span class="line">  <span class="comment">//.......  </span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程上下文类加载器是从线程的角度来看待类的加载，为每一个线程绑定一个类加载器，可以将类的加载从单纯的 双亲加载模型解放出来，进而实现特定的加载需求。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-06, 17:32:14</p>
+        <p><span>最后更新:</span>2018-06-06, 17:54:11</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/" title="十三、实例说明类加载过程（对十、十一的补充和加深理解）">http://yoursite.com/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/06/06/SQL必知必会/">
+                    SQL必知必会
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/06/十二、虚拟机字节码执行引擎/">
+                    十二、虚拟机字节码执行引擎
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Java虚拟机启动、加载类过程分析"><span class="toc-number">1.</span> <span class="toc-text">1. Java虚拟机启动、加载类过程分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-根据JVM内存配置要求，为JVM申请特定大小的内存空间"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 根据JVM内存配置要求，为JVM申请特定大小的内存空间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-创建一个引导类加载器实例，初步加载系统类到内存方法区区域中"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 创建一个引导类加载器实例，初步加载系统类到内存方法区区域中</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-创建JVM-启动器实例-Launcher-并取得类加载器ClassLoader"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 创建JVM 启动器实例 Launcher,并取得类加载器ClassLoader</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-使用类加载器ClassLoader加载Main类"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 使用类加载器ClassLoader加载Main类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-使用Main类的main方法作为程序入口运行程序"><span class="toc-number">1.5.</span> <span class="toc-text">1.5 使用Main类的main方法作为程序入口运行程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-方法执行完毕，JVM销毁，释放内存"><span class="toc-number">1.6.</span> <span class="toc-text">1.6 方法执行完毕，JVM销毁，释放内存</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-再来回顾回顾java类加载器相关的概念吧"><span class="toc-number">2.</span> <span class="toc-text">2. 再来回顾回顾java类加载器相关的概念吧</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-线程上下文加载器"><span class="toc-number">3.</span> <span class="toc-text">3. 线程上下文加载器</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"十三、实例说明类加载过程（对十、十一的补充和加深理解）　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/06/06/SQL必知必会/" title="上一篇: SQL必知必会">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/06/十二、虚拟机字节码执行引擎/" title="下一篇: 十二、虚拟机字节码执行引擎">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十三、实例说明类加载过程（对十、十一的补充和加深理解）/">十三、实例说明类加载过程（对十、十一的补充和加深理解）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
       <footer id="footer">
     <div class="outer">
         <div id="footer-info">
