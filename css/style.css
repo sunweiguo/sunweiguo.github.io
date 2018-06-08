@@ -374,7 +374,7 @@ a {
   #container .share {
     padding: 3px 10px;
   }
-  #container .duoshuo {
+  #container #SOHUCS {
     padding: 0 13px;
   }
   #container #disqus_thread {
@@ -990,8 +990,9 @@ a {
 #header .header-nav .social ._500px::before {
   content: '\f26e';
 }
-.duoshuo {
-  padding: 0 40px;
+#SOHUCS {
+  padding: 0 40px !important;
+  width: inherit !important;
 }
 #disqus_thread {
   padding: 0 40px;
