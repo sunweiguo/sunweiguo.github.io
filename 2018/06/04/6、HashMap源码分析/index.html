@@ -32,7 +32,7 @@
 <meta property="og:image" content="https://pic7.zhimg.com/80/e5aa99e811d1814e010afa7779b759d4_hd.jpg">
 <meta property="og:image" content="https://pic4.zhimg.com/80/a285d9b2da279a18b052fe5eed69afe9_hd.jpg">
 <meta property="og:image" content="https://pic1.zhimg.com/80/b2cb057773e3d67976c535d6ef547d51_hd.jpg">
-<meta property="og:updated_time" content="2018-06-04T07:27:25.943Z">
+<meta property="og:updated_time" content="2018-06-12T03:02:57.090Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6、HashMap源码分析">
 <meta name="twitter:description" content="本文分析HashMap源码。">
@@ -297,7 +297,7 @@
 <p>首先，<code>Node[] table</code>的初始化长度<code>length</code>(默认值是16)，<code>Load factor</code>为负载因子(默认值是0.75)，<code>threshold</code>是<code>HashMap</code>所能容纳的最大数据量的<code>Node</code>(键值对)个数。<code>threshold = length * Load factor</code>。也就是说，在数组定义好长度之后，负载因子越大，所能容纳的键值对个数越多。</p>
 <p>结合负载因子的定义公式可知，<code>threshold</code>就是在此<code>Load factor</code>和<code>length</code>(数组长度)对应下允许的最大元素数目，超过这个数目就重新<code>resize</code>(扩容)，<strong>扩容后的<code>HashMap</code>容量是之前容量的两</strong>倍。默认的负载因子0.75是对空间和时间效率的一个平衡选择，建议大家不要修改，除非在时间和空间比较特殊的情况下，如果内存空间很多而又对时间效率要求很高，可以降低负载因子<code>Load factor</code>的值；相反，如果内存空间紧张而对时间效率要求不高，可以增加负载因子<code>loadFactor</code>的值，这个值可以大于1。</p>
 <p><code>size</code>这个字段其实很好理解，就是<code>HashMap</code>中实际存在的键值对数量。<strong>注意<code>size</code>和<code>table</code>的长度<code>length</code>、容纳最大键值对数量<code>threshold</code>的区别</strong>。而<code>modCount</code>字段主要用来记录<code>HashMap</code>内部结构发生变化的次数，主要用于迭代的快速失败。强调一点，内部结构发生变化指的是结构发生变化，例如put新键值对，但是某个<code>key</code>对应的<code>value</code>值被覆盖不属于结构变化。</p>
-<p><strong>在<code>HashMap</code>中，哈希桶数组<code>table</code>的长度<code>length</code>大小必须为2的n次方(一定是合数)</strong>，这是一种非常规的设计，常规的设计是把桶的大小设计为素数。相对来说素数导致冲突的概率要小于合数，具体证明可以参考<a href="http://blog.csdn.net/liuqiyao_01/article/details/14475159，`Hashtable`初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。**`HashMap`采用这种非常规设计，主要是为了在取模和扩容时做优化，同时为了减少冲突，`HashMap`定位哈希桶索引位置时，也加入了高位参与运算的过程。*" target="_blank" rel="noopener">http://blog.csdn.net/liuqiyao_01/article/details/14475159，`Hashtable`初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。**`HashMap`采用这种非常规设计，主要是为了在取模和扩容时做优化，同时为了减少冲突，`HashMap`定位哈希桶索引位置时，也加入了高位参与运算的过程。*</a>*</p>
+<p><strong>在<code>HashMap</code>中，哈希桶数组<code>table</code>的长度<code>length</code>大小必须为2的n次方(一定是合数)</strong>，这是一种非常规的设计，常规的设计是把桶的大小设计为素数。相对来说素数导致冲突的概率要小于合数，具体证明可以参考 <a href="http://blog.csdn.net/liuqiyao_01/article/details/14475159" target="_blank" rel="noopener">http://blog.csdn.net/liuqiyao_01/article/details/14475159</a> ，<code>Hashtable</code>初始化桶大小为11，就是桶大小设计为素数的应用（Hashtable扩容后不能保证还是素数）。<strong><code>HashMap</code>采用这种非常规设计，主要是为了在取模和扩容时做优化，同时为了减少冲突，<code>HashMap</code>定位哈希桶索引位置时，也加入了高位参与运算的过程。</strong></p>
 <p>这里存在一个问题，即使负载因子和<code>Hash</code>算法设计的再合理，也免不了会出现拉链过长的情况，一旦出现拉链过长，则会严重影响<code>HashMap</code>的性能。于是，在JDK1.8版本中，对数据结构做了进一步的优化，引入了红黑树。<strong>而当链表长度太长（默认超过8）时，链表就转换为红黑树</strong>，利用红黑树快速增删改查的特点提高<code>HashMap</code>的性能，其中会用到红黑树的插入、删除、查找等算法。</p>
 <p><img src="https://images2015.cnblogs.com/blog/616953/201603/616953-20160304192851940-1880633940.png" alt="image"></p>
 <p>这里着重提一下<code>MIN_TREEIFY_CAPACITY</code>字段，容易与<code>TREEIFY_THRESHOLD</code>打架，<code>TREEIFY_THRESHOLD</code>是指桶中元素达到8个，就将其本来的链表结构改为红黑树，提高查询的效率。<code>MIN_TREEIFY_CAPACITY</code>是指最小树化的哈希表元素个数，也就是说，小于这个值，就算你(数组)桶里的元素数量大于8了，还是要用链表存储，只有同时满足：表中数据容量已经扩容到<code>MIN_TREEIFY_CAPACITY</code>这个长度，并且桶里的数据个数达到8个的时候，才会将该桶里的结构进行树化。注意扩容是数组的复制。</p>
@@ -384,7 +384,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 15:27:24</p>
-        <p><span>最后更新:</span>2018-06-04, 15:27:25</p>
+        <p><span>最后更新:</span>2018-06-12, 11:02:57</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/6、HashMap源码分析/" title="6、HashMap源码分析">http://yoursite.com/2018/06/04/6、HashMap源码分析/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/6、HashMap源码分析/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
