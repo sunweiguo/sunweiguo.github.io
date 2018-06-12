@@ -27,7 +27,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20150122131549304">
 <meta property="og:image" content="http://img.blog.csdn.net/20150122133322461">
 <meta property="og:image" content="http://img.blog.csdn.net/20150122140842817">
-<meta property="og:updated_time" content="2018-06-04T07:28:47.060Z">
+<meta property="og:updated_time" content="2018-06-12T06:13:52.145Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="8、HashMap和LinkedHashMap遍历机制">
 <meta name="twitter:description" content="本文分析HashMap和LinkedHashMap遍历机制.">
@@ -110,6 +110,8 @@
         </hgroup>
 
         
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
 
         
 
@@ -165,6 +167,8 @@
             <hgroup>
               <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
             </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
             
             <nav class="header-menu">
                 <ul>
@@ -254,6 +258,7 @@
 <p>它的内部会在<code>Map.Entry</code>类的基础上，增加两个<code>Entry</code>类型的引用：<code>before</code>，<code>after</code>。<code>LinkedHashMap</code>使用一个双向连表，将其内部所有的<code>Entry</code>串起来。</p>
 <p><img src="http://img.blog.csdn.net/20150122131549304" alt="image"></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LinkedHashMap linkedHashMap = <span class="keyword">new</span> LinkedHashMap();  </span><br><span class="line">linkedHashMap.put(<span class="string">"name"</span>,<span class="string">"louis"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"age"</span>,<span class="string">"24"</span>);  </span><br><span class="line">linkedHashMap.put(<span class="string">"sex"</span>,<span class="string">"male"</span>);</span><br></pre></td></tr></table></figure>
+<p>注：下面的图演示是；老版本的实现，因为老版本是用双向循环链表实现的，但是新版本直接是双向链表，但是基本原理是一样的。</p>
 <p><img src="http://img.blog.csdn.net/20150122133322461" alt="image"></p>
 <p>对<code>LinkedHashMap</code>进行遍历的策略：</p>
 <p><strong>从 <code>header.after</code> 指向的<code>Entry</code>对象开始，然后一直沿着此链表遍历下去，直到某个<code>entry.after == header</code> 为止，完成遍历。</strong></p>
@@ -282,7 +287,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 15:28:45</p>
-        <p><span>最后更新:</span>2018-06-04, 15:28:47</p>
+        <p><span>最后更新:</span>2018-06-12, 14:13:52</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/" title="8、HashMap和LinkedHashMap遍历机制">http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/8、HashMap和LinkedHashMap遍历机制/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

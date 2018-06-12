@@ -15,13 +15,13 @@
 
 
 
-<meta name="description" content="本文分析HashMap死循环问题">
+<meta name="description" content="本文分析HashMap死循环问题，这在老版本的jdk中是很常见的问题，但是在jdk8开始，已经解决了死循环的问题了。本文首先讲讲出现死循环的原因，以及jdk8中是如何解决死循环问题的。">
 <meta name="keywords" content="java容器">
 <meta property="og:type" content="article">
 <meta property="og:title" content="13、HashMap死循环问题">
 <meta property="og:url" content="http://yoursite.com/2018/06/04/13、HashMap死循环问题/index.html">
 <meta property="og:site_name" content="Eureka-Home">
-<meta property="og:description" content="本文分析HashMap死循环问题">
+<meta property="og:description" content="本文分析HashMap死循环问题，这在老版本的jdk中是很常见的问题，但是在jdk8开始，已经解决了死循环的问题了。本文首先讲讲出现死循环的原因，以及jdk8中是如何解决死循环问题的。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF1.jpg">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF2.jpg">
@@ -31,10 +31,10 @@
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF6.jpg">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF7.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF8.png">
-<meta property="og:updated_time" content="2018-06-04T07:31:28.638Z">
+<meta property="og:updated_time" content="2018-06-12T07:04:45.126Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="13、HashMap死循环问题">
-<meta name="twitter:description" content="本文分析HashMap死循环问题">
+<meta name="twitter:description" content="本文分析HashMap死循环问题，这在老版本的jdk中是很常见的问题，但是在jdk8开始，已经解决了死循环的问题了。本文首先讲讲出现死循环的原因，以及jdk8中是如何解决死循环问题的。">
 <meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF1.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
@@ -114,6 +114,8 @@
         </hgroup>
 
         
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
 
         
 
@@ -169,6 +171,8 @@
             <hgroup>
               <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
             </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
             
             <nav class="header-menu">
                 <ul>
@@ -236,7 +240,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>本文分析HashMap死循环问题<br><a id="more"></a></p>
+        <p>本文分析HashMap死循环问题，这在老版本的jdk中是很常见的问题，但是在jdk8开始，已经解决了死循环的问题了。本文首先讲讲出现死循环的原因，以及jdk8中是如何解决死循环问题的。<br><a id="more"></a></p>
 <p>由于<code>HashMap</code>并非是线程安全的，所以在高并发的情况下必然会出现问题，这是一个普遍的问题.</p>
 <p>如果是在单线程下使用<code>HashMap</code>，自然是没有问题的，如果后期由于代码优化，这段逻辑引入了多线程并发执行，在一个未知的时间点，会发现CPU占用100%，居高不下，通过查看堆栈，你会惊讶的发现，线程都Hang在<code>hashMap</code>的<code>get()</code>方法上，服务重启之后，问题消失，过段时间可能又复现了。</p>
 <p>这是为什么？</p>
@@ -275,7 +279,7 @@
 <p>节点a和b互相引用，形成了一个环，当在数组该位置get寻找对应的key时，就发生了死循环。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以在并发的情况，发生扩容时，可能会产生循环链表，在执行get的时候，会触发死循环，引起CPU的100%问题，所以一定要避免在并发环境下使用HashMap。</p>
 <p>曾经有人把这个问题报给了Sun，不过Sun不认为这是一个bug，因为在HashMap本来就不支持多线程使用，要并发就用ConcurrentHashmap。</p>
-<p>转自：<a href="https://juejin.im/post/5a66a08d5188253dc3321da0" target="_blank" rel="noopener">https://juejin.im/post/5a66a08d5188253dc3321da0</a></p>
+<h2 id="jdk8如何解决死循环问题"><a href="#jdk8如何解决死循环问题" class="headerlink" title="jdk8如何解决死循环问题"></a>jdk8如何解决死循环问题</h2><p>转自：<a href="https://juejin.im/post/5a66a08d5188253dc3321da0" target="_blank" rel="noopener">https://juejin.im/post/5a66a08d5188253dc3321da0</a></p>
 
       
     </div>
@@ -287,7 +291,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 15:31:14</p>
-        <p><span>最后更新:</span>2018-06-04, 15:31:28</p>
+        <p><span>最后更新:</span>2018-06-12, 15:04:45</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/13、HashMap死循环问题/" title="13、HashMap死循环问题">http://yoursite.com/2018/06/04/13、HashMap死循环问题/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/13、HashMap死循环问题/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -323,7 +327,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap的put方法实现"><span class="toc-number">1.</span> <span class="toc-text">HashMap的put方法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-判断key是否已经存在"><span class="toc-number">1.0.1.</span> <span class="toc-text">1.判断key是否已经存在</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-检查容量是否达到阈值threshold"><span class="toc-number">1.0.2.</span> <span class="toc-text">2.检查容量是否达到阈值threshold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-扩容实现"><span class="toc-number">1.0.3.</span> <span class="toc-text">3.扩容实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-transfer方法移动元素"><span class="toc-number">1.0.4.</span> <span class="toc-text">4.transfer方法移动元素</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#死循环问题分析"><span class="toc-number">2.</span> <span class="toc-text">死循环问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#HashMap的put方法实现"><span class="toc-number">1.</span> <span class="toc-text">HashMap的put方法实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-判断key是否已经存在"><span class="toc-number">1.0.1.</span> <span class="toc-text">1.判断key是否已经存在</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-检查容量是否达到阈值threshold"><span class="toc-number">1.0.2.</span> <span class="toc-text">2.检查容量是否达到阈值threshold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-扩容实现"><span class="toc-number">1.0.3.</span> <span class="toc-text">3.扩容实现</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-transfer方法移动元素"><span class="toc-number">1.0.4.</span> <span class="toc-text">4.transfer方法移动元素</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#死循环问题分析"><span class="toc-number">2.</span> <span class="toc-text">死循环问题分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#jdk8如何解决死循环问题"><span class="toc-number">4.</span> <span class="toc-text">jdk8如何解决死循环问题</span></a></li></ol>
         
     </div>
     <style>
