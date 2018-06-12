@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF6.jpg">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF7.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF8.png">
-<meta property="og:updated_time" content="2018-06-12T07:04:45.126Z">
+<meta property="og:updated_time" content="2018-06-12T13:15:07.968Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="13、HashMap死循环问题">
 <meta name="twitter:description" content="本文分析HashMap死循环问题，这在老版本的jdk中是很常见的问题，但是在jdk8开始，已经解决了死循环的问题了。本文首先讲讲出现死循环的原因，以及jdk8中是如何解决死循环问题的。">
@@ -279,7 +279,8 @@
 <p>节点a和b互相引用，形成了一个环，当在数组该位置get寻找对应的key时，就发生了死循环。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>所以在并发的情况，发生扩容时，可能会产生循环链表，在执行get的时候，会触发死循环，引起CPU的100%问题，所以一定要避免在并发环境下使用HashMap。</p>
 <p>曾经有人把这个问题报给了Sun，不过Sun不认为这是一个bug，因为在HashMap本来就不支持多线程使用，要并发就用ConcurrentHashmap。</p>
-<h2 id="jdk8如何解决死循环问题"><a href="#jdk8如何解决死循环问题" class="headerlink" title="jdk8如何解决死循环问题"></a>jdk8如何解决死循环问题</h2><p>转自：<a href="https://juejin.im/post/5a66a08d5188253dc3321da0" target="_blank" rel="noopener">https://juejin.im/post/5a66a08d5188253dc3321da0</a></p>
+<h2 id="jdk8如何解决死循环问题"><a href="#jdk8如何解决死循环问题" class="headerlink" title="jdk8如何解决死循环问题"></a>jdk8如何解决死循环问题</h2><p>经过上面的学习，我们知道死循环发生在扩容后<code>entry</code>迁移时，即<code>transfer</code>，引起死循环的原因是他扩容后是采用头插入法，造成在多线程访问的情况下可能会死循环。jdk8中直接在链表的末尾添加元素，就是说，第二个线程的操作与第一个线程的操作是一模一样的，不会出现死循环问题，但是依然存在一定的弊端，比如数据丢失问题。可能原因是多线程<code>put</code>的时候，当<code>index</code>相同而又同时达到链表的末尾时，另一个线程put的数据会把之前线程<code>put</code>的数据覆盖掉，就会产生数据丢失。</p>
+<p>转自：<a href="https://juejin.im/post/5a66a08d5188253dc3321da0" target="_blank" rel="noopener">https://juejin.im/post/5a66a08d5188253dc3321da0</a></p>
 
       
     </div>
@@ -291,7 +292,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 15:31:14</p>
-        <p><span>最后更新:</span>2018-06-12, 15:04:45</p>
+        <p><span>最后更新:</span>2018-06-12, 21:15:07</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/13、HashMap死循环问题/" title="13、HashMap死循环问题">http://yoursite.com/2018/06/04/13、HashMap死循环问题/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/13、HashMap死循环问题/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
