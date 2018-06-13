@@ -30,7 +30,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20170102225017065">
 <meta property="og:image" content="http://img.blog.csdn.net/20170102225017372">
 <meta property="og:image" content="http://img.blog.csdn.net/20170102225017799">
-<meta property="og:updated_time" content="2018-06-06T08:35:49.073Z">
+<meta property="og:updated_time" content="2018-06-13T12:24:39.592Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="三、七种垃圾回收器">
 <meta name="twitter:description" content="前人已经帮我们设计了很多的垃圾回收器，我们来了解了解吧！">
@@ -430,9 +430,9 @@
 <li>而在<code>Server</code>模式有两大用途：</li>
 </ol>
 </blockquote>
-<pre><code>(A)在JDK1.5及之前，与`Parallel Scavenge`收集器搭配使用（JDK1.6有Parallel Old收集器可搭配）；
+<pre><code>(A)在JDK1.5及之前，与Parallel Scavenge收集器搭配使用（JDK1.6有Parallel Old收集器可搭配）；
 
-(B)作为CMS收集器的后备预案，在并发收集发生`Concurrent Mode Failure`时使用（后面详解）；
+(B)作为CMS收集器的后备预案，在并发收集发生Concurrent Mode Failure时使用（后面详解）；
 </code></pre><h2 id="6、Parallel-Old收集器"><a href="#6、Parallel-Old收集器" class="headerlink" title="6、Parallel Old收集器"></a>6、Parallel Old收集器</h2><p><code>Parallel Old</code>垃圾收集器是<code>Parallel Scavenge</code>收集器的老年代版本；JDK1.6中才开始提供；</p>
 <h3 id="6-1-特点"><a href="#6-1-特点" class="headerlink" title="6.1 特点"></a>6.1 特点</h3><blockquote>
 <ol>
@@ -601,7 +601,7 @@
 </blockquote>
 <blockquote>
 <ol start="3">
-<li>也要可以认为CMS所需要的空间比其他垃圾收集器大；</li>
+<li>也可以认为CMS所需要的空间比其他垃圾收集器大；</li>
 </ol>
 </blockquote>
 <blockquote>
@@ -863,7 +863,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 16:29:44</p>
-        <p><span>最后更新:</span>2018-06-06, 16:35:49</p>
+        <p><span>最后更新:</span>2018-06-13, 20:24:39</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/三、七种垃圾回收器/" title="三、七种垃圾回收器">http://yoursite.com/2018/06/06/三、七种垃圾回收器/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/三、七种垃圾回收器/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

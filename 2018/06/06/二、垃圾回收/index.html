@@ -28,7 +28,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141102170015242?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamlhbmd3ZWkwOTEwNDEwMDAz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="og:image" content="http://img.blog.csdn.net/20141102170022215?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamlhbmd3ZWkwOTEwNDEwMDAz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="og:image" content="http://static.oschina.net/uploads/img/201410/16150211_aRgY.jpg">
-<meta property="og:updated_time" content="2018-06-06T08:29:28.977Z">
+<meta property="og:updated_time" content="2018-06-13T12:13:46.759Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="二、垃圾回收">
 <meta name="twitter:description" content="虚拟机本身为我们处理了很多事情，其中最主要的一件事就是进行垃圾的自动回收，我们先来看看垃圾回收的基本原理。">
@@ -255,16 +255,22 @@
 <h5 id="1-2-可达性分析算法"><a href="#1-2-可达性分析算法" class="headerlink" title="1.2 可达性分析算法"></a>1.2 可达性分析算法</h5><p>这个算法的基本思路就是通过一系列的称谓“GC Roots”的对象作为起始点，从这些节点开始向下搜索，搜索所有走过的路径为引用链，当一个对象到GC Roots没有任何引用链项链时，则证明此对象时不可用的，下面看一下例子：</p>
 <p><img src="http://img.blog.csdn.net/20141102164158981?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvamlhbmd3ZWkwOTEwNDEwMDAz/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
 <p>上面的这张图，对象object5、object6、object7虽然互相没有关联，但是它们到GC Roots是不可达的，所以它们将会被判定为是可回收的对象</p>
-<p>注：Java语言中，可作为GC Roots的对象包括下面几种：<br>1) 虚拟机栈(栈帧中的本地变量表)中引用的对象<br>2) 方法区中类静态属性引用的对象<br>3) 方法区中常量引用的对象<br>4) 本地方法栈中JNI(即一般说的Native方法)引用的对象</p>
+<p>注：Java语言中，可作为GC Roots的对象包括下面几种：</p>
+<ul>
+<li>虚拟机栈(栈帧中的本地变量表)中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中JNI(即一般说的Native方法)引用的对象</li>
+</ul>
 <h3 id="2、Java中的引用类型"><a href="#2、Java中的引用类型" class="headerlink" title="2、Java中的引用类型"></a>2、Java中的引用类型</h3><p>从JDK1.2之后，Java对引用的概念进行了扩充，将引用分为强引用，软引用，弱引用，虚引用，这四种引用的强度一次逐渐减弱</p>
 <p>1) 强引用就是指在程序代码之中普遍存在的，类似 <code>Object obj = new Object()</code> 这类的引用，只要强引用还存在，垃圾回收器永远不会回收掉被引用的对象。</p>
 <p>2) 软引用是用来描述一些还有用但并非需要的对象，对于软引用关联着的对象，在系统将要发生内存异常之前，将会把这些对象列进回收范围之中进行第二次回收，如果这次回收还没有足够的内存，才会抛出内存异常</p>
-<p>3) 弱引用也是用来描述非必需对象的，但是它的强度比软引用更弱一些，被弱引用关联的对象只能生存岛下一次垃圾收集发生之前，当垃圾收集器工作时，无论当前内存释放足够，都会回收掉只被弱引用关联的对象</p>
+<p>3) 弱引用也是用来描述非必需对象的，但是它的强度比软引用更弱一些，被弱引用关联的对象只能生存到下一次垃圾收集发生之前，当垃圾收集器工作时，无论当前内存释放足够，都会回收掉只被弱引用关联的对象</p>
 <p>4) 虚引用也称为幽灵引用或者幻影引用，它是最弱的一种引用关系，一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象实例，对一个对象设置虚引用关联的唯一目的就是能在这个对象被收集器回收时收到一个系统通知</p>
 <h3 id="3、两次标记"><a href="#3、两次标记" class="headerlink" title="3、两次标记"></a>3、两次标记</h3><p>《深入理解java虚拟机》原文：</p>
 <p>在java根搜索算法中判断对象的可达性，对于不可达的对象，也并不一定是必须清理。这个时候有一个缓刑期，真正的判断一个对象死亡，至少要经过俩次标记过程：</p>
 <p>如果对象在进行根搜索后发现没有与<code>GC roots</code>相关联的引用链，那他将会第一次标记并且进行一次筛选，筛选的条件是此对象是否有必要执行<code>finalize（）</code>方法，当对象没有覆盖<code>finalize（）</code>方法，或者<code>finalize（）</code>方法已经被虚拟机调用过，虚拟机将这俩种情况都视为“没有必要执行”。</p>
-<p>即当一个对象重写了<code>finalize（）</code>方法的时候，这个对象被判定为有必要执行<code>finalize（）</code>方法，那么这个对象被放置在<code>F-Queue</code>队列之中，并在稍后由一条由虚拟机自动建立的、低优先级的<code>Finalizer</code>线程去执行。这里所谓的执行是指虚拟机会出发这个方法，但不承诺会等待它运行结束。这样做的原因：如果一个对象在<code>finalize()</code>方法中执行缓慢，或者发生了死循环（极端的情况下），将可能会导致<code>F-Queue</code>队列中的其他对象永久处于等待状态，甚至导致整个内存回收系统崩溃。<code>finalize（）</code>方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-<code>Queue</code>中的对象进行第二次小规模的标记，如果对象要在<code>finalize（）</code>中成功拯救自己—-只要重新与引用链上的任何建立关联即可，那么在第二次标记时它将会被移出“即将回收”的集合；如果对象这时候没有逃脱，就会被回收。</p>
+<p>即当一个对象重写了<code>finalize（）</code>方法的时候，这个对象被判定为有必要执行<code>finalize（）</code>方法，那么这个对象被放置在<code>F-Queue</code>队列之中，并在稍后由一条由虚拟机自动建立的、低优先级的<code>Finalizer</code>线程去执行。这里所谓的执行是指虚拟机会触发这个方法，但不承诺会等待它运行结束。这样做的原因：如果一个对象在<code>finalize()</code>方法中执行缓慢，或者发生了死循环（极端的情况下），将可能会导致<code>F-Queue</code>队列中的其他对象永久处于等待状态，甚至导致整个内存回收系统崩溃。<code>finalize（）</code>方法是对象逃脱死亡命运的最后一次机会，稍后GC将对F-<code>Queue</code>中的对象进行第二次小规模的标记，如果对象要在<code>finalize（）</code>中成功拯救自己—-只要重新与引用链上的任何建立关联即可，那么在第二次标记时它将会被移出“即将回收”的集合；如果对象这时候没有逃脱，就会被回收。</p>
 <p><strong>说明</strong>：</p>
 <h5 id="finalize的工作原理"><a href="#finalize的工作原理" class="headerlink" title="finalize的工作原理"></a>finalize的工作原理</h5><p>一旦垃圾收集器准备好释放对象占用的存储空间，它首先调用<code>finalize()</code>，而且只有在下一次垃圾收集过程中，才会真正回收对象的内存.所以如果使用<code>finalize()</code>，就可以在垃圾收集期间进行一些重要的清除或清扫工作.</p>
 <h5 id="finalize-在什么时候被调用"><a href="#finalize-在什么时候被调用" class="headerlink" title="finalize()在什么时候被调用?"></a>finalize()在什么时候被调用?</h5><ol>
@@ -318,7 +324,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 16:29:28</p>
-        <p><span>最后更新:</span>2018-06-06, 16:29:28</p>
+        <p><span>最后更新:</span>2018-06-13, 20:13:46</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/二、垃圾回收/" title="二、垃圾回收">http://yoursite.com/2018/06/06/二、垃圾回收/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/二、垃圾回收/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

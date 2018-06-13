@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141113141534249">
 <meta property="og:image" content="http://img.blog.csdn.net/20141113154008360">
 <meta property="og:image" content="http://img.blog.csdn.net/20141113162348750">
-<meta property="og:updated_time" content="2018-06-06T09:14:10.446Z">
+<meta property="og:updated_time" content="2018-06-13T12:56:33.344Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="八、Class文件中的字段表集合--field字段在class文件中是怎样组织的">
 <meta name="twitter:description" content="继续讲class文件中的字段表集合。">
@@ -276,7 +276,7 @@
 <blockquote>
 <p>如果该<code>field</code>字段并没有被<code>final</code>修饰，或者不是基本类型或者<code>String</code>类型，那么将在类构造方法<code>&lt;cinit&gt;()</code>中赋值。</p>
 </blockquote>
-<p>对于上述的<code>public static final init MAX=100</code>：</p>
+<p>对于上述的<code>public static final int MAX=100</code>：</p>
 <blockquote>
 <p><code>javac</code>编译器在编译此<code>field</code>字段构建<code>field_info</code>结构体时，除了访问标志、名称索引、描述符索引外，会增加一个<code>ConstantValue</code>类型的属性表。</p>
 </blockquote>
@@ -327,7 +327,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:09:48</p>
-        <p><span>最后更新:</span>2018-06-06, 17:14:10</p>
+        <p><span>最后更新:</span>2018-06-13, 20:56:33</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/" title="八、Class文件中的字段表集合--field字段在class文件中是怎样组织的">http://yoursite.com/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

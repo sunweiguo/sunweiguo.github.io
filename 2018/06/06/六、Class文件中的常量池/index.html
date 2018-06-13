@@ -59,7 +59,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141111132041264">
 <meta property="og:image" content="http://img.blog.csdn.net/20141111141834454">
 <meta property="og:image" content="http://img.blog.csdn.net/20141111142916832">
-<meta property="og:updated_time" content="2018-06-06T12:05:40.410Z">
+<meta property="og:updated_time" content="2018-06-13T12:50:28.384Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="六、Class文件中的常量池">
 <meta name="twitter:description" content="上一节Class类文件结构大致地介绍了class文件的组织结构，接下来，我们将深入每一个结构，来详细了解它们。这一章节呢，我们就来扒一扒 class文件中非常重要 的一个数据区域——常量池。它在JVM虚拟机中扮演了非常重要的地位。">
@@ -382,12 +382,12 @@
 <p>只有在类中的其他地方引用到了，才会将他放到常量池中。</p>
 <h2 id="11-类中引用到的method方法在常量池中是怎样描述的？-CONSTANT-Methodref-info-CONSTANT-Name-Type-info"><a href="#11-类中引用到的method方法在常量池中是怎样描述的？-CONSTANT-Methodref-info-CONSTANT-Name-Type-info" class="headerlink" title="11. 类中引用到的method方法在常量池中是怎样描述的？(CONSTANT_Methodref_info, CONSTANT_Name_Type_info)"></a>11. 类中引用到的method方法在常量池中是怎样描述的？(CONSTANT_Methodref_info, CONSTANT_Name_Type_info)</h2><h3 id="1-举例"><a href="#1-举例" class="headerlink" title="1. 举例"></a>1. 举例</h3><p>还是以<code>Person</code>类为例。在<code>Person</code>类中，我们定义了<code>setName(String name)</code>、<code>getName()</code>、<code>setAge(int age)</code>、<code>getAge()</code>这些方法：   </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="keyword">private</span> String name;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;  </span><br><span class="line">      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">return</span> name;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">this</span>.name = name;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">return</span> age;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">this</span>.age = age;  </span><br><span class="line">    &#125;  </span><br><span class="line">      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>虽然我们定义了方法，但是这些方法没有在类总的其他地方被用到（即没有在类中其他的方法中引用到），所以它们的方法引用信息并不会放到常量中。</p>
+<p>虽然我们定义了方法，但是这些方法没有在类中的其他地方被用到（即没有在类中其他的方法中引用到），所以它们的方法引用信息并不会放到常量池中。</p>
 <p>现在我们在类中加一个方法 <code>getInfo()</code>，调用了<code>getName()</code>和<code>getAge()</code> 方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getInfo</span><span class="params">()</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="keyword">return</span> getName()+<span class="string">"\t"</span>+getAge();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这时候JVM编译器会将<code>getName()</code>和<code>getAge()</code>方法的引用信息包装成<code>CONSTANT_Methodref_info</code>结构体放入到常量池之中。</p>
 <p><img src="http://img.blog.csdn.net/20141022155455316" alt="image"></p>
-<p>这里的方法调用的方式牵涉到Java非常重要的一个术语和机制，叫动态绑定。这个动态绑定问题以后在单独谈谈。</p>
+<p>这里的方法调用的方式牵涉到Java非常重要的一个术语和机制，叫动态绑定。这个动态绑定问题以后再单独谈谈。</p>
 <h3 id="2-表示一个方法引用"><a href="#2-表示一个方法引用" class="headerlink" title="2. 表示一个方法引用"></a>2. 表示一个方法引用</h3><p><img src="http://img.blog.csdn.net/20141110150930996" alt="image"></p>
 <p><img src="http://img.blog.csdn.net/20141111152543921" alt="image"></p>
 <p><img src="http://img.blog.csdn.net/20141111130431203" alt="image"></p>
@@ -399,7 +399,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Boss</span> </span>&#123;  </span><br><span class="line">      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">makeMoney</span><span class="params">(Worker worker)</span>  </span></span><br><span class="line"><span class="function">    </span>&#123;  </span><br><span class="line">        worker.work();  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="http://img.blog.csdn.net/20141111141834454" alt="image"></p>
 <p>如上图所示，在<code>Boss</code>类的<code>makeMoney()</code>方法中调用了<code>Worker</code>接口的<code>work()</code>方法，机器指令是通过<code>invokeinterface</code>指令完成的，<code>invokeinterface</code>指令后面的操作数，是指向了<code>Boss</code>常量池中<code>Worker</code>接口的<code>work()</code>方法描述，表示的意思就是：“我要调用<code>Worker</code>接口的<code>work()</code>方法”。</p>
-<p><code>Worker</code>接口的<code>work()</code>方法引用信息，JVM会使用<code>CONSTANT_InterfaceMethodref_info</code>结构体来描述，<code>CONSTANT_InterfaceMethodref_info</code>定义如下：</p>
+<p><code>Worker</code>接口的<code>work()</code>方法引用信息，<code>JVM</code>会使用<code>CONSTANT_InterfaceMethodref_info</code>结构体来描述，<code>CONSTANT_InterfaceMethodref_info</code>定义如下：</p>
 <p><img src="http://img.blog.csdn.net/20141111142916832" alt="image"></p>
 <p><code>CONSTANT_InterfaceMethodref_info</code>结构体和上面介绍的<code>CONSTANT_Methodref_info</code> 结构体很基本上相同，它们的不同点只有：</p>
 <blockquote>
@@ -425,7 +425,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:04:43</p>
-        <p><span>最后更新:</span>2018-06-06, 20:05:40</p>
+        <p><span>最后更新:</span>2018-06-13, 20:50:28</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/六、Class文件中的常量池/" title="六、Class文件中的常量池">http://yoursite.com/2018/06/06/六、Class文件中的常量池/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/六、Class文件中的常量池/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

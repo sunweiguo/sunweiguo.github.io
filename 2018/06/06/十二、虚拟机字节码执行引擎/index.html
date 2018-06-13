@@ -39,7 +39,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E4%B8%BB%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%96%B9%E6%B3%95%E6%8C%87%E4%BB%A4.png">
 <meta property="og:image" content="http://img.blog.csdn.net/20160103193210732">
 <meta property="og:image" content="http://img.blog.csdn.net/20160103185730474">
-<meta property="og:updated_time" content="2018-06-06T09:44:01.251Z">
+<meta property="og:updated_time" content="2018-06-13T13:10:19.851Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="十二、虚拟机字节码执行引擎">
 <meta name="twitter:description" content="本章讲解虚拟机字节码执行引擎。">
@@ -298,7 +298,7 @@
 <li>解析调用是静态的过程，在编译期间就完全确定目标方法。</li>
 <li>分派调用即可能是静态，也可能是动态的，根据分派标准可以分为单分派和多分派。两两组合有形成了静态单分派、静态多分派、动态单分派、动态多分派</li>
 </ul>
-<h3 id="2-1-解析"><a href="#2-1-解析" class="headerlink" title="2.1 解析"></a>2.1 解析</h3><p>在Class文件中，所有方法调用中的目标方法都是常量池中的符号引用，在类加载的解析阶段，会将一部分符号引用转为直接引用，也就是在编译阶段就能够确定唯一的目标方法，这类方法的调用成为解析调用。</p>
+<h3 id="2-1-解析"><a href="#2-1-解析" class="headerlink" title="2.1 解析"></a>2.1 解析</h3><p>在Class文件中，所有方法调用中的目标方法都是常量池中的符号引用，在类加载的解析阶段，会将一部分符号引用转为直接引用，也就是在编译阶段就能够确定唯一的目标方法，这类方法的调用称为解析调用。</p>
 <p>此类方法主要包括静态方法和私有方法两大类，前者与类型直接关联，后者在外部不可访问，因此决定了他们都不可能通过继承或者别的方式重写该方法，符合这两类的方法主要有以下几种：静态方法、私有方法、实例构造器、父类方法。虚拟机中提供了以下几条方法调用指令：</p>
 <ul>
 <li><code>invokestatic</code>：调用静态方法，解析阶段确定唯一方法版本</li>
@@ -452,7 +452,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 17:31:56</p>
-        <p><span>最后更新:</span>2018-06-06, 17:44:01</p>
+        <p><span>最后更新:</span>2018-06-13, 21:10:19</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/十二、虚拟机字节码执行引擎/" title="十二、虚拟机字节码执行引擎">http://yoursite.com/2018/06/06/十二、虚拟机字节码执行引擎/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/十二、虚拟机字节码执行引擎/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

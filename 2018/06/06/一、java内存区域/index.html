@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://img.blog.csdn.net/20141013142924359">
 <meta property="og:image" content="http://img.blog.csdn.net/20160720214130162?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="og:image" content="http://img.blog.csdn.net/20160720214145756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
-<meta property="og:updated_time" content="2018-06-06T08:22:34.626Z">
+<meta property="og:updated_time" content="2018-06-13T12:07:12.231Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="一、java内存区域">
 <meta name="twitter:description" content="学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。">
@@ -271,7 +271,7 @@
 <p>线程私有，生命周期与线程相同。</p>
 </blockquote>
 <blockquote>
-<p>虚拟机栈描述的是Java方法的内存模型：每个方法在执行的同时都会创建一个栈帧用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机中入栈道出栈的过程。</p>
+<p>虚拟机栈描述的是Java方法的内存模型：每个方法在执行的同时都会创建一个栈帧用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机中入栈到出栈的过程。</p>
 </blockquote>
 <p><img src="http://img.blog.csdn.net/20141013142638909" alt="image"></p>
 <blockquote>
@@ -291,7 +291,7 @@
 </blockquote>
 <p><strong>2.3 本地方法栈</strong></p>
 <blockquote>
-<p>本地方法栈与虚拟机栈所发挥的作用是非常相似的，他们之间的区别不过是虚拟机栈尾虚拟机执行java方法(也就是字节码)服务，而本地方法栈则为虚拟机用到的Native方法服务。</p>
+<p>本地方法栈与虚拟机栈所发挥的作用是非常相似的，他们之间的区别不过是虚拟机栈为虚拟机执行java方法(也就是字节码)服务，而本地方法栈则为虚拟机用到的Native方法服务。</p>
 </blockquote>
 <blockquote>
 <p><code>Sun HotSpot</code>虚拟机直接将本地方法栈和虚拟机栈合二为一。</p>
@@ -344,7 +344,7 @@
 <p>类文件中除了类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法的运行时常量池中存放。</p>
 </blockquote>
 <blockquote>
-<p>这里尤其值得注意的是字符串的创建，会被扔到常量池中。如果是new，那么还是在堆重创建的。当然，运行时也可以产生新的常量放入池中，比如讲new出来的字符串用<code>intern()</code>方法便可以在运行时将其放到常量池中。</p>
+<p>这里尤其值得注意的是字符串的创建，会被扔到常量池中。如果是new，那么还是在堆重创建的。当然，运行时也可以产生新的常量放入池中，比如将new出来的字符串用<code>intern()</code>方法便可以在运行时将其放到常量池中。</p>
 </blockquote>
 <p><strong>举例</strong></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String str1 = <span class="string">"hello"</span>;</span><br><span class="line">	String str2 = <span class="string">"hello"</span>;</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str2); <span class="comment">//true</span></span><br><span class="line">	</span><br><span class="line">	String str3 = <span class="keyword">new</span> String(<span class="string">"hello"</span>);</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3); <span class="comment">//false</span></span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3.intern()); <span class="comment">//true	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -417,7 +417,7 @@
         <p><span>本文标题:</span><a href="/2018/06/06/一、java内存区域/">一、java内存区域</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-06, 16:22:33</p>
-        <p><span>最后更新:</span>2018-06-06, 16:22:34</p>
+        <p><span>最后更新:</span>2018-06-13, 20:07:12</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/06/一、java内存区域/" title="一、java内存区域">http://yoursite.com/2018/06/06/一、java内存区域/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/06/一、java内存区域/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
