@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="学习java线程的开发者,首先遇到的第一个类就是Thread,通过使用Thread类,我们就可以启动,停止,中断一个线程. 在同一个时间片里, 可能会有多个线程在执行, 每个线程都拥有它自己的方法调用堆栈, 参数和变量.每个app至少会有一个线程–主线程(main thread).">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-04T14:05:47.313Z">
+<meta property="og:updated_time" content="2018-06-14T07:43:54.659Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="四、Thread类方法详解">
 <meta name="twitter:description" content="学习java线程的开发者,首先遇到的第一个类就是Thread,通过使用Thread类,我们就可以启动,停止,中断一个线程. 在同一个时间片里, 可能会有多个线程在执行, 每个线程都拥有它自己的方法调用堆栈, 参数和变量.每个app至少会有一个线程–主线程(main thread).">
@@ -271,11 +271,20 @@
 <p>结果是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Waiter1--等待1511336596131</span><br><span class="line">Waiter2--等待1511336596131</span><br><span class="line">Waiter2唤醒线程工作1511336596230</span><br><span class="line">Waiter1唤醒线程工作1511336596230</span><br></pre></td></tr></table></figure>
 <p>分析：这里用<code>notifyAll</code>，即唤醒所有，那么这两个<code>wait</code>都被唤醒而继续执行了。</p>
-<h2 id="2-线程让步（yield-）"><a href="#2-线程让步（yield-）" class="headerlink" title="2. 线程让步（yield()）"></a>2. 线程让步（yield()）</h2><p>API中对<code>yield()</code>的介绍是可以暂停当前正在执行的线程对象，并执行其他线程。<strong>“暂停”代表着让出CPU，但不会释放锁</strong>。执行<code>yield()</code>后，当前线程由运行状态变为就绪状态。但不能保证在当前线程调用<code>yield()</code>之后，其它具有相同优先级的线程就一定能获得执行权，<strong>也有可能是当前线程又进入到运行状态继续运行</strong>！</p>
+<h2 id="2-线程让步（yield-）"><a href="#2-线程让步（yield-）" class="headerlink" title="2. 线程让步（yield()）"></a>2. 线程让步（yield()）</h2><p>API中对<code>yield()</code>的介绍是可以暂停当前正在执行的线程对象，并执行其他线程。<strong>“暂停”代表着让出CPU</strong>。执行<code>yield()</code>后，当前线程由运行状态变为就绪状态。但不能保证在当前线程调用<code>yield()</code>之后，其它具有相同优先级的线程就一定能获得执行权，<strong>也有可能是当前线程又进入到运行状态继续运行</strong>！</p>
 <p><code>yield()</code>与无参的<code>wait()</code>的区别：</p>
 <ul>
 <li>执行<code>yield()</code>后，当前线程由运行状态变为就绪状态。执行<code>wait</code>后，当前线程会失去对象的锁，状态变为<code>WAITING</code>状态。</li>
-<li>执行<code>yield()</code>后，当前线程不会释放锁。执行<code>wait</code>后，当前线程会释放锁。</li>
+</ul>
+<p>jdk 中的解释为：</p>
+<blockquote>
+<p>调用该方法的线程通知线程调度器当前线程可以让出CPU，线程调度器可以响应或者忽略此请求。</p>
+</blockquote>
+<p>要注意的是：</p>
+<ul>
+<li>线程调度器并不一定响应这个请求。</li>
+<li>响应请求时，仅仅将当前线程变为可运行状态。其他处于可运行状态的线程将竞争CPU资源，高优先级线程将会比相同优先级的线程有较高的概率获得CPU资源，但并不保证。</li>
+<li>另外，需要注意的是，CPU资源和锁的获取并没有直接关系，CPU资源是由系统来分配的。</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;num; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span> (i==<span class="number">50</span>)&#123;</span><br><span class="line">            Thread.yield();<span class="comment">//当i=50，将当前的线程执行权放弃，让cpu重新选择线程来执行，但不一定准确停住</span></span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="3-线程休眠（sleep-）"><a href="#3-线程休眠（sleep-）" class="headerlink" title="3. 线程休眠（sleep()）"></a>3. 线程休眠（sleep()）</h2><p>线程的休眠（暂停执行）与<code>sleep(long millis)</code>和<code>sleep(long millis, int nanos)</code>有关。API中的介绍是<code>sleep(long millis)</code> 方法可以在指定的毫秒数内让当前正在执行的线程休眠；<code>sleep(long millis, int nanos)</code> 可以在指定的毫秒数加指定的纳秒数内让当前正在执行的线程休眠。该线程不丢失任何监视器的所属权。简单来说就是<strong><code>sleep</code>方法可以使正在执行的线程让出CPU，但不会释放锁</strong>。执行<code>sleep</code>方法后，当前线程由运行状态变为<code>TIMED_WAITING</code>状态。</p>
@@ -323,7 +332,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:05:45</p>
-        <p><span>最后更新:</span>2018-06-04, 22:05:47</p>
+        <p><span>最后更新:</span>2018-06-14, 15:43:54</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/四、Thread类方法详解/" title="四、Thread类方法详解">http://yoursite.com/2018/06/04/四、Thread类方法详解/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/四、Thread类方法详解/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
