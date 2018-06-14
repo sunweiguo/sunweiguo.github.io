@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="并发基础篇最后聊一聊Lock接口。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-05T12:48:03.479Z">
+<meta property="og:updated_time" content="2018-06-14T09:26:05.514Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="九、Lock接口简单体验">
 <meta name="twitter:description" content="并发基础篇最后聊一聊Lock接口。">
@@ -260,7 +260,7 @@
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = ...;</span><br><span class="line"><span class="keyword">if</span>(lock.tryLock()) &#123;</span><br><span class="line">     <span class="keyword">try</span>&#123;</span><br><span class="line">         <span class="comment">//处理任务</span></span><br><span class="line">     &#125;<span class="keyword">catch</span>(Exception ex)&#123;</span><br><span class="line">         </span><br><span class="line">     &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">         lock.unlock();   <span class="comment">//释放锁</span></span><br><span class="line">     &#125; </span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">//如果不能获取锁，则直接做其他事情</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li><code>lockInterruptibly()</code>：<strong>当通过这个方法去获取锁时，如果线程正在等待获取锁，则这个线程能够响应中断，即中断线程的等待状态</strong>。也就使说，当两个线程同时通过<code>lock.lockInterruptibly()</code>想获取某个锁时，假若此时线程A获取到了锁，而线程B只有在等待，那么对线程B调用<code>threadB.interrupt()</code>方法能够中断线程B的等待过程。</li>
+<li><code>lockInterruptibly()</code>：<strong>当通过这个方法去获取锁时，如果线程正在等待获取锁，则这个线程能够响应中断，即中断线程的等待状态</strong>。也就是说，当两个线程同时通过<code>lock.lockInterruptibly()</code>想获取某个锁时，假若此时线程A获取到了锁，而线程B只有在等待，那么对线程B调用<code>threadB.interrupt()</code>方法能够中断线程B的等待过程。</li>
 </ul>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    lock.lockInterruptibly();</span><br><span class="line">    <span class="keyword">try</span> &#123;  </span><br><span class="line">     <span class="comment">//.....</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span> &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>因此当通过<code>lockInterruptibly()</code>方法获取某个锁时，如果不能获取到，只有进行等待的情况下，是可以响应中断的。</p>
@@ -278,7 +278,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:09:40</p>
-        <p><span>最后更新:</span>2018-06-05, 20:48:03</p>
+        <p><span>最后更新:</span>2018-06-14, 17:26:05</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/九、Lock接口简单体验/" title="九、Lock接口简单体验">http://yoursite.com/2018/06/04/九、Lock接口简单体验/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/九、Lock接口简单体验/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
