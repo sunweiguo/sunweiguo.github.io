@@ -24,7 +24,7 @@
 <meta property="og:description" content="ThreadLocal是面试重灾区，分为两篇来讲解其中的用法和原理。这是第二篇。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png">
-<meta property="og:updated_time" content="2018-06-05T12:43:02.394Z">
+<meta property="og:updated_time" content="2018-06-14T13:22:42.915Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="十一、深入分析ThreadLocal内存泄漏问题">
 <meta name="twitter:description" content="ThreadLocal是面试重灾区，分为两篇来讲解其中的用法和原理。这是第二篇。">
@@ -245,7 +245,7 @@
 <li><code>ThreadLocal</code> 最佳实践</li>
 </ul>
 <h2 id="ThreadLocal-实现原理"><a href="#ThreadLocal-实现原理" class="headerlink" title="ThreadLocal 实现原理"></a>ThreadLocal 实现原理</h2><p><img src="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png" alt="image"></p>
-<p><code>ThreadLocal</code>的实现是这样的：每个<code>Thread</code> 维护一个 <code>ThreadLocalMap</code> 映射表，这个映射表的 <code>key</code> 是 <code>ThreadLocal</code> 实例本身，<code>value</code> 是真正需要存储的 <code>Object</code>。</p>
+<p><code>ThreadLocal</code>的实现是这样的：每个<code>Thread</code> 维护一个 <code>ThreadLocalMap</code> 映射表，这个映射表的 <code>key</code> 指向 <code>ThreadLocal</code> 实例本身，<code>value</code> 指向真正需要存储的 <code>Object</code>，这个值真实保存在线程实例上的。</p>
 <p>也就是说 <code>ThreadLocal</code> 本身并不存储值，它只是作为一个 <code>key</code> 来让线程从 <code>ThreadLocalMap</code> 获取 <code>value</code>。值得注意的是图中的虚线，表示 <code>ThreadLocalMap</code> 是使用 <code>ThreadLocal</code> 的弱引用作为 <code>Key</code> 的，弱引用的对象在 <code>GC</code> 时会被回收。</p>
 <p>这里一定要注意，<code>ThreadLocal</code> 本身并不存储值，它只是作为一个 <code>key</code> 来让线程从 <code>ThreadLocalMap</code> 获取 <code>value</code>。我们从<code>get</code>和<code>set</code>代码中可以看到<code>ThreadLocalMap</code>的<code>key</code>是<code>ThreadLocal</code> 实例本身。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">        <span class="comment">//this在这里代表的是当前线程的ThreadLocal对象</span></span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -277,7 +277,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 20:40:55</p>
-        <p><span>最后更新:</span>2018-06-05, 20:43:02</p>
+        <p><span>最后更新:</span>2018-06-14, 21:22:42</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/" title="十一、深入分析ThreadLocal内存泄漏问题">http://yoursite.com/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
