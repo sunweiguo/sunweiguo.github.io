@@ -24,7 +24,7 @@
 <meta property="og:description" content="聊一聊ReentrantReadWriteLock。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="https://segmentfault.com/img/bVOGUM?w=1063&h=246">
-<meta property="og:updated_time" content="2018-06-04T14:08:23.466Z">
+<meta property="og:updated_time" content="2018-06-15T01:45:21.481Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="七、读写锁">
 <meta name="twitter:description" content="聊一聊ReentrantReadWriteLock。">
@@ -266,6 +266,15 @@
 <p><strong>运行结果：</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">main 写操作开始执行</span><br><span class="line">main 写操作执行完毕</span><br><span class="line">main 写操作开始执行</span><br><span class="line">main 写操作执行完毕</span><br><span class="line">main 写操作开始执行</span><br><span class="line">main 写操作执行完毕</span><br><span class="line"></span><br><span class="line">Thread-0 读操作开始执行</span><br><span class="line">Thread-1 读操作开始执行</span><br><span class="line">Thread-2 读操作开始执行</span><br><span class="line">value1</span><br><span class="line">Thread-0 读操作执行完毕</span><br><span class="line">value2</span><br><span class="line">Thread-1 读操作执行完毕</span><br><span class="line">value3</span><br><span class="line">Thread-2 读操作执行完毕</span><br></pre></td></tr></table></figure></p>
 <p><strong>分析</strong></p>
 <p>在主线程中先<code>put</code>进去几个数用于读的测试，下面开辟三个读线程，我们可以从执行结果中发现，其中一个线程进去之后，另外的线程能够立即再次进入，即这三把锁不是互斥的。</p>
+<p>总结： </p>
+<p>在<code>ReentrantReadWriteLock</code>中实现了公平锁与非公平锁，主要区别就是：当一个线程尝试获取公平锁时，会检查这个结点是否是头结点的后继者，也就是不允许插队，插队就阻塞！</p>
+<p>与<code>ReentrantLock</code>中的公平锁、非公平锁类似，默认使用非公平锁。非公平锁有更高的吞吐率，更低的线程切换消耗！</p>
+<p>可重入</p>
+<ul>
+<li>一个线程获取读锁后，这个线程可以再次获取这个读锁，但是这个线程不能获取对应写锁。 </li>
+<li>一个线程获取写锁后，这个线程可以再次获取这个写锁，同时它也可以获取对应的读锁。</li>
+</ul>
+<p>注意：<strong>当前读锁被读取，以及当前线程不是获取写锁的线程时，则不能获取写锁。原因在于：读写锁要确保写锁的操作对读锁可见，如果允许读锁在已被获取的情况下获取写锁，那么正在运行的其他读线程就无法感知到写线程的操作。因此，只有等待其他读线程都释放了读锁，写锁才能被当前线程获取，一旦写锁被获取，其他读写线程的后续访问均被阻塞。</strong></p>
 <h2 id="5-锁降级"><a href="#5-锁降级" class="headerlink" title="5. 锁降级"></a>5. 锁降级</h2><p>锁降级是指写锁将为读锁。</p>
 <p>锁降级：从写锁变成读锁；锁升级：从读锁变成写锁。读锁是可以被多线程共享的，写锁是单线程独占的。也就是说写锁的并发限制比读锁高，这可能就是升级/降级名称的来源。</p>
 <p>如下代码会产生死锁，因为同一个线程中，在没有释放读锁的情况下，就去申请写锁，这属于锁升级，<code>ReentrantReadWriteLock</code>是不支持的。</p>
@@ -287,7 +296,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/七、读写锁/">七、读写锁</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:08:22</p>
-        <p><span>最后更新:</span>2018-06-04, 22:08:23</p>
+        <p><span>最后更新:</span>2018-06-15, 09:45:21</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/七、读写锁/" title="七、读写锁">http://yoursite.com/2018/06/04/七、读写锁/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/七、读写锁/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
