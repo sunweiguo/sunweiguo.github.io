@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B111.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86111.png">
-<meta property="og:updated_time" content="2018-06-05T01:31:47.792Z">
+<meta property="og:updated_time" content="2018-06-15T08:10:07.735Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="10.线程池">
 <meta name="twitter:description" content="线程池的原理是面试的重灾区。本篇将完整分析线程池的原理。">
@@ -273,7 +273,7 @@
 <p><code>ArrayBlockingQueue</code>：是一个基于数组结构的有界阻塞队列，此队列按 <code>FIFO</code>（先进先出）原则对元素进行排序；</p>
 <p><code>LinkedBlockingQueue</code>：一个基于链表结构的阻塞队列，此队列按FIFO （先进先出） 排序元素，吞吐量通常要高于<code>ArrayBlockingQueue</code>。静态工厂方法<code>Executors.newFixedThreadPool()</code>使用了这个队列；</p>
 <p><code>SynchronousQueue</code>：一个不存储元素的阻塞队列。每个插入操作必须等到另一个线程调用移除操作，否则插入操作一直处于阻塞状态，吞吐量通常要高于<code>LinkedBlockingQueue</code>，静态工厂方法<code>Executors.newCachedThreadPool</code>使用了这个队列；</p>
-<p><code>PriorityBlockingQueue</code>：一个具有优先级的无限阻塞队列；</p>
+<p><code>PriorityBlockingQueue</code>：一个具有优先级的无限阻塞队列；底层用<code>DelayedWorkQueue</code>实现。</p>
 </blockquote>
 <ul>
 <li><code>keepAliveTime</code>：线程没有任务执行时最多保持多久时间终止</li>
@@ -509,7 +509,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/10.线程池/">10.线程池</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:18:51</p>
-        <p><span>最后更新:</span>2018-06-05, 09:31:47</p>
+        <p><span>最后更新:</span>2018-06-15, 16:10:07</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/10.线程池/" title="10.线程池">http://yoursite.com/2018/06/04/10.线程池/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/10.线程池/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

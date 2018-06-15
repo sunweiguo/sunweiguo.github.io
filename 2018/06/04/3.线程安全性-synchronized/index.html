@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="再来简单回顾一下synchronized关键字。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-04T14:13:58.543Z">
+<meta property="og:updated_time" content="2018-06-15T05:35:42.142Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3.线程安全性-synchronized">
 <meta name="twitter:description" content="再来简单回顾一下synchronized关键字。">
@@ -267,7 +267,7 @@
 <li>线程加锁时，将清空工作内存中共享变量的值，从而使用共享变量时需要从主内存中重新读取最新的值（注意，加锁和解锁是同一把锁）</li>
 </ul>
 <h4 id="可见性-volatile"><a href="#可见性-volatile" class="headerlink" title="可见性-volatile"></a>可见性-volatile</h4><blockquote>
-<p>通过加入内存屏障和进制重排序优化来实现。</p>
+<p>通过加入内存屏障和禁止指令重排序优化来实现。</p>
 </blockquote>
 <ul>
 <li>对<code>volatile</code>变量写操作时，会在写操作后加入一条<code>store</code>屏障指令，将本地内存中的共享变量值刷新到主内存</li>
@@ -297,7 +297,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:13:34</p>
-        <p><span>最后更新:</span>2018-06-04, 22:13:58</p>
+        <p><span>最后更新:</span>2018-06-15, 13:35:42</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/3.线程安全性-synchronized/" title="3.线程安全性-synchronized">http://yoursite.com/2018/06/04/3.线程安全性-synchronized/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/3.线程安全性-synchronized/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

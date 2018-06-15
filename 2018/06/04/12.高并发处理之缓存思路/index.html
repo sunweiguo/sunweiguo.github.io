@@ -27,7 +27,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86%E5%9B%BE.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98.png">
-<meta property="og:updated_time" content="2018-06-04T14:21:14.162Z">
+<meta property="og:updated_time" content="2018-06-15T08:32:12.173Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="12.高并发处理之缓存思路">
 <meta name="twitter:description" content="这里对Guava Cache,Memcache以及redis进行简单介绍和对比。">
@@ -275,7 +275,7 @@
 <p><code>Memcached</code>单进程在32位系统中最大使用内存为2G，若在64位系统则没有限制,这是由于32位系统限制单进程最多可使用2G内存,要使用更多内存，可以分多个端口开启多个<code>Memcached</code>进程。</p>
 </blockquote>
 <blockquote>
-<p>最大30天的数据过期时间，设置为永久也会在这个时间过期。最长键长为250字节，大于该长度无法存储。最大同事连接数是200;</p>
+<p>最大30天的数据过期时间，设置为永久也会在这个时间过期。最长键长为250字节，大于该长度无法存储。最大同时连接数是200;</p>
 </blockquote>
 <blockquote>
 <p><code>memcache</code>是一种无阻塞的<code>socket</code>通信方式服务，基于<code>libevent</code>库，犹豫无阻塞通信，对内存读写速度非常快。</p>
@@ -447,7 +447,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:21:12</p>
-        <p><span>最后更新:</span>2018-06-04, 22:21:14</p>
+        <p><span>最后更新:</span>2018-06-15, 16:32:12</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/12.高并发处理之缓存思路/" title="12.高并发处理之缓存思路">http://yoursite.com/2018/06/04/12.高并发处理之缓存思路/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/12.高并发处理之缓存思路/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

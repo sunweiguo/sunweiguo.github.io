@@ -25,7 +25,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/BlockingQueue%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.png">
-<meta property="og:updated_time" content="2018-06-04T14:17:55.448Z">
+<meta property="og:updated_time" content="2018-06-15T07:59:26.651Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="9.JUC组件拓展-BlockingQueue">
 <meta name="twitter:description" content="在Java中，BlockingQueue是一个接口，它的实现类有ArrayBlockingQueue、DelayQueue、 LinkedBlockingDeque、LinkedBlockingQueue、PriorityBlockingQueue、SynchronousQueue等，它们的区别主要体现在存储结构上或对元素操作上的不同，但是对于take与put操作的原理，却是类似的。">
@@ -279,7 +279,7 @@
 <li>若不带大小参数,所生成的BlockingQueue的大小由<code>Integer.MAX_VALUE</code>来决定</li>
 <li>其所含的对象是以<code>FIFO</code>(先入先出)顺序排序的</li>
 <li>链接队列的吞吐量通常要高于基于数组的队列，但是在大多数并发应用程序中，其可预知的性能要低</li>
-<li>最新插入的数据在尾部，最新移除的对象再头部</li>
+<li>最新插入的数据在尾部，最新移除的对象在头部</li>
 </ul>
 <h4 id="3-PriorityBlockingQueue"><a href="#3-PriorityBlockingQueue" class="headerlink" title="3. PriorityBlockingQueue"></a>3. PriorityBlockingQueue</h4><ul>
 <li>类似于<code>LinkedBlockQueue</code>,但其所含对象的排序不是<code>FIFO</code>,而是依据对象的自然排序顺序或者是构造函数的<code>Comparator</code>决定的顺序</li>
@@ -301,15 +301,15 @@
 <li>队列中锁的实现不同</li>
 </ul>
 <blockquote>
-<p><code>ArrayBlockingQueue</code>实现的队列中的锁是没有分离的，即生产和消费用的是同一个锁；</p>
-<p><code>LinkedBlockingQueue</code>实现的队列中的锁是分离的，即生产用的是<code>putLock</code>，消费是<code>takeLock</code></p>
+<p><code>ArrayBlockingQueue</code>实现的队列中的锁是没有分离的，即生产和消费用的是同一个锁；在队头和队尾各持有一把锁，入队和出队之间不存在竞争。另外，可以执行是否为公平锁，默认是非公平锁。</p>
+<p><code>LinkedBlockingQueue</code>实现的队列中的锁是分离的，即生产用的是<code>putLock</code>，消费是<code>takeLock</code>，这也意味着在高并发的情况下生产者和消费者可以并行地操作队列中的数据，以此来提高整个队列的并发性能。</p>
 </blockquote>
 <ul>
 <li>在生产或消费时操作不同</li>
 </ul>
 <blockquote>
 <p><code>ArrayBlockingQueue</code>实现的队列中在生产和消费的时候，是直接将枚举对象插入或移除的；</p>
-<p><code>LinkedBlockingQueue</code>实现的队列中在生产和消费的时候，需要把枚举对象转换为<code>Node&lt;E&gt;</code>进行插入或移</p>
+<p><code>LinkedBlockingQueue</code>实现的队列中在生产和消费的时候，需要把枚举对象转换为<code>Node&lt;E&gt;</code>进行插入或移出(会生成一个额外的<code>Node</code>对象，这在长时间内需要高效并发地处理大批量数据的系统中，其对于GC的影响还是存在一定的区别。)</p>
 </blockquote>
 <ul>
 <li>队列大小初始化方式不同</li>
@@ -318,6 +318,11 @@
 <p><code>ArrayBlockingQueue</code>实现的队列中必须指定队列的大小；</p>
 <p><code>LinkedBlockingQueue</code>实现的队列中可以不指定队列的大小，但是默认是<code>Integer.MAX_VALUE</code></p>
 </blockquote>
+<ul>
+<li>作为开发者，我们需要注意的是，如果构造一个<code>LinkedBlockingQueue</code>对象，而没有指定其容量大小，<code>LinkedBlockingQueue</code>会默认一个类似无限大小的容量（<code>Integer.MAX_VALUE</code>），这样的话，如果生产者的速度一旦大于消费者的速度，也许还没有等到队列满阻塞产生，系统内存就有可能已被消耗殆尽了。</li>
+<li>在使用<code>ArrayBlockingQueue</code>和<code>LinkedBlockingQueue</code>分别对1000000个简单字符做入队操作时，<code>LinkedBlockingQueue</code>的消耗是<code>ArrayBlockingQueue</code>消耗的10倍左右，即<code>LinkedBlockingQueue</code>消耗在1500毫秒左右，而<code>ArrayBlockingQueue</code>只需150毫秒左右。</li>
+<li>按照实现原理来分析，<code>ArrayBlockingQueue</code>完全可以采用分离锁，从而实现生产者和消费者操作的完全并行运行。<code>Doug Lea</code>之所以没这样去做，也许是因为<code>ArrayBlockingQueue</code>的数据写入和获取操作已经足够轻巧，以至于引入独立的锁机制，除了给代码带来额外的复杂性外，其在性能上完全占不到任何便宜。</li>
+</ul>
 
       
     </div>
@@ -329,7 +334,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:17:54</p>
-        <p><span>最后更新:</span>2018-06-04, 22:17:55</p>
+        <p><span>最后更新:</span>2018-06-15, 15:59:26</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/" title="9.JUC组件拓展-BlockingQueue">http://yoursite.com/2018/06/04/9.JUC组件拓展-BlockingQueue/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/9.JUC组件拓展-BlockingQueue/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
