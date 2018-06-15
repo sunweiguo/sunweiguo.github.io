@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="Atomic包是我们经常使用的一个线程安全的包。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-04T14:12:59.206Z">
+<meta property="og:updated_time" content="2018-06-15T03:46:15.981Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2.线程安全性-Atomic包">
 <meta name="twitter:description" content="Atomic包是我们经常使用的一个线程安全的包。">
@@ -287,6 +287,13 @@
 </blockquote>
 <p>这样，就通过<code>CAS</code>操作，完成了线程安全的<code>count</code>计数功能。</p>
 <h2 id="4-LongAdder"><a href="#4-LongAdder" class="headerlink" title="4. LongAdder"></a>4. LongAdder</h2><p>用<code>LongAddr</code>也可以，但是为什么不使用<code>AtomicLong</code>呢？换句话说，为什么<code>AtomicLong</code>可以实现，还要有<code>LongAddr</code>这个类呢？？？</p>
+<p>我们都知道<code>AtomicLong</code>是通过无限循环不停的采取<code>CAS</code>的方法从机器指令级别操作去设置<code>value</code>，直到成功为止。那么当并发数比较多或出现更新热点时，就会导致<code>CAS</code>的失败机率变高，重试次数更多，越多的线程重试，<code>CAS</code>失败的机率越高，形成恶性循环，从而降低了效率。而<code>LongAdder</code>的原理就是降低对<code>value</code>更新的并发数，也就是将对单一<code>value</code>的变更压力分散到多个<code>value</code>值上，降低单个<code>value</code>的“热度”.相较于<code>AtomicLong</code>来说，更加适合读多写少的并发情景。</p>
+<p>在高并发下N多线程同时去操作一个变量会造成大量线程CAS失败，然后处于自旋状态，这样导致大大浪费CPU资源，降低了并发性。</p>
+<p>既然<code>AtomicLong</code>性能问题是由于过多线程同时去竞争同一个变量的更新而降低的，那么如果把一个变量分解为多个变量，让同样多的线程去竞争多个资源，那么性能问题不久迎刃而解了吗？</p>
+<p><code>LongAdder</code>将把一个<code>value</code>拆分成若干<code>cell</code>，把所有<code>cell</code>加起来，就是<code>value</code>。所以对<code>LongAdder</code>进行加减操作，只需要对不同的<code>cell</code>来操作，不同的线程对不同的<code>cell</code>进行<code>CAS</code>操作，<code>CAS</code>的成功率当然高了.</p>
+<p>可是在并发数不是很高的情况，拆分成若干的<code>cell</code>，还需要维护<code>cell</code>和求和，效率不如<code>AtomicLong</code>的实现。<code>LongAdder</code>用了巧妙的办法来解决了这个问题。</p>
+<p>初始情况，<code>LongAdder</code>与<code>AtomicLong</code>是相同的，只有在<code>CAS</code>失败时，才会将<code>value</code>拆分成<code>cell</code>，每失败一次，都会增加<code>cell</code>的数量，这样在低并发时，同样高效，在高并发时，这种“自适应”的处理方式，达到一定<code>cell</code>数量后，CAS将不会失败，效率大大提高。</p>
+<p><code>LongAdder</code>是一种以空间换时间的策略。</p>
 <p><code>LongAddr</code>优点：我们从<code>AtomicInteger</code>这个类的实现看到，他是在一个死循环内不停地尝试修改目标值，直到修改成功。如果竞争不激烈的时候，修改成功的几率很高。否则修改失败的概率就会很高。在大量修改失败的时候，多次尝试，性能会受到一定的影响。</p>
 <p>对于普通类型的<code>Long</code>和<code>Double</code>变量，JVM允许将64位的读操作和写操作拆成两个32位的操作。</p>
 <p>（我们知道<code>JUC</code>下面提供的原子类都是基于<code>Unsafe</code>类实现的，并由<code>Unsafe</code>来提供<code>CAS</code>的能力。<code>CAS</code> (<code>compare-and-swap</code>)本质上是由现代<code>CPU</code>在硬件级实现的原子指令，允许进行无阻塞，多线程的数据操作同时兼顾了安全性以及效率。<code>getAndAddLong</code>方法会以<code>volatile</code>的语义去读需要自增的域的最新值，然后通过<code>CAS</code>去尝试更新，正常情况下会直接成功后返回，但是在高并发下可能会同时有很多线程同时尝试这个过程，也就是说线程A读到的最新值可能实际已经过期了，因此需要在<code>while</code>循环中不断的重试，造成很多不必要的开销。）</p>
@@ -311,7 +318,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:12:58</p>
-        <p><span>最后更新:</span>2018-06-04, 22:12:59</p>
+        <p><span>最后更新:</span>2018-06-15, 11:46:15</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/2.线程安全性-Atomic包/" title="2.线程安全性-Atomic包">http://yoursite.com/2018/06/04/2.线程安全性-Atomic包/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/2.线程安全性-Atomic包/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

@@ -24,7 +24,7 @@
 <meta property="og:description" content="本系列再对java并发的认识抬高一个台阶！">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E6%8A%BD%E8%B1%A1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
-<meta property="og:updated_time" content="2018-06-04T14:12:07.580Z">
+<meta property="og:updated_time" content="2018-06-15T02:04:14.094Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="1.基础介绍和线程安全性问题展示">
 <meta name="twitter:description" content="本系列再对java并发的认识抬高一个台阶！">
@@ -250,7 +250,7 @@
 <p>CPU多级缓存</p>
 </blockquote>
 <ul>
-<li><code>cpu</code>速度太快，主内存速度跟不上，<code>cpu</code>常常需要等待主内存，浪费<code>cpu</code>资源。所以<code>cache</code>出现了，缓解了<code>cpu</code>和主内存之间舒服不匹配的问题(<code>cpu</code>-&gt;<code>cache</code>-&gt;<code>memory</code>)</li>
+<li><code>cpu</code>速度太快，主内存速度跟不上，<code>cpu</code>常常需要等待主内存，浪费<code>cpu</code>资源。所以<code>cache</code>出现了，缓解了<code>cpu</code>和主内存之间速度不匹配的问题(<code>cpu</code>-&gt;<code>cache</code>-&gt;<code>memory</code>)</li>
 <li>时间局部性：如果某个数据被访问，那么在不久的将来他很有可能再次被访问。</li>
 <li>空间局部性：如果某个数据被访问，那么与它相邻的数据也可能被访问。</li>
 </ul>
@@ -276,11 +276,11 @@
 <ul>
 <li>需要注意的是需要引入<code>spring-boot-starter-web</code>,要不然项目起不来。</li>
 </ul>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>lombok slf4j</p>
 </blockquote>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">	&lt;groupId&gt;org.projectlombok&lt;/groupId&gt;</span><br><span class="line">	&lt;artifactId&gt;lombok&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>几个注解，注明是否是线程安全以及是否是推荐的写法。以是线程安全为例。</p>
 </blockquote>
@@ -299,7 +299,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:12:07</p>
-        <p><span>最后更新:</span>2018-06-04, 22:12:07</p>
+        <p><span>最后更新:</span>2018-06-15, 10:04:14</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/1.基础介绍和线程安全性问题展示/" title="1.基础介绍和线程安全性问题展示">http://yoursite.com/2018/06/04/1.基础介绍和线程安全性问题展示/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/1.基础介绍和线程安全性问题展示/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
