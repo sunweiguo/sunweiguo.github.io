@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/bgrewriteaof.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/aof%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/RDB%E5%92%8CAOF%E5%AF%B9%E6%AF%94.png">
-<meta property="og:updated_time" content="2018-06-05T05:33:04.920Z">
+<meta property="og:updated_time" content="2018-06-19T07:38:25.439Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="4.redis持久化">
 <meta name="twitter:description" content="介绍redis持久化。">
@@ -335,6 +335,29 @@
 <p><img src="http://p376695fl.bkt.clouddn.com/bgrewriteaof.png" alt="image"></p>
 <p>注意：这里的重写并不是上面演示的，将原来的<code>aof</code>文件进行重写，而是对<code>redis</code>的内存数据进行一次回溯。</p>
 <h4 id="aof重写流程"><a href="#aof重写流程" class="headerlink" title="aof重写流程"></a>aof重写流程</h4><p><img src="http://p376695fl.bkt.clouddn.com/aof%E9%87%8D%E5%86%99%E6%B5%81%E7%A8%8B.png" alt="image"></p>
+<p>也就是说，子进程在执行 AOF 重写时，主进程需要执行以下三个工作：</p>
+<ul>
+<li>1.处理命令请求；</li>
+<li>2.将写命令追加到现有的 AOF 文件中；</li>
+<li>3.将写命令追加到 AOF 重写缓存中。</li>
+</ul>
+<p>如此可以保证：</p>
+<ul>
+<li>现有的AOF功能继续执行，即使 AOF 重写期间发生停机，也不会有任何数据丢失；</li>
+<li>所有对数据库进行修改的命令都会被记录到 AOF 重写缓存中。</li>
+</ul>
+<p>当子进程完成对 AOF 文件重写之后，它会向父进程发送一个完成信号，父进程接到该完成信号之后，会调用一个信号处理函数，该函数完成以下工作：(阻塞)</p>
+<ul>
+<li>将 AOF 重写缓存中的内容全部写入到新的 AOF 文件中；(现有 AOF 文件、新的 AOF 文件和数据库三者的状态就完全一致了)</li>
+<li>对新的 AOF 文件进行改名，覆盖原有的 AOF 文件。(执行完毕后，程序就完成了新旧两个 AOF 文件的替换)</li>
+</ul>
+<p>当这个信号处理函数执行完毕之后，主进程就可以继续像往常一样接收命令请求了。在整个 AOF 后台重写过程中，只有最后的“主进程写入命令到AOF缓存”和“对新的 AOF 文件进行改名，覆盖原有的 AOF 文件。”这两个步骤会造成主进程阻塞，在其他时候， AOF 后台重写都不会对主进程造成阻塞，这将 AOF 重写对性能造成的影响降到最低。</p>
+<p>小结：</p>
+<ul>
+<li>AOF 重写的目的是用更小的体积来保存数据库状态，整个重写过程基本上不影响 Redis 主进程处理命令请求；</li>
+<li>AOF 重写其实是一个有歧义的名字，实际上重写工作是针对数据库的当前值来进行的，重写过程中不会读写、也不适用原来的 AOF 文件；</li>
+<li>AOF 可以由用户手动触发，也可以由服务器自动触发。</li>
+</ul>
 <h2 id="5-持久化的取舍和选择"><a href="#5-持久化的取舍和选择" class="headerlink" title="5. 持久化的取舍和选择"></a>5. 持久化的取舍和选择</h2><h4 id="RDB和AOF对比"><a href="#RDB和AOF对比" class="headerlink" title="RDB和AOF对比"></a>RDB和AOF对比</h4><p><img src="http://p376695fl.bkt.clouddn.com/RDB%E5%92%8CAOF%E5%AF%B9%E6%AF%94.png" alt="image"></p>
 <h4 id="RDB最佳策略"><a href="#RDB最佳策略" class="headerlink" title="RDB最佳策略"></a>RDB最佳策略</h4><p>“关”：建议关闭，但是后面主从复制功能是需要他的，因为需要主节点执行<code>dbsave</code>，然后将<code>rdb</code>文件传给从节点。所以说，关不是永久关。</p>
 <p>“集中管理”：虽然<code>RDB</code>很重，但是对于数据备份是很重要的，按照小时或者天集中地进行备份比较好，因为他的文件很小，利于传输。</p>
@@ -360,7 +383,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/4.redis持久化/">4.redis持久化</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:03:56</p>
-        <p><span>最后更新:</span>2018-06-05, 13:33:04</p>
+        <p><span>最后更新:</span>2018-06-19, 15:38:25</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/4.redis持久化/" title="4.redis持久化">http://yoursite.com/2018/06/05/4.redis持久化/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/4.redis持久化/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

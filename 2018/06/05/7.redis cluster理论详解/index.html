@@ -62,7 +62,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/6295367.jpg">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/415428.jpg">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/18-5-12/24688449.jpg">
-<meta property="og:updated_time" content="2018-06-05T05:33:02.241Z">
+<meta property="og:updated_time" content="2018-06-19T09:15:41.922Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="7.redis cluster理论详解">
 <meta name="twitter:description" content="上一篇我们学习了redis sentinel，知道了它是redis高可用的一种实现方案。但是面对要求很高的场景，一台master是一定不能解决问题的，redis 3.0给我们带来了服务端集群方案，解决了这个问题。">
@@ -330,7 +330,7 @@
 <h4 id="5-2-ask重定向"><a href="#5-2-ask重定向" class="headerlink" title="5.2 ask重定向"></a>5.2 ask重定向</h4><p>在扩容缩容的时候，由于需要遍历这个节点上的所有的<code>key</code>然后进行迁移，是比较慢的，对客户端是一个挑战。因为假设一个场景，客户端访问某个key，节点告诉客户端这个<code>key</code>在源节点，当我们再去源节点访问的时候，却发现<code>key</code>已经迁移到目标节点。</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-11/35563321.jpg" alt="image"></p>
 <h4 id="5-3-moved重定向和ask重定向对比"><a href="#5-3-moved重定向和ask重定向对比" class="headerlink" title="5.3 moved重定向和ask重定向对比"></a>5.3 moved重定向和ask重定向对比</h4><ul>
-<li>两者都是客户端单重定向</li>
+<li>两者都是客户端的重定向</li>
 <li>moved：槽已经确定转移</li>
 <li>ask:槽还在迁移中</li>
 </ul>
@@ -339,11 +339,11 @@
 <h2 id="6-smart客户端"><a href="#6-smart客户端" class="headerlink" title="6. smart客户端"></a>6. smart客户端</h2><h4 id="6-1-追求目标"><a href="#6-1-追求目标" class="headerlink" title="6.1 追求目标"></a>6.1 追求目标</h4><p>追求性能，不会使用代理模式，而是直连对应节点。需要对<code>moved</code>异常和ask异常做兼容。也就是说，需要有一个这个语言对应的客户端来高效实现查找等操作。</p>
 <h4 id="6-2-smart原理"><a href="#6-2-smart原理" class="headerlink" title="6.2 smart原理"></a>6.2 smart原理</h4><ul>
 <li>从集群中选一个可运行节点，使用<code>cluster slots</code>初始化槽和节点映射</li>
-<li>将<code>cluster cluster</code>的结果映射到本地，为每个节点创建<code>JedisPool</code></li>
+<li>将<code>slot</code>与<code>node</code>节点的结果映射到本地，为每个节点创建<code>JedisPool</code></li>
 <li>准备执行命令</li>
 </ul>
 <p>第一步中将<code>slot</code>与<code>node</code>节点的对应关系放在了<code>map</code>中，形成一个映射关系；<code>key</code>是通过<code>CRC16</code>算法再取余得到<code>slot</code>，所以<code>key</code>与<code>slot</code>的映射关系也是确定的。我们就可以直接发送命令。只要后面集群没有发生数据迁移，那么就会连接成功。但是如果在连接的时候出现了连接出错，说明这个<code>key</code>已经迁移到其他的<code>node</code>上了。如果发现<code>key</code>不停地迁移，超过5次就报错。</p>
-<p>在发生<code>move</code>异常的时候，则需要刷新缓存，即一开始维护的<code>map</code>。<br><img src="http://p376695fl.bkt.clouddn.com/18-5-12/49065180.jpg" alt="image"></p>
+<p>在发生<code>moved</code>异常的时候，则需要刷新缓存，即一开始维护的<code>map</code>。<br><img src="http://p376695fl.bkt.clouddn.com/18-5-12/49065180.jpg" alt="image"></p>
 <p>有一个情况比较全的图：</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/16371398.jpg" alt="image"></p>
 <p><code>java redis cluster</code>客户端：<code>jedisCluster</code>基本使用–伪代码</p>
@@ -357,7 +357,7 @@
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/68192871.jpg" alt="image"></p>
 <h4 id="6-4-批量操作"><a href="#6-4-批量操作" class="headerlink" title="6.4 批量操作"></a>6.4 批量操作</h4><p><strong><code>mget</code>,<code>mset</code>必须在一个槽</strong>。这个条件比较苛刻，一般是不能保证的，那么如何实现批量的操作呢？</p>
 <blockquote>
-<p><code>Redis Cluster</code>的行为和<code>Redis</code> 的单节点不同，甚至和一个<code>Sentinel</code> 监控的主从模式也不一样。主要原因是集群自动分片，将一个<code>key</code> 映射到16384个槽中的一个，这些槽分布在多个节点上。因此操作多个<code>key</code> 的命令必须保证所有的<code>key</code> 都映射到同一个槽上，避免跨槽执行错误。更进一步说，今后一个单独的集群节点，只服务于一组专用的<code>keys</code>，请求一个命令到一个<code>Server</code>，只能得到该<code>Server</code> 上拥有<code>keys</code> 的对应结果。一个非常简单的例子是执行<code>KEYS</code>命令，当发布该命令到集群环境中的某个节点是，只能得到该节点上拥有的<code>keys</code>，而不是集群中所有的<code>keys</code>。所以要得到集群中所有的<code>keys</code>，必须从集群的所有主节点上获取所有的<code>keys</code>。</p>
+<p><code>Redis Cluster</code>的行为和<code>Redis</code> 的单节点不同，甚至和一个<code>Sentinel</code> 监控的主从模式也不一样。主要原因是集群自动分片，将一个<code>key</code> 映射到16384个槽中的一个，这些槽分布在多个节点上。因此操作多个<code>key</code> 的命令必须保证所有的<code>key</code> 都映射到同一个槽上，避免跨槽执行错误。更进一步说，今后一个单独的集群节点，只服务于一组专用的<code>keys</code>，请求一个命令到一个<code>Server</code>，只能得到该<code>Server</code> 上拥有<code>keys</code> 的对应结果。一个非常简单的例子是执行<code>KEYS</code>命令，当发布该命令到集群环境中的某个节点是时，只能得到该节点上拥有的<code>keys</code>，而不是集群中所有的<code>keys</code>。所以要得到集群中所有的<code>keys</code>，必须从集群的所有主节点上获取所有的<code>keys</code>。</p>
 </blockquote>
 <p>对于分散在<code>redis</code>集群中不同节点的数据，我们如何比较高效地批量获取数据呢？？？？</p>
 <ol>
@@ -387,7 +387,7 @@
 </ol>
 <p>方案三比较复杂，一般不用；方案四可能会出现数据倾斜，也不用。方案一在key小的时候可以用；方案二相对来说有一点优势；</p>
 <p><img src="http://p376695fl.bkt.clouddn.com/18-5-12/2180496.jpg" alt="image"></p>
-<p>为什么说是一点优势呢？<code>pipeline</code>批量处理不应该比单挑处理好很多吗？</p>
+<p>为什么说是一点优势呢？<code>pipeline</code>批量处理不应该比串行处理好很多吗？</p>
 <ul>
 <li><a href="http://xiezefan.me/2015/12/13/redis_cluster_research_2/" target="_blank" rel="noopener">http://xiezefan.me/2015/12/13/redis_cluster_research_2/</a></li>
 <li><a href="http://trumandu.github.io/2016/05/09/RedisCluster%E6%9E%84%E5%BB%BA%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%8E%A2%E8%AE%A8/" target="_blank" rel="noopener">http://trumandu.github.io/2016/05/09/RedisCluster%E6%9E%84%E5%BB%BA%E6%89%B9%E9%87%8F%E6%93%8D%E4%BD%9C%E6%8E%A2%E8%AE%A8/</a></li>
@@ -503,7 +503,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:06:05</p>
-        <p><span>最后更新:</span>2018-06-05, 13:33:02</p>
+        <p><span>最后更新:</span>2018-06-19, 17:15:41</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/7.redis cluster理论详解/" title="7.redis cluster理论详解">http://yoursite.com/2018/06/05/7.redis cluster理论详解/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/7.redis cluster理论详解/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

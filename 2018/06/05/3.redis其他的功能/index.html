@@ -36,7 +36,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglogdemo.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglogdemo2.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglog%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97.png">
-<meta property="og:updated_time" content="2018-06-05T05:35:11.823Z">
+<meta property="og:updated_time" content="2018-06-19T06:59:44.559Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3.redis其他的功能">
 <meta name="twitter:description" content="介绍redis其他重要功能。">
@@ -296,9 +296,13 @@
 <p><code>pipeline</code>非原子命令。</p>
 </blockquote>
 <p><img src="http://p376695fl.bkt.clouddn.com/pipeline%E9%9D%9E%E5%8E%9F%E5%AD%90%E5%91%BD%E4%BB%A4.png" alt="image"></p>
+<p>当某个命令的执行需要依赖前一个命令的返回结果时，无法使用<code>pipeline</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mset a “a1” b “b” c “c1” mget a b c</span><br></pre></td></tr></table></figure>
+<p><code>mget</code>和<code>mset</code>命令也是为了减少网络连接和传输时间所设置的，其本质和<code>pipeline</code>的应用区别不大，但是在特定场景下只能用<code>pipeline</code>实现，例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">get a</span><br><span class="line">set b ‘1’</span><br><span class="line">incr b</span><br></pre></td></tr></table></figure></p>
+<p><code>pipeline</code>适合执行这种连续，且无相关性的命令。</p>
 <h4 id="2-2-一个demo"><a href="#2-2-一个demo" class="headerlink" title="2.2 一个demo"></a>2.2 一个demo</h4><p>搭建一个<code>quickstart</code>的<code>maven</code>工程。过程略。</p>
 <p>引入依赖：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;redis.clients&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;jedis&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.9.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>直接再单元测试中进行测试：普通的直接<code>hset</code> 10000条数据：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">"127.0.0.1"</span>,<span class="number">6379</span>);</span><br><span class="line">    <span class="keyword">long</span> before = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++)&#123;</span><br><span class="line">        jedis.hset(<span class="string">"hashkey"</span>+i,<span class="string">"filed"</span>+i,<span class="string">"value"</span>+i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">long</span> after = System.currentTimeMillis();</span><br><span class="line">    System.out.println(<span class="string">"一共耗时: "</span>+(after-before)+<span class="string">"ms"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行结果：</p>
@@ -370,7 +374,7 @@
 <p>不能拿到单条数据</p>
 </blockquote>
 <h2 id="六、geo"><a href="#六、geo" class="headerlink" title="六、geo"></a>六、geo</h2><p>存储经纬度、计算两地距离、范围计算等。</p>
-<p>提到<code>LBS(Location Based Service)</code>，基于位置的服务。我你今想起<code>Mongodb</code>的<code>GEO</code>实现地理坐标查询等功能。</p>
+<p>提到<code>LBS(Location Based Service)</code>，基于位置的服务。我立即想起<code>Mongodb</code>的<code>GEO</code>实现地理坐标查询等功能。</p>
 <p><code>mongodb</code>最大的特点是灵活，因为其数据是以<code>json</code>的格式存储，所以字段随时可以增加或减少；<code>Redis</code>的特点是快，适合单一的，简单的，大量数据的存储；<code>HBase</code>我没有做深入研究，它的特点是大，适合做离线缓存。在处理社交这种关系复杂的数据存储时，依然还是需要用<code>mysql</code>这种关系型数据库，<code>nosql</code>并不能完全替代。</p>
 
       
@@ -383,7 +387,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:03:18</p>
-        <p><span>最后更新:</span>2018-06-05, 13:35:11</p>
+        <p><span>最后更新:</span>2018-06-19, 14:59:44</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/3.redis其他的功能/" title="3.redis其他的功能">http://yoursite.com/2018/06/05/3.redis其他的功能/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/3.redis其他的功能/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>

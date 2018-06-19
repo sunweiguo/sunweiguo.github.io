@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%BA%8C%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%AE%9A%E6%97%B6.png">
-<meta property="og:updated_time" content="2018-06-05T05:35:07.669Z">
+<meta property="og:updated_time" content="2018-06-19T08:10:09.127Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="6.redis sentinel实现高可用读写分离">
 <meta name="twitter:description" content="介绍redis sentinel实现高可用读写分离。">
@@ -255,7 +255,7 @@
 <ul>
 <li>多个<code>sentinel</code>发现并确认<code>master</code>有问题</li>
 <li>选举出一个<code>sentinel</code>作为领导</li>
-<li>选出一个<code>slave</code>称为新的<code>master</code>的<code>slave</code></li>
+<li>选出一个可以成为新的<code>master</code>的<code>slave</code></li>
 <li>通知其他的<code>slave</code>称为新的<code>master</code>的<code>slave</code></li>
 <li>通知客户端主从变化</li>
 <li>等待老的<code>master</code>复活称为新的<code>master</code>的<code>slave</code></li>
@@ -339,7 +339,7 @@
 <p>选举：通过<code>sentinel is-master-down-by-addr</code>命令都希望成为领导者</p>
 <ul>
 <li>每个做主观下线的<code>sentinel</code>节点向其他<code>sentinel</code>节点发送命令，要求将它设置为领导者</li>
-<li>收到命令的<code>sentinel</code>节点如果没有同意通过其他<code>semtinel</code>节点发送的命令，那么将同意该请求，否则拒绝</li>
+<li>收到命令的<code>sentinel</code>节点如果还没有同意过其他<code>semtinel</code>节点发送的命令，那么将同意该请求，否则拒绝</li>
 <li>如果该<code>sentinel</code>节点发现自己的票数已经超过<code>sentinel</code>集合半数并且超过<code>quorum</code>，那么它将成为领导者。</li>
 <li>如果此过程中多个<code>sentinel</code>节点成为了领导者，那么将等待一段时间重新进行选举</li>
 </ul>
@@ -352,7 +352,7 @@
 <p>那么，如何选择“合适”的<code>slave</code>节点呢？</p>
 <ul>
 <li>选择<code>slave-priority</code>(<code>slave</code>节点优先级)最高的<code>slave</code>节点，如果存在则返回，不存在则继续。</li>
-<li>选择复制偏移量对打的<code>slave</code>节点(复制得最完整)，如果存在则返回，不存在则继续</li>
+<li>选择复制偏移量最大的<code>slave</code>节点(复制得最完整)，如果存在则返回，不存在则继续</li>
 <li>选择<code>run_id</code>最小的<code>slave</code>节点(最早的节点)</li>
 </ul>
 <h2 id="8-节点下线"><a href="#8-节点下线" class="headerlink" title="8. 节点下线"></a>8. 节点下线</h2><p>主节点下线：<code>sentinel failover &lt;masterName&gt;</code></p>
@@ -400,7 +400,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:05:28</p>
-        <p><span>最后更新:</span>2018-06-05, 13:35:07</p>
+        <p><span>最后更新:</span>2018-06-19, 16:10:09</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/6.redis sentinel实现高可用读写分离/" title="6.redis sentinel实现高可用读写分离">http://yoursite.com/2018/06/05/6.redis sentinel实现高可用读写分离/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/6.redis sentinel实现高可用读写分离/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
