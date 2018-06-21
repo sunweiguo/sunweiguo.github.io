@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/proxyFactoryBean">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/ReflectiveMethodInvocation">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/aop%E6%8B%A6%E6%88%AA%E5%99%A8">
-<meta property="og:updated_time" content="2018-06-21T13:57:50.568Z">
+<meta property="og:updated_time" content="2018-06-21T14:02:07.475Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="28.Spring AOP的实现原理">
 <meta name="twitter:description" content="详细探讨spring aop的实现原理。">
@@ -332,10 +332,8 @@
 <h4 id="6-其他"><a href="#6-其他" class="headerlink" title="6.其他"></a>6.其他</h4><ul>
 <li>至于<code>Adivce</code>如何包裹为一个 <code>MethodInterceptor</code>的细节就没有说，如果要继续了解，可以看<a href="https://www.jianshu.com/p/16a2ad9f4fbc" target="_blank" rel="noopener">Spring AOP实现原理</a>中所介绍的。</li>
 <li>最后关于<code>AdivseChain</code>如何按照一定逻辑执行，归纳起来就是用了责任链模式。</li>
-<li><p>拦截器是AOP的一个实现：Java中的拦截器是基于Java反射机制实现的，更准确的划分，应该是基于JDK实现的动态代理。它依赖于具体的接口，在运行期间动态生成字节码。</p>
-</li>
-<li><p>整理自：<a href="https://blog.csdn.net/luanlouis/article/details/51155821" target="_blank" rel="noopener">https://blog.csdn.net/luanlouis/article/details/51155821</a></p>
-</li>
+<li>拦截器是AOP的一个实现：Java中的拦截器是基于Java反射机制实现的，更准确的划分，应该是基于JDK实现的动态代理。它依赖于具体的接口，在运行期间动态生成字节码。</li>
+<li>整理自：<a href="https://blog.csdn.net/luanlouis/article/details/51155821" target="_blank" rel="noopener">https://blog.csdn.net/luanlouis/article/details/51155821</a></li>
 <li>参考了：<a href="https://qiankunli.github.io/2015/12/28/spring-aop.html" target="_blank" rel="noopener">https://qiankunli.github.io/2015/12/28/spring-aop.html</a></li>
 </ul>
 
@@ -349,7 +347,7 @@
         <p><span>本文标题:</span><a href="/2018/06/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-21, 21:48:28</p>
-        <p><span>最后更新:</span>2018-06-21, 21:57:50</p>
+        <p><span>最后更新:</span>2018-06-21, 22:02:07</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/21/28.Spring AOP的实现原理/" title="28.Spring AOP的实现原理">http://yoursite.com/2018/06/21/28.Spring AOP的实现原理/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/21/28.Spring AOP的实现原理/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
