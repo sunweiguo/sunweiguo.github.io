@@ -196,11 +196,11 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-HTTP" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-六、Class文件中的常量池" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/06/HTTP/" class="article-date">
-      <time datetime="2018-06-06T03:58:23.036Z" itemprop="datePublished">2018-06-06</time>
+      <a href="/2018/06/06/六、Class文件中的常量池/" class="article-date">
+      <time datetime="2018-06-06T09:04:43.502Z" itemprop="datePublished">2018-06-06</time>
 </a>
 
 
@@ -215,7 +215,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/06/HTTP/">HTTP</a>
+      <a class="article-title" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a>
     </h1>
   
 
@@ -226,7 +226,527 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <p>HTTP协议是每一个做web层开发者必须理解的协议。<br>
+              <p>上一节<code>Class</code>类文件结构大致地介绍了<code>class</code>文件的组织结构，接下来，我们将深入每一个结构，来详细了解它们。这一章节呢，我们就来扒一扒 <code>class</code>文件中非常重要 的一个数据区域——常量池。它在JVM虚拟机中扮演了非常重要的地位。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/六、Class文件中的常量池/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-五、Class类文件结构" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/五、Class类文件结构/" class="article-date">
+      <time datetime="2018-06-06T08:51:51.237Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>总体概览一下Class文件是什么以及有什么。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/五、Class类文件结构/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-四、内存分配和回收策略" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/四、内存分配和回收策略/" class="article-date">
+      <time datetime="2018-06-06T08:36:11.375Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>这里详细探讨java虚拟机内存分配和回收策略。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/四、内存分配和回收策略/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-三、七种垃圾回收器" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/三、七种垃圾回收器/" class="article-date">
+      <time datetime="2018-06-06T08:29:44.431Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>前人已经帮我们设计了很多的垃圾回收器，我们来了解了解吧！<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/三、七种垃圾回收器/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-二、垃圾回收" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/二、垃圾回收/" class="article-date">
+      <time datetime="2018-06-06T08:29:28.407Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>虚拟机本身为我们处理了很多事情，其中最主要的一件事就是进行垃圾的自动回收，我们先来看看垃圾回收的基本原理。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/二、垃圾回收/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-一、java内存区域" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/一、java内存区域/" class="article-date">
+      <time datetime="2018-06-06T08:22:33.446Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/一、java内存区域/">一、java内存区域</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>学习虚拟机，第一步是搞清楚虚拟机的内存区域各是什么以及是什么作用。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/一、java内存区域/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-随笔1" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/随笔1/" class="article-date">
+      <time datetime="2018-06-06T07:36:32.572Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/随笔1/">我们的重量</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>今天是2018/6/6号，一个吉祥的日子，记录此时的重量。</p>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/随笔/">随笔</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/随笔1/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Java虚拟机总概览" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/Java虚拟机总概览/" class="article-date">
+      <time datetime="2018-06-06T07:30:21.894Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>从整体把握虚拟机重要知识点，后面将详细描述虚拟机中的细节。<br>
+          
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+    </div>
+
+      
+        <p class="article-more-link">
+          <a href="/2018/06/06/Java虚拟机总概览/#more">more >></a>
+        </p>
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
+    <article id="post-Socket基础" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/06/Socket基础/" class="article-date">
+      <time datetime="2018-06-06T06:23:26.354Z" itemprop="datePublished">2018-06-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/06/Socket基础/">Socket基础</a>
+    </h1>
+  
+
+        
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+              <p>学习I/O几种常见模型以及select、poll、epoll三个关键字。<br>
           
       
     </div>
@@ -242,7 +762,7 @@
 
       
         <p class="article-more-link">
-          <a href="/2018/06/06/HTTP/#more">more >></a>
+          <a href="/2018/06/06/Socket基础/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -261,11 +781,11 @@
 
 
   
-    <article id="post-Git" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-maven" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/06/Git/" class="article-date">
-      <time datetime="2018-06-06T03:56:49.591Z" itemprop="datePublished">2018-06-06</time>
+      <a href="/2018/06/06/maven/" class="article-date">
+      <time datetime="2018-06-06T05:37:14.570Z" itemprop="datePublished">2018-06-06</time>
 </a>
 
 
@@ -280,7 +800,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/06/Git/">Git</a>
+      <a class="article-title" href="/2018/06/06/maven/">maven</a>
     </h1>
   
 
@@ -291,7 +811,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-              <p>Git作为分布式代码托管工具，是每一个IT人必备工具。<br>
+              <p>一直在用maven构建web项目，这里把其中的一些面试点记录记录。<br>
           
       
     </div>
@@ -307,547 +827,7 @@
 
       
         <p class="article-more-link">
-          <a href="/2018/06/06/Git/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-十二、Java并发总览" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/十二、Java并发总览/" class="article-date">
-      <time datetime="2018-06-05T13:27:28.565Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>从今天开始，开始学习java并发编程的基础知识。本篇介绍java并发编程中的几个关键字以及如何使用。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/十二、Java并发总览/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-十一、深入分析ThreadLocal内存泄漏问题" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/" class="article-date">
-      <time datetime="2018-06-05T12:40:55.161Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>ThreadLocal是面试重灾区，分为两篇来讲解其中的用法和原理。这是第二篇。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-十、ThreadLocal详解" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/十、ThreadLocal详解/" class="article-date">
-      <time datetime="2018-06-05T12:40:10.289Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>ThreadLocal是面试重灾区，分为两篇来讲解其中的用法和原理。这是第一篇。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/十、ThreadLocal详解/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-9.缓存设计与优化" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/9.缓存设计与优化/" class="article-date">
-      <time datetime="2018-06-05T03:07:32.675Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>介绍redis缓存。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/9.缓存设计与优化/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-8.redis cluster实践--淘淘商城的某一节" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/" class="article-date">
-      <time datetime="2018-06-05T03:06:55.008Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>介绍redis cluster实践。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-7.redis cluster理论详解" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/7.redis cluster理论详解/" class="article-date">
-      <time datetime="2018-06-05T03:06:05.414Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>上一篇我们学习了<code>redis sentinel</code>，知道了它是<code>redis</code>高可用的一种实现方案。但是面对要求很高的场景，一台<code>master</code>是一定不能解决问题的，<code>redis 3.0</code>给我们带来了服务端集群方案，解决了这个问题。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/7.redis cluster理论详解/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-6.redis sentinel实现高可用读写分离" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/6.redis sentinel实现高可用读写分离/" class="article-date">
-      <time datetime="2018-06-05T03:05:28.140Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>介绍redis sentinel实现高可用读写分离。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/6.redis sentinel实现高可用读写分离/#more">more >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-5.redis主从复制" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/06/05/5.redis主从复制/" class="article-date">
-      <time datetime="2018-06-05T03:04:53.471Z" itemprop="datePublished">2018-06-05</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a>
-    </h1>
-  
-
-        
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>介绍redis主从复制功能实现原理。<br>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-    </div>
-
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="/2018/06/05/5.redis主从复制/#more">more >></a>
+          <a href="/2018/06/06/maven/#more">more >></a>
         </p>
       
       <div class="clearfix"></div>
@@ -868,7 +848,7 @@
   
   
     <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
+      <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
     </nav>
   
 </div>
