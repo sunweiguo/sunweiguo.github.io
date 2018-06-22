@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="redis缓存更新策略学习。">
+<meta name="keywords" content="redis学习">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.缓存更新">
+<meta property="og:url" content="http://yoursite.com/2018/06/22/10.缓存更新/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="redis缓存更新策略学习。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-22T04:04:41.343Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="10.缓存更新">
+<meta name="twitter:description" content="redis缓存更新策略学习。">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>10.缓存更新 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/resume/">简历</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/resume/">简历</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-10.缓存更新" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/06/22/10.缓存更新/" class="article-date">
+      <time datetime="2018-06-22T04:04:31.994Z" itemprop="datePublished">2018-06-22</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      10.缓存更新
+    </h1>
+  
+
+        
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis学习/">redis学习</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>redis缓存更新策略学习。<br><a id="more"></a></p>
+<p>更新缓存的的<code>Design Pattern</code>有四种：<code>Cache aside</code>, <code>Read through</code>, <code>Write through</code>, <code>Write behind caching</code>，我们下面一一来看一下这四种<code>Pattern</code>。这里，我们先不讨论更新缓存和更新数据这两个事是一个事务的事，或是会有失败的可能，<strong>我们先假设更新数据库和更新缓存都可以成功的情况（我们先把成功的代码逻辑先写对）</strong>。</p>
+<p>先来看看缓存可能存在的一些问题，目的是突出缓存使用策略选择的重要性。</p>
+<h2 id="1-缓存穿透"><a href="#1-缓存穿透" class="headerlink" title="1.缓存穿透"></a>1.缓存穿透</h2><p>缓存穿透是说访问一个缓存中没有的数据，但是这个数据数据库中也不存在。</p>
+<p>解决方案是：</p>
+<ul>
+<li>缓存空对象。如果缓存未命中，而数据库中也没有这个对象，则可以缓存一个空对象到缓存。如果使用<code>Redis</code>，这种<code>key</code>需设置一个较短的时间，以防内存浪费。</li>
+<li>缓存预测。预测<code>key</code>是否存在。如果缓存的量不大可以使用<code>hash</code>来判断，如果量大可以使用布隆过滤器来做判断。采用布隆，将所有可能存在的数据哈希到一个足够大的<code>BitSet</code>中，不存在的数据将会被拦截掉，从而避免了对存储系统的查询压力。</li>
+</ul>
+<h2 id="2-缓存并发"><a href="#2-缓存并发" class="headerlink" title="2.缓存并发"></a>2.缓存并发</h2><p>多个客户端同时访问一个没有在<code>cache</code>中的数据，这时每个客户端都会执行从<code>DB</code>加载数据<code>set</code>到缓存，就会造成缓存并发。</p>
+<ul>
+<li>缓存预热。提前把所有预期的热数据加到缓存。定位热数据还是比较复杂的事情，需要根据自己的服务访问情况去评估。这个方案只能减轻缓存并发的发生次数不能全部抵制。</li>
+<li>缓存加锁。 如果多个客户端访问不存在的缓存时，在执行加载数据并<code>set</code>缓存这个逻辑之前先加锁，只能让一个客户端执行这段逻辑。</li>
+</ul>
+<h2 id="3-缓存雪崩"><a href="#3-缓存雪崩" class="headerlink" title="3.缓存雪崩"></a>3.缓存雪崩</h2><p>缓存雪崩是缓存服务暂时不能提供服务，导致所有的请求都直接访问DB。</p>
+<p>解决方案：</p>
+<ul>
+<li>构建高可用的缓存系统。目前常用的缓存系统<code>Redis</code>和<code>Memcache</code>都支持高可用的部署方式，所以部署的时候不防先考虑是否要以高可用的集群方式部署。</li>
+<li>限流。<code>Netflix</code>的<code>Hystrix</code>是非常不错的工具，在用缓存时不妨搭配它来使用。</li>
+</ul>
+<h2 id="4-Cache-Aside-Pattern"><a href="#4-Cache-Aside-Pattern" class="headerlink" title="4.Cache Aside Pattern"></a>4.Cache Aside Pattern</h2><p><strong>一种错误的做法是</strong>：先删除缓存，然后再更新数据库，而后续的操作会把数据再装载的缓存中。试想，两个并发操作，一个是更新操作，另一个是查询操作，更新操作删除缓存后，查询操作没有命中缓存，先把老数据读出来后放到缓存中，然后更新操作更新了数据库。于是，在缓存中的数据还是老的数据，导致缓存中的数据是脏的，直到这个缓存失效为止。</p>
+<p><code>Cache Aside Pattern</code>是最常用最常用的<code>pattern</code>了。其具体逻辑如下：</p>
+<ul>
+<li>失效：应用程序先从<code>cache</code>取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。</li>
+<li>命中：应用程序从<code>cache</code>中取数据，取到后返回。</li>
+<li>更新：先把数据存到数据库中，成功后，再让缓存失效。</li>
+</ul>
+<p><strong>注意，我们的更新是先更新数据库，成功后，让缓存失效</strong>。那么，这种方式是否可以没有文章前面提到过的那个问题呢？</p>
+<p>一个是查询操作，一个是更新操作的并发，首先，没有了删除<code>cache</code>数据的操作了，而是先更新了数据库中的数据，此时，缓存依然有效，所以，并发的查询操作拿的是没有更新的数据，但是，更新操作马上让缓存的失效了，后续的查询操作再把数据从数据库中拉出来。<strong>而不会像文章开头的那个逻辑产生的问题，后续的查询操作一直都在取老的数据</strong>。</p>
+<p><strong>但是还有存在问题的</strong>。比如，一个是读操作，但是没有命中缓存，然后就到数据库中取数据，此时来了一个写操作，写完数据库后，让缓存失效，然后，之前的那个读操作再把老的数据放进去，所以，会造成脏数据。不过，实际上出现的概率可能非常低.</p>
+<p>所以，这也就是<code>Quora</code>上的那个答案里说的，要么通过<code>2PC</code>或是<code>Paxos</code>协议保证一致性，要么就是拼命的降低并发时脏数据的概率，而<code>Facebook</code>使用了这个降低概率的玩法，因为<code>2PC</code>太慢，而<code>Paxos</code>太复杂。当然，最好还是为缓存设置上过期时间。</p>
+<h2 id="5-Read-Write-Through-Pattern"><a href="#5-Read-Write-Through-Pattern" class="headerlink" title="5.Read/Write Through Pattern"></a>5.Read/Write Through Pattern</h2><ul>
+<li><code>Read Through</code>：读取数据的时候如果当前缓存中没有数据，惯常的操作都是应用程序去<code>DB</code>加载数据，然后加入到缓存中。<code>Read Through</code>与之不同的是我们不需要在应用程序自己加载数据了，缓存层会帮忙做件事。</li>
+<li><code>Write Through</code>：更新数据的时候，如果命中缓存，则先更新缓存然后缓存在负责把数据更新到数据库；如果没有命中缓存则直接更新数据库。</li>
+</ul>
+<p>这种方式缓存层直接屏蔽了DB，应用程序只需要更缓存打交道。优点是应用逻辑简单了，而且更高效了；缺点是缓存层的实现相对复杂一些。</p>
+<h2 id="6-Write-Back-Pattern"><a href="#6-Write-Back-Pattern" class="headerlink" title="6.Write Back Pattern"></a>6.Write Back Pattern</h2><p><code>Write Back</code>套路，一句说就是，在更新数据的时候，只更新缓存，不更新数据库，而我们的缓存会异步地批量更新数据库。这个设计的好处就是让数据的<code>I/O</code>操作飞快无比（因为直接操作内存嘛 ），因为异步，<code>write backg</code>还可以合并对同一个数据的多次操作，所以性能的提高是相当可观的。</p>
+<p>但是，其带来的问题是，数据不是强一致性的，而且可能会丢失（我们知道<code>Unix/Linux</code>非正常关机会导致数据丢失，就是因为这个事）。在软件设计上，我们基本上不可能做出一个没有缺陷的设计，就像算法设计中的时间换空间，空间换时间一个道理，有时候，强一致性和高性能，高可用和高性性是有冲突的。</p>
+<p>另外，<code>Write Back</code>实现逻辑比较复杂，因为他需要<code>track</code>有哪数据是被更新了的，需要刷到持久层上。操作系统的<code>write back</code>会在仅当这个<code>cache</code>需要失效的时候，才会被真正持久起来，比如，内存不够了，或是进程退出了等情况，这又叫<code>lazy write</code>。</p>
+<h2 id="7-实际使用的一些策略"><a href="#7-实际使用的一些策略" class="headerlink" title="7.实际使用的一些策略"></a>7.实际使用的一些策略</h2><h4 id="业务方（调用者）更新"><a href="#业务方（调用者）更新" class="headerlink" title="业务方（调用者）更新"></a>业务方（调用者）更新</h4><p>传统上，更新缓存都是由业务方来做，也就是由调用者负责更新DB和缓存。</p>
+<h4 id="DB中间件监听DB变化，更新缓存"><a href="#DB中间件监听DB变化，更新缓存" class="headerlink" title="DB中间件监听DB变化，更新缓存"></a>DB中间件监听DB变化，更新缓存</h4><p>现在有种新的办法就是利用<code>DB</code>中间件监听<code>DB</code>变化（比如阿里的<code>Canal</code>中间件，点评的<code>Puma</code>），从而对缓存进行更新。<br>这种办法的一个好处就是：把缓存的更新逻辑，和业务逻辑解藕。业务只更新DB，缓存的更新被放在另外一个专门的系统里面。</p>
+<h2 id="8-总结"><a href="#8-总结" class="headerlink" title="8.总结"></a>8.总结</h2><p>一句话，无论谁先谁后，只要更新缓存和更新DB不是原子的，就可能导致不一致。</p>
+<p>总之，只是从实际业务来讲，一般缓存也都是保持“最终一致性“，而不是和<code>DB</code>的强一致性。</p>
+<p><strong>并且一般建议先更新DB，再更新缓存，优先保证DB数据正确。</strong></p>
+<h2 id="9-一致性问题"><a href="#9-一致性问题" class="headerlink" title="9.一致性问题"></a>9.一致性问题</h2><p>上面，我们没有考虑缓存（<code>Cache</code>）和持久层（<code>Repository</code>）的整体事务的问题。比如，更新<code>Cache</code>成功，更新数据库失败了怎么吗？或是反过来。关于这个事，如果你需要强一致性，你需要使用“两阶段提交协议”——<code>prepare</code>, <code>commit/rollback</code>.后续再探讨。</p>
+<ul>
+<li>参考1：<a href="https://coolshell.cn/articles/17416.html" target="_blank" rel="noopener">https://coolshell.cn/articles/17416.html</a></li>
+<li>参考2：<a href="https://www.jianshu.com/p/3c111e4719b8" target="_blank" rel="noopener">https://www.jianshu.com/p/3c111e4719b8</a></li>
+<li>参考3：<a href="https://blog.csdn.net/chunlongyu/article/details/53384933" target="_blank" rel="noopener">https://blog.csdn.net/chunlongyu/article/details/53384933</a></li>
+</ul>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/06/22/10.缓存更新/">10.缓存更新</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-06-22, 12:04:31</p>
+        <p><span>最后更新:</span>2018-06-22, 12:04:41</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/22/10.缓存更新/" title="10.缓存更新">http://yoursite.com/2018/06/22/10.缓存更新/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/22/10.缓存更新/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/06/22/1.设计模式汇总/">
+                    1.设计模式汇总
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-缓存穿透"><span class="toc-number">1.</span> <span class="toc-text">1.缓存穿透</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-缓存并发"><span class="toc-number">2.</span> <span class="toc-text">2.缓存并发</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-缓存雪崩"><span class="toc-number">3.</span> <span class="toc-text">3.缓存雪崩</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-Cache-Aside-Pattern"><span class="toc-number">4.</span> <span class="toc-text">4.Cache Aside Pattern</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-Read-Write-Through-Pattern"><span class="toc-number">5.</span> <span class="toc-text">5.Read/Write Through Pattern</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Write-Back-Pattern"><span class="toc-number">6.</span> <span class="toc-text">6.Write Back Pattern</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-实际使用的一些策略"><span class="toc-number">7.</span> <span class="toc-text">7.实际使用的一些策略</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#业务方（调用者）更新"><span class="toc-number">7.0.1.</span> <span class="toc-text">业务方（调用者）更新</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#DB中间件监听DB变化，更新缓存"><span class="toc-number">7.0.2.</span> <span class="toc-text">DB中间件监听DB变化，更新缓存</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-总结"><span class="toc-number">8.</span> <span class="toc-text">8.总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-一致性问题"><span class="toc-number">9.</span> <span class="toc-text">9.一致性问题</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"10.缓存更新　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <!--PC和WAP自适应版-->
+<div id="SOHUCS"></div> 
+<script type="text/javascript"> 
+(function(){ 
+var appid = 'cytEFcz7H'; 
+var conf = 'prod_cb84c9187d5b3e228aa6cf3a7e32be61'; 
+var width = window.innerWidth || document.documentElement.clientWidth; 
+if (width < 960) { 
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/06/22/1.设计模式汇总/" title="下一篇: 1.设计模式汇总">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/22/10.缓存更新/">10.缓存更新</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/22/1.设计模式汇总/">1.设计模式汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/27.自己动手写springIOC(3)/">27.自己动手写springIOC(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/26.自己动手写springIOC(2)/">26.自己动手写springIOC(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/25.自己动手写springIOC(1)/">25.自己动手写springIOC(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/24.SpringAop--责任链模式/">24.SpringAop--责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/23.SpringAop--动态代理模式/">23.SpringAop--动态代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/22.SpringAop--基本使用和切点表达式/">22.SpringAop--基本使用和切点表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/21.spring aop基本使用/">21.spring aop基本使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/20.@Profile环境搭建和根据环境注册bean/">20.@Profile环境搭建和根据环境注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/19.Aware注入Spring底层组件及原理/">19.Aware注入Spring底层组件及原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/18.方法、构造器位置的自动装配/">18.方法、构造器位置的自动装配</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/17.@Resource & @Inject/">17.@Resource & @Inject</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/16.@Autowired & @Qualifier & @Primary/">16.@Autowired & @Qualifier & @Primary</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/15.@PropertySource加载外部配置文件/">15.@PropertySource加载外部配置文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/14.@Value赋值/">14.@Value赋值</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/13.BeanPostProcessor-后置处理器/">13.BeanPostProcessor-后置处理器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/12.@PostConstruct&@PreDestory/">12.@PostConstruct&@PreDestory</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/11.InitializingBean和DisposableBean/">11.InitializingBean和DisposableBean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/10.@Bean指定初始化和销毁方法/">10.@Bean指定初始化和销毁方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/9.组件注册总结/">9.组件注册总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/8.使用FactoryBean注册组件/">8.使用FactoryBean注册组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/7.@Import/">7.@Import</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/6.@Conditional-按照条件注册bean/">6.@Conditional-按照条件注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/5.@lazy-bean-懒加载/">5.@lazy-bean-懒加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/4.@Scope-设置组件作用域/">4.@Scope-设置组件作用域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/3.自定义TypeFilter指定过滤规则/">3.自定义TypeFilter制定过滤规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/2.@ComponentScan自动扫描组件以及扫描规则/">2.@ComponentScan自动扫描组件以及扫描规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/21/1.组件注册-@Configuration & @Bean/">1.组件注册-@Configuration & @Bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/20/1.深入Web请求过程/">1.深入Web请求过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/19/10.redis事务/">10.redis事务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/08/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1. 登录功能/">1. 登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/06/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/01/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/31/1.Java基础/">1.Java基础</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共178篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
