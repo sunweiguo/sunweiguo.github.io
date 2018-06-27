@@ -15,27 +15,20 @@
 
 
 
-<meta name="description" content="堆排序和优先队列">
-<meta name="keywords" content="数据结构与算法">
+<meta name="description" content="继续深入对ThreadLocal的理解。">
+<meta name="keywords" content="java基础">
 <meta property="og:type" content="article">
-<meta property="og:title" content="4、堆排序和优先队列">
-<meta property="og:url" content="http://yoursite.com/2018/06/07/4、堆排序和优先队列/index.html">
+<meta property="og:title" content="12.ThreadLocal自问自答">
+<meta property="og:url" content="http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/index.html">
 <meta property="og:site_name" content="Eureka-Home">
-<meta property="og:description" content="堆排序和优先队列">
+<meta property="og:description" content="继续深入对ThreadLocal的理解。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AE%9A%E4%B9%89%E5%9B%BE.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E4%BA%8C%E5%8F%89%E5%A0%86%E4%B8%8E%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E7%94%A8%E6%95%B0%E7%BB%84%E8%A1%A8%E7%A4%BA.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%9C%80%E5%A4%A7%E5%A0%86%E7%9A%84%E6%8F%92%E5%85%A5.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%9C%80%E5%A4%A7%E5%A0%86%E7%9A%84%E5%88%A0%E9%99%A4.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E4%B8%8B%E6%B2%89%E5%9B%9E%E5%A4%8D%E5%A0%86%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E6%8E%92%E5%BA%8F-%E6%95%B0%E7%BB%84%E5%88%9D%E5%A7%8B%E5%8C%96.png">
-<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E6%8E%92%E5%BA%8F-%E6%9E%84%E9%80%A0.png">
-<meta property="og:updated_time" content="2018-06-07T04:41:21.337Z">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png">
+<meta property="og:updated_time" content="2018-06-27T09:24:37.744Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="4、堆排序和优先队列">
-<meta name="twitter:description" content="堆排序和优先队列">
-<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AE%9A%E4%B9%89%E5%9B%BE.png">
+<meta name="twitter:title" content="12.ThreadLocal自问自答">
+<meta name="twitter:description" content="继续深入对ThreadLocal的理解。">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -67,7 +60,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>4、堆排序和优先队列 | Eureka-Home</title>
+<title>12.ThreadLocal自问自答 | Eureka-Home</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -203,11 +196,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-4、堆排序和优先队列" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-12.ThreadLocal自问自答" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/06/07/4、堆排序和优先队列/" class="article-date">
-      <time datetime="2018-06-07T04:41:09.971Z" itemprop="datePublished">2018-06-07</time>
+      <a href="/2018/06/27/12.ThreadLocal自问自答/" class="article-date">
+      <time datetime="2018-06-27T09:24:14.085Z" itemprop="datePublished">2018-06-27</time>
 </a>
 
 
@@ -222,7 +215,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      4、堆排序和优先队列
+      12.ThreadLocal自问自答
     </h1>
   
 
@@ -234,7 +227,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/数据结构与算法/">数据结构与算法</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java基础/">java基础</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -244,62 +237,87 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>堆排序和优先队列<br><a id="more"></a></p>
-<h3 id="1-什么是优先队列"><a href="#1-什么是优先队列" class="headerlink" title="1. 什么是优先队列"></a>1. 什么是优先队列</h3><p>普通队列：先进先出，后进后出</p>
-<p>优先队列：出队顺序和入队顺序无关，和优先级相关</p>
-<h3 id="2-为什么要使用优先队列"><a href="#2-为什么要使用优先队列" class="headerlink" title="2. 为什么要使用优先队列"></a>2. 为什么要使用优先队列</h3><p>从N个元素中选出前M个元素，用排序的手段时间复杂度为NlgN，但是用优先队列，可以达到NlgM.</p>
-<h3 id="3-堆的定义"><a href="#3-堆的定义" class="headerlink" title="3. 堆的定义"></a>3. 堆的定义</h3><blockquote>
-<p>堆是一棵顺序存储的完全二叉树。完全二叉树中所有非终端节点的值均不大于（或不小于）其左、右孩子节点的值。</p>
-</blockquote>
-<blockquote>
-<p>数据结构二叉堆能够很好地实现优先队列的操作</p>
-</blockquote>
-<blockquote>
-<p>在“堆排序”中的“堆”通常指“二叉堆（binary heap)”</p>
-</blockquote>
-<blockquote>
-<p>其中每个节点的值小于等于其左、右孩子的值，这样的堆称为小根堆；</p>
-</blockquote>
-<blockquote>
-<p>其中每个节点的值大于等于其左、右孩子的值，这样的堆称为大根堆；</p>
-</blockquote>
-<h3 id="4-二叉堆的结构"><a href="#4-二叉堆的结构" class="headerlink" title="4. 二叉堆的结构"></a>4. 二叉堆的结构</h3><p>首先明确完全二叉树的定义：</p>
-<blockquote>
-<p>除二叉树最后一层外，其他各层的节点数都达到最大个数，且最后一层从左向右的叶节点连续存在，只缺右侧若干节点，就是完全二叉树。</p>
-</blockquote>
-<blockquote>
-<p>如下图，每一层都是从左向右摆放节点，每个节点都是摆满两个子节点后才向右移动到下一个节点，一层摆满后向下移动一层，直到摆放完所有数字。这样得到的二叉树就是完全二叉树，中间有任何缺失的节点就不能称为完全二叉树。</p>
-</blockquote>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91%E5%AE%9A%E4%B9%89%E5%9B%BE.png" alt="image"></p>
-<p>二叉堆是一种完全二叉树，他们的区别是：</p>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E4%BA%8C%E5%8F%89%E5%A0%86%E4%B8%8E%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91.png" alt="二叉堆与完全二叉树"></p>
-<p>二叉堆是一颗完全二叉树，完全二叉树只用数组而不需要指针就可以表示。</p>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E7%94%A8%E6%95%B0%E7%BB%84%E8%A1%A8%E7%A4%BA.png" alt="堆用数组表示"></p>
-<h3 id="4-堆的算法"><a href="#4-堆的算法" class="headerlink" title="4. 堆的算法"></a>4. 堆的算法</h3><p>我们用N+1长度的数组来表示一个大小为N的堆，我们不会使用[0],堆元素会被保存于[1]-[N-1]中。</p>
-<h5 id="4-1-最大堆的插入-上浮"><a href="#4-1-最大堆的插入-上浮" class="headerlink" title="4.1 最大堆的插入(上浮)"></a>4.1 最大堆的插入(上浮)</h5><p><img src="http://p376695fl.bkt.clouddn.com/%E6%9C%80%E5%A4%A7%E5%A0%86%E7%9A%84%E6%8F%92%E5%85%A5.png" alt="image"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * k:当前插入元素的位置，相应地k/2就是其父结点的位置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">swim</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(k&gt;<span class="number">1</span> &amp;&amp; less(k/<span class="number">2</span>,k))&#123;</span><br><span class="line">		swap(k/<span class="number">2</span>,k);</span><br><span class="line">		k = k/<span class="number">2</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="4-2-最大堆的删除"><a href="#4-2-最大堆的删除" class="headerlink" title="4.2 最大堆的删除"></a>4.2 最大堆的删除</h5><p><img src="http://p376695fl.bkt.clouddn.com/%E6%9C%80%E5%A4%A7%E5%A0%86%E7%9A%84%E5%88%A0%E9%99%A4.png" alt="image"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//伪代码</span><br><span class="line">1. 获取根结点</span><br><span class="line">2. 将根结点与最后一个结点交换</span><br><span class="line">3. 恢复堆的有序性...</span><br></pre></td></tr></table></figure>
-<blockquote>
-<p>显然现在看来该二叉树虽然是一个完全二叉树，但是它并不符合最大堆的相关定义，我们的目的是要在删除完成之后，该完全二叉树依然是最大堆。因此就需要我们来做一些相关的操作！</p>
-</blockquote>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E4%B8%8B%E6%B2%89%E5%9B%9E%E5%A4%8D%E5%A0%86%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7.png" alt="image"></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * k:当前被删除元素的位置(若删除根节点,则k=1)，相应地2*k就是其左子结点的位置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">sink</span><span class="params">(<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(<span class="number">2</span>*k &lt; N)&#123;</span><br><span class="line">		<span class="keyword">int</span> j = <span class="number">2</span> * k;</span><br><span class="line">		<span class="keyword">if</span>(j &lt; N &amp;&amp; less(j,j+<span class="number">1</span>))</span><br><span class="line">			j++;</span><br><span class="line">		<span class="keyword">if</span>(!less(k,j))</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		swap(k,j);</span><br><span class="line">		k = j;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="5-堆排序"><a href="#5-堆排序" class="headerlink" title="5. 堆排序"></a>5. 堆排序</h3><h5 id="5-1-堆排序的介绍"><a href="#5-1-堆排序的介绍" class="headerlink" title="5.1 堆排序的介绍"></a>5.1 堆排序的介绍</h5><blockquote>
-<p>堆排序是简单选择排序的一种改进，改进的着眼点是：如何减少关键码的比较次数。简单选择排序在一趟中仅选出最小关键码，没有把一趟比较结果保存下来，因而记录的比较次数较多。堆排序在选出最小关键码的同时，也找出较小关键码，减少了在后面的选择中的比较次数，从而提高了整个排序的效率</p>
-</blockquote>
-<h5 id="5-2-堆排序的实现思路"><a href="#5-2-堆排序的实现思路" class="headerlink" title="5.2 堆排序的实现思路"></a>5.2 堆排序的实现思路</h5><p>假设有这么一个数组待排序</p>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E6%8E%92%E5%BA%8F-%E6%95%B0%E7%BB%84%E5%88%9D%E5%A7%8B%E5%8C%96.png" alt="image"></p>
-<blockquote>
-<p>① 初始化操作：将R[1..n]构造为初始堆； </p>
-</blockquote>
-<p><img src="http://p376695fl.bkt.clouddn.com/%E5%A0%86%E6%8E%92%E5%BA%8F-%E6%9E%84%E9%80%A0.png" alt="image"></p>
-<blockquote>
-<p>② 每一趟排序的基本操作(原地堆排序)：将当前无序区的堆顶记录R[1]和该区间的最后一个记录交换，然后将新的无序区调整为堆(亦称重建堆)。这样，最大的数就被放到了最后面，循环完毕时，数组元素从小到大依次排序好。过程思想可参考《算法》第四版的207页。</p>
-</blockquote>
-<h5 id="5-3-原地堆排序的代码实现"><a href="#5-3-原地堆排序的代码实现" class="headerlink" title="5.3 原地堆排序的代码实现"></a>5.3 原地堆排序的代码实现</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HeapSort</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        <span class="comment">//数组中a[0]，不参与排序，只对a[1]-a[len-1]排序  </span></span><br><span class="line">        <span class="keyword">int</span> a[] = &#123;<span class="number">0</span> , <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">16</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">14</span>, <span class="number">8</span>, <span class="number">7</span>&#125;;  </span><br><span class="line">        System.out.println(<span class="string">"输入的数组为："</span>+Arrays.toString(a));</span><br><span class="line">        <span class="keyword">int</span> len=a.length-<span class="number">1</span>;  </span><br><span class="line">        heapSort(a,len);  </span><br><span class="line">        System.out.println(<span class="string">"排序后的堆为："</span>+Arrays.toString(a));  </span><br><span class="line">    &#125;  </span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] data, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">if</span> (i == j) &#123;  </span><br><span class="line">            <span class="keyword">return</span>;  </span><br><span class="line">        &#125;  </span><br><span class="line">        data[i] = data[i] + data[j];  </span><br><span class="line">        data[j] = data[i] - data[j];  </span><br><span class="line">        data[i] = data[i] - data[j];  </span><br><span class="line">    &#125;  </span><br><span class="line">	</span><br><span class="line">	<span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 排序，先构造出堆，再将数组排序</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> r 当前代排序的数组 </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> n 数组元素个数</span></span><br><span class="line"><span class="comment">     */</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">heapSort</span><span class="params">(<span class="keyword">int</span> r[],<span class="keyword">int</span> n)</span></span>&#123;  </span><br><span class="line">    	<span class="comment">//从第一个非叶子结点开始构建子堆</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=n/<span class="number">2</span>;i&gt;=<span class="number">1</span>;i--)&#123;  </span><br><span class="line">            Sift(r,i,n);  </span><br><span class="line">        &#125;  </span><br><span class="line">        System.out.println(<span class="string">"构造出来的堆："</span>+Arrays.toString(r));<span class="comment">//构建出的大根堆  </span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;n;i++)&#123;  </span><br><span class="line">        	<span class="comment">//将根结点与最后一个节点进行交换</span></span><br><span class="line">            swap(r,<span class="number">1</span>,n-i+<span class="number">1</span>);</span><br><span class="line">            <span class="comment">//调整这个堆</span></span><br><span class="line">            Sift(r,<span class="number">1</span>,n-i);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 筛选调整堆 </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> k 当前要筛选结点的编号为k， </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> m 堆中最后一个结点的编号为m </span></span><br><span class="line"><span class="comment">     */</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Sift</span><span class="params">(<span class="keyword">int</span> r[],<span class="keyword">int</span> k,<span class="keyword">int</span> m)</span></span>&#123;  </span><br><span class="line">        <span class="keyword">int</span> i=k;<span class="comment">//被筛选的结点  </span></span><br><span class="line">        <span class="keyword">int</span> j=<span class="number">2</span>*i;<span class="comment">//左子树  </span></span><br><span class="line">        <span class="keyword">while</span>(j&lt;=m)&#123;  </span><br><span class="line">            <span class="keyword">if</span>(j&lt;m&amp;&amp;r[j]&lt;r[j+<span class="number">1</span>])j++;  <span class="comment">//对比左右两个子节点哪个大</span></span><br><span class="line">            <span class="keyword">if</span>(r[j]&lt;r[i])<span class="keyword">break</span>;       <span class="comment">//父结点大于两个子节点就停止循环</span></span><br><span class="line">            <span class="keyword">else</span>&#123; </span><br><span class="line">                swap(r,i,j);</span><br><span class="line">                i=j;          <span class="comment">//被筛选结点位于原来的结点j的位置  </span></span><br><span class="line">                j=<span class="number">2</span>*i;  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>代码运行结果：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入的数组为：[<span class="number">0</span>, <span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>, <span class="number">16</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">14</span>, <span class="number">8</span>, <span class="number">7</span>]</span><br><span class="line">构造出来的堆：[<span class="number">0</span>, <span class="number">16</span>, <span class="number">9</span>, <span class="number">14</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">10</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">7</span>]</span><br><span class="line">排序后的堆为：[<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">14</span>, <span class="number">16</span>]</span><br></pre></td></tr></table></figure>
+        <p>继续深入对ThreadLocal的理解。<br><a id="more"></a><br>在<code>java</code>多线程基础的最后，用两篇对<code>ThreadLocal</code>进行了讲解，但是还是觉得自己理解的略浅或者甚至不对，这里再次对其进行深入的理解，原文地址是：<a href="https://juejin.im/post/5a0e985df265da430e4ebb92。" target="_blank" rel="noopener">https://juejin.im/post/5a0e985df265da430e4ebb92。</a></p>
+<h3 id="问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？"><a href="#问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？" class="headerlink" title="问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？"></a>问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？</h3><p>官方定位：<code>ThreadLocal</code>类用来<strong>提供线程内部的局部变量</strong>。这种变量在多线程环境下访问（通过<code>get</code>和<code>set</code>方法访问）时能保证各个线程的变量相对独立于其他线程内的变量。</p>
+<p>简单归纳就是：</p>
+<ul>
+<li><code>ThreadLocal</code>的作用是提供线程内的局部变量</li>
+<li>这种变量在线程的生命周期内起作用</li>
+<li>不同的线程之间不会相互干扰</li>
+</ul>
+<h3 id="问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？"><a href="#问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？" class="headerlink" title="问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？"></a>问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？</h3><p>通常，如果我不去看源代码的话，我猜<code>ThreadLocal</code>是这样子设计的：每个<code>ThreadLocal</code>类都创建一个<code>Map</code>，然后用线程的ID <code>threadID</code>作为<code>Map</code>的<code>key</code>，要存储的局部变量作为<code>Map</code>的<code>value</code>，这样就能达到各个线程的值隔离的效果。这是最简单的设计方法，JDK最早期的<code>ThreadLocal</code>就是这样设计的。</p>
+<p>但是，JDK后面优化了设计方案，现时JDK8 <code>ThreadLocal</code>的设计是：每个<code>Thread</code>维护一个<code>ThreadLocalMap</code>哈希表，这个哈希表的<code>key</code>是<code>ThreadLocal</code>实例本身，<code>value</code>才是真正要存储的值<code>Object</code>。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png" alt="image"></p>
+<p><strong>那么为什么不用上面个设计呢？多简单啊！</strong></p>
+<p>如果用Map来做的话，只能是用<code>thread</code>+<code>threadlocal</code>计算出来作为<code>key</code>，毕竟我存的不一定只有一个变量。那么不用他的时候，如何清理呢？只能是手动<code>remove</code>掉，但是一方面很麻烦，另一方面代码很丑陋，最后一方面是在<code>remove</code>的时候突然出现问题，那么就可能导致内存泄漏。</p>
+<p><strong>新的设计的好处：</strong></p>
+<p>当<code>Thread</code>销毁之后，对应的<code>ThreadLocalMap</code>也会随之销毁，能减少内存的使用。</p>
+<p>假设当前<code>thread</code>一直活着（比如赖在线程池中），有些无用的<code>threadlocal</code>对象怎么清理呢？</p>
+<p><code>key</code>是一个软引用指向<code>ThreadLocal</code>实例，特性是下一次gc的时候就会被回收掉了，<code>ThreadLocalMap</code>中就会出现<code>key</code>为<code>null</code>的<code>Entry</code>.</p>
+<p><code>key</code>回收掉了，<code>value</code>值还在啊，这个怎么回收！！！</p>
+<p><code>ThreadLocal</code>的<code>get</code>和<code>set</code>方法每次调用时，如果发现当前的<code>entry</code>的<code>key</code>为<code>null</code>（也就是被回收掉了），最终会调用<code>expungeStaleEntry(int staleSlot)</code>方法，该方法会把哈希表当前位置的无用数据清理掉（当然还有别的操作）。</p>
+<p>但是最佳实践还是每次使用完<code>ThreadLocal</code>，都调用它的<code>remove()</code>方法，清除数据,确保不会出现内存泄漏问题。</p>
+<h3 id="问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set-T-value-，获取get-，删除remove-等操作。"><a href="#问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set-T-value-，获取get-，删除remove-等操作。" class="headerlink" title="问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set(T value)，获取get()，删除remove()等操作。"></a>问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set(T value)，获取get()，删除remove()等操作。</h3><p>具体的代码就不贴了，核心代码都已经看过了。这里简单总结一下。</p>
+<ul>
+<li><p>调用<code>get()</code>:</p>
+<ul>
+<li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
+<li>判断当前的<code>ThreadLocalMap</code>是否存在,如果存在，则以当前的<code>ThreadLocal</code> 为 <code>key</code>，调用<code>ThreadLocalMap</code>中的<code>getEntry</code>方法获取对应的存储实体 <code>e</code>。找到对应的存储实体 <code>e</code>，获取存储实体 <code>e</code> 对应的 <code>value</code>值，即为我们想要的当前线程对应此<code>ThreadLocal</code>的值，返回结果值。</li>
+<li>如果不存在，则证明此线程没有维护的<code>ThreadLocalMap</code>对象，调用<code>setInitialValue</code>方法进行初始化。返回<code>setInitialValue</code>初始化的值。</li>
+</ul>
+</li>
+<li><p>调用<code>set(T value)</code>:</p>
+<ul>
+<li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
+<li>判断当前的<code>ThreadLocalMap</code>是否存在：</li>
+<li>如果存在，则调用<code>map.set</code>设置此实体<code>entry</code>。</li>
+<li>如果不存在，则调用<code>createMap</code>进行<code>ThreadLocalMap</code>对象的初始化，并将此实体<code>entry</code>作为第一个值存放至<code>ThreadLocalMap</code>中。</li>
+</ul>
+</li>
+<li><p>调用<code>remove()</code></p>
+<ul>
+<li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
+<li>判断当前的<code>ThreadLocalMap</code>是否存在， 如果存在，则调用<code>map.remove</code>，以当前<code>ThreadLocal</code>为<code>key</code>删除对应的实体<code>entry</code>。</li>
+</ul>
+</li>
+</ul>
+<h3 id="问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗"><a href="#问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗" class="headerlink" title="问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗?"></a>问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗?</h3><p><code>ThreadLocalMap</code>的底层实现是一个定制的自定义<code>HashMap</code>哈希表，核心组成元素有：</p>
+<ul>
+<li><code>Entry[] table</code>：底层哈希表 <code>table</code>,必要时需要进行扩容，底层哈希表 <code>table.length</code> 长度必须是2的n次方。</li>
+<li><code>int size</code>：实际存储键值对元素个数 <code>entries</code></li>
+<li><code>int threshold</code>：下一次扩容时的阈值，阈值 <code>threshold</code> = 底层哈希表<code>table</code>的长度 <code>len</code> <em> 2 / 3。当<code>size &gt;= threshold</code>时，遍历<code>table</code>并删除<code>key</code>为<code>null</code>的元素，如果删除后`size &gt;= threshold</em>3/4<code>时，需要对</code>table`进行扩容</li>
+</ul>
+<p>其中<code>Entry[] table</code>哈希表存储的核心元素是<code>Entry</code>，<code>Entry</code>包含：</p>
+<ul>
+<li><code>ThreadLocal&lt;?&gt; k</code>：当前存储的<code>ThreadLocal</code>实例对象</li>
+<li><code>Object value</code>：当前 <code>ThreadLocal</code> 对应储存的值<code>value</code></li>
+</ul>
+<p>需要注意的是，此<code>Entry</code>继承了弱引用 <code>WeakReference</code>，所以在使用<code>ThreadLocalMap</code>时，发现<code>key == null</code>，则意味着此<code>key ThreadLocal</code>不在被引用，需要将其从<code>ThreadLocalMap</code>哈希表中移除。</p>
+<h3 id="问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？"><a href="#问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？" class="headerlink" title="问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？"></a>问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？</h3><p>参考java基础第十一篇文章。</p>
+<h3 id="问题6：ThreadLocal和synchronized的区别"><a href="#问题6：ThreadLocal和synchronized的区别" class="headerlink" title="问题6：ThreadLocal和synchronized的区别?"></a>问题6：ThreadLocal和synchronized的区别?</h3><p><code>ThreadLocal</code>和<code>synchronized</code>关键字都用于处理多线程并发访问变量的问题，只是二者处理问题的角度和思路不同。</p>
+<ul>
+<li><code>ThreadLocal</code>是一个<code>Java</code>类,通过对当前线程中的局部变量的操作来解决不同线程的变量访问的冲突问题。所以，<code>ThreadLocal</code>提供了线程安全的共享对象机制，每个线程都拥有其副本。</li>
+<li><code>Java</code>中的<code>synchronized</code>是一个保留字，它依靠JVM的锁机制来实现临界区的函数或者变量的访问中的原子性。在同步机制中，通过对象的锁机制保证同一时间只有一个线程访问变量。此时，被用作“锁机制”的变量时多个线程共享的。</li>
+<li>同步机制(<code>synchronized</code>关键字)采用了以“时间换空间”的方式，提供一份变量，让不同的线程排队访问。而<code>ThreadLocal</code>采用了“以空间换时间”的方式，为每一个线程都提供一份变量的副本，从而实现同时访问而互不影响.</li>
+</ul>
+<h3 id="问题7：ThreadLocal在现时有什么应用场景？"><a href="#问题7：ThreadLocal在现时有什么应用场景？" class="headerlink" title="问题7：ThreadLocal在现时有什么应用场景？"></a>问题7：ThreadLocal在现时有什么应用场景？</h3><p>总的来说<code>ThreadLocal</code>主要是解决2种类型的问题：</p>
+<ul>
+<li>解决并发问题：使用<code>ThreadLocal</code>代替<code>synchronized</code>来保证线程安全。同步机制采用了“以时间换空间”的方式，而<code>ThreadLocal</code>采用了“以空间换时间”的方式。前者仅提供一份变量，让不同的线程排队访问，而后者为每一个线程都提供了一份变量，因此可以同时访问而互不影响。</li>
+<li>解决数据存储问题：<code>ThreadLocal</code>为变量在每个线程中都创建了一个副本，所以每个线程可以访问自己内部的副本变量，不同线程之间不会互相干扰。如一个<code>Parameter</code>对象的数据需要在多个模块中使用，如果采用参数传递的方式，显然会增加模块之间的耦合性。此时我们可以使用<code>ThreadLocal</code>解决。</li>
+</ul>
+<p>一般的<code>Web</code>应用划分为展现层、服务层和持久层三个层次，在不同的层中编写对应的逻辑，下层通过接口向上层开放功能调用。在一般情况下，从接收请求到返回响应所经过的所有程序调用都同属于一个线程<code>ThreadLocal</code>是解决线程安全问题一个很好的思路，它通过为每个线程提供一个独立的变量副本解决了变量并发访问的冲突问题。在很多情况下，<code>ThreadLocal</code>比直接使用<code>synchronized</code>同步机制解决线程安全问题更简单，更方便，且结果程序拥有更高的并发性。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><code>ThreadLocal</code>提供线程内部的局部变量，在本线程内随时随地可取，隔离其他线程。</li>
+<li><code>ThreadLocal</code>的设计是：每个<code>Thread</code>维护一个<code>ThreadLocalMap</code>哈希表，这个哈希表的<code>key</code>是<code>ThreadLocal</code>实例本身，<code>value</code>才是真正要存储的值<code>Object</code>。</li>
+<li>对<code>ThreadLocal</code>的常用操作实际是对线程<code>Thread</code>中的<code>ThreadLocalMap</code>进行操作。</li>
+<li><code>ThreadLocalMap</code>的底层实现是一个定制的自定义哈希表，<code>ThreadLocalMap</code>的阈值<code>threshold</code> = <code>底层哈希表table的长度 len * 2 / 3</code>，当实际存储元素个数<code>size</code> 大于或等于 阈值<code>threshold的 3/4</code> 时<code>size &gt;= threshold*3/4</code>，则对底层哈希表数组<code>table</code>进行扩容操作。</li>
+<li><code>ThreadLocalMap</code>中的哈希表<code>Entry[] table</code>存储的核心元素是<code>Entry</code>，存储的<code>key</code>是<code>ThreadLocal</code>实例对象，<code>value</code>是<code>ThreadLocal</code> 对应储存的值<code>value</code>。需要注意的是，此<code>Entry</code>继承了弱引用 <code>WeakReference</code>，所以在使用<code>ThreadLocalMap</code>时，发现<code>key == null</code>，则意味着此<code>key  ThreadLocal</code>不在被引用，需要将其从<code>ThreadLocalMap</code>哈希表中移除。</li>
+<li><code>ThreadLocalMap</code>使用<code>ThreadLocal</code>的弱引用作为<code>key</code>，如果一个<code>ThreadLocal</code>没有外部强引用来引用它，那么系统 GC 的时候，这个<code>ThreadLocal</code>势必会被回收。所以，在<code>ThreadLocal</code>的<code>get()</code>,<code>set()</code>,<code>remove()</code>的时候都会清除线程<code>ThreadLocalMap</code>里所有<code>key</code>为<code>null</code>的<code>value</code>。如果我们不主动调用上述操作，则会导致内存泄露。</li>
+<li>为了安全地使用<code>ThreadLocal</code>，必须要像每次使用完锁就解锁一样，在每次使用完<code>ThreadLocal</code>后都要调用<code>remove()</code>来清理无用的<code>Entry</code>。这在操作在使用线程池时尤为重要。</li>
+<li><code>ThreadLocal</code>和<code>synchronized</code>的区别：同步机制(<code>synchronized</code>关键字)采用了以“时间换空间”的方式，提供一份变量，让不同的线程排队访问。而<code>ThreadLocal</code>采用了“以空间换时间”的方式，为每一个线程都提供一份变量的副本，从而实现同时访问而互不影响。</li>
+<li><code>ThreadLocal</code>主要是解决2种类型的问题：A. 解决并发问题：使用<code>ThreadLocal</code>代替同步机制解决并发问题。B. 解决数据存储问题：如一个<code>Parameter</code>对象的数据需要在多个模块中使用，如果采用参数传递的方式，显然会增加模块之间的耦合性。此时我们可以使用<code>ThreadLocal</code>解决。</li>
+</ul>
+
       
     </div>
     
@@ -307,13 +325,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/06/07/4、堆排序和优先队列/">4、堆排序和优先队列</a></p>
+        <p><span>本文标题:</span><a href="/2018/06/27/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-06-07, 12:41:09</p>
-        <p><span>最后更新:</span>2018-06-07, 12:41:21</p>
+        <p><span>发布时间:</span>2018-06-27, 17:24:14</p>
+        <p><span>最后更新:</span>2018-06-27, 17:24:37</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/06/07/4、堆排序和优先队列/" title="4、堆排序和优先队列">http://yoursite.com/2018/06/07/4、堆排序和优先队列/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/07/4、堆排序和优先队列/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/06/27/12.ThreadLocal自问自答/" title="12.ThreadLocal自问自答">http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -325,16 +343,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/06/07/5、几种排序算法的对比/">
-                    5、几种排序算法的对比
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/06/07/3、快速排序及优化/">
-                    3、快速排序及优化
+                <a href="/2018/06/27/11.关于泛型的补充/">
+                    11.关于泛型的补充
                 </a>
             </div>
         
@@ -346,7 +358,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-什么是优先队列"><span class="toc-number">1.</span> <span class="toc-text">1. 什么是优先队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-为什么要使用优先队列"><span class="toc-number">2.</span> <span class="toc-text">2. 为什么要使用优先队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-堆的定义"><span class="toc-number">3.</span> <span class="toc-text">3. 堆的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-二叉堆的结构"><span class="toc-number">4.</span> <span class="toc-text">4. 二叉堆的结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-堆的算法"><span class="toc-number">5.</span> <span class="toc-text">4. 堆的算法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#4-1-最大堆的插入-上浮"><span class="toc-number">5.0.1.</span> <span class="toc-text">4.1 最大堆的插入(上浮)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4-2-最大堆的删除"><span class="toc-number">5.0.2.</span> <span class="toc-text">4.2 最大堆的删除</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-堆排序"><span class="toc-number">6.</span> <span class="toc-text">5. 堆排序</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#5-1-堆排序的介绍"><span class="toc-number">6.0.1.</span> <span class="toc-text">5.1 堆排序的介绍</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-2-堆排序的实现思路"><span class="toc-number">6.0.2.</span> <span class="toc-text">5.2 堆排序的实现思路</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#5-3-原地堆排序的代码实现"><span class="toc-number">6.0.3.</span> <span class="toc-text">5.3 原地堆排序的代码实现</span></a></li></ol></li></ol></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？"><span class="toc-number">1.</span> <span class="toc-text">问题1：ThreadLocal了解吗？您能给我说说他的主要用途吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？"><span class="toc-number">2.</span> <span class="toc-text">问题2：ThreadLocal实现原理是什么，它是怎么样做到局部变量不同的线程之间不会相互干扰的？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set-T-value-，获取get-，删除remove-等操作。"><span class="toc-number">3.</span> <span class="toc-text">问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set(T value)，获取get()，删除remove()等操作。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗"><span class="toc-number">4.</span> <span class="toc-text">问题4：对ThreadLocal的常用操作实际是对线程Thread中的ThreadLocalMap进行操作，核心是ThreadLocalMap这个哈希表，你能谈谈ThreadLocalMap的内部底层实现吗?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？"><span class="toc-number">5.</span> <span class="toc-text">问题5：ThreadLocalMap中的存储实体Entry使用ThreadLocal作为key，但这个Entry是继承弱引用WeakReference的，为什么要这样设计，使用了弱引用WeakReference会造成内存泄露问题吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题6：ThreadLocal和synchronized的区别"><span class="toc-number">6.</span> <span class="toc-text">问题6：ThreadLocal和synchronized的区别?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#问题7：ThreadLocal在现时有什么应用场景？"><span class="toc-number">7.</span> <span class="toc-text">问题7：ThreadLocal在现时有什么应用场景？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
         
     </div>
     <style>
@@ -379,7 +391,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"4、堆排序和优先队列　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"12.ThreadLocal自问自答　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -409,15 +421,13 @@ window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="tex
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/06/07/5、几种排序算法的对比/" title="上一篇: 5、几种排序算法的对比">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/06/07/3、快速排序及优化/" title="下一篇: 3、快速排序及优化">
+            <a href="/2018/06/27/11.关于泛型的补充/" title="下一篇: 11.关于泛型的补充">
                 <i class="fa fa-angle-right"></i>
             </a>
         
