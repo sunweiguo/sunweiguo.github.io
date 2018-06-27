@@ -24,7 +24,7 @@
 <meta property="og:description" content="继续深入对ThreadLocal的理解。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png">
-<meta property="og:updated_time" content="2018-06-27T09:24:37.744Z">
+<meta property="og:updated_time" content="2018-06-27T09:32:10.161Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="12.ThreadLocal自问自答">
 <meta name="twitter:description" content="继续深入对ThreadLocal的理解。">
@@ -285,7 +285,7 @@
 <ul>
 <li><code>Entry[] table</code>：底层哈希表 <code>table</code>,必要时需要进行扩容，底层哈希表 <code>table.length</code> 长度必须是2的n次方。</li>
 <li><code>int size</code>：实际存储键值对元素个数 <code>entries</code></li>
-<li><code>int threshold</code>：下一次扩容时的阈值，阈值 <code>threshold</code> = 底层哈希表<code>table</code>的长度 <code>len</code> <em> 2 / 3。当<code>size &gt;= threshold</code>时，遍历<code>table</code>并删除<code>key</code>为<code>null</code>的元素，如果删除后`size &gt;= threshold</em>3/4<code>时，需要对</code>table`进行扩容</li>
+<li><code>int threshold</code>：下一次扩容时的阈值，阈值 <code>threshold = len(table) * 2 / 3</code>。当 <code>size &gt;= threshold</code> 时，遍历<code>table</code>并删除<code>key</code>为<code>null</code>的元素，如果删除后<code>size &gt;= threshold*3/4</code>时，需要对<code>table</code>进行扩容</li>
 </ul>
 <p>其中<code>Entry[] table</code>哈希表存储的核心元素是<code>Entry</code>，<code>Entry</code>包含：</p>
 <ul>
@@ -328,7 +328,7 @@
         <p><span>本文标题:</span><a href="/2018/06/27/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-27, 17:24:14</p>
-        <p><span>最后更新:</span>2018-06-27, 17:24:37</p>
+        <p><span>最后更新:</span>2018-06-27, 17:32:10</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/27/12.ThreadLocal自问自答/" title="12.ThreadLocal自问自答">http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
