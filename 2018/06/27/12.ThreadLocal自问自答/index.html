@@ -24,7 +24,7 @@
 <meta property="og:description" content="继续深入对ThreadLocal的理解。">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/iKjk3GS.png">
-<meta property="og:updated_time" content="2018-06-27T09:39:56.299Z">
+<meta property="og:updated_time" content="2018-06-27T09:42:21.365Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="12.ThreadLocal自问自答">
 <meta name="twitter:description" content="继续深入对ThreadLocal的理解。">
@@ -259,23 +259,20 @@
 <p>但是最佳实践还是每次使用完<code>ThreadLocal</code>，都调用它的<code>remove()</code>方法，清除数据,确保不会出现内存泄漏问题。</p>
 <h3 id="问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set-T-value-，获取get-，删除remove-等操作。"><a href="#问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set-T-value-，获取get-，删除remove-等操作。" class="headerlink" title="问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set(T value)，获取get()，删除remove()等操作。"></a>问题3：您能说说ThreadLocal常用操作的底层实现原理吗？如存储set(T value)，获取get()，删除remove()等操作。</h3><p>具体的代码就不贴了，核心代码都已经看过了。这里简单总结一下。</p>
 <ul>
-<li><p>调用<code>get()</code></p>
-<ul>
+<li>调用<code>get()</code><ul>
 <li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
 <li>判断当前的<code>ThreadLocalMap</code>是否存在,如果存在，则以当前的<code>ThreadLocal</code> 为 <code>key</code>，调用<code>ThreadLocalMap</code>中的<code>getEntry</code>方法获取对应的存储实体 <code>e</code>。找到对应的存储实体 <code>e</code>，获取存储实体 <code>e</code> 对应的 <code>value</code>值，即为我们想要的当前线程对应此<code>ThreadLocal</code>的值，返回结果值。</li>
 <li>如果不存在，则证明此线程没有维护的<code>ThreadLocalMap</code>对象，调用<code>setInitialValue</code>方法进行初始化。返回<code>setInitialValue</code>初始化的值。</li>
 </ul>
 </li>
-<li><p>调用<code>set(T value)</code></p>
-<ul>
+<li>调用<code>set(T value)</code><ul>
 <li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
 <li>判断当前的<code>ThreadLocalMap</code>是否存在：</li>
 <li>如果存在，则调用<code>map.set</code>设置此实体<code>entry</code>。</li>
 <li>如果不存在，则调用<code>createMap</code>进行<code>ThreadLocalMap</code>对象的初始化，并将此实体<code>entry</code>作为第一个值存放至<code>ThreadLocalMap</code>中。</li>
 </ul>
 </li>
-<li><p>调用<code>remove()</code></p>
-<ul>
+<li>调用<code>remove()</code><ul>
 <li>获取当前线程<code>Thread</code>对象，进而获取此线程对象中维护的<code>ThreadLocalMap</code>对象。</li>
 <li>判断当前的<code>ThreadLocalMap</code>是否存在， 如果存在，则调用<code>map.remove</code>，以当前<code>ThreadLocal</code>为<code>key</code>删除对应的实体<code>entry</code>。</li>
 </ul>
@@ -328,7 +325,7 @@
         <p><span>本文标题:</span><a href="/2018/06/27/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-27, 17:24:14</p>
-        <p><span>最后更新:</span>2018-06-27, 17:39:56</p>
+        <p><span>最后更新:</span>2018-06-27, 17:42:21</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/27/12.ThreadLocal自问自答/" title="12.ThreadLocal自问自答">http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/27/12.ThreadLocal自问自答/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
