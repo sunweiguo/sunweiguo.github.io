@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="Atomic包是我们经常使用的一个线程安全的包。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-15T04:05:38.817Z">
+<meta property="og:updated_time" content="2018-06-28T03:13:21.634Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2.线程安全性-Atomic包">
 <meta name="twitter:description" content="Atomic包是我们经常使用的一个线程安全的包。">
@@ -131,6 +131,8 @@
                         
                             <li><a href="/about/">关于我</a></li>
                         
+                            <li><a href="/log">修改记录</a></li>
+                        
                         </ul>
                     </nav>
                     <nav class="header-nav">
@@ -181,6 +183,8 @@
                     <li><a href="/resume/">简历</a></li>
                 
                     <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/log">修改记录</a></li>
                 
                 <div class="clearfix"></div>
                 </ul>
@@ -282,9 +286,8 @@
 <p>再点进getAndAddInt这个方法：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">getAndAddInt</span><span class="params">(Object var1, <span class="keyword">long</span> var2, <span class="keyword">int</span> var4)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> var5;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="comment">//getIntVolatile是native方法</span></span><br><span class="line">            var5 = <span class="keyword">this</span>.getIntVolatile(var1, var2);</span><br><span class="line">        &#125; <span class="keyword">while</span>(!<span class="keyword">this</span>.compareAndSwapInt(var1, var2, var5, var5 + var4));<span class="comment">//compareAndSwapInt也是native方法</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> var5;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>这里的原理是什么呢？</p>
-<blockquote>
-<p>原来我们是将<code>count</code>这个对象传递进来，第二个参数就是当前的值；第三个参数是要加上的值，这里为1.然后调用底层方法<code>getIntVolatile</code>获取底层当前的值赋给var5，然后<code>while</code>判断var2和var5是否相等，即获取到的当前值和当前底层值是否相等，相等，就跳出循环，返回原来当前的值，并且将底层的值更新为新的值。</p>
-</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* 比较obj的offset处内存位置中的值和期望的值，如果相同则更新。此更新是不可中断的。 </span></span><br><span class="line"><span class="comment">*  </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> obj 需要更新的对象 </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> offset obj中整型field的偏移量 </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> expect 希望field中存在的值 </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> update 如果期望值expect与field的当前值相同，设置filed的值为这个新值 </span></span><br><span class="line"><span class="comment">* <span class="doctag">@return</span> 如果field的值被更改返回true </span></span><br><span class="line"><span class="comment">*/</span> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">compareAndSwapInt</span><span class="params">(Object obj, <span class="keyword">long</span> offset, <span class="keyword">int</span> expect, <span class="keyword">int</span> update)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>根据<code>Object obj</code>和<code>long offset</code>拿到内存值，与期望值<code>expect</code>比较，两者相等，说明没有其他线程修改这个值，那么当前线程可以进行修改，将它更新为新值<code>update</code>；两者不相等，说明其他线程已经做了修改，那么当前线程继续下一次的循环尝试，重新读取新的期望值，再与内存值进行比较。</p>
 <p>这样，就通过<code>CAS</code>操作，完成了线程安全的<code>count</code>计数功能。</p>
 <h2 id="4-LongAdder"><a href="#4-LongAdder" class="headerlink" title="4. LongAdder"></a>4. LongAdder</h2><p>用<code>LongAddr</code>也可以，但是为什么不使用<code>AtomicLong</code>呢？换句话说，为什么<code>AtomicLong</code>可以实现，还要有<code>LongAddr</code>这个类呢？？？</p>
 <p>我们都知道<code>AtomicLong</code>是通过无限循环不停的采取<code>CAS</code>的方法从机器指令级别操作去设置<code>value</code>，直到成功为止。那么当并发数比较多或出现更新热点时，就会导致<code>CAS</code>的失败机率变高，重试次数更多，越多的线程重试，<code>CAS</code>失败的机率越高，形成恶性循环，从而降低了效率。而<code>LongAdder</code>的原理就是降低对<code>value</code>更新的并发数，也就是将对单一<code>value</code>的变更压力分散到多个<code>value</code>值上，降低单个<code>value</code>的“热度”.相较于<code>AtomicLong</code>来说，更加适合读多写少的并发情景。</p>
@@ -324,7 +327,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:12:58</p>
-        <p><span>最后更新:</span>2018-06-15, 12:05:38</p>
+        <p><span>最后更新:</span>2018-06-28, 11:13:21</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/2.线程安全性-Atomic包/" title="2.线程安全性-Atomic包">http://yoursite.com/2018/06/04/2.线程安全性-Atomic包/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/2.线程安全性-Atomic包/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
