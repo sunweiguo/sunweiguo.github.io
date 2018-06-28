@@ -26,7 +26,7 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%9A%84%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B111.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E7%8A%B6%E6%80%81.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86111.png">
-<meta property="og:updated_time" content="2018-06-15T08:10:07.735Z">
+<meta property="og:updated_time" content="2018-06-28T09:11:52.453Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="10.线程池">
 <meta name="twitter:description" content="线程池的原理是面试的重灾区。本篇将完整分析线程池的原理。">
@@ -319,40 +319,17 @@
 <p><code>ExecutorService</code>接口继承了<code>Executor</code>接口，并声明了一些方法：<code>submit</code>、<code>invokeAll</code>、<code>invokeAny</code>以及<code>shutDown</code>等；<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ExecutorService</span> <span class="keyword">extends</span> <span class="title">Executor</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isShutdown</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isTerminated</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">awaitTermination</span><span class="params">(<span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line">    &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line">    &lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Runnable task, T result)</span></span>;</span><br><span class="line">    Future&lt;?&gt; submit(Runnable task);</span><br><span class="line">    &lt;T&gt; List&lt;Future&lt;T&gt;&gt; invokeAll(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks)</span><br><span class="line">        <span class="keyword">throws</span> InterruptedException;</span><br><span class="line">    &lt;T&gt; List&lt;Future&lt;T&gt;&gt; invokeAll(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks,</span><br><span class="line">                                  <span class="keyword">long</span> timeout, TimeUnit unit)</span><br><span class="line">        <span class="keyword">throws</span> InterruptedException;</span><br><span class="line"> </span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">invokeAny</span><span class="params">(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException, ExecutionException</span>;</span><br><span class="line">    &lt;T&gt; <span class="function">T <span class="title">invokeAny</span><span class="params">(Collection&lt;? extends Callable&lt;T&gt;&gt; tasks,</span></span></span><br><span class="line"><span class="function"><span class="params">                    <span class="keyword">long</span> timeout, TimeUnit unit)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InterruptedException, ExecutionException, TimeoutException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <p>在<code>ThreadPoolExecutor</code>类中有几个非常重要的方法：</p>
 <ul>
-<li><code>execute()</code></li>
-</ul>
-<blockquote>
-<p><code>execute()</code>方法实际上是<code>Executor</code>中声明的方法，在<code>ThreadPoolExecutor</code>进行了具体的实现，这个方法是<code>ThreadPoolExecutor</code>的核心方法，通过这个方法可以向线程池提交一个任务，交由线程池去执行。</p>
-</blockquote>
-<ul>
-<li><p><code>submit()</code></p>
-<blockquote>
-<p><code>submit()</code>方法是在<code>ExecutorService</code>中声明的方法,这个方法也是用来向线程池提交任务的，但是它和<code>execute()</code>方法不同，它能够返回任务执行的结果，去看<code>submit()</code>方法的实现，会发现它实际上还是调用的<code>execute()</code>方法，只不过它利用了<code>Future</code>来获取任务执行结果。</p>
-</blockquote>
+<li><code>execute()</code><br><code>execute()</code>方法实际上是<code>Executor</code>中声明的方法，在<code>ThreadPoolExecutor</code>进行了具体的实现，这个方法是<code>ThreadPoolExecutor</code>的核心方法，通过这个方法可以向线程池提交一个任务，交由线程池去执行。</li>
+<li><code>submit()</code><br><code>submit()</code>方法是在<code>ExecutorService</code>中声明的方法,这个方法也是用来向线程池提交任务的，但是它和<code>execute()</code>方法不同，它能够返回任务执行的结果，去看<code>submit()</code>方法的实现，会发现它实际上还是调用的<code>execute()</code>方法，只不过它利用了<code>Future</code>来获取任务执行结果。</li>
+<li><p><code>shutdown()</code><br>将线程池状态置为<code>SHUTDOWN</code>,并不会立即停止：</p>
+<p>  停止接收外部submit的任务<br>  内部正在跑的任务和队列里等待的任务，会执行完<br>  等到第二步完成后，才真正停止</p>
 </li>
-<li><p><code>shutdown()</code></p>
+<li><p><code>shutdownNow()</code><br>将线程池状态置为<code>STOP</code>。企图立即停止，事实上不一定：</p>
+<p>  跟shutdown()一样，先停止接收外部提交的任务<br>  忽略队列里等待的任务<br>  尝试将正在跑的任务interrupt中断<br>  返回未执行的任务列表</p>
 </li>
 </ul>
-<blockquote>
-<p>将线程池状态置为<code>SHUTDOWN</code>,并不会立即停止：</p>
-</blockquote>
-<pre><code>停止接收外部submit的任务
-内部正在跑的任务和队列里等待的任务，会执行完
-等到第二步完成后，才真正停止
-</code></pre><ul>
-<li><code>shutdownNow()</code></li>
-</ul>
-<blockquote>
-<p>将线程池状态置为<code>STOP</code>。企图立即停止，事实上不一定：</p>
-</blockquote>
-<pre><code>跟shutdown()一样，先停止接收外部提交的任务
-忽略队列里等待的任务
-尝试将正在跑的任务interrupt中断
-返回未执行的任务列表
-</code></pre><blockquote>
 <p>它试图终止线程的方法是通过调用<code>Thread.interrupt()</code>方法来实现的，但是大家知道，这种方法的作用有限，如果线程中没有<code>sleep</code> 、<code>wait</code>、<code>Condition</code>、定时锁等应用, <code>interrupt()</code>方法是无法中断当前的线程的。所以，<code>ShutdownNow()</code>并不代表线程池就一定立即就能退出，它也可能必须要等待所有正在执行的任务都执行完成了才能退出。</p>
 <p>但是大多数时候是能立即退出的</p>
-</blockquote>
 <ul>
 <li><code>awaitTermination(long timeOut, TimeUnit unit)</code></li>
 </ul>
@@ -513,7 +490,7 @@
         <p><span>本文标题:</span><a href="/2018/06/04/10.线程池/">10.线程池</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-04, 22:18:51</p>
-        <p><span>最后更新:</span>2018-06-15, 16:10:07</p>
+        <p><span>最后更新:</span>2018-06-28, 17:11:52</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/04/10.线程池/" title="10.线程池">http://yoursite.com/2018/06/04/10.线程池/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/04/10.线程池/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
