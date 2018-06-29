@@ -28,7 +28,7 @@
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E7%94%A8%E6%88%B7%E8%BF%9B%E7%A8%8B%E5%92%8C%E5%86%85%E6%A0%B82.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/selector2.png">
 <meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%87%A0%E7%A7%8DIO%E6%96%B9%E5%BC%8F%E5%88%99%E5%A1%9E%E6%83%85%E5%86%B5%E5%AF%B9%E6%AF%94.png">
-<meta property="og:updated_time" content="2018-06-29T04:46:01.675Z">
+<meta property="og:updated_time" content="2018-06-29T05:35:16.338Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="13.IO多路复用">
 <meta name="twitter:description" content="对于IO多路复用，是理解NIO到学习Netty最重要的一环。包括redis的线程模型也是采用这种IO模式。">
@@ -247,6 +247,7 @@
           
         <p>对于IO多路复用，是理解NIO到学习Netty最重要的一环。包括redis的线程模型也是采用这种IO模式。<br><a id="more"></a></p>
 <h2 id="什么是IO多路复用"><a href="#什么是IO多路复用" class="headerlink" title="什么是IO多路复用"></a>什么是IO多路复用</h2><p>这些名词比较绕口，理解涵义就好。一个<code>epoll</code>场景：一个酒吧服务员（一个线程），前面趴了一群醉汉，突然一个吼一声“倒酒”（事件），你小跑过去给他倒一杯，然后随他去吧，突然又一个要倒酒，你又过去倒上，就这样一个服务员服务好多人，有时没人喝酒，服务员处于空闲状态，可以干点别的玩玩手机。至于<code>epoll</code>与<code>select</code>，<code>poll</code>的区别在于后两者的场景中醉汉不说话，你要挨个问要不要酒，没时间玩手机了。io多路复用大概就是指这几个醉汉共用一个服务员。</p>
+<p><a href="https://www.zhihu.com/question/32163005/answer/55772739" target="_blank" rel="noopener">IO 多路复用是什么意思？ - 罗志宇的回答 - 知乎</a></p>
 <p>还有一个比喻：</p>
 <p>下面举一个例子，模拟一个<code>tcp</code>服务器处理30个客户<code>socket</code>。</p>
 <p>假设你是一个老师，让30个学生解答一道题目，然后检查学生做的是否正确，你有下面几个选择：</p>
@@ -256,7 +257,6 @@
 <li>第三种选择，你站在讲台上等，谁解答完谁举手。这时C、D举手，表示他们解答问题完毕，你下去依次检查C、D的答案，然后继续回到讲台上等。此时E、A又举手，然后去处理E和A。。。 </li>
 <li>这种就是IO复用模型，<code>Linux</code>下的<code>select</code>、<code>poll</code>和<code>epoll</code>就是干这个的。将用户<code>socket</code>对应的<code>fd</code>注册进<code>epoll</code>，然后<code>epoll</code>帮你监听哪些<code>socket</code>上有消息到达，这样就避免了大量的无用操作。此时的socket应该采用非阻塞模式。</li>
 </ol>
-<p><a href="https://www.zhihu.com/question/32163005/answer/55772739" target="_blank" rel="noopener">IO 多路复用是什么意思？ - 罗志宇的回答 - 知乎</a></p>
 <h2 id="为什么要有IO多路复用"><a href="#为什么要有IO多路复用" class="headerlink" title="为什么要有IO多路复用"></a>为什么要有IO多路复用</h2><p>一个服务器进程和一个客户端进程通信,服务器端<code>read(sockfd1,bud,bufsize)</code>,此时客户端进程没有发送数据,那么<code>read</code>(阻塞调用)将 阻塞直到客户端调用<code>write(sockfd,but,size)</code>发来数据.</p>
 <p>在一个客户和服务器通信时这没什么问题,当多个客户与服务器通信时,若服 务器阻塞于其中一个客户<code>sockfd1</code>,当另一个客户的数据到达套接字<code>sockfd2</code>时,服务器不 能处理,仍然阻塞<code>在read(sockfd1,…)</code>上;此时问题就出现了,不能及时处理另一个客户的服务,咋么办?I/O多路复用来解决!</p>
 <p>I/O多路复用:继续上面的问题,有多个客户连接,<code>sockfd1</code>,<code>sockfd2</code>,<code>sockfd3</code>..<code>sockfdn</code> 同时监听这n个客户,当其中有一个发来消息时就从<code>select</code>的阻塞中返回,然后就调用<code>read</code> 读取收到消息的<code>sockfd</code>,然后又循环回<code>select</code>阻塞;这样就不会因为阻塞在其中一个上而不能处理另一个客户的消息.</p>
@@ -323,7 +323,7 @@
         <p><span>本文标题:</span><a href="/2018/06/29/13.IO多路复用/">13.IO多路复用</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-29, 12:42:48</p>
-        <p><span>最后更新:</span>2018-06-29, 12:46:01</p>
+        <p><span>最后更新:</span>2018-06-29, 13:35:16</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/29/13.IO多路复用/" title="13.IO多路复用">http://yoursite.com/2018/06/29/13.IO多路复用/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/29/13.IO多路复用/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
