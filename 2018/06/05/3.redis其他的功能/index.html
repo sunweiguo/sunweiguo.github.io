@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="介绍redis其他重要功能。">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://img-blog.csdn.net/20170708133634756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3VuaHVpbGlhbmc4NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/redis%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%89%B9%E9%87%8F%E7%BD%91%E7%BB%9C%E5%91%BD%E4%BB%A4%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%B5%81%E6%B0%B4%E7%BA%BF.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E4%BD%9C%E7%94%A8.png">
@@ -36,11 +36,11 @@
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglogdemo.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglogdemo2.png">
 <meta property="og:image" content="http://p376695fl.bkt.clouddn.com/hyperloglog%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97.png">
-<meta property="og:updated_time" content="2018-06-19T06:59:44.559Z">
+<meta property="og:updated_time" content="2018-06-30T07:46:19.042Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="3.redis其他的功能">
 <meta name="twitter:description" content="介绍redis其他重要功能。">
-<meta name="twitter:image" content="https://img-blog.csdn.net/20170708133634756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3VuaHVpbGlhbmc4NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/redis%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -259,7 +259,7 @@
           
         <p>介绍redis其他重要功能。<br><a id="more"></a></p>
 <h2 id="一、慢查询日志"><a href="#一、慢查询日志" class="headerlink" title="一、慢查询日志"></a>一、慢查询日志</h2><h4 id="1-1-什么是慢查询日志"><a href="#1-1-什么是慢查询日志" class="headerlink" title="1.1 什么是慢查询日志"></a>1.1 什么是慢查询日志</h4><p>慢查询日志帮助开发和运维人员定位系统存在的慢操作。慢查询日志就是系统在命令执行前后计算每条命令的执行时间，当超过预设阀值，就将这条命令的相关信息（慢查询ID，发生时间戳，耗时，命令的详细信息）记录下来。</p>
-<h4 id="1-2-redis一条命令简单的生命周期"><a href="#1-2-redis一条命令简单的生命周期" class="headerlink" title="1.2 redis一条命令简单的生命周期"></a>1.2 redis一条命令简单的生命周期</h4><p><img src="https://img-blog.csdn.net/20170708133634756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvc3VuaHVpbGlhbmc4NQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<h4 id="1-2-redis一条命令简单的生命周期"><a href="#1-2-redis一条命令简单的生命周期" class="headerlink" title="1.2 redis一条命令简单的生命周期"></a>1.2 redis一条命令简单的生命周期</h4><p><img src="http://p9l5rzdf0.bkt.clouddn.com/redis%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="image"></p>
 <p>慢查询只会出现在【<strong>3.执行命令</strong>】这个阶段，即慢查询只记录命令执行时间，并不包括命令排队时间和网络传输时间。</p>
 <h4 id="1-3-慢查询配置参数"><a href="#1-3-慢查询配置参数" class="headerlink" title="1.3 慢查询配置参数"></a>1.3 慢查询配置参数</h4><blockquote>
 <p>慢查询的预设阀值  <code>slowlog-log-slower-than</code></p>
@@ -391,7 +391,7 @@
         <p><span>本文标题:</span><a href="/2018/06/05/3.redis其他的功能/">3.redis其他的功能</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-06-05, 11:03:18</p>
-        <p><span>最后更新:</span>2018-06-19, 14:59:44</p>
+        <p><span>最后更新:</span>2018-06-30, 15:46:19</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/06/05/3.redis其他的功能/" title="3.redis其他的功能">http://yoursite.com/2018/06/05/3.redis其他的功能/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/06/05/3.redis其他的功能/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
