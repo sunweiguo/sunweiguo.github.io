@@ -23,7 +23,7 @@
 <meta property="og:site_name" content="Eureka-Home">
 <meta property="og:description" content="没有从源码的角度一步一步分析PageHelper分页插件的实现原理，只是大概讲讲其中的门道，等后面有了mybatis源码分析的基础，再回过头来从源码的角度一步一步地看它的实现原理。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-07-04T13:45:48.807Z">
+<meta property="og:updated_time" content="2018-07-04T14:15:41.961Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="1.初步认识PageHelper分页插件原理和使用">
 <meta name="twitter:description" content="没有从源码的角度一步一步分析PageHelper分页插件的实现原理，只是大概讲讲其中的门道，等后面有了mybatis源码分析的基础，再回过头来从源码的角度一步一步地看它的实现原理。">
@@ -250,7 +250,8 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> a = <span class="string">'1'</span> <span class="keyword">limit</span> <span class="number">5</span>,<span class="number">10</span></span><br></pre></td></tr></table></figure>
 <p>这样我们只需要根据业务逻辑开发原<code>SQL</code>，不需关心分页语法对原<code>SQL</code>的影响，拦截器已经为我们处理好了。</p>
 <p>面试问到<code>mybatis</code>是如何分页以及分页插件的原理，大概可以这样说：</p>
-<p><code>mybatis</code>是通过<code>RowBounds</code>对象进行分页的，他针对返回结果集<code>ResultSet</code>进行内存分页，而非物理分页。<br>分页插件通过<code>mybatis</code>提供的分页插件接口进行实现，通过拦截器拦截需要执行的<code>sql</code>并重写<code>sql</code>，以此来添加对应的参数，最终实现分页效果。</p>
+<p><code>mybatis</code>是通过<code>RowBounds</code>对象进行分页的，他针对返回结果集<code>ResultSet</code>进行内存分页，而非物理分页。</p>
+<p>分页插件通过<code>mybatis</code>提供的分页插件接口进行实现，通过拦截器拦截需要执行的<code>sql</code>并重写<code>sql</code>，以此来添加对应的参数，最终实现分页效果。</p>
 <h2 id="简单使用"><a href="#简单使用" class="headerlink" title="简单使用"></a>简单使用</h2><h3 id="Maven依赖"><a href="#Maven依赖" class="headerlink" title="Maven依赖"></a>Maven依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 分页插件 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.pagehelper<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>pagehelper<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>5.0.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <h3 id="Spring配置文件"><a href="#Spring配置文件" class="headerlink" title="Spring配置文件"></a>Spring配置文件</h3><p>只需要在原来配置<code>Mybatis</code>的<code>SqlSessionFactoryBean</code>的地方加上分页插件的配置即可，具体区别请看以下的对比：</p>
 <p>原来的配置方式：</p>
@@ -275,7 +276,7 @@
         <p><span>本文标题:</span><a href="/2018/07/04/1.初步认识PageHelper分页插件原理和使用/">1.初步认识PageHelper分页插件原理和使用</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
         <p><span>发布时间:</span>2018-07-04, 21:45:35</p>
-        <p><span>最后更新:</span>2018-07-04, 21:45:48</p>
+        <p><span>最后更新:</span>2018-07-04, 22:15:41</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="/2018/07/04/1.初步认识PageHelper分页插件原理和使用/" title="1.初步认识PageHelper分页插件原理和使用">http://yoursite.com/2018/07/04/1.初步认识PageHelper分页插件原理和使用/</a>
             <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/04/1.初步认识PageHelper分页插件原理和使用/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
