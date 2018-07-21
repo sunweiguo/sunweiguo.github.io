@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="这里对Guava Cache,Memcache以及redis进行简单介绍和对比。">
+<meta name="keywords" content="java并发进阶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.高并发处理之缓存思路">
+<meta property="og:url" content="http://yoursite.com/2018/07/21/12.高并发处理之缓存思路/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="这里对Guava Cache,Memcache以及redis进行简单介绍和对比。">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/GuavaCache.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86%E5%9B%BE.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86.png">
+<meta property="og:image" content="http://p376695fl.bkt.clouddn.com/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98.png">
+<meta property="og:updated_time" content="2018-06-15T08:32:12.173Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="12.高并发处理之缓存思路">
+<meta name="twitter:description" content="这里对Guava Cache,Memcache以及redis进行简单介绍和对比。">
+<meta name="twitter:image" content="http://p376695fl.bkt.clouddn.com/GuavaCache.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>12.高并发处理之缓存思路 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/随笔">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/resume/">简历</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                            <li><a href="/log">修改记录</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/随笔">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/resume/">简历</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                    <li><a href="/log">修改记录</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-12.高并发处理之缓存思路" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/07/21/12.高并发处理之缓存思路/" class="article-date">
+      <time datetime="2018-07-21T03:56:21.548Z" itemprop="datePublished">2018-07-21</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      12.高并发处理之缓存思路
+    </h1>
+  
+
+        
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发进阶/">java并发进阶</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>这里对Guava Cache,Memcache以及redis进行简单介绍和对比。<br><a id="more"></a></p>
+<h2 id="1-高并发处理思路与手段"><a href="#1-高并发处理思路与手段" class="headerlink" title="1. 高并发处理思路与手段"></a>1. 高并发处理思路与手段</h2><h4 id="1-1-扩容"><a href="#1-1-扩容" class="headerlink" title="1.1 扩容"></a>1.1 扩容</h4><ul>
+<li>垂直扩容（纵向扩展）：提高系统部件能力</li>
+<li>水平扩容（横向扩容）：增加更多系统成员来实现</li>
+</ul>
+<h4 id="1-2-数据库"><a href="#1-2-数据库" class="headerlink" title="1.2 数据库"></a>1.2 数据库</h4><ul>
+<li>读操作扩展：<code>memcache</code>,<code>redis</code>,<code>CDN</code></li>
+<li>写操作扩展：<code>Cassandra</code>,<code>Hbase</code>等</li>
+</ul>
+<h2 id="2-高并发之缓存思路"><a href="#2-高并发之缓存思路" class="headerlink" title="2. 高并发之缓存思路"></a>2. 高并发之缓存思路</h2><h4 id="缓存特征"><a href="#缓存特征" class="headerlink" title="缓存特征"></a>缓存特征</h4><p>命中率、最大元素、清空策略(<code>FIFO</code>,<code>LFU</code>,<code>LRU</code>,过期时间，随机)</p>
+<h4 id="影响缓存命中率因素："><a href="#影响缓存命中率因素：" class="headerlink" title="影响缓存命中率因素："></a>影响缓存命中率因素：</h4><ul>
+<li>业务场景和业务需求：适合读多写少的场景</li>
+<li>缓存的设计(粒度和策略)：缓存粒度越小，命中率越高</li>
+<li>缓存容量(经常用LRU)和基础设施(是否可扩展，避免缓存失效-一致性hash算法和几点冗余)</li>
+</ul>
+<h4 id="缓存分类"><a href="#缓存分类" class="headerlink" title="缓存分类"></a>缓存分类</h4><ul>
+<li>本地缓存：编程实现（成员变量、局部变量、静态变量）、Guava Cache</li>
+<li>分布式缓存：Memcache，Redis</li>
+</ul>
+<p>本地缓存：个应用之间无法很好地共享，与应用本身耦合过紧；而分布式缓存，本身就是独立的应用，各独立应用之间共享缓存。</p>
+<h4 id="2-1-Guava-Cache"><a href="#2-1-Guava-Cache" class="headerlink" title="2.1 Guava Cache"></a>2.1 Guava Cache</h4><p><img src="http://p376695fl.bkt.clouddn.com/GuavaCache.png" alt="image"></p>
+<p>设计思想类似于jdk1.7中的<code>ConcurrentHashMap</code>，也是用多个<code>segments</code>的细粒度锁，在保证线程安全的同时，支持高并发场景的需求。</p>
+<p>下面数据存储就是以键值对的形式存储，另外，需要处理缓存过期、动态加载等算法逻辑，所以需要一些额外的信息来实现这些操作。</p>
+<p>主要实现的功能有：自动将节点加入到缓存结构中，当缓存的数据超过设置的最大值时，用LRU算法来移除。他具备根据节点上次被访问或者写入的时间来计算他的过期机制。</p>
+<h4 id="2-2-memcache"><a href="#2-2-memcache" class="headerlink" title="2.2 memcache"></a>2.2 memcache</h4><h5 id="memcache简单认识"><a href="#memcache简单认识" class="headerlink" title="memcache简单认识"></a>memcache简单认识</h5><p><code>memcache</code>是一个高性能的分布式的内存对象缓存系统，它在内存里维护一个统一的巨大的<code>hash</code>表。能用来缓存各种格式的数据，包括图像、视频、文件以及数据库检索等结果.</p>
+<p><code>memcache</code>是以守护程序方式运行于一个或多个服务器中，随时会接收客户的连接和操作。</p>
+<p>存在<code>memcache</code>中的对象实际放置在内存中，这也是<code>memcache</code>如此高效的原因。</p>
+<p>本身是不提供分布式的解决方案的。分布式是在客户端实现的，通过客户端的路由来处理达到分布式的目的。</p>
+<p>应用服务器每次在存储某个<code>key</code>和<code>value</code>的时候，通过某种算法把<code>key</code>映射到某台服务器上。</p>
+<h5 id="一致性hash算法"><a href="#一致性hash算法" class="headerlink" title="一致性hash算法"></a>一致性hash算法</h5><p>客户端实现分布式：一致性<code>hash</code>算法。</p>
+<p><img src="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86%E5%9B%BE.png" alt="image"></p>
+<h5 id="memcache一些特性"><a href="#memcache一些特性" class="headerlink" title="memcache一些特性"></a>memcache一些特性</h5><blockquote>
+<p><code>Memcached</code>单进程在32位系统中最大使用内存为2G，若在64位系统则没有限制,这是由于32位系统限制单进程最多可使用2G内存,要使用更多内存，可以分多个端口开启多个<code>Memcached</code>进程。</p>
+</blockquote>
+<blockquote>
+<p>最大30天的数据过期时间，设置为永久也会在这个时间过期。最长键长为250字节，大于该长度无法存储。最大同时连接数是200;</p>
+</blockquote>
+<blockquote>
+<p><code>memcache</code>是一种无阻塞的<code>socket</code>通信方式服务，基于<code>libevent</code>库，犹豫无阻塞通信，对内存读写速度非常快。</p>
+</blockquote>
+<h5 id="不适用memcached的业务场景？"><a href="#不适用memcached的业务场景？" class="headerlink" title="不适用memcached的业务场景？"></a>不适用memcached的业务场景？</h5><blockquote>
+<p>缓存对象的大小大于1MB</p>
+</blockquote>
+<blockquote>
+<p>虚拟主机不让运行<code>memcached</code>服务</p>
+</blockquote>
+<blockquote>
+<p>key的长度大于250字符</p>
+</blockquote>
+<blockquote>
+<p>需要持久化</p>
+</blockquote>
+<h5 id="不能够遍历memcached中所有的item？"><a href="#不能够遍历memcached中所有的item？" class="headerlink" title="不能够遍历memcached中所有的item？"></a>不能够遍历memcached中所有的item？</h5><p> 这个操作的速度相对缓慢且阻塞其他的操作</p>
+<h5 id="memcache如何分配内存？"><a href="#memcache如何分配内存？" class="headerlink" title="memcache如何分配内存？"></a>memcache如何分配内存？</h5><p>这张图片里面涉及了<code>slab_class</code>、<code>slab</code>、<code>page</code>、<code>chunk</code>四个概念，它们之间的关系是：</p>
+<ul>
+<li><code>MemCache</code>将内存空间分为一组<code>slab</code></li>
+<li>每个<code>slab</code>下又有若干个<code>page</code>，每个<code>page</code>默认是1M，如果一个<code>slab</code>占用100M内存的话，那么这个slab下应该有100个page</li>
+<li>每个page里面包含一组<code>chunk</code>，<code>chunk</code>是真正存放数据的地方，同一个<code>slab</code>里面的<code>chunk</code>的大小是固定的</li>
+<li>有相同大小<code>chunk</code>的<code>slab</code>被组织在一起，称为<code>slab_class</code></li>
+</ul>
+<p><img src="http://p376695fl.bkt.clouddn.com/memcache%E5%8E%9F%E7%90%86.png" alt="image"></p>
+<p><strong>那么是具体如何分配的呢？</strong></p>
+<blockquote>
+<p><code>MemCache</code>中的<code>value</code>过来存放的地方是由<code>value</code>的大小决定的，<code>value</code>总是会被存放到与<code>chunk</code>大小最接近的一个<code>slab</code>中，比如<code>slab[1]</code>的<code>chunk</code>大小为80字节、<code>slab[2]</code>的<code>chunk</code>大小为100字节、<code>slab[3]</code>的<code>chunk</code>大小为128字节（相邻<code>slab</code>内的<code>chunk</code>基本以1.25为比例进行增长，<code>MemCache</code>启动时可以用-f指定这个比例），那么过来一个88字节的<code>value</code>，这个<code>value</code>将被放到2号<code>slab</code>中。</p>
+</blockquote>
+<blockquote>
+<p>放<code>slab</code>的时候，首先<code>slab</code>要申请内存，申请内存是以<code>page</code>为单位的，所以在放入第一个数据的时候，无论大小为多少，都会有1M大小的<code>page</code>被分配给该<code>slab</code>。申请到<code>page</code>后，<code>slab</code>会将这个<code>page</code>的内存按<code>chunk</code>的大小进行切分，这样就变成了一个<code>chunk</code>数组，最后从这个<code>chunk</code>数组中选择一个用于存储数据。</p>
+</blockquote>
+<blockquote>
+<p>如果这个slab中没有<code>chunk</code>可以分配了怎么办，如果<code>MemCache</code>启动没有追加-M（禁止LRU，这种情况下内存不够会报<code>Out Of Memory</code>错误），那么<code>MemCache</code>会把这个<code>slab</code>中最近最少使用的<code>chunk</code>中的数据清理掉，然后放上最新的数据。</p>
+</blockquote>
+<blockquote>
+<ol>
+<li><code>MemCache</code>的内存分配<code>chunk</code>里面会有内存浪费，88字节的<code>value</code>分配在128字节（紧接着大的用）的<code>chunk</code>中，就损失了30字节，但是这也避免了管理内存碎片的问题</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li><code>MemCache</code>的<code>LRU</code>算法不是针对全局的，是针对<code>slab</code>的</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>该可以理解为什么<code>MemCache</code>存放的<code>value</code>大小是限制的，因为一个新数据过来，<code>slab</code>会先以<code>page</code>为单位申请一块内存，申请的内存最多就只有1M，所以<code>value</code>大小自然不能大于1M了</li>
+</ol>
+</blockquote>
+<h5 id="最后再总结一下memcache"><a href="#最后再总结一下memcache" class="headerlink" title="最后再总结一下memcache"></a>最后再总结一下memcache</h5><ul>
+<li><code>MemCache</code>中可以保存的<code>item</code>数据量是没有限制的，只要内存足够</li>
+<li><code>MemCache</code>单进程在32位机中最大使用内存为2G，64位机则没有限制</li>
+<li><code>Key</code>最大为250个字节，超过该长度无法存储</li>
+<li>单个<code>item</code>最大数据是1MB，超过1MB的数据不予存储</li>
+<li><code>MemCache</code>服务端是不安全的，比如已知某个<code>MemCache</code>节点，可以直接<code>telnet</code>过去，并通过<code>flush_all</code>让已经存在的键值对立即失效</li>
+<li>不能够遍历<code>MemCache</code>中所有的<code>item</code>，因为这个操作的速度相对缓慢且会阻塞其他的操作</li>
+<li><code>MemCache</code>的高性能源自于两阶段哈希结构：第一阶段在客户端，通过<code>Hash</code>算法根据<code>Key</code>值算出一个节点；第二阶段在服务端，通过一个内部的<code>Hash</code>算法，查找真正的<code>item</code>并返回给客户端。从实现的角度看，<code>MemCache</code>是一个非阻塞的、基于事件的服务器程序</li>
+<li><code>MemCache</code>设置添加某一个<code>Key</code>值的时候，传入<code>expire</code>为0表示这个<code>Key</code>值永久有效，这个<code>Key</code>值也会在30天之后失效</li>
+</ul>
+<h4 id="2-3-redis"><a href="#2-3-redis" class="headerlink" title="2.3 redis"></a>2.3 redis</h4><h5 id="redis特点："><a href="#redis特点：" class="headerlink" title="redis特点："></a>redis特点：</h5><ul>
+<li>支持数据持久化，可以将内存中的数据保存到磁盘。</li>
+<li>支持更多的数据结构</li>
+<li>支持数据备份</li>
+<li>性能极高，读可以达到11万次每秒；写达到8万1千次每秒</li>
+<li>redis所有操作都是原子性，并且支持几个操作一起的原子性</li>
+<li>支持发布-订阅功能</li>
+</ul>
+<h5 id="redis适用场景："><a href="#redis适用场景：" class="headerlink" title="redis适用场景："></a>redis适用场景：</h5><ul>
+<li>取最新n个数据、排行榜</li>
+<li>精准过期时间</li>
+<li>计数器</li>
+<li>唯一性检查</li>
+<li>实时系统、垃圾系统、缓存等</li>
+</ul>
+<h4 id="2-4-redis-VS-memcache"><a href="#2-4-redis-VS-memcache" class="headerlink" title="2.4 redis VS memcache"></a>2.4 redis VS memcache</h4><p>当提到<code>redis</code>就问<code>memcache</code>，当提到<code>memcache</code>就提到<code>redis</code>，说明这两者用的都十分广泛，<code>redis</code>号称“强化版<code>memcached</code>”，他们之间的区别到底是啥呢？</p>
+<ul>
+<li>基本命令</li>
+</ul>
+<blockquote>
+<p><code>memcache</code>支持的命令很少，因为他只支持<code>String</code>的操作，通讯协议包括文本格式和二进制格式，用于满足简单网络客户端工具（如<code>telnet</code>）和对性能要求更高的客户端的不同需求；<code>redis</code>操作类似，只是数据结构更复杂以支持更多的特性，如发布订阅、消息队列等。<code>redis</code>的客户端-服务器通讯协议完全采用文本格式(在将来可能的服务器间通讯会采用二进制格式)。</p>
+</blockquote>
+<ul>
+<li>事务</li>
+</ul>
+<blockquote>
+<p><code>redis</code>通过<code>multi</code> / <code>watch</code> / <code>exec</code>等命令可以支持事务的概念，原子性的执行一批命令;</p>
+<p><code>memcache</code>:即使在多线程模式，所有的命令都是原子的；命令序列不是原子的。在并发的情况下，您也可能覆写了一个被其他进程set的item。<code>memcached 1.2.5</code>以及更高版本，提供了<code>gets</code>和<code>cas</code>命令，它们可以解决上面的问题。如果您使用<code>gets</code>命令查询某个<code>key</code>的<code>item</code>，<code>memcached</code>会给您返回该<code>item</code>当前值的唯一标识。如果您覆写了这个<code>item</code>并想把它写回到<code>memcached</code>中，您可以通过<code>cas</code>命令把那个唯一标识一起发送给 <code>memcached</code>。如果该<code>item</code>存放在<code>memcached</code>中的唯一标识与您提供的一致，您的写操作将会成功。如果另一个进程在这期间也修改了这个 <code>item</code>，那么该<code>item</code>存放在<code>memcached</code>中的唯一标识将会改变，您的写操作就会失败。</p>
+</blockquote>
+<ul>
+<li>数据备份，有效性，持久化等</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>不保证存储的数据的有效性，<code>slab</code>内部基于<code>LRU</code>也会自动淘汰旧数据;<code>memcached</code>也不做数据的持久化工作;</p>
+<p><code>redis</code>可以以<code>master-slave</code>的方式配置服务器，<code>slave</code>节点对数据进行<code>replica</code>备份，<code>slave</code>节点也可以充当<code>read only</code>的节点分担数据读取的工作;<code>redis</code>内建支持两种持久化方案，<code>snapshot</code>快照和<code>AOF</code>增量<code>Log</code>方式。</p>
+</blockquote>
+<ul>
+<li>性能</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>自身并不主动定期检查和标记哪些数据需要被淘汰，只有当再次读取相关数据时才检查时间戳，或者当内存不够使用需要主动淘汰数据时进一步检查<code>LRU</code>数据。</p>
+<p><code>redis</code>为了减少大量小数据CMD操作的网络通讯时间开销 <code>RTT (Round Trip Time)</code>，支持<code>pipeline</code>和<code>script</code>技术。</p>
+</blockquote>
+<ul>
+<li>集群</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>的服务器端互相完全独立，客户端通常通过对键值应用<code>hash</code>算法决定数据的分区，为了减少服务器的增减对<code>hash</code>结果的影响，导致大面积的缓存失效，多数客户端实现了一致性<code>hash</code>算法。</p>
+<p><code>redis3.0</code>已经支持服务端集群了。</p>
+</blockquote>
+<ul>
+<li>性能对比</li>
+</ul>
+<blockquote>
+<p>由于<code>redis</code>只使用单核，而<code>memcached</code>可以使用多核，所以平均每一个核上<code>redis</code>在存储小数据时比<code>memcached</code>性能更高。而在100k以上的数据中，<code>memcached</code>性能要高于<code>redis</code>，虽然<code>redis</code>最近也在存储大数据的性能上进行优化，但是比起<code>memcached</code>，还是稍有逊色</p>
+</blockquote>
+<ul>
+<li>内存使用效率</li>
+</ul>
+<blockquote>
+<p>使用简单的<code>key-value</code>存储的话，<code>memcached</code>的内存利用率更高，而如果<code>redis</code>采用<code>hash</code>结构来做<code>key-value</code>存储，由于其组合式的压缩，其内存利用率会高于<code>memcached</code>。另外，<code>memcached</code>使用预分配的内存池的方式，带来一定程度的空间浪费 并且在内存仍然有很大空间时，新的数据也可能会被剔除，而<code>redis</code>使用现场申请内存的方式来存储数据，不会剔除任何非临时数据 redis更适合作为存储而不是<code>cache</code>。</p>
+</blockquote>
+<ul>
+<li><code>redis</code>支持服务器端的数据操作<blockquote>
+<p><code>redis</code>相比<code>memcached</code>来说，拥有更多的数据结构和并支持更丰富的数据操作，通常在<code>memcached</code>里，你需要将数据拿到客户端来进行类似的修改再<code>set</code>回去。这大大增加了网络IO的次数和数据体积。在<code>redis</code>中，这些复杂的操作通常和一般的<code>GET/SET</code>一样高效。所以，如果需要缓存能够支持更复杂的结构和操作，那么<code>redis</code>会是不错的选择</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<p>何时应该使用<code>memcache</code>:</p>
+<blockquote>
+<p>首先就是对小型静态数据进行缓存处理，最具代表性的例子就是HTML代码片段。这是因为<code>memcached</code>在处理元数据时所消耗的内存资源相对更少.</p>
+<p>在以前，<code>redis3.0</code>版本之前，<code>memcached</code>在横向扩展方面也比<code>redis</code>更具优势。由于其在设计上的思路倾向以及相对更为简单的功能设置，<code>memcached</code>在实现扩展时的难度比redis低得多。</p>
+</blockquote>
+<p>何时应该使用<code>redis</code>：</p>
+<blockquote>
+<p>其他场景都可以用<code>redis</code>来替换。</p>
+<p>相比于武断的<code>LRU</code>(即最低近期使用量)算法，<code>redis</code>允许用户更为精准地进行细化控制，利用六种不同回收策略确切提高缓存资源的实际利用率。<code>redis</code>还采用更为复杂的内存管理与回收对象备选方案。</p>
+<p><code>memcached</code>将键名限制在250字节，值也被限制在不超过1MB，且只适用于普通字符串。<code>redis</code>则将键名与值的最大上限各自设定为512MB，且支持二进制格式。</p>
+<p>它所保存的数据具备透明化特性，也就是说服务器能够直接对这些数据进行操作.</p>
+<p><code>redis</code>还提供可选而且能够具体调整的数据持久性方案</p>
+<p><code>redis</code>能够提供复制功能。复制功能旨在帮助缓存体系实现高可用性配置方案，从而在遭遇故障的情况下继续为应用程序提供不间断的缓存服务。</p>
+</blockquote>
+<p>使用<code>redis</code>的正确姿势：</p>
+<blockquote>
+<p>要进行<code>master-slave</code>配置，出现服务故障时可以支持切换。</p>
+<p>在<code>master</code>侧禁用数据持久化，只需在<code>slave</code>上配置数据持久化。</p>
+<p>物理内存+虚拟内存不足，这个时候<code>dump</code>一直死着，时间久了机器挂掉。这个情况就是灾难。</p>
+<p>当<code>redis</code>物理内存使用超过内存总容量的3/5时就会开始比较危险了，就开始做<code>swap</code>,内存碎片大。</p>
+<p>当达到最大内存时，会清空带有过期时间的<code>key</code>，即使<code>key</code>未到过期时间。</p>
+<p><code>redis</code>与<code>DB</code>同步写的问题，先写<code>DB</code>，后写<code>redis</code>，因为写内存基本上没有问题。</p>
+</blockquote>
+<h4 id="2-5-缓存数据的一致性"><a href="#2-5-缓存数据的一致性" class="headerlink" title="2.5 缓存数据的一致性"></a>2.5 缓存数据的一致性</h4><p><img src="http://p376695fl.bkt.clouddn.com/%E7%BC%93%E5%AD%98%E4%B8%80%E8%87%B4%E6%80%A7%E9%97%AE%E9%A2%98.png" alt="image"></p>
+<p>这个话题是比较重要的话题，在独立的章节中继续讨论。可以先简单看看：<a href="https://hacpai.com/article/1520822628400" target="_blank" rel="noopener">https://hacpai.com/article/1520822628400</a></p>
+<h4 id="2-6-缓存穿透"><a href="#2-6-缓存穿透" class="headerlink" title="2.6 缓存穿透"></a>2.6 缓存穿透</h4><p>对于缓存穿透概念的误解：由于缓存故障或者缓存过期，导致大量的请求穿透到后端数据库服务器；</p>
+<p>其实他真正是：在高并发场景下，如果某个key被高并发地访问，却没有被命中，处于对容错性的考虑，会尝试从后端数据库取获取，从而导致大量的请求打到了数据库。</p>
+<p>缓存穿透解决：缓存空对象；布隆过滤器 </p>
+<h4 id="2-7-缓存雪崩"><a href="#2-7-缓存雪崩" class="headerlink" title="2.7 缓存雪崩"></a>2.7 缓存雪崩</h4><p>由于缓存故障或者缓存过期，导致大量的请求穿透到后端数据库服务器.导致系统崩溃。</p>
+<p>并发、缓存穿透、缓存抖动都有可能导致缓存雪崩问题。某个时间点，系统缓存集中失效：对缓存设置不同的过期时间。从应用架构角度看，可以限流、降级、熔断来降低影响，也可以通过多级缓存避免灾难。一开始要多进行压力测试，避免隐患。</p>
+<p>关于缓存穿透和缓存雪崩，之redis系统学习中提及到了。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/07/21/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-07-21, 11:56:21</p>
+        <p><span>最后更新:</span>2018-06-15, 16:32:12</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/07/21/12.高并发处理之缓存思路/" title="12.高并发处理之缓存思路">http://yoursite.com/2018/07/21/12.高并发处理之缓存思路/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/21/12.高并发处理之缓存思路/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/07/21/12、深入fail-fast/">
+                    12、深入fail-fast
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/07/21/12、支付宝开发/">
+                    12、支付宝开发
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-高并发处理思路与手段"><span class="toc-number">1.</span> <span class="toc-text">1. 高并发处理思路与手段</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-扩容"><span class="toc-number">1.0.1.</span> <span class="toc-text">1.1 扩容</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-数据库"><span class="toc-number">1.0.2.</span> <span class="toc-text">1.2 数据库</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-高并发之缓存思路"><span class="toc-number">2.</span> <span class="toc-text">2. 高并发之缓存思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#缓存特征"><span class="toc-number">2.0.1.</span> <span class="toc-text">缓存特征</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#影响缓存命中率因素："><span class="toc-number">2.0.2.</span> <span class="toc-text">影响缓存命中率因素：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#缓存分类"><span class="toc-number">2.0.3.</span> <span class="toc-text">缓存分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-Guava-Cache"><span class="toc-number">2.0.4.</span> <span class="toc-text">2.1 Guava Cache</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-memcache"><span class="toc-number">2.0.5.</span> <span class="toc-text">2.2 memcache</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#memcache简单认识"><span class="toc-number">2.0.5.1.</span> <span class="toc-text">memcache简单认识</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#一致性hash算法"><span class="toc-number">2.0.5.2.</span> <span class="toc-text">一致性hash算法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#memcache一些特性"><span class="toc-number">2.0.5.3.</span> <span class="toc-text">memcache一些特性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#不适用memcached的业务场景？"><span class="toc-number">2.0.5.4.</span> <span class="toc-text">不适用memcached的业务场景？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#不能够遍历memcached中所有的item？"><span class="toc-number">2.0.5.5.</span> <span class="toc-text">不能够遍历memcached中所有的item？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#memcache如何分配内存？"><span class="toc-number">2.0.5.6.</span> <span class="toc-text">memcache如何分配内存？</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#最后再总结一下memcache"><span class="toc-number">2.0.5.7.</span> <span class="toc-text">最后再总结一下memcache</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-redis"><span class="toc-number">2.0.6.</span> <span class="toc-text">2.3 redis</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#redis特点："><span class="toc-number">2.0.6.1.</span> <span class="toc-text">redis特点：</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#redis适用场景："><span class="toc-number">2.0.6.2.</span> <span class="toc-text">redis适用场景：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-4-redis-VS-memcache"><span class="toc-number">2.0.7.</span> <span class="toc-text">2.4 redis VS memcache</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-5-缓存数据的一致性"><span class="toc-number">2.0.8.</span> <span class="toc-text">2.5 缓存数据的一致性</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-6-缓存穿透"><span class="toc-number">2.0.9.</span> <span class="toc-text">2.6 缓存穿透</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-7-缓存雪崩"><span class="toc-number">2.0.10.</span> <span class="toc-text">2.7 缓存雪崩</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"12.高并发处理之缓存思路　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <!--PC和WAP自适应版-->
+<div id="SOHUCS"></div> 
+<script type="text/javascript"> 
+(function(){ 
+var appid = 'cytEFcz7H'; 
+var conf = 'prod_cb84c9187d5b3e228aa6cf3a7e32be61'; 
+var width = window.innerWidth || document.documentElement.clientWidth; 
+if (width < 960) { 
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/07/21/12、深入fail-fast/" title="上一篇: 12、深入fail-fast">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/07/21/12、支付宝开发/" title="下一篇: 12、支付宝开发">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/电信子公司的实习/">电信子公司的实习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/关于索引失效和联合索引/">关于索引失效和联合索引</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/nginx原理/">nginx原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.组件注册总结/">9.组件注册总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.redis分布式锁/">9.redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.整合WebSocket/">8.整合WebSocket</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.使用FactoryBean注册组件/">8.使用FactoryBean注册组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.整合微信/">7.整合微信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.@Import/">7.@Import</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AOP、异常、整合mybatis/">6.AOP、异常、整合mybatis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.@Conditional-按照条件注册bean/">6.@Conditional-按照条件注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.卖家订单部分/">5.卖家订单部分</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.@lazy-bean-懒加载/">5.@lazy-bean-懒加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.部署在本机环境/">4.部署在本机环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.@Scope-设置组件作用域/">4.@Scope-设置组件作用域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.订单/">3.订单</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.自定义TypeFilter指定过滤规则/">3.自定义TypeFilter制定过滤规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/27.自己动手写springIOC(3)/">27.自己动手写springIOC(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26.自己动手写springIOC(2)/">26.自己动手写springIOC(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25.自己动手写springIOC(1)/">25.自己动手写springIOC(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24.SpringAop--责任链模式/">24.SpringAop--责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23.SpringAop--动态代理模式/">23.SpringAop--动态代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22.SpringAop--基本使用和切点表达式/">22.SpringAop--基本使用和切点表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21.spring aop基本使用/">21.spring aop基本使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20.@Profile环境搭建和根据环境注册bean/">20.@Profile环境搭建和根据环境注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.商品和类目开发/">2.商品和类目开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.@ComponentScan自动扫描组件以及扫描规则/">2.@ComponentScan自动扫描组件以及扫描规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19.Aware注入Spring底层组件及原理/">19.Aware注入Spring底层组件及原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18.方法、构造器位置的自动装配/">18.方法、构造器位置的自动装配</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17.@Resource & @Inject/">17.@Resource & @Inject</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16.@Autowired & @Qualifier & @Primary/">16.@Autowired & @Qualifier & @Primary</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.@PropertySource加载外部配置文件/">15.@PropertySource加载外部配置文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.@Value赋值/">14.@Value赋值</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.IO多路复用/">13.IO多路复用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.BeanPostProcessor-后置处理器/">13.BeanPostProcessor-后置处理器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.@PostConstruct&@PreDestory/">12.@PostConstruct&@PreDestory</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.关于泛型的补充/">11.关于泛型的补充</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.InitializingBean和DisposableBean/">11.InitializingBean和DisposableBean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.部署/">10.部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.缓存更新/">10.缓存更新</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.redis事务/">10.redis事务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.@Bean指定初始化和销毁方法/">10.@Bean指定初始化和销毁方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.设计模式汇总/">1.设计模式汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.组件注册-@Configuration & @Bean/">1.组件注册-@Configuration & @Bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.深入Web请求过程/">1.深入Web请求过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.数据库设计和基础环境搭建/">1.数据库设计和基础环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.初步认识PageHelper分页插件原理和使用/">1.初步认识PageHelper分页插件原理和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Java基础/">1.Java基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1. 登录功能/">1. 登录功能</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共195篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
