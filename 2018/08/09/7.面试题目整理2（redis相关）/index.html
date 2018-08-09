@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="面试题目整理2（redis相关）。">
+<meta name="keywords" content="面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.面试题目整理2（redis相关）">
+<meta property="og:url" content="http://yoursite.com/2018/08/09/7.面试题目整理2（redis相关）/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="面试题目整理2（redis相关）。">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-08-09T00:56:52.759Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="7.面试题目整理2（redis相关）">
+<meta name="twitter:description" content="面试题目整理2（redis相关）。">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>7.面试题目整理2（redis相关） | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/resume/">简历</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/resume/">简历</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-7.面试题目整理2（redis相关）" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/08/09/7.面试题目整理2（redis相关）/" class="article-date">
+      <time datetime="2018-08-09T00:48:01.635Z" itemprop="datePublished">2018-08-09</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      7.面试题目整理2（redis相关）
+    </h1>
+  
+
+        
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/面试/">面试</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>面试题目整理2（redis相关）。<br><a id="more"></a></p>
+<h2 id="1-Redis有哪些数据结构？"><a href="#1-Redis有哪些数据结构？" class="headerlink" title="1. Redis有哪些数据结构？"></a>1. Redis有哪些数据结构？</h2><p>字符串<code>String</code>、字典<code>Hash</code>、列表<code>List</code>、集合<code>Set</code>、有序集合<code>SortedSet</code>。</p>
+<p>如果你是<code>Redis</code>中高级用户，还需要加上下面几种数据结构<code>HyperLogLog</code>、<code>Geo</code>、<code>Pub/Sub</code>。</p>
+<h2 id="2-使用过Redis分布式锁么，它是什么回事？"><a href="#2-使用过Redis分布式锁么，它是什么回事？" class="headerlink" title="2. 使用过Redis分布式锁么，它是什么回事？"></a>2. 使用过Redis分布式锁么，它是什么回事？</h2><p>先拿setnx来争抢锁，抢到之后，再用expire给锁加一个过期时间防止锁忘记了释放。如果在setnx之后执行expire之前进程意外crash或者要重启维护了，那会怎么样？可以同时把setnx和expire合成  一条指令.</p>
+<h2 id="3-假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><a href="#3-假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？" class="headerlink" title="3. 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"></a>3. 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</h2><p>使用keys指令可以扫出指定模式的key列表。</p>
+<p>对方接着追问：如果这个redis正在给线上的业务提供服务，那使用keys指令会有什么问题？</p>
+<p>这个时候你要回答redis关键的一个特性：redis的单线程的。keys指令会导致线程阻塞一段时间，线上服务会停顿，直到指令执行完毕，服务才能恢复。这个时候可以使用scan指令，scan指令可以无阻塞的提取出指定模式的key列表，但是会有一定的重复概率，在客户端做一次去重就可以了，但是整体所花费的时间会比直接用keys指令长。</p>
+<h2 id="4-使用过Redis做异步队列么，你是怎么用的？"><a href="#4-使用过Redis做异步队列么，你是怎么用的？" class="headerlink" title="4. 使用过Redis做异步队列么，你是怎么用的？"></a>4. 使用过Redis做异步队列么，你是怎么用的？</h2><p>一般使用list结构作为队列，rpush生产消息，lpop消费消息。当lpop没有消息的时候，要适当sleep一会再重试。</p>
+<p>如果对方追问可不可以不用sleep呢？list还有个指令叫blpop，在没有消息的时候，它会阻塞住直到消息到来。</p>
+<p>如果对方追问能不能生产一次消费多次呢？使用pub/sub主题订阅者模式，可以实现1:N的消息队列。</p>
+<p>如果对方追问pub/sub有什么缺点？在消费者下线的情况下，生产的消息会丢失，得使用专业的消息队列如rabbitmq等。</p>
+<p>如果对方追问redis如何实现延时队列？<br>使用sortedset，拿时间戳作为score，消息内容作为key调用zadd来生产消息，消费者用zrangebyscore指令获取N秒之前的数据轮询进行处理。</p>
+<h2 id="5-如果有大量的key需要设置同一时间过期，一般需要注意什么？"><a href="#5-如果有大量的key需要设置同一时间过期，一般需要注意什么？" class="headerlink" title="5. 如果有大量的key需要设置同一时间过期，一般需要注意什么？"></a>5. 如果有大量的key需要设置同一时间过期，一般需要注意什么？</h2><p>如果大量的key过期时间设置的过于集中，到过期的那个时间点，redis可能会出现短暂的卡顿现象。一般需要在时间上加一个随机值，使得过期时间分散一些。</p>
+<h2 id="6-Redis如何做持久化的？"><a href="#6-Redis如何做持久化的？" class="headerlink" title="6. Redis如何做持久化的？"></a>6. Redis如何做持久化的？</h2><p>bgsave做镜像全量持久化，aof做增量持久化。因为bgsave会耗费较长时间，不够实时，在停机的时候会导致大量丢失数据，所以需要aof来配合使用。在redis实例重启时，优先使用aof来恢复内存的状态，如果没有aof日志，就会使用rdb文件来恢复。</p>
+<p>如果再问aof文件过大恢复时间过长怎么办？你告诉面试官，Redis会定期做aof重写，压缩aof文件日志大小。如果面试官不够满意，再拿出杀手锏答案，Redis4.0之后有了混合持久化的功能，将bgsave的全量和aof的增量做了融合处理，这样既保证了恢复的效率又兼顾了数据的安全性。</p>
+<p>如果对方追问那如果突然机器掉电会怎样？取决于aof日志sync属性的配置，如果不要求性能，在每条写指令时都sync一下磁盘，就不会丢失数据。但是在高性能的要求下每次都sync是不现实的，一般都使用定时sync，比如1s1次，这个时候最多就会丢失1s的数据。</p>
+<p>如果对方追问bgsave的原理是什么？你给出两个词汇就可以了，fork和cow。fork是指redis通过创建子进程来进行bgsave操作，cow指的是copy on write，子进程创建后，父子进程共享数据段，父进程继续提供读写服务。</p>
+<h2 id="7-Pipeline有什么好处，为什么要用pipeline？"><a href="#7-Pipeline有什么好处，为什么要用pipeline？" class="headerlink" title="7. Pipeline有什么好处，为什么要用pipeline？"></a>7. Pipeline有什么好处，为什么要用pipeline？</h2><p>可以将多次IO往返的时间缩减为一次，前提是pipeline执行的指令之间没有因果相关性。使用redis-benchmark进行压测的时候可以发现影响redis的QPS峰值的一个重要因素是pipeline批次指令的数目。</p>
+<h2 id="8-Redis的同步机制了解么？"><a href="#8-Redis的同步机制了解么？" class="headerlink" title="8. Redis的同步机制了解么？"></a>8. Redis的同步机制了解么？</h2><p>Redis可以使用主从同步，从从同步。第一次同步时，主节点做一次bgsave，并同时将后续修改操作记录到内存buffer，待完成后将rdb文件全量同步到复制节点，复制节点接受完成后将rdb镜像加载到内存。加载完成后，再通知主节点将期间修改的操作记录同步到复制节点进行重放就完成了同步过程。</p>
+<h2 id="9-是否使用过Redis集群，集群的原理是什么？"><a href="#9-是否使用过Redis集群，集群的原理是什么？" class="headerlink" title="9. 是否使用过Redis集群，集群的原理是什么？"></a>9. 是否使用过Redis集群，集群的原理是什么？</h2><p>Redis Sentinal着眼于高可用，在master宕机时会自动将slave提升为master，继续提供服务。<br>Redis Cluster着眼于扩展性，在单个redis内存不足时，使用Cluster进行分片存储。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/08/09/7.面试题目整理2（redis相关）/">7.面试题目整理2（redis相关）</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-08-09, 08:48:01</p>
+        <p><span>最后更新:</span>2018-08-09, 08:56:52</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/08/09/7.面试题目整理2（redis相关）/" title="7.面试题目整理2（redis相关）">http://yoursite.com/2018/08/09/7.面试题目整理2（redis相关）/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/08/09/7.面试题目整理2（redis相关）/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/08/09/6.面试题目整理1（myabtis相关）/">
+                    6.面试题目整理1（myabtis相关）
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-Redis有哪些数据结构？"><span class="toc-number">1.</span> <span class="toc-text">1. Redis有哪些数据结构？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-使用过Redis分布式锁么，它是什么回事？"><span class="toc-number">2.</span> <span class="toc-text">2. 使用过Redis分布式锁么，它是什么回事？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？"><span class="toc-number">3.</span> <span class="toc-text">3. 假如Redis里面有1亿个key，其中有10w个key是以某个固定的已知的前缀开头的，如果将它们全部找出来？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-使用过Redis做异步队列么，你是怎么用的？"><span class="toc-number">4.</span> <span class="toc-text">4. 使用过Redis做异步队列么，你是怎么用的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-如果有大量的key需要设置同一时间过期，一般需要注意什么？"><span class="toc-number">5.</span> <span class="toc-text">5. 如果有大量的key需要设置同一时间过期，一般需要注意什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-Redis如何做持久化的？"><span class="toc-number">6.</span> <span class="toc-text">6. Redis如何做持久化的？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-Pipeline有什么好处，为什么要用pipeline？"><span class="toc-number">7.</span> <span class="toc-text">7. Pipeline有什么好处，为什么要用pipeline？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#8-Redis的同步机制了解么？"><span class="toc-number">8.</span> <span class="toc-text">8. Redis的同步机制了解么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#9-是否使用过Redis集群，集群的原理是什么？"><span class="toc-number">9.</span> <span class="toc-text">9. 是否使用过Redis集群，集群的原理是什么？</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"7.面试题目整理2（redis相关）　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <!--PC和WAP自适应版-->
+<div id="SOHUCS"></div> 
+<script type="text/javascript"> 
+(function(){ 
+var appid = 'cytEFcz7H'; 
+var conf = 'prod_cb84c9187d5b3e228aa6cf3a7e32be61'; 
+var width = window.innerWidth || document.documentElement.clientWidth; 
+if (width < 960) { 
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/08/09/6.面试题目整理1（myabtis相关）/" title="下一篇: 6.面试题目整理1（myabtis相关）">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/7.面试题目整理2（redis相关）/">7.面试题目整理2（redis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/6.面试题目整理1（myabtis相关）/">6.面试题目整理1（myabtis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/5.Http的简单介绍/">5.Http的简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/4.TCP和UDP/">4.TCP和UDP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/3.java基础-高频面试知识点/">3.java基础-高频面试知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题67：机器人运动范围】/">【面试题67：机器人运动范围】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题66：矩阵中的路径】/">【面试题66：矩阵中的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题65：滑动窗口的最大值】/">【面试题65：滑动窗口的最大值】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题64：数据流中的中位数】/">【面试题64：数据流中的中位数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题63：二叉搜索树的第K个节点】/">【面试题63：二叉搜索树的第K个节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题62：序列化二叉树】/">【面试题62：序列化二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题61：把二叉树打印成多行】/">【面试题61：把二叉树打印成多行】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题60：按之字形顺序打印二叉树】/">【面试题60：按之字形顺序打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题59：对称的二叉树】/">【面试题59：对称的二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题58：二叉树的下一个结点】/">【面试题58：二叉树的下一个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题57：删除链表中重复的结点】/">【面试题57：删除链表中重复的结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题56：链表中环的入口节点】/">【面试题56：链表中环的入口节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题55：字符流中第一个不重复的字符】/">【面试题55：字符流中第一个不重复的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题54：表示数值的字符串】/">【面试题54：表示数值的字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题53：正则表达式匹配】/">【面试题53：正则表达式匹配】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题52：构建乘积数组】/">【面试题52：构建乘积数组】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题51：数组中重复的数字】/">【面试题51：数组中重复的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题50：把字符串转为整数】/">【面试题50：把字符串转为整数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题49：不用加减乘除做加法】/">【面试题49：不用加减乘除做加法】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题48：求1+2+...+n】/">【面试题48：求1+2+...+n】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题47：孩子们的游戏】/">【面试题47：孩子们的游戏】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题46：扑克牌顺子】/">【面试题46：扑克牌顺子】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题45：翻转单词顺序列】/">【面试题45：翻转单词顺序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题44：左旋转字符串】/">【面试题44：左旋转字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题43：和为S的两个数字】/">【面试题43：和为S的两个数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题42：和为S的连续正数序列】/">【面试题42：和为S的连续正数序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题41：数组中只出现一次的数字】/">【面试题41：数组中只出现一次的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题40：平衡二叉树】/">【面试题40：平衡二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题39：二叉树的深度】/">【面试题39：二叉树的深度】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题38：数字在排序数组中出现的次数】/">【面试题38：数字在排序数组中出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题37：两个链表的公共结点】/">【面试题37：两个链表的公共结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题36：数组中的逆序对】/">【面试题36：数组中的逆序对】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题35：第一个只出现一次的字符】/">【面试题35：第一个只出现一次的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题34：丑数】/">【面试题34：丑数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题33：把数组排成最小的数】/">【面试题33：把数组排成最小的数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题32：整数中1出现的次数】/">【面试题32：整数中1出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题31：连续子数组的最大和】/">【面试题31：连续子数组的最大和】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题30：最小的K个数】/">【面试题30：最小的K个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题29：数组中出现次数超过一半的数字】/">【面试题29：数组中出现次数超过一半的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题28：字符串的排列】/">【面试题28：字符串的排列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题27：二叉搜索树与双向链表】/">【面试题27：二叉搜索树与双向链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题26：复杂链表的复制】/">【面试题26：复杂链表的复制】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题25：二叉树中和为某一值的路径】/">【面试题25：二叉树中和为某一值的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题24：二叉搜索树的后序遍历序列】/">【面试题24：二叉搜索树的后序遍历序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题23：从上往下打印二叉树】/">【面试题23：从上往下打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题22：栈的压入、弹出序列】/">【面试题22：栈的压入、弹出序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题21：包含min函数的栈】/">【面试题21：包含min函数的栈】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题20：顺时针打印矩阵】/">【面试题20：顺时针打印矩阵】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题19：二叉树的镜像】/">【面试题19：二叉树的镜像】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题18：树的子结构】/">【面试题18：树的子结构】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题17： 合并两个排序的链表】/">【面试题17： 合并两个排序的链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题16： 反转链表】/">【面试题16： 反转链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题15： 链表中倒数第k个结点】/">【面试题15： 链表中倒数第k个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题14： 调整数组顺序使奇数位于偶数前面】/">【面试题14： 调整数组顺序使奇数位于偶数前面】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题13： 数值的整数次方】/">【面试题13： 数值的整数次方】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题12 ： 二进制中1的个数】/">【面试题12 ： 二进制中1的个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题11 ： 矩形覆盖】/">【面试题11 ： 矩形覆盖】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题10 ： 变态跳台阶】/">【面试题10 ： 变态跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题9 ： 跳台阶】/">【面试题9 ： 跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题8 ： 斐波那契数列】/">【面试题8 ： 斐波那契数列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题7：旋转数组的最小数字】/">【面试题7：旋转数组的最小数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题6：用两个栈实现队列】/">【面试题6：用两个栈实现队列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题5 ：重建二叉树】/">【面试题5 ：重建二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题4 ： 从尾到头打印链表】/">【面试题4 ： 从尾到头打印链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题3 ： 替换空格】/">【面试题3 ： 替换空格】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题2 ：二维数组中的查找】/">【面试题2 ：二维数组中的查找】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/03/【面试题1 ： 实现Singleton 模式——七种实现方式】/">【面试题1 ： 实现Singleton 模式——七种实现方式】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/内连接和外连接/">内连接和外连接</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.秒杀总结/">8.秒杀总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/电信子公司的实习/">电信子公司的实习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/关于索引失效和联合索引/">关于索引失效和联合索引</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/nginx原理/">nginx原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.组件注册总结/">9.组件注册总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.redis分布式锁/">9.redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.整合WebSocket/">8.整合WebSocket</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.使用FactoryBean注册组件/">8.使用FactoryBean注册组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.整合微信/">7.整合微信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.@Import/">7.@Import</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AOP、异常、整合mybatis/">6.AOP、异常、整合mybatis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.@Conditional-按照条件注册bean/">6.@Conditional-按照条件注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.卖家订单部分/">5.卖家订单部分</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.@lazy-bean-懒加载/">5.@lazy-bean-懒加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.部署在本机环境/">4.部署在本机环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.@Scope-设置组件作用域/">4.@Scope-设置组件作用域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.订单/">3.订单</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.自定义TypeFilter指定过滤规则/">3.自定义TypeFilter制定过滤规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/27.自己动手写springIOC(3)/">27.自己动手写springIOC(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26.自己动手写springIOC(2)/">26.自己动手写springIOC(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25.自己动手写springIOC(1)/">25.自己动手写springIOC(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24.SpringAop--责任链模式/">24.SpringAop--责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23.SpringAop--动态代理模式/">23.SpringAop--动态代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22.SpringAop--基本使用和切点表达式/">22.SpringAop--基本使用和切点表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21.spring aop基本使用/">21.spring aop基本使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20.@Profile环境搭建和根据环境注册bean/">20.@Profile环境搭建和根据环境注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.商品和类目开发/">2.商品和类目开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.@ComponentScan自动扫描组件以及扫描规则/">2.@ComponentScan自动扫描组件以及扫描规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19.Aware注入Spring底层组件及原理/">19.Aware注入Spring底层组件及原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18.方法、构造器位置的自动装配/">18.方法、构造器位置的自动装配</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17.@Resource & @Inject/">17.@Resource & @Inject</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16.@Autowired & @Qualifier & @Primary/">16.@Autowired & @Qualifier & @Primary</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.@PropertySource加载外部配置文件/">15.@PropertySource加载外部配置文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.@Value赋值/">14.@Value赋值</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.IO多路复用/">13.IO多路复用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.BeanPostProcessor-后置处理器/">13.BeanPostProcessor-后置处理器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.@PostConstruct&@PreDestory/">12.@PostConstruct&@PreDestory</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.关于泛型的补充/">11.关于泛型的补充</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.InitializingBean和DisposableBean/">11.InitializingBean和DisposableBean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.部署/">10.部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.缓存更新/">11.缓存更新</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.redis事务/">10.redis事务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.@Bean指定初始化和销毁方法/">10.@Bean指定初始化和销毁方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.设计模式汇总/">1.设计模式汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.组件注册-@Configuration & @Bean/">1.组件注册-@Configuration & @Bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.深入Web请求过程/">1.深入Web请求过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.数据库设计和基础环境搭建/">1.数据库设计和基础环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.初步认识PageHelper分页插件原理和使用/">1.初步认识PageHelper分页插件原理和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Java基础/">1.Java基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1. 登录功能/">1. 登录功能</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共269篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
