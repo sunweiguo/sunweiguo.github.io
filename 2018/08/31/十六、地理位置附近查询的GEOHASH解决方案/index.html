@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="Eureka" />
+
+
+
+<meta name="description" content="地理位置附近查询的GEOHASH解决方案">
+<meta name="keywords" content="单车后台系统实战">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十六、地理位置附近查询的GEOHASH解决方案">
+<meta property="og:url" content="http://yoursite.com/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="地理位置附近查询的GEOHASH解决方案">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%881.png">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%883.png">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%882.png">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%884.png">
+<meta property="og:updated_time" content="2018-08-31T09:05:41.408Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="十六、地理位置附近查询的GEOHASH解决方案">
+<meta name="twitter:description" content="地理位置附近查询的GEOHASH解决方案">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%881.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>十六、地理位置附近查询的GEOHASH解决方案 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/resume/">简历</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/resume/">简历</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
+</nav>
+      <div class="body-wrap"><article id="post-十六、地理位置附近查询的GEOHASH解决方案" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/" class="article-date">
+      <time datetime="2018-08-31T09:05:24.393Z" itemprop="datePublished">2018-08-31</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      十六、地理位置附近查询的GEOHASH解决方案
+    </h1>
+  
+
+        
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>地理位置附近查询的GEOHASH解决方案<br><a id="more"></a></p>
+<h2 id="1-需求场景"><a href="#1-需求场景" class="headerlink" title="1.需求场景"></a>1.需求场景</h2><p>现今互联网确实从方方面面影响我们的生活。现在我们可以足不出户就能买到我们心仪的衣服，找到附近的美食。当我们点开一个外卖的app就能看到自己附近的餐厅，那我们有没有想过这是怎么实现的呢？</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%881.png" alt="image"></p>
+<h2 id="2-尝试解决"><a href="#2-尝试解决" class="headerlink" title="2.尝试解决"></a>2.尝试解决</h2><ul>
+<li>首先我们能想到的就是把所有餐厅的经纬度存下来</li>
+<li>然后当用户选择附近餐厅时</li>
+<li>我们先获取用户的经纬度，然后到数据库中查出所有的经纬度，依次计算它们和用户间的距离。</li>
+<li>最后根据用户输入的距离范围过滤出合适的餐厅，并根据距离做一个升序排列。</li>
+</ul>
+<p>这样貌似能查出附近的餐厅，但是餐厅的数量这么多，直接全查出来内存也要爆掉，即使分批处理计算量也十分大。这样用户等待的时间就会特别长。那有什么办法能减少我们的计算量呢？</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%883.png" alt="image"></p>
+<p>其实很简单，我们应该只计算用户关心的那一片数据，而不是计算所有的。例如用户在北京，那完全没必要计算海南，黑龙江，新疆，浙江等其它地区的数据。如果我们能快速定位到北京甚至某个区，那么我们的计算量将大大减少。我们发现这其实就是索引的功能，但是<code>MySQL</code>对这种二维的地理位置的索引支持并不友好（<code>mongodb</code>有直接的地理位置索引），它对一维的像字符串这样的支持很好。那如果我们的数据在MySQL中，有没有什么方法能将我们的二维坐标转换为一种可比较的字符串呢？这就是我们今天要介绍的<code>geohash</code>算法。</p>
+<h2 id="3-基本思想"><a href="#3-基本思想" class="headerlink" title="3.基本思想"></a>3.基本思想</h2><p><strong><code>geohash</code>简单来说就是将一个地理坐标转换为一个可比较的字符串的算法。不过生成的字符串表示的是一个矩形的范围，并不是一个点。</strong></p>
+<p>比如西二旗地铁附近这一片矩形区域就可以用<code>wx4eyu82</code>这个字符串表示，并且越靠前的编码表示额范围越大，比如中国绝大部分地区可以用w这个字母表示的矩形区域内。像<code>wx4eyu82</code>表示的区域一定在<code>wx4e</code>表示的区域范围内。利用这些特性我们就可以实现附近餐厅的功能了，比如我们希望查看西二旗地铁附近的餐厅就可以这样查询：<code>select * from table where geohash like &#39;wx4eyu82%&#39;;</code> 这样就可以利用索引，快速查询出相关餐厅的信息了。并且我们还可以用<code>wx4eyu82</code>为<code>key</code>，餐厅信息为<code>value</code>做缓存。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%882.png" alt="image"></p>
+<p>通过上面的介绍我们知道了<code>GeoHash</code>就是一种将经纬度转换成字符串的方法，并且使得在大部分情况下，字符串前缀匹配越多的距离越近.</p>
+<h2 id="4-GeoHash算法的步骤"><a href="#4-GeoHash算法的步骤" class="headerlink" title="4.GeoHash算法的步骤"></a>4.GeoHash算法的步骤</h2><ul>
+<li>首先我们将经度和纬度都单独转换为一个二进制编码</li>
+<li>得到经度和纬度的二进制编码后，我们按照奇数位放纬度，偶数为放经度的规则（我们这里奇数偶数下标是从0开始）将它们合成一个二进制编码</li>
+<li>最后我们需要将这个二进制编码转换为base32编码</li>
+</ul>
+<p><strong>举例</strong></p>
+<ul>
+<li>地球纬度区间是[-90,90]， 北海公园的纬度是39.928167，可以通过下面算法对纬度39.928167进行逼近编码:</li>
+</ul>
+<blockquote>
+<ol>
+<li>区间[-90,90]进行二分为[-90,0),[0,90]，称为左右区间，可以确定39.928167属于右区间[0,90]，给标记为1；</li>
+<li>接着将区间[0,90]进行二分为 [0,45),[45,90]，可以确定39.928167属于左区间 [0,45)，给标记为0；</li>
+<li>递归上述过程39.928167总是属于某个区间[a,b]。随着每次迭代区间[a,b]总在缩小，并越来越逼近39.928167；</li>
+<li>如果给定的纬度x（39.928167）属于左区间，则记录0，如果属于右区间则记录1，这样随着算法的进行会产生一个序列1011100，序列的长度跟给定的区间划分次数有关。</li>
+</ol>
+</blockquote>
+<ul>
+<li><p>通过上述计算，纬度产生的编码为10111 00011，经度产生的编码为11010 01011。偶数位放经度，奇数位放纬度，把2串编码组合生成新串：11100 11101 00100 01111。</p>
+</li>
+<li><p>最后使用用0-9、b-z（去掉a, i, l, o）这32个字母进行base32编码，首先将11100 11101 00100 01111转成十进制，对应着28、29、4、15，十进制对应的编码就是wx4g。</p>
+</li>
+</ul>
+<h2 id="5-缺陷-geohash的边界问题"><a href="#5-缺陷-geohash的边界问题" class="headerlink" title="5.缺陷-geohash的边界问题"></a>5.缺陷-geohash的边界问题</h2><p>比如红色的点是我们的位置，绿色的两个点分别是附近的两个餐馆，但是在查询的时候会发现距离较远餐馆的<code>GeoHash</code>编码与我们一样（因为在同一个GeoHash区域块上），而较近餐馆的<code>GeoHash</code>编码与我们不一致。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%884.png" alt="image"></p>
+<p>目前比较通行的做法就是我们不仅获取当前我们所在的矩形区域，还获取周围8个矩形块中的点。那么怎样定位周围8个点呢？关键就是需要获取周围8个点的经纬度，那我们已经知道自己的经纬度，只需要用自己的经纬度减去最小划分单位的经纬度就行。因为我们知道经纬度的范围,有知道需要划分的次数，所以很容易就能计算出最小划分单位的经纬度。</p>
+<h2 id="6-几种实现geohash方案的对比"><a href="#6-几种实现geohash方案的对比" class="headerlink" title="6.几种实现geohash方案的对比"></a>6.几种实现geohash方案的对比</h2><h4 id="6-1支持二维索引的存储数据库：mongodb"><a href="#6-1支持二维索引的存储数据库：mongodb" class="headerlink" title="6.1支持二维索引的存储数据库：mongodb"></a>6.1支持二维索引的存储数据库：mongodb</h4><p><code>mongoDB</code>支持二维空间索引,使用空间索引,<code>mongoDB</code>支持一种特殊查询,如某地图网站上可以查找离你最近的咖啡厅,银行等信息。这个使用<code>mongoDB</code>的空间索引结合特殊的查询方法很容易实现。</p>
+<ul>
+<li>API直接支持，很方便</li>
+<li>支持按照距离排序，并支持分页。支持多条件筛选。</li>
+<li>可满足实时性需求。</li>
+<li>资源占用大，数据量达到百万级请流量在10w左右查询速度明显下降。</li>
+</ul>
+<h4 id="6-2升级Mysql至5-7，支持Geohash"><a href="#6-2升级Mysql至5-7，支持Geohash" class="headerlink" title="6.2升级Mysql至5.7，支持Geohash"></a>6.2升级Mysql至5.7，支持Geohash</h4><p><code>MySQL 5.7.5</code> 增加了对<code>GeoHash</code>的支持，提供了一系列<code>geohash</code>的函数，但是其实<code>Mysql</code>并没有提供类似<code>mogodb</code>类型<code>near</code>这样的函数，仅仅提供了一些经纬度转<code>hash</code>、<code>hash</code>取经纬度的一些函数。</p>
+<ul>
+<li>优点:函数直接调用，生成目标<code>hash</code>、根据<code>hash</code>获取经纬度。</li>
+<li>缺点：不支持范围查询函数，需要自行处理周边8点的问题，需要补充<code>geo</code>的算法</li>
+</ul>
+<h4 id="6-3Redis-Commands-Geography-Edition"><a href="#6-3Redis-Commands-Geography-Edition" class="headerlink" title="6.3Redis Commands: Geography Edition"></a>6.3Redis Commands: Geography Edition</h4><p>GEO 特性在 Redis 3.2 版发布， 这个功能可以将用户给定的地理位置信息储存起来， 并对这些信息进行操作，GEO通过如下命令来完成GEO需求.</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>geoadd</td>
+<td>添加一个或多个经纬度地理位置</td>
+</tr>
+<tr>
+<td>georadius</td>
+<td>获取指定范围内的对象，也可以增加参数withdistance直接算出距离，也可以增加参数descending/ascending 进行距离排序</td>
+</tr>
+<tr>
+<td>georadiusbymember</td>
+<td>通过指定的对象，获取其周边对象</td>
+</tr>
+<tr>
+<td>geoencode</td>
+<td>转换为geohash，52-bit，同时返回该区域最小角的geohash,最大角的geohash，及中心点</td>
+</tr>
+<tr>
+<td>geodecode</td>
+<td>同上逆操作</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>优点:效率高，API丰富</li>
+<li>缺点：3.2版本是否稳定？</li>
+</ul>
+<p>面试的时候，问到geohash算法以及技术选型大概也能说一说了…</p>
+<p>本文章借鉴很多优秀文章，七拼八凑而出。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/">十六、地理位置附近查询的GEOHASH解决方案</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-08-31, 17:05:24</p>
+        <p><span>最后更新:</span>2018-08-31, 17:05:41</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/" title="十六、地理位置附近查询的GEOHASH解决方案">http://yoursite.com/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/08/16/十一、链表问题的总结/">
+                    十一、链表问题的总结
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-需求场景"><span class="toc-number">1.</span> <span class="toc-text">1.需求场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-尝试解决"><span class="toc-number">2.</span> <span class="toc-text">2.尝试解决</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-基本思想"><span class="toc-number">3.</span> <span class="toc-text">3.基本思想</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-GeoHash算法的步骤"><span class="toc-number">4.</span> <span class="toc-text">4.GeoHash算法的步骤</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-缺陷-geohash的边界问题"><span class="toc-number">5.</span> <span class="toc-text">5.缺陷-geohash的边界问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-几种实现geohash方案的对比"><span class="toc-number">6.</span> <span class="toc-text">6.几种实现geohash方案的对比</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-1支持二维索引的存储数据库：mongodb"><span class="toc-number">6.0.1.</span> <span class="toc-text">6.1支持二维索引的存储数据库：mongodb</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-2升级Mysql至5-7，支持Geohash"><span class="toc-number">6.0.2.</span> <span class="toc-text">6.2升级Mysql至5.7，支持Geohash</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3Redis-Commands-Geography-Edition"><span class="toc-number">6.0.3.</span> <span class="toc-text">6.3Redis Commands: Geography Edition</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"十六、地理位置附近查询的GEOHASH解决方案　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+        <!--PC和WAP自适应版-->
+<div id="SOHUCS"></div> 
+<script type="text/javascript"> 
+(function(){ 
+var appid = 'cytEFcz7H'; 
+var conf = 'prod_cb84c9187d5b3e228aa6cf3a7e32be61'; 
+var width = window.innerWidth || document.documentElement.clientWidth; 
+if (width < 960) { 
+window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="text/javascript" src="https://changyan.sohu.com/upload/mobile/wap-js/changyan_mobile.js?client_id=' + appid + '&conf=' + conf + '"><\/script>'); } else { var loadJs=function(d,a){var c=document.getElementsByTagName("head")[0]||document.head||document.documentElement;var b=document.createElement("script");b.setAttribute("type","text/javascript");b.setAttribute("charset","UTF-8");b.setAttribute("src",d);if(typeof a==="function"){if(window.attachEvent){b.onreadystatechange=function(){var e=b.readyState;if(e==="loaded"||e==="complete"){b.onreadystatechange=null;a()}}}else{b.onload=a}}c.appendChild(b)};loadJs("https://changyan.sohu.com/upload/changyan.js",function(){window.changyan.api.config({appid:appid,conf:conf})}); } })(); </script>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/08/16/十一、链表问题的总结/" title="下一篇: 十一、链表问题的总结">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/">十六、地理位置附近查询的GEOHASH解决方案</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/十一、链表问题的总结/">十一、链表问题的总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/十、LRU算法实现/">十、LRU算法实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/九、贪心算法/">九、贪心算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/八、动态规划问题/">八、动态规划问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/七、回溯问题/">七、回溯问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/六、二叉树问题/">六、二叉树问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/五、栈和队列问题/">五、栈和队列问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/四、链表问题/">四、链表问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/三、查找问题/">三、查找问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/二、数组问题/">二、数组问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/一、写在前面/">一、写在前面</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/7.面试题目整理2（redis相关）/">7.面试题目整理2（redis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/6.面试题目整理1（myabtis相关）/">6.面试题目整理1（myabtis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/5.Http的简单介绍/">5.Http的简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/4.TCP和UDP/">4.TCP和UDP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/3.java基础-高频面试知识点/">3.java基础-高频面试知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题67：机器人运动范围】/">【面试题67：机器人运动范围】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题66：矩阵中的路径】/">【面试题66：矩阵中的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题65：滑动窗口的最大值】/">【面试题65：滑动窗口的最大值】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题64：数据流中的中位数】/">【面试题64：数据流中的中位数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题63：二叉搜索树的第K个节点】/">【面试题63：二叉搜索树的第K个节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题62：序列化二叉树】/">【面试题62：序列化二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题61：把二叉树打印成多行】/">【面试题61：把二叉树打印成多行】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题60：按之字形顺序打印二叉树】/">【面试题60：按之字形顺序打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题59：对称的二叉树】/">【面试题59：对称的二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题58：二叉树的下一个结点】/">【面试题58：二叉树的下一个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题57：删除链表中重复的结点】/">【面试题57：删除链表中重复的结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题56：链表中环的入口节点】/">【面试题56：链表中环的入口节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题55：字符流中第一个不重复的字符】/">【面试题55：字符流中第一个不重复的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题54：表示数值的字符串】/">【面试题54：表示数值的字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题53：正则表达式匹配】/">【面试题53：正则表达式匹配】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题52：构建乘积数组】/">【面试题52：构建乘积数组】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题51：数组中重复的数字】/">【面试题51：数组中重复的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题50：把字符串转为整数】/">【面试题50：把字符串转为整数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题49：不用加减乘除做加法】/">【面试题49：不用加减乘除做加法】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题48：求1+2+...+n】/">【面试题48：求1+2+...+n】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题47：孩子们的游戏】/">【面试题47：孩子们的游戏】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题46：扑克牌顺子】/">【面试题46：扑克牌顺子】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题45：翻转单词顺序列】/">【面试题45：翻转单词顺序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题44：左旋转字符串】/">【面试题44：左旋转字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题43：和为S的两个数字】/">【面试题43：和为S的两个数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题42：和为S的连续正数序列】/">【面试题42：和为S的连续正数序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题41：数组中只出现一次的数字】/">【面试题41：数组中只出现一次的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题40：平衡二叉树】/">【面试题40：平衡二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题39：二叉树的深度】/">【面试题39：二叉树的深度】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题38：数字在排序数组中出现的次数】/">【面试题38：数字在排序数组中出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题37：两个链表的公共结点】/">【面试题37：两个链表的公共结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题36：数组中的逆序对】/">【面试题36：数组中的逆序对】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题35：第一个只出现一次的字符】/">【面试题35：第一个只出现一次的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题34：丑数】/">【面试题34：丑数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题33：把数组排成最小的数】/">【面试题33：把数组排成最小的数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题32：整数中1出现的次数】/">【面试题32：整数中1出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题31：连续子数组的最大和】/">【面试题31：连续子数组的最大和】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题30：最小的K个数】/">【面试题30：最小的K个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题29：数组中出现次数超过一半的数字】/">【面试题29：数组中出现次数超过一半的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题28：字符串的排列】/">【面试题28：字符串的排列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题27：二叉搜索树与双向链表】/">【面试题27：二叉搜索树与双向链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题26：复杂链表的复制】/">【面试题26：复杂链表的复制】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题25：二叉树中和为某一值的路径】/">【面试题25：二叉树中和为某一值的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题24：二叉搜索树的后序遍历序列】/">【面试题24：二叉搜索树的后序遍历序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题23：从上往下打印二叉树】/">【面试题23：从上往下打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题22：栈的压入、弹出序列】/">【面试题22：栈的压入、弹出序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题21：包含min函数的栈】/">【面试题21：包含min函数的栈】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题20：顺时针打印矩阵】/">【面试题20：顺时针打印矩阵】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题19：二叉树的镜像】/">【面试题19：二叉树的镜像】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题18：树的子结构】/">【面试题18：树的子结构】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题17： 合并两个排序的链表】/">【面试题17： 合并两个排序的链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题16： 反转链表】/">【面试题16： 反转链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题15： 链表中倒数第k个结点】/">【面试题15： 链表中倒数第k个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题14： 调整数组顺序使奇数位于偶数前面】/">【面试题14： 调整数组顺序使奇数位于偶数前面】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题13： 数值的整数次方】/">【面试题13： 数值的整数次方】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题12 ： 二进制中1的个数】/">【面试题12 ： 二进制中1的个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题11 ： 矩形覆盖】/">【面试题11 ： 矩形覆盖】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题10 ： 变态跳台阶】/">【面试题10 ： 变态跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题9 ： 跳台阶】/">【面试题9 ： 跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题8 ： 斐波那契数列】/">【面试题8 ： 斐波那契数列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题7：旋转数组的最小数字】/">【面试题7：旋转数组的最小数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题6：用两个栈实现队列】/">【面试题6：用两个栈实现队列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题5 ：重建二叉树】/">【面试题5 ：重建二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题4 ： 从尾到头打印链表】/">【面试题4 ： 从尾到头打印链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题3 ： 替换空格】/">【面试题3 ： 替换空格】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题2 ：二维数组中的查找】/">【面试题2 ：二维数组中的查找】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/03/【面试题1 ： 实现Singleton 模式——七种实现方式】/">【面试题1 ： 实现Singleton 模式——七种实现方式】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/内连接和外连接/">内连接和外连接</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.秒杀总结/">8.秒杀总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/电信子公司的实习/">电信子公司的实习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/关于索引失效和联合索引/">关于索引失效和联合索引</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/nginx原理/">nginx原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.组件注册总结/">9.组件注册总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.redis分布式锁/">9.redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.整合WebSocket/">8.整合WebSocket</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.使用FactoryBean注册组件/">8.使用FactoryBean注册组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.整合微信/">7.整合微信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.@Import/">7.@Import</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AOP、异常、整合mybatis/">6.AOP、异常、整合mybatis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.@Conditional-按照条件注册bean/">6.@Conditional-按照条件注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.卖家订单部分/">5.卖家订单部分</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.@lazy-bean-懒加载/">5.@lazy-bean-懒加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.部署在本机环境/">4.部署在本机环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.@Scope-设置组件作用域/">4.@Scope-设置组件作用域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.自定义TypeFilter指定过滤规则/">3.自定义TypeFilter制定过滤规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.订单/">3.订单</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/27.自己动手写springIOC(3)/">27.自己动手写springIOC(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26.自己动手写springIOC(2)/">26.自己动手写springIOC(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25.自己动手写springIOC(1)/">25.自己动手写springIOC(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24.SpringAop--责任链模式/">24.SpringAop--责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23.SpringAop--动态代理模式/">23.SpringAop--动态代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22.SpringAop--基本使用和切点表达式/">22.SpringAop--基本使用和切点表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21.spring aop基本使用/">21.spring aop基本使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20.@Profile环境搭建和根据环境注册bean/">20.@Profile环境搭建和根据环境注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.商品和类目开发/">2.商品和类目开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.@ComponentScan自动扫描组件以及扫描规则/">2.@ComponentScan自动扫描组件以及扫描规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19.Aware注入Spring底层组件及原理/">19.Aware注入Spring底层组件及原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18.方法、构造器位置的自动装配/">18.方法、构造器位置的自动装配</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17.@Resource & @Inject/">17.@Resource & @Inject</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16.@Autowired & @Qualifier & @Primary/">16.@Autowired & @Qualifier & @Primary</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.@PropertySource加载外部配置文件/">15.@PropertySource加载外部配置文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.@Value赋值/">14.@Value赋值</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.IO多路复用/">13.IO多路复用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.BeanPostProcessor-后置处理器/">13.BeanPostProcessor-后置处理器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.@PostConstruct&@PreDestory/">12.@PostConstruct&@PreDestory</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.关于泛型的补充/">11.关于泛型的补充</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.InitializingBean和DisposableBean/">11.InitializingBean和DisposableBean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.部署/">10.部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.缓存更新/">11.缓存更新</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.redis事务/">10.redis事务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.@Bean指定初始化和销毁方法/">10.@Bean指定初始化和销毁方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.设计模式汇总/">1.设计模式汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.组件注册-@Configuration & @Bean/">1.组件注册-@Configuration & @Bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.深入Web请求过程/">1.深入Web请求过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.数据库设计和基础环境搭建/">1.数据库设计和基础环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.初步认识PageHelper分页插件原理和使用/">1.初步认识PageHelper分页插件原理和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Java基础/">1.Java基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1. 登录功能/">1. 登录功能</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                共280篇文章 <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
