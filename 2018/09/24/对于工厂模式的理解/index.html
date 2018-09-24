@@ -15,18 +15,22 @@
 
 
 
-<meta name="description" content="继续安装mysql和git.">
-<meta name="keywords" content="电商项目实战">
+<meta name="description" content="面试常问工厂模式。">
+<meta name="keywords" content="技术短文杂记">
 <meta property="og:type" content="article">
-<meta property="og:title" content="3、mysql+git安装">
-<meta property="og:url" content="http://yoursite.com/2018/07/21/3、mysql+git安装/index.html">
+<meta property="og:title" content="对于工厂模式的理解">
+<meta property="og:url" content="http://yoursite.com/2018/09/24/对于工厂模式的理解/index.html">
 <meta property="og:site_name" content="Eureka-Home">
-<meta property="og:description" content="继续安装mysql和git.">
+<meta property="og:description" content="面试常问工厂模式。">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-07T08:34:59.143Z">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82UML%E5%9B%BE.jpg">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95UML.png">
+<meta property="og:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82UML.png">
+<meta property="og:updated_time" content="2018-09-24T13:21:54.625Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="3、mysql+git安装">
-<meta name="twitter:description" content="继续安装mysql和git.">
+<meta name="twitter:title" content="对于工厂模式的理解">
+<meta name="twitter:description" content="面试常问工厂模式。">
+<meta name="twitter:image" content="http://p9l5rzdf0.bkt.clouddn.com/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82UML%E5%9B%BE.jpg">
 
 <link rel="apple-touch-icon" href= "/apple-touch-icon.png">
 
@@ -58,7 +62,7 @@
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>3、mysql+git安装 | Eureka-Home</title>
+<title>对于工厂模式的理解 | Eureka-Home</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -194,11 +198,11 @@
     </div>
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
-      <div class="body-wrap"><article id="post-3、mysql+git安装" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-对于工厂模式的理解" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2018/07/21/3、mysql+git安装/" class="article-date">
-      <time datetime="2018-07-21T03:56:21.590Z" itemprop="datePublished">2018-07-21</time>
+      <a href="/2018/09/24/对于工厂模式的理解/" class="article-date">
+      <time datetime="2018-09-24T13:21:24.428Z" itemprop="datePublished">2018-09-24</time>
 </a>
 
 
@@ -213,7 +217,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      3、mysql+git安装
+      对于工厂模式的理解
     </h1>
   
 
@@ -225,7 +229,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/电商项目实战/">电商项目实战</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/技术短文杂记/">技术短文杂记</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -235,8 +239,24 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p>继续安装mysql和git.<br><a id="more"></a></p>
-<p>基于virtualbox+centos6.9的服务器搭建（二）—&gt;<a href="http://note.youdao.com/noteshare?id=b02979bc81cf8e04f92cc845a61f09c0&amp;sub=7BCB68826CEB4C8BB1DAB3FFF9961FCE" target="_blank" rel="noopener">基于virtualbox+centos6.9的服务器搭建（二）</a></p>
+        <p>面试常问工厂模式。<br><a id="more"></a></p>
+<h2 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h2><p>一直都没有系统地去所有的设计模式，但是又是面试中常问的问题，比如问：说一说你对工厂模式的理解(vivo面试)，我的回答一般是：工厂模式类似于一个工厂去生产产品，你需要什么产品，不要自己去new，而是通过工厂来获取，达到对象的创建与使用解耦的目的。但是，总感觉是感性上的认知，所以把工厂模式拿出来再好好理理。</p>
+<h2 id="2-简单工厂模式"><a href="#2-简单工厂模式" class="headerlink" title="2. 简单工厂模式"></a>2. 简单工厂模式</h2><p><a href="http://swg_.coding.me/2018/09/24/%E4%B8%80%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" target="_blank" rel="noopener">简单工厂模式介绍</a></p>
+<p>定义一个工厂类，根据传入的参数不同返回不同的实例，被创建的实例具有共同的父类或接口。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82UML%E5%9B%BE.jpg" alt="image"></p>
+<h2 id="3-工厂方法模式"><a href="#3-工厂方法模式" class="headerlink" title="3. 工厂方法模式"></a>3. 工厂方法模式</h2><p><a href="http://swg_.coding.me/2018/09/24/%E4%BA%8C%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" target="_blank" rel="noopener">工厂方法模式介绍</a></p>
+<p>对于简单工厂的进一步封装，因为对于简单工厂模式而言，需要新添产品的时候，需要在工厂类中添加对应的判断和new，不符合开闭原则。</p>
+<p>这里是对于每一个产品用一个单独的工厂来生产。而不是单独一个工厂统一生产所有产品。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95UML.png" alt="image"></p>
+<h2 id="4-抽象工厂模式"><a href="#4-抽象工厂模式" class="headerlink" title="4. 抽象工厂模式"></a>4. 抽象工厂模式</h2><p><a href="http://swg_.coding.me/2018/09/24/%E4%B8%89%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" target="_blank" rel="noopener">抽象工厂模式介绍</a></p>
+<p>抽象工厂模式是工厂方法的仅一步深化，在这个模式中的工厂类不单单可以创建一个对象，而是可以创建一组对象。</p>
+<p><img src="http://p9l5rzdf0.bkt.clouddn.com/%E6%8A%BD%E8%B1%A1%E5%B7%A5%E5%8E%82UML.png" alt="image"></p>
+<h2 id="5-对于工厂模式的一些思考"><a href="#5-对于工厂模式的一些思考" class="headerlink" title="5. 对于工厂模式的一些思考"></a>5. 对于工厂模式的一些思考</h2><ul>
+<li>工厂模式是为了解耦</li>
+<li>工厂模式可以降低代码重复</li>
+<li>由于创建过程都由工厂统一管理，所以发生业务逻辑变化，不需要找到所有需要创建B的地方去逐个修正，只需要在工厂里修改即可，降低维护成本。</li>
+</ul>
+<p>有的时候觉得工厂模式没啥用，尤其是抽象工厂模式跟我们好像没啥关系。还是那句话，这些设计模式随着系统越来越大，将产生越来越深远的影响。一开始代码比较少，所以可能用new的方式处理也不算麻烦，但是随着系统越来越庞大，越来越复杂，牵一发而动全身甚至会容易产生扩展错误时，就应该好好想想，这里是不是应该用到设计模式，比如典型的工厂模式。</p>
 
       
     </div>
@@ -245,13 +265,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/07/21/3、mysql+git安装/">3、mysql+git安装</a></p>
+        <p><span>本文标题:</span><a href="/2018/09/24/对于工厂模式的理解/">对于工厂模式的理解</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
-        <p><span>发布时间:</span>2018-07-21, 11:56:21</p>
-        <p><span>最后更新:</span>2018-06-07, 16:34:59</p>
+        <p><span>发布时间:</span>2018-09-24, 21:21:24</p>
+        <p><span>最后更新:</span>2018-09-24, 21:21:54</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/07/21/3、mysql+git安装/" title="3、mysql+git安装">http://yoursite.com/2018/07/21/3、mysql+git安装/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/07/21/3、mysql+git安装/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="/2018/09/24/对于工厂模式的理解/" title="对于工厂模式的理解">http://yoursite.com/2018/09/24/对于工厂模式的理解/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/09/24/对于工厂模式的理解/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -263,16 +283,10 @@
 
     <nav id="article-nav">
         
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2018/07/21/3、快速排序及优化/">
-                    3、快速排序及优化
-                </a>
-            </div>
-        
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="/2018/07/21/3、LinkedList源码分析/">
-                    3、LinkedList源码分析
+                <a href="/2018/09/24/三、设计模式-抽象工厂模式/">
+                    三、设计模式-抽象工厂模式
                 </a>
             </div>
         
@@ -284,7 +298,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-前言"><span class="toc-number">1.</span> <span class="toc-text">1. 前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-简单工厂模式"><span class="toc-number">2.</span> <span class="toc-text">2. 简单工厂模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-工厂方法模式"><span class="toc-number">3.</span> <span class="toc-text">3. 工厂方法模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-抽象工厂模式"><span class="toc-number">4.</span> <span class="toc-text">4. 抽象工厂模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-对于工厂模式的一些思考"><span class="toc-number">5.</span> <span class="toc-text">5. 对于工厂模式的一些思考</span></a></li></ol>
         
     </div>
     <style>
@@ -317,7 +331,7 @@
         </div>
         <script>
             window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"3、mysql+git安装　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+                "common":{"bdSnsKey":{},"bdText":"对于工厂模式的理解　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
         </script>
     
 
@@ -347,15 +361,13 @@ window.document.write('<script id="changyan_mobile_js" charset="utf-8" type="tex
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2018/07/21/3、快速排序及优化/" title="上一篇: 3、快速排序及优化">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
 
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="/2018/07/21/3、LinkedList源码分析/" title="下一篇: 3、LinkedList源码分析">
+            <a href="/2018/09/24/三、设计模式-抽象工厂模式/" title="下一篇: 三、设计模式-抽象工厂模式">
                 <i class="fa fa-angle-right"></i>
             </a>
         
