@@ -66,9 +66,9 @@
       <div class="outer">
         <section id="main">
   
-    <article id="post-六、Class文件中的常量池" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-六、volatile详解" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/07/21/六、Class文件中的常量池/" class="article-date">
+    <a href="/2018/07/21/六、volatile详解/" class="article-date">
   <time datetime="2018-07-21T03:56:21.666Z" itemprop="datePublished">2018-07-21</time>
 </a>
     
@@ -80,7 +80,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/21/六、Class文件中的常量池/">六、Class文件中的常量池</a>
+      <a class="article-title" href="/2018/07/21/六、volatile详解/">六、volatile详解</a>
     </h1>
   
 
@@ -88,19 +88,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>上一节<code>Class</code>类文件结构大致地介绍了<code>class</code>文件的组织结构，接下来，我们将深入每一个结构，来详细了解它们。这一章节呢，我们就来扒一扒 <code>class</code>文件中非常重要 的一个数据区域——常量池。它在JVM虚拟机中扮演了非常重要的地位。<br>
+        <p>理解<code>volatile</code>特性的一个好方法是：把对<code>volatile</code>变量的单个读/写，看成是使用同一个监视器锁对这些单个读/写操作做了同步。<br>
         
           <p class="article-more-link">
-            <a href="/2018/07/21/六、Class文件中的常量池/#more">Read More</a>
+            <a href="/2018/07/21/六、volatile详解/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/六、Class文件中的常量池/" data-id="cjoocuf6n00f8fkw6rfsfgh5h" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/六、volatile详解/" data-id="cjoocvepg00f9g4w6mof6cj8z" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
 
     </footer>
   </div>
@@ -140,7 +140,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/八、整合云存储/" data-id="cjoocuf6g00f6fkw6jul876mw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/八、整合云存储/" data-id="cjoocvepe00f7g4w6b1yj0iq2" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
@@ -183,7 +183,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/八、JVM对synchronized的优化/" data-id="cjoocuf6c00f2fkw62e786pvw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/八、JVM对synchronized的优化/" data-id="cjoocvep800ezg4w66ox9kcbd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
@@ -226,7 +226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/" data-id="cjoocuf6a00f0fkw66cn39j41" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/" data-id="cjoocvep600exg4w6e0d3wvjb" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
@@ -269,53 +269,10 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/五、整合昵称修改功能/" data-id="cjoocuf6500ewfkw62yjgiij3" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/五、整合昵称修改功能/" data-id="cjoocvep100etg4w6mbdjfi2u" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-五、从卖票程序看synchronized特性" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2018/07/21/五、从卖票程序看synchronized特性/" class="article-date">
-  <time datetime="2018-07-21T03:56:21.661Z" itemprop="datePublished">2018-07-21</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这一篇好好聊聊synchronized关键字。<br>
-        
-          <p class="article-more-link">
-            <a href="/2018/07/21/五、从卖票程序看synchronized特性/#more">Read More</a>
-          </p>
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/五、从卖票程序看synchronized特性/" data-id="cjoocuf6300eufkw6jjvcbyi8" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
 
     </footer>
   </div>
@@ -355,10 +312,53 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/五、Class类文件结构/" data-id="cjoocuf6100esfkw6w717936d" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/五、Class类文件结构/" data-id="cjoocvep300evg4w67jaia6gd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-五、从卖票程序看synchronized特性" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/07/21/五、从卖票程序看synchronized特性/" class="article-date">
+  <time datetime="2018-07-21T03:56:21.661Z" itemprop="datePublished">2018-07-21</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这一篇好好聊聊synchronized关键字。<br>
+        
+          <p class="article-more-link">
+            <a href="/2018/07/21/五、从卖票程序看synchronized特性/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2018/07/21/五、从卖票程序看synchronized特性/" data-id="cjoocveoz00erg4w67g2jthuo" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
 
     </footer>
   </div>
@@ -398,7 +398,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/" data-id="cjoocuf5v00ekfkw620fcreiu" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/" data-id="cjoocveow00eng4w6lh82a0ka" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
@@ -441,7 +441,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/二、基础概念/" data-id="cjoocuf5w00emfkw60dp1pzae" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/二、基础概念/" data-id="cjoocveop00efg4w6spqi86rt" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java并发基础/">java并发基础</a></li></ul>
@@ -453,9 +453,9 @@
 
 
   
-    <article id="post-二、垃圾回收" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-九、MongoDB入门上" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2018/07/21/二、垃圾回收/" class="article-date">
+    <a href="/2018/07/21/九、MongoDB入门上/" class="article-date">
   <time datetime="2018-07-21T03:56:21.658Z" itemprop="datePublished">2018-07-21</time>
 </a>
     
@@ -467,7 +467,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2018/07/21/二、垃圾回收/">二、垃圾回收</a>
+      <a class="article-title" href="/2018/07/21/九、MongoDB入门上/">九、MongoDB入门上</a>
     </h1>
   
 
@@ -475,19 +475,19 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>虚拟机本身为我们处理了很多事情，其中最主要的一件事就是进行垃圾的自动回收，我们先来看看垃圾回收的基本原理。<br>
+        <p>先简单看看mongoDB怎么用。<br>
         
           <p class="article-more-link">
-            <a href="/2018/07/21/二、垃圾回收/#more">Read More</a>
+            <a href="/2018/07/21/九、MongoDB入门上/#more">Read More</a>
           </p>
         
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2018/07/21/二、垃圾回收/" data-id="cjoocuf5s00egfkw61bkem2m9" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2018/07/21/九、MongoDB入门上/" data-id="cjoocveol00ebg4w6cjt2yyrj" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/java虚拟机/">java虚拟机</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/单车后台系统实战/">单车后台系统实战</a></li></ul>
 
     </footer>
   </div>
