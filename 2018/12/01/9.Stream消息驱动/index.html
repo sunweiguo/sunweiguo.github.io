@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Eureka">
+
+
+
+<meta name="description" content="Stream消息驱动">
+<meta name="keywords" content="系统学习spring cloud组件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.Stream消息驱动">
+<meta property="og:url" content="http://yoursite.com/2018/12/01/9.Stream消息驱动/index.html">
+<meta property="og:site_name" content="Eureka-Home">
+<meta property="og:description" content="Stream消息驱动">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://bloghello.oursnail.cn/SpringCloudStream%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="http://bloghello.oursnail.cn/stream%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:updated_time" content="2018-12-01T05:51:32.985Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="9.Stream消息驱动">
+<meta name="twitter:description" content="Stream消息驱动">
+<meta name="twitter:image" content="http://bloghello.oursnail.cn/SpringCloudStream%E6%9E%B6%E6%9E%84.png">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Eureka-Home" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/img/avatar.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>9.Stream消息驱动 | Eureka-Home</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: false
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Eureka</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+        
+
+        
+
+
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Eureka</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Eureka</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="https://sunweiguo.github.io/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-9.Stream消息驱动" class="article article-type-post" itemscope="" itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2018/12/01/9.Stream消息驱动/" class="article-date">
+      <time datetime="2018-12-01T05:51:24.004Z" itemprop="datePublished">2018-12-01</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      9.Stream消息驱动
+    </h1>
+  
+
+        
+          <div style="margin-top:10px;">
+    <span class="post-time">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-keyboard-o"></i>
+        <span class="post-meta-item-text">  字数统计: </span>
+        <span class="post-count">2,802字</span>
+      </span>
+    </span>
+
+    <span class="post-time">
+      &nbsp; | &nbsp;
+      <span class="post-meta-item-icon">
+        <i class="fa fa-hourglass-half"></i>
+        <span class="post-meta-item-text">  阅读时长: </span>
+        <span class="post-count">12分</span>
+      </span>
+    </span>
+</div>
+        
+      </header>
+
+    
+
+
+
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>Stream消息驱动<br><a id="more"></a></p>
+<h2 id="一、为什么需要SpringCloud-Stream消息驱动呢？"><a href="#一、为什么需要SpringCloud-Stream消息驱动呢？" class="headerlink" title="一、为什么需要SpringCloud Stream消息驱动呢？"></a>一、为什么需要SpringCloud Stream消息驱动呢？</h2><p>比方说我们用到了<code>RabbitMQ</code>和<code>Kafka</code>，由于这两个消息中间件的架构上的不同，像<code>RabbitMQ</code>有<code>exchange</code>，<code>kafka</code>有<code>Topic</code>，<code>partitions</code>分区，这些中间件的差异性导致我们实际项目开发给我们造成了一定的困扰，我们如果用了两个消息队列的其中一种，</p>
+<p>后面的业务需求，我想往另外一种消息队列进行迁移，这时候无疑就是一个灾难性的，一大堆东西都要重新推倒重新做，因为它跟我们的系统耦合了，这时候<code>springcloud Stream</code>给我们提供了一种解耦合的方式。</p>
+<p><img src="http://bloghello.oursnail.cn/SpringCloudStream%E6%9E%B6%E6%9E%84.png" alt="image"></p>
+<p><code>Spring Cloud Stream</code>由一个中间件中立的核组成。应用通过<code>Spring Cloud Stream</code>插入的<code>input</code>(相当于消费者<code>consumer</code>，它是从队列中接收消息的)和<code>output</code>(相当于生产者<code>producer</code>，它是从队列中发送消息的。)通道与外界交流。</p>
+<p>通道通过指定中间件的<code>Binder</code>实现与外部代理连接。业务开发者不再关注具体消息中间件，只需关注<code>Binder</code>对应用程序提供的抽象概念来使用消息中间件实现业务即可。</p>
+<p>Binder</p>
+<p>通过定义绑定器作为中间层，实现了应用程序与消息中间件(<code>Middleware</code>)细节之间的隔离。通过向应用程序暴露统一的<code>Channel</code>通道，使得应用程序不需要再考虑各种不同的消息中间件的实现。当需要升级消息中间件，或者是更换其他消息中间件产品时，我们需要做的就是更换对应的<code>Binder</code>绑定器而不需要修改任何应用逻辑 。甚至可以任意的改变中间件的类型而不需要修改一行代码。目前只提供了<code>RabbitMQ</code>和<code>Kafka</code>的<code>Binder</code>实现。</p>
+<p><code>Springcloud Stream</code>还有个好处就是像<code>Kafka</code>一样引入了一点分区的概念，像<code>RabbitMQ</code>不支持分区的队列，你用了<code>SpringCloud Stream</code>技术，它就会帮<code>RabbitMQ</code>引入了分区的特性，<code>SpringCloud Stream</code>就是天然支持分区的，我们用起来还是很方便的。</p>
+<h2 id="二、简单的演示"><a href="#二、简单的演示" class="headerlink" title="二、简单的演示"></a>二、简单的演示</h2><p>首先我们要新建三个项目，分别是<code>spring-cloud-stream</code>，<code>spring-cloud-stream1</code>，<code>spring-cloud-stream2</code>，其中<code>spring-cloud-stream</code>作为生产者进行发消息模块，<code>spring-cloud-stream-1</code>，<code>spring-cloud-stream-2</code>作为消息接收模块。</p>
+<h3 id="第一步："><a href="#第一步：" class="headerlink" title="第一步："></a>第一步：</h3><p>对于这三个项目，都要引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.swg<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream-producer<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">packaging</span>&gt;</span>jar<span class="tag">&lt;/<span class="name">packaging</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>spring-cloud-stream-producer<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>Demo project for Spring Boot<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.0.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> <span class="comment">&lt;!-- lookup parent from repository --&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">project.reporting.outputEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.reporting.outputEncoding</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>Elmhurst.SR2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-stream-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span> <span class="comment">&lt;!-- or '*-stream-kafka' --&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="第二步："><a href="#第二步：" class="headerlink" title="第二步："></a>第二步：</h3><p>对于<code>spring-cloud-stream</code>，是信息的生产方，配置文件为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 8081</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: producer</span><br><span class="line">  cloud:</span><br><span class="line">    stream:</span><br><span class="line">      kafka:</span><br><span class="line">        binder:</span><br><span class="line">          #Kafka的消息中间件服务器</span><br><span class="line">          brockers: localhost:9092</span><br><span class="line">          #Zookeeper的节点，如果集群，后面加,号分隔</span><br><span class="line">          zk-nodes: localhost:2181</span><br><span class="line">          #如果设置为false,就不会自动创建Topic 有可能你Topic还没创建就直接调用了。</span><br><span class="line">          auto-create-topics: true</span><br><span class="line">      bindings:</span><br><span class="line">        #这里用stream给我们提供的默认output，后面会讲到自定义output</span><br><span class="line">        output:</span><br><span class="line">          #消息发往的目的地</span><br><span class="line">          destination: stream-demo</span><br><span class="line">          #消息发送的格式，接收端不用指定格式，但是发送端要</span><br><span class="line">          content-type: text/plain</span><br></pre></td></tr></table></figure>
+<p>这里指定了kafka和zk的地址，最终的是，指定了我们要用的<code>output</code>，就是消息的生产通道，这里用的是自定义。下面指定了消息的目的地。</p>
+<p>发送的程序<code>SendService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableBinding</span>(Source.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SendService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Source source;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMsg</span><span class="params">(String msg)</span></span>&#123;</span><br><span class="line">        source.output().send(MessageBuilder.withPayload(msg).build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里就是接口一个字符串，然后把消息通过<code>output</code>发送到指定的目的地。<code>@EnableBinding(Source.class)</code>这个注解给我们绑定消息通道的，Source是Stream给我们提供的，可以点进去看源码，可以看到output和input,这和配置文件中的output，input对应的。</p>
+<p>最后就是浏览器传入值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> SendService sendService;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/send/&#123;msg&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">send</span><span class="params">(@PathVariable(<span class="string">"msg"</span>)</span> String msg)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"发送了。。。"</span>+msg);</span><br><span class="line">        sendService.sendMsg(msg);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第三步："><a href="#第三步：" class="headerlink" title="第三步："></a>第三步：</h3><p>消息的发送端已经搞好了，下面配置消息的消费端。配置文件为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 8082</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: consumer_1</span><br><span class="line">  cloud:</span><br><span class="line">    stream:</span><br><span class="line">      kafka:</span><br><span class="line">        binder:</span><br><span class="line">          brockers: localhost:9092</span><br><span class="line">          zk-nodes: localhost:2181</span><br><span class="line">          auto-create-topics: true</span><br><span class="line">      bindings:</span><br><span class="line">        #input是接收，注意这里不能再像前面一样写output了</span><br><span class="line">        input:</span><br><span class="line">          destination: stream-demo</span><br></pre></td></tr></table></figure>
+<p>接收的service：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//消息接受端，stream给我们提供了Sink,Sink源码里面是绑定input的，要跟我们配置文件的imput关联的。</span></span><br><span class="line"><span class="meta">@EnableBinding</span>(Sink.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RecieveService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@StreamListener</span>(Sink.INPUT)<span class="comment">//其实就是@StreamListener(“input”)，监听这个通道有没有消息过来，有就消费</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recieve</span><span class="params">(Object payload)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"====="</span>+payload);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h3><p>启动kafka和zk，上一章已经讲过了如何启动。打开浏览器输入对应的url进行测试，看两个消费端是否都可以打印出来传入的信息。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>其实上面的一个流程就可以概括为下面一张图：</p>
+<p><img src="http://bloghello.oursnail.cn/stream%E6%A8%A1%E5%9E%8B.png" alt="image"></p>
+<p>一个是产品的生产者，一个是商店消费者，生产者将产品通过通道，这里就是<code>Source</code>中默认的<code>output</code>，将产品发送到<code>binder</code>中，给他一个<code>topic</code>，告诉消费者这个消息的名字(位置，这里是<code>stream-demo</code>)。消费者通过监听<code>Sink</code>中的默认的<code>input</code>通道来看看有没有自己感兴趣的消息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Source</span> </span>&#123;</span><br><span class="line">    String OUTPUT = <span class="string">"output"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Output</span>(<span class="string">"output"</span>)</span><br><span class="line">    <span class="function">MessageChannel <span class="title">output</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Sink</span> </span>&#123;</span><br><span class="line">    String INPUT = <span class="string">"input"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Input</span>(<span class="string">"input"</span>)</span><br><span class="line">    <span class="function">SubscribableChannel <span class="title">input</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到这里，最基本的一个消息的生产消费流程就走完了。</p>
+<h2 id="三、自定义消息通道"><a href="#三、自定义消息通道" class="headerlink" title="三、自定义消息通道"></a>三、自定义消息通道</h2><p>到现在为止，我们进行了一个简单的消息发送和接收，用的是<code>Stream</code>给我们提供的默认<code>Source</code>，<code>Sink</code>，接下来我们要自己进行自定义，这种方式在工作中还是用的比较多的，因为我们要往不同的消息通道发消息，</p>
+<p>必然不能全都叫input,output的，那样的话就乱套了，因此首先自定义一个接口，如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Created by cong on 2018/5/28.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MySource</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Output</span>(<span class="string">"myOutput"</span>)</span><br><span class="line">    <span class="function">MessageChannel <span class="title">myOutput</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实就是将默认的<code>Source</code>里的<code>output</code>改个名字而已，十分简单，在配置文件中指定通道的地方就要响应地修改为我们自己定义的通道就可以了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 7888</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: producer</span><br><span class="line">  cloud:</span><br><span class="line">    stream:</span><br><span class="line">      kafka:</span><br><span class="line">        binder:</span><br><span class="line">#Kafka的消息中间件服务器</span><br><span class="line">          brockers: localhost:9092</span><br><span class="line">#Zookeeper的节点，如果集群，后面加,号分隔</span><br><span class="line">          zk-nodes: localhost:2181</span><br><span class="line">#如果设置为false,就不会自动创建Topic 有可能你Topic还没创建就直接调用了。</span><br><span class="line">          auto-create-topics: true</span><br><span class="line">      bindings:</span><br><span class="line">#自定义output</span><br><span class="line">        myOutput:</span><br><span class="line">#消息发往的目的地</span><br><span class="line">            destination: stream-demo</span><br><span class="line">#消息发送的格式，接收端不用指定格式，但是发送端要</span><br><span class="line">            content-type: text/plain</span><br></pre></td></tr></table></figure>
+<p>下面发送消息的时候，就是注入我们自己定义的<code>source</code>即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableBinding</span>(MySource.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SendService</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MySource source;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMsg</span><span class="params">(String msg)</span></span>&#123;</span><br><span class="line">        source.myOutput().send(MessageBuilder.withPayload(msg).build());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消费者同样如此，就是改一下<code>Sink</code>的名字即可。</p>
+<h2 id="四、消息中转站"><a href="#四、消息中转站" class="headerlink" title="四、消息中转站"></a>四、消息中转站</h2><p>这是一个比较有意思的功能，就是消息经过中间一个加工一下，再传给下一个消费者。就是一个链式的调用。</p>
+<p>那么，我们这里改造一下<code>spring-cloud-stream-consumer-1</code>为<code>spring-cloud-stream-trans</code>:</p>
+<p>第一步：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 7889</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: consumer_1</span><br><span class="line">  cloud:</span><br><span class="line">    stream:</span><br><span class="line">      kafka:</span><br><span class="line">        binder:</span><br><span class="line">          brockers: localhost:9092</span><br><span class="line">          zk-nodes: localhost:2181</span><br><span class="line">          auto-create-topics: true</span><br><span class="line">      bindings:</span><br><span class="line">#input是接收，注意这里不能再像前面一样写output了</span><br><span class="line">          input:</span><br><span class="line">            destination: stream-demo</span><br><span class="line"> #进行消息中转处理后，在进行转发出去           </span><br><span class="line">          output:</span><br><span class="line">            destination: stream-demo-trans</span><br></pre></td></tr></table></figure></p>
+<p>第二步：接着在新建一个消息中转类，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> hjc.consumer;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.stream.annotation.EnableBinding;</span><br><span class="line"><span class="keyword">import</span> org.springframework.cloud.stream.messaging.Processor;</span><br><span class="line"><span class="keyword">import</span> org.springframework.integration.annotation.ServiceActivator;</span><br><span class="line"></span><br><span class="line"><span class="meta">@EnableBinding</span>(Processor.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TransFormService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ServiceActivator</span>(inputChannel = Processor.INPUT,outputChannel = Processor.OUTPUT)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">transform</span><span class="params">(Object payload)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"消息中转站："</span>+payload);</span><br><span class="line">        <span class="keyword">return</span> payload;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>记得要将拷贝过来的工程中的<code>SendService</code>里面的注解全部删除掉，要不然程序启动会报错。</p>
+<p>接着要修改消息中转站发送消息出去的接收端springcloud-stream2的配置,<code>input</code>的值改为<code>stream-demo-trans</code>即可。</p>
+<h2 id="五、消息分组"><a href="#五、消息分组" class="headerlink" title="五、消息分组"></a>五、消息分组</h2><p>我们都是一端发消息，两个消息接受者都接收到了，但是有时候有些业务场景我只想让其中一个消息接收者接收到消息，那么该怎么办呢？</p>
+<p><code>Group</code>，如果使用过 <code>Kafka</code> 的读者并不会陌生。<code>Spring Cloud Stream</code> 的这个分组概念的意思基本和 <code>Kafka</code> 一致。微服务中动态的缩放同一个应用的数量以此来达到更高的处理能力是非常必须的。对于这种情况，同一个事件防止被重复消费，</p>
+<p>只要把这些应用放置于同一个 <code>group</code> 中，就能够保证消息只会被其中一个应用消费一次。不同的组是可以消费的，同一个组内会发生竞争关系，只有其中一个可以消费。</p>
+<p>修改消费段的配置文件，将他们都配置到同一个组下面：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 7889</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: consumer_1</span><br><span class="line">  cloud:</span><br><span class="line">    stream:</span><br><span class="line">      kafka:</span><br><span class="line">        binder:</span><br><span class="line">          brockers: localhost:9092</span><br><span class="line">          zk-nodes: localhost:2181</span><br><span class="line">          auto-create-topics: true</span><br><span class="line">      bindings:</span><br><span class="line">          #input是接收，注意这里不能再像前面一样写output了</span><br><span class="line">          input:</span><br><span class="line">            destination: stream-demo</span><br><span class="line">            #分组的组名</span><br><span class="line">            group: group</span><br></pre></td></tr></table></figure>
+<p>可以看到<code>springcloud-stream1</code>和<code>springcloud-stream2</code>是属于同一组的。<code>springcloud-stream</code>模块的发的消息只能被<code>springcloud-stream1</code>或<code>springcloud-stream2</code>其中一个接收到，这样避免了重复消费。</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2018/12/01/9.Stream消息驱动/">9.Stream消息驱动</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Eureka</a></p>
+        <p><span>发布时间:</span>2018-12-01, 13:51:24</p>
+        <p><span>最后更新:</span>2018-12-01, 13:51:32</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2018/12/01/9.Stream消息驱动/" title="9.Stream消息驱动">http://yoursite.com/2018/12/01/9.Stream消息驱动/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2018/12/01/9.Stream消息驱动/　　作者: Eureka" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2018/12/01/10.Sleuth服务追踪/">
+                    10.Sleuth服务追踪
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2018/12/01/8.Bus消息总线/">
+                    8.Bus消息总线
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一、为什么需要SpringCloud-Stream消息驱动呢？"><span class="toc-number">1.</span> <span class="toc-text">一、为什么需要SpringCloud Stream消息驱动呢？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二、简单的演示"><span class="toc-number">2.</span> <span class="toc-text">二、简单的演示</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#第一步："><span class="toc-number">2.1.</span> <span class="toc-text">第一步：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第二步："><span class="toc-number">2.2.</span> <span class="toc-text">第二步：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第三步："><span class="toc-number">2.3.</span> <span class="toc-text">第三步：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#第四步"><span class="toc-number">2.4.</span> <span class="toc-text">第四步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">2.5.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三、自定义消息通道"><span class="toc-number">3.</span> <span class="toc-text">三、自定义消息通道</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四、消息中转站"><span class="toc-number">4.</span> <span class="toc-text">四、消息中转站</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五、消息分组"><span class="toc-number">5.</span> <span class="toc-text">五、消息分组</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"9.Stream消息驱动　| Eureka-Home　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2018/12/01/10.Sleuth服务追踪/" title="上一篇: 10.Sleuth服务追踪">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2018/12/01/8.Bus消息总线/" title="下一篇: 8.Bus消息总线">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/10.Sleuth服务追踪/">10.Sleuth服务追踪</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/9.Stream消息驱动/">9.Stream消息驱动</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/8.Bus消息总线/">8.Bus消息总线</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/7.Config分布式配置管理/">7.Config分布式配置管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/6.Zuul网关服务/">6.Zuul网关服务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/01/5.Feign声明式服务调用/">5.Feign声明式服务调用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/28/4.Hystrix线程隔离请求缓存请求合并/">4.Hystrix线程隔离请求缓存请求合并</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/28/3.Hystrix请求熔断服务降级/">3.Hystrix请求熔断服务降级</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/27/2.Ribbon客户端负载均衡/">2.Ribbon客户端负载均衡</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/27/1.Eureka服务治理/">1.Eureka服务治理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/26/11.天气预报系统-熔断机制/">11.天气预报系统-熔断机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/25/10.天气预报系统-集中化配置/">10.天气预报系统-集中化配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/25/9.天气预报系统-API网关/">9.天气预报系统-API网关</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/23/8.天气预报系统-微服务的消费/">8.天气预报系统-微服务的消费</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/23/7.天气预报系统-微服务的注册和发现/">7.天气预报系统-微服务的注册和发现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/22/【面试题48：求1+2++n】/">【面试题48：求1+2+...+n】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/6.天气预报系统-拆分本系统/">6.天气预报系统-拆分本系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/5.天气预报系统-服务拆分和业务建模/">5.天气预报系统-服务拆分和业务建模</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/4.天气预报系统-前端样式/">4.天气预报系统-前端样式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/3.天气预报系统-天气数据同步/">3.天气预报系统-天气数据同步</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/2.天气预报系统-redis提升性能/">2.天气预报系统-redis提升性能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/1.天气预报系统-简单接口调用/">1.天气预报系统-简单接口调用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/21/spring多数据源实现读写分离/">spring多数据源实现读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/19/navicate新建查询报错问题记录/">navicate新建查询报错问题记录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/24/对于工厂模式的理解/">对于工厂模式的理解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/24/三、设计模式-抽象工厂模式/">三、设计模式-抽象工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/24/二、设计模式-工厂方法模式/">二、设计模式-工厂方法模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/24/一、设计模式-简单工厂模式/">一、设计模式-简单工厂模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/24/关于枚举实现单例模式/">关于枚举实现单例模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/31/十六、地理位置附近查询的GEOHASH解决方案/">十六、地理位置附近查询的GEOHASH解决方案</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/十一、链表问题的总结/">十一、链表问题的总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/十、LRU算法实现/">十、LRU算法实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/九、贪心算法/">九、贪心算法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/八、动态规划问题/">八、动态规划问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/七、回溯问题/">七、回溯问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/六、二叉树问题/">六、二叉树问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/五、栈和队列问题/">五、栈和队列问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/四、链表问题/">四、链表问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/三、查找问题/">三、查找问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/二、数组问题/">二、数组问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/16/一、写在前面/">一、写在前面</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/7.面试题目整理2（redis相关）/">7.面试题目整理2（redis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/6.面试题目整理1（myabtis相关）/">6.面试题目整理1（myabtis相关）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/5.Http的简单介绍/">5.Http的简单介绍</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/4.TCP和UDP/">4.TCP和UDP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/09/3.java基础-高频面试知识点/">3.java基础-高频面试知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题67：机器人运动范围】/">【面试题67：机器人运动范围】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题66：矩阵中的路径】/">【面试题66：矩阵中的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题65：滑动窗口的最大值】/">【面试题65：滑动窗口的最大值】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题64：数据流中的中位数】/">【面试题64：数据流中的中位数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题63：二叉搜索树的第K个节点】/">【面试题63：二叉搜索树的第K个节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题62：序列化二叉树】/">【面试题62：序列化二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题61：把二叉树打印成多行】/">【面试题61：把二叉树打印成多行】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题60：按之字形顺序打印二叉树】/">【面试题60：按之字形顺序打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题59：对称的二叉树】/">【面试题59：对称的二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/05/【面试题58：二叉树的下一个结点】/">【面试题58：二叉树的下一个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题57：删除链表中重复的结点】/">【面试题57：删除链表中重复的结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题56：链表中环的入口节点】/">【面试题56：链表中环的入口节点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题55：字符流中第一个不重复的字符】/">【面试题55：字符流中第一个不重复的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题54：表示数值的字符串】/">【面试题54：表示数值的字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题53：正则表达式匹配】/">【面试题53：正则表达式匹配】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题52：构建乘积数组】/">【面试题52：构建乘积数组】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题51：数组中重复的数字】/">【面试题51：数组中重复的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题50：把字符串转为整数】/">【面试题50：把字符串转为整数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题49：不用加减乘除做加法】/">【面试题49：不用加减乘除做加法】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题48：求1+2+...+n】/">【面试题48：求1+2+...+n】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题47：孩子们的游戏】/">【面试题47：孩子们的游戏】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题46：扑克牌顺子】/">【面试题46：扑克牌顺子】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题45：翻转单词顺序列】/">【面试题45：翻转单词顺序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题44：左旋转字符串】/">【面试题44：左旋转字符串】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题43：和为S的两个数字】/">【面试题43：和为S的两个数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题42：和为S的连续正数序列】/">【面试题42：和为S的连续正数序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题41：数组中只出现一次的数字】/">【面试题41：数组中只出现一次的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题40：平衡二叉树】/">【面试题40：平衡二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题39：二叉树的深度】/">【面试题39：二叉树的深度】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题38：数字在排序数组中出现的次数】/">【面试题38：数字在排序数组中出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题37：两个链表的公共结点】/">【面试题37：两个链表的公共结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题36：数组中的逆序对】/">【面试题36：数组中的逆序对】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题35：第一个只出现一次的字符】/">【面试题35：第一个只出现一次的字符】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题34：丑数】/">【面试题34：丑数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题33：把数组排成最小的数】/">【面试题33：把数组排成最小的数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题32：整数中1出现的次数】/">【面试题32：整数中1出现的次数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题31：连续子数组的最大和】/">【面试题31：连续子数组的最大和】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题30：最小的K个数】/">【面试题30：最小的K个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题29：数组中出现次数超过一半的数字】/">【面试题29：数组中出现次数超过一半的数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题28：字符串的排列】/">【面试题28：字符串的排列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题27：二叉搜索树与双向链表】/">【面试题27：二叉搜索树与双向链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题26：复杂链表的复制】/">【面试题26：复杂链表的复制】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题25：二叉树中和为某一值的路径】/">【面试题25：二叉树中和为某一值的路径】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题24：二叉搜索树的后序遍历序列】/">【面试题24：二叉搜索树的后序遍历序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题23：从上往下打印二叉树】/">【面试题23：从上往下打印二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题22：栈的压入、弹出序列】/">【面试题22：栈的压入、弹出序列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题21：包含min函数的栈】/">【面试题21：包含min函数的栈】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题20：顺时针打印矩阵】/">【面试题20：顺时针打印矩阵】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题19：二叉树的镜像】/">【面试题19：二叉树的镜像】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题18：树的子结构】/">【面试题18：树的子结构】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题17： 合并两个排序的链表】/">【面试题17： 合并两个排序的链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题16： 反转链表】/">【面试题16： 反转链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题15： 链表中倒数第k个结点】/">【面试题15： 链表中倒数第k个结点】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题14： 调整数组顺序使奇数位于偶数前面】/">【面试题14： 调整数组顺序使奇数位于偶数前面】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题13： 数值的整数次方】/">【面试题13： 数值的整数次方】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题12 ： 二进制中1的个数】/">【面试题12 ： 二进制中1的个数】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题11 ： 矩形覆盖】/">【面试题11 ： 矩形覆盖】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题10 ： 变态跳台阶】/">【面试题10 ： 变态跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题9 ： 跳台阶】/">【面试题9 ： 跳台阶】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题8 ： 斐波那契数列】/">【面试题8 ： 斐波那契数列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题7：旋转数组的最小数字】/">【面试题7：旋转数组的最小数字】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题6：用两个栈实现队列】/">【面试题6：用两个栈实现队列】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题5 ：重建二叉树】/">【面试题5 ：重建二叉树】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题4 ： 从尾到头打印链表】/">【面试题4 ： 从尾到头打印链表】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题3 ： 替换空格】/">【面试题3 ： 替换空格】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/04/【面试题2 ：二维数组中的查找】/">【面试题2 ：二维数组中的查找】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/03/【面试题1 ： 实现Singleton 模式——七种实现方式】/">【面试题1 ： 实现Singleton 模式——七种实现方式】</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/内连接和外连接/">内连接和外连接</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.秒杀总结/">8.秒杀总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/随笔1/">我们的重量</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机网络/">计算机网络</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/计算机操作系统/">计算机操作系统</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/算法总概览/">算法总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/电信子公司的实习/">电信子公司的实习</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/数据库索引的实现原理/">数据库索引的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/复杂查询训练/">复杂查询训练</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、整合用户登录功能/">四、整合用户登录功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、内存分配和回收策略/">四、内存分配和回收策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/四、Thread类方法详解/">四、Thread类方法详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十四、锁车/">十四、锁车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十五、骑行轨迹/">十五、骑行轨迹</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、虚拟机字节码执行引擎/">十二、虚拟机字节码执行引擎</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、整合mongodb获取附近单车以及距离/">十二、整合mongodb获取附近单车以及距离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十二、Java并发总览/">十二、Java并发总览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十三、整合百度云推送--开锁/">十三、整合百度云推送--开锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、类加载器和双亲委派机制/">十一、类加载器和双亲委派机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、深入分析ThreadLocal内存泄漏问题/">十一、深入分析ThreadLocal内存泄漏问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十一、整合完成编号连续递增/">十一、整合完成编号连续递增</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、虚拟机类加载机制/">十、虚拟机类加载机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、ThreadLocal详解/">十、ThreadLocal详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/十、MongoDB入门下/">十、MongoDB入门下</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式问题分析/">分布式问题分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/分布式基础/">分布式基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/关于索引失效和联合索引/">关于索引失效和联合索引</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、整合springSecurity/">六、整合springSecurity</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、Class文件中的常量池/">六、Class文件中的常量池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/六、volatile详解/">六、volatile详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、整合云存储/">八、整合云存储</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、JVM对synchronized的优化/">八、JVM对synchronized的优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/八、Class文件中的字段表集合--field字段在class文件中是怎样组织的/">八、Class文件中的字段表集合--field字段在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、整合昵称修改功能/">五、整合昵称修改功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、从卖票程序看synchronized特性/">五、从卖票程序看synchronized特性</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/五、Class类文件结构/">五、Class类文件结构</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、整合fastJson、整合logback、lombok插件、单元测试/">二、整合fastJson、整合logback、lombok插件、单元测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、基础概念/">二、基础概念</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/二、垃圾回收/">二、垃圾回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、MongoDB入门上/">九、MongoDB入门上</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Lock接口简单体验/">九、Lock接口简单体验</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/九、Class文件中的方法表集合--method方法在class文件中是怎样组织的/">九、Class文件中的方法表集合--method方法在class文件中是怎样组织的</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、线程的创建和线程状态/">三、线程的创建和线程状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、整合加密/">三、整合加密</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/三、七种垃圾回收器/">三、七种垃圾回收器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、读写锁/">七、读写锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、整合发送短信/">七、整合发送短信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/七、Class文件中的访问标志、类索引、父类索引、接口索引集合/">七、Class文件中的访问标志、类索引、父类索引、接口索引集合</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、整合ssm/">一、整合ssm</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、基础概念/">一、线程基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/一、java内存区域/">一、java内存区域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/SQL必知必会/">SQL必知必会</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Socket基础/">Socket基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/nginx原理/">nginx原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql面试高频理论知识/">mysql面试高频理论知识</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/MySQL重要知识点/">MySQL重要知识点</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql复杂查询基础/">mysql复杂查询基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/mysql最基础知识小结/">mysql最基础知识小结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/maven/">maven</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Java虚拟机总概览/">Java虚拟机总概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/HTTP/">HTTP</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/Git/">Git</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、购物车管理模块/">9、购物车管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9、Hashtable源码分析/">9、Hashtable源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.缓存设计与优化/">9.缓存设计与优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.组件注册总结/">9.组件注册总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.redis分布式锁/">9.redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.JUC组件拓展-BlockingQueue/">9.JUC组件拓展-BlockingQueue</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/9.Java IO/">9.Java IO</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、商品管理模块/">8、商品管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8、HashMap和LinkedHashMap遍历机制/">8、HashMap和LinkedHashMap遍历机制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.整合WebSocket/">8.整合WebSocket</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.使用FactoryBean注册组件/">8.使用FactoryBean注册组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.redis cluster实践--淘淘商城的某一节/">8.redis cluster实践--淘淘商城的某一节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.JUC组件拓展-ForkJoin简介/">8.JUC组件拓展-ForkJoin简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/8.java面向对象/">8.java面向对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、分类管理模块/">7、分类管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、LinkedHashMap源码分析/">7、LinkedHashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7、二分搜索树（下）/">7、二分搜索树（下）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.整合微信/">7.整合微信</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.安全防护--图形验证码及恶意防刷/">7.安全防护--图形验证码及恶意防刷</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.redis cluster理论详解/">7.redis cluster理论详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.java克隆/">7.java克隆</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.JUC组件拓展-Callable、Future和FutureTask/">7.JUC组件拓展-Callable、Future和FutureTask</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/7.@Import/">7.@Import</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、用户管理模块/">6、用户管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、二分搜索树（上）/">6、二分搜索树（上）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6、HashMap源码分析/">6、HashMap源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/">6.服务级高并发秒杀优化（RabbitMQ+接口优化）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.redis sentinel实现高可用读写分离/">6.redis sentinel实现高可用读写分离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.java泛型/">6.java泛型</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AQS以及同步组件/">6.AQS以及同步组件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.AOP、异常、整合mybatis/">6.AOP、异常、整合mybatis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、项目初始化/">5、项目初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/6.@Conditional-按照条件注册bean/">6.@Conditional-按照条件注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、几种排序算法的对比/">5、几种排序算法的对比</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5、hashcode和equals/">5、hashcode和equals</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.页面级高并发秒杀优化（Redis缓存+静态化分离）/">5.页面级高并发秒杀优化（Redis缓存+静态化分离）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.线程安全策略/">5.线程安全策略</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.卖家订单部分/">5.卖家订单部分</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.redis主从复制/">5.redis主从复制</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.java异常/">5.java异常</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、堆排序和优先队列/">4、堆排序和优先队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/5.@lazy-bean-懒加载/">5.@lazy-bean-懒加载</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、idea初始化/">4、idea初始化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.部署在本机环境/">4.部署在本机环境</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4、CopyOnWriteArrayList源码分析/">4、CopyOnWriteArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.安全发布对象/">4.安全发布对象</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.redis持久化/">4.redis持久化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.JMeter压测/">4.JMeter压测</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.java注解/">4.java注解</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/4.@Scope-设置组件作用域/">4.@Scope-设置组件作用域</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、快速排序及优化/">3、快速排序及优化</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、mysql+git安装/">3、mysql+git安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3、LinkedList源码分析/">3、LinkedList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.订单/">3.订单</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.自定义TypeFilter指定过滤规则/">3.自定义TypeFilter制定过滤规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.线程安全性-synchronized/">3.线程安全性-synchronized</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.秒杀功能实现/">3.秒杀功能实现</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.redis其他的功能/">3.redis其他的功能</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/3.java动态代理/">3.java动态代理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、归并排序/">2、归并排序</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、基于virtualbox+centos6.9的服务器搭建（一）/">2、基于virtualbox+centos6.9的服务器搭建（一）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2、ArrayList源码分析/">2、ArrayList源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/28.Spring AOP的实现原理/">28.Spring AOP的实现原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/27.自己动手写springIOC(3)/">27.自己动手写springIOC(3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26.自己动手写springIOC(2)/">26.自己动手写springIOC(2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/26、前端在windows本地下的部署/">26、前端在windows本地下的部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25、Redisson实现redis分布式锁/">25、Redisson实现redis分布式锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/25.自己动手写springIOC(1)/">25.自己动手写springIOC(1)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24.SpringAop--责任链模式/">24.SpringAop--责任链模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/24、spring schedule定时任务/">24、spring schedule定时任务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23、springmvc拦截器/">23、springmvc拦截器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/23.SpringAop--动态代理模式/">23.SpringAop--动态代理模式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22、springMVC全局异常+spring包扫描包隔离+spring事务传播/">22、springMVC全局异常+spring包扫描包隔离+spring事务传播</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/22.SpringAop--基本使用和切点表达式/">22.SpringAop--基本使用和切点表达式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21.spring aop基本使用/">21.spring aop基本使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/21、springSession实现单点登录/">21、springSession实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20、Redis分布式/">20、Redis分布式</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/20.@Profile环境搭建和根据环境注册bean/">20.@Profile环境搭建和根据环境注册bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.线程安全性-Atomic包/">2.线程安全性-Atomic包</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.整合redis/">2.整合redis</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.商品和类目开发/">2.商品和类目开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.redis基本数据结构的入门/">2.redis基本数据结构的入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.Mybatis面试问题集锦/">2.Mybatis面试问题集锦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.java反射/">2.java反射</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/2.@ComponentScan自动扫描组件以及扫描规则/">2.@ComponentScan自动扫描组件以及扫描规则</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、VirtualBox+Centos6.9下载、安装、网络配置/">1、VirtualBox+Centos6.9下载、安装、网络配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、初级排序算法的实现和性能测试/">1、初级排序算法的实现和性能测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1、Java容器概览/">1、Java容器概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19、redis+cookie+jackson+filter实现单点登录/">19、redis+cookie+jackson+filter实现单点登录</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/19.Aware注入Spring底层组件及原理/">19.Aware注入Spring底层组件及原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18、二期进阶-redis快速入门/">18、二期进阶-redis快速入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17、二期进阶-tomcat集群（单机多服务器）/">17、二期进阶-tomcat集群（单机多服务器）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/18.方法、构造器位置的自动装配/">18.方法、构造器位置的自动装配</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/17.@Resource & @Inject/">17.@Resource & @Inject</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16、二期进阶-maven环境隔离/">16、二期进阶-maven环境隔离</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/16.@Autowired & @Qualifier & @Primary/">16.@Autowired & @Qualifier & @Primary</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15、阿里云centos7.3部署本项目（后端+前端）/">15、阿里云centos7.3部署本项目（后端+前端）</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.高并发处理之应用限流思路/">15.高并发处理之应用限流思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/15.@PropertySource加载外部配置文件/">15.@PropertySource加载外部配置文件</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14、订单模块开发/">14、订单模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.高并发处理之应用拆分思路/">14.高并发处理之应用拆分思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/14.@Value赋值/">14.@Value赋值</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、支付模块开发/">13、支付模块开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13、HashMap死循环问题/">13、HashMap死循环问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.IO多路复用/">13.IO多路复用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.高并发处理之消息队列思路/">13.高并发处理之消息队列思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/13.BeanPostProcessor-后置处理器/">13.BeanPostProcessor-后置处理器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、深入fail-fast/">12、深入fail-fast</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12、支付宝开发/">12、支付宝开发</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.高并发处理之缓存思路/">12.高并发处理之缓存思路</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.ThreadLocal自问自答/">12.ThreadLocal自问自答</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/12.@PostConstruct&@PreDestory/">12.@PostConstruct&@PreDestory</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、支付宝demo测试/">11、支付宝demo测试</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11、LinkedHashSet源码解析/">11、LinkedHashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.关于泛型的补充/">11.关于泛型的补充</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.多线程并发拓展/">11.多线程并发拓展</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.InitializingBean和DisposableBean/">11.InitializingBean和DisposableBean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、收货地址管理模块/">10、收货地址管理模块</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10、HashSet源码解析/">10、HashSet源码解析</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.部署/">10.部署</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/11.缓存更新/">11.缓存更新</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.线程池/">10.线程池</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.redis事务/">10.redis事务</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.java字符串/">10.java字符串</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/10.@Bean指定初始化和销毁方法/">10.@Bean指定初始化和销毁方法</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.设计模式汇总/">1.设计模式汇总</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.组件注册-@Configuration & @Bean/">1.组件注册-@Configuration & @Bean</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.数据库设计和基础环境搭建/">1.数据库设计和基础环境搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.深入Web请求过程/">1.深入Web请求过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.基础介绍和线程安全性问题展示/">1.基础介绍和线程安全性问题展示</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.初步认识PageHelper分页插件原理和使用/">1.初步认识PageHelper分页插件原理和使用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Spring知识点提炼/">1.Spring知识点提炼</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.redis简介/">1.redis简介</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1.Java基础/">1.Java基础</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/21/1. 登录功能/">1. 登录功能</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2018 Eureka
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 2;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
