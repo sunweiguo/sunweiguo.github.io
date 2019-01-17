@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Eureka-Home</title>
+  <title>FourColor</title>
   
   <subtitle>学习技术一口吃不成胖子，慢慢走，每天只要进步一丢丢！</subtitle>
   <link href="/atom.xml" rel="self"/>
@@ -10,7 +10,7 @@
   <id>http://yoursite.com/</id>
   
   <author>
-    <name>Eureka</name>
+    <name>FourColor</name>
     
   </author>
   
