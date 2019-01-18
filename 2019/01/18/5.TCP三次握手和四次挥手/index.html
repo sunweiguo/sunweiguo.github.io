@@ -49,7 +49,7 @@
 <h2 id="4-三次握手-重要，细读"><a href="#4-三次握手-重要，细读" class="headerlink" title="4.三次握手(重要，细读)"></a>4.三次握手(重要，细读)</h2><p><img src="http://bloghello.oursnail.cn/http5-3.jpg" alt="image"></p>
 <p>首先，TCP作为一种可靠传输控制协议，其核心思想：<strong>既要保证数据可靠传输，又要提高传输的效率，而用三次恰恰可以满足以上两方面的需求！</strong></p>
 <p>然后，要明确TCP连接握手，握的是啥？ </p>
-<p>答案：<strong>++通信双方数据原点的序列号++</strong>！</p>
+<p>答案：<strong>通信双方数据原点的序列号</strong>！</p>
 <p>我们在上面一篇文章知道，消息的完整是靠给每个消息包搞一个编号，依次地ACK确认。确认机制是累计的，意味着 X 序列号之前(不包括 X) 包都是被确认接收到的。</p>
 <p>TCP可靠传输的精髓：TCP连接的一方A，由<strong>操作系统动态随机选取一个32位长的序列号（Initial Sequence Number）</strong>。</p>
 <p><strong>假设A的初始序列号为1000，以该序列号为原点，对自己将要发送的每个字节的数据进行编号，1001，1002，1003…，并把自己的初始序列号ISN告诉B。</strong></p>
@@ -70,7 +70,7 @@
 <li>A 发送同步信号SYN + A’s Initial sequence number</li>
 <li>B发送同步信号SYN + B’s Initial sequence number + B’s ACK sequence number</li>
 </ol>
-<p>++这里有一个问题，A与B就A的初始序列号达成了一致，但是B无法知道A是否已经接收到自己的同步信号，如果这个同步信号丢失了，A和B就B的初始序列号将无法达成一致。++</p>
+<p><strong>这里有一个问题，A与B就A的初始序列号达成了一致，但是B无法知道A是否已经接收到自己的同步信号，如果这个同步信号丢失了，A和B就B的初始序列号将无法达成一致。</strong></p>
 <p>所以A必须再给B一个确认，以确认A已经接收到B的同步信号。</p>
 <blockquote>
 <p>如果A发给B的确认丢了，该如何？</p>
