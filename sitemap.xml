@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2019/01/20/7.LinkedHashMap/</loc>
+    <loc>http://yoursite.com/2019/01/20/8.HashMap%E5%92%8CLinkedHashMap%E9%81%8D%E5%8E%86%E6%9C%BA%E5%88%B6/</loc>
     
-    <lastmod>2019-01-20T11:49:07.463Z</lastmod>
+    <lastmod>2019-01-20T12:08:05.754Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://yoursite.com/2019/01/20/5.HashMap/</loc>
     
-    <lastmod>2019-01-20T11:20:22.874Z</lastmod>
+    <lastmod>2019-01-20T12:07:09.930Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/01/20/7.LinkedHashMap/</loc>
+    
+    <lastmod>2019-01-20T11:49:07.463Z</lastmod>
     
   </url>
   
