@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/20/6.HashSet/</loc>
+    
+    <lastmod>2019-01-20T10:32:26.612Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/20/5.HashMap/</loc>
     
-    <lastmod>2019-01-20T10:14:09.082Z</lastmod>
+    <lastmod>2019-01-20T10:19:29.192Z</lastmod>
     
   </url>
   
