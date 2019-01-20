@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-01-20T12:40:29.498Z</updated>
+  <updated>2019-01-20T12:43:14.826Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>LinkedHashSet</title>
+    <link href="http://yoursite.com/2019/01/20/10.LinkedHashSet/"/>
+    <id>http://yoursite.com/2019/01/20/10.LinkedHashSet/</id>
+    <published>2019-01-20T12:43:12.169Z</published>
+    <updated>2019-01-20T12:43:14.826Z</updated>
+    
+    <content type="html"><![CDATA[<p>HashSet 和 LinkedHashSet 的关系类似于 HashMap 和 LinkedHashMap 的关系，即后者维护双向链表，实现迭代顺序可为插入顺序或是访问顺序。所以也就轻松加愉快快速了解一下即可。<br><a id="more"></a></p><p>从源码中可以看到其空的构造函数为：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">LinkedHashSet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="number">16</span>, .<span class="number">75f</span>, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这个<code>super</code>即父类是<code>HashSet</code>，从它的继承关系就可以显然看到：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LinkedHashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">extends</span> <span class="title">HashSet</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Set</span>&lt;<span class="title">E</span>&gt;, <span class="title">Cloneable</span>, <span class="title">java</span>.<span class="title">io</span>.<span class="title">Serializable</span></span></span><br></pre></td></tr></table></figure><p>那么<code>HashSet</code>内部的数据结构就是一个 <code>HashMap</code>，其方法的内部几乎就是在调用 <code>HashMap</code> 的方法。</p><p><code>LinkedHashSet</code> 首先我们需要知道的是它是一个 <code>Set</code> 的实现，所以它其中存的肯定不是键值对，而是值。此实现与 <code>HashSet</code> 的不同之处在于，<code>LinkedHashSet</code> 维护着一个运行于所有条目的双向循环链表。</p><p>这一切都与<code>LinkedHashMap</code>类似。</p><p><code>LinkedHashSet</code> 内部有个属性 <code>accessOrder</code> 控制着遍历次序。默认情况下该值为 <code>false</code> ,即按插入排序访问。如果将该值设置为 <code>true</code> 的话，则按访问次序排序(即最近最少使用算法，最近最少使用的放在链表头部，最近访问的则在链表尾部)。</p><h2 id="一、-示例"><a href="#一、-示例" class="headerlink" title="一、 示例"></a>一、 示例</h2><h4 id="HashSet的遍历："><a href="#HashSet的遍历：" class="headerlink" title="HashSet的遍历："></a>HashSet的遍历：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">Set&lt;String&gt; linkedHashSet = <span class="keyword">new</span> HashSet&lt;&gt;();</span><br><span class="line">linkedHashSet.add(<span class="string">"aaa"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"eee"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"ccc"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"bbb"</span>);</span><br><span class="line"></span><br><span class="line">Iterator&lt;String&gt; it = linkedHashSet.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">System.out.println(it.next());</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="输出结果是："><a href="#输出结果是：" class="headerlink" title="输出结果是："></a>输出结果是：</h4><blockquote><p>aaa<br>ccc<br>bbb<br>eee</p></blockquote><h4 id="LinkedHashSet的遍历："><a href="#LinkedHashSet的遍历：" class="headerlink" title="LinkedHashSet的遍历："></a>LinkedHashSet的遍历：</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">Set&lt;String&gt; linkedHashSet = <span class="keyword">new</span> LinkedHashSet&lt;&gt;();</span><br><span class="line">linkedHashSet.add(<span class="string">"aaa"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"eee"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"ccc"</span>);</span><br><span class="line">linkedHashSet.add(<span class="string">"bbb"</span>);</span><br><span class="line">linkedHashSet.add(<span class="keyword">null</span>);</span><br><span class="line"></span><br><span class="line">Iterator&lt;String&gt; it = linkedHashSet.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">System.out.println(it.next());</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="输出结果是：-1"><a href="#输出结果是：-1" class="headerlink" title="输出结果是："></a>输出结果是：</h4><blockquote><p>aaa<br>eee<br>ccc<br>bbb<br>null</p></blockquote><p>可以看到与输入顺序是一致的。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;HashSet 和 LinkedHashSet 的关系类似于 HashMap 和 LinkedHashMap 的关系，即后者维护双向链表，实现迭代顺序可为插入顺序或是访问顺序。所以也就轻松加愉快快速了解一下即可。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="java容器" scheme="http://yoursite.com/tags/java%E5%AE%B9%E5%99%A8/"/>
+    
+  </entry>
   
   <entry>
     <title>Hashtable</title>

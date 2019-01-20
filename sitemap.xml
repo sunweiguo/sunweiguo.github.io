@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/20/10.LinkedHashSet/</loc>
+    
+    <lastmod>2019-01-20T12:43:14.826Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/20/9.HashTable/</loc>
     
     <lastmod>2019-01-20T12:40:29.498Z</lastmod>
