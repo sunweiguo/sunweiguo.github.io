@@ -20,14 +20,14 @@
 <p>删除操作与添加操作大同小异，例如删除指定节点的过程如下图所示，需要把当前节点的前驱节点的后继修改为当前节点的后继，以及当前节点的后继结点的前驱修改为当前节点的前驱。</p>
 <p>就不赘述了。</p>
 <h2 id="五、获取元素"><a href="#五、获取元素" class="headerlink" title="五、获取元素"></a>五、获取元素</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取指定索引对应的元素</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    checkElementIndex(index);</span><br><span class="line">    <span class="keyword">return</span> node(index).item;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//寻找元素的方向是根据index在表中的位置决定的</span></span><br><span class="line"><span class="function">Node&lt;E&gt; <span class="title">node</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// assert isElementIndex(index);</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> (index &lt; (size &gt;&gt; <span class="number">1</span>)) &#123;<span class="comment">//索引小于表长的一半，从表头开始往后找</span></span><br><span class="line">        Node&lt;E&gt; x = first;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; index; i++)</span><br><span class="line">            x = x.next;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;<span class="comment">//索引大于表长的一半，从表尾往前开始找</span></span><br><span class="line">        Node&lt;E&gt; x = last;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = size - <span class="number">1</span>; i &gt; index; i--)</span><br><span class="line">            x = x.prev;</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上述代码，利用了双向链表的特性，如果index离链表头比较近，就从节点头部遍历。否则就从节点尾部开始遍历。使用空间（双向链表）来换取时间。</p>
+<p>上述代码，利用了双向链表的特性，如果<code>index</code>离链表头比较近，就从节点头部遍历。否则就从节点尾部开始遍历。使用空间（双向链表）来换取时间。</p>
 <ul>
-<li>node()会以O(n/2)的性能去获取一个结点<ul>
+<li><code>node()</code>会以<code>O(n/2)</code>的性能去获取一个结点<ul>
 <li>如果索引值大于链表大小的一半，那么将从尾结点开始遍历</li>
 </ul>
 </li>
 </ul>
-<p>这样的效率是非常低的，特别是当 index 越接近 size 的中间值时。</p>
+<p>这样的效率是非常低的，特别是当 <code>index</code> 越接近 <code>size</code> 的中间值时。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><blockquote>
 <p>1、理论上无容量限制，只受虚拟机自身限制影响，所以没有扩容方法。</p>
 </blockquote>
