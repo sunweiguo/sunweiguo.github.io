@@ -1,26 +1,26 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 从下到上看五层模型 · FourColor</title><meta name="description" content="从下到上看五层模型 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">从下到上看五层模型</h1><div class="post-meta"><span class="post-time">Jan 17, 2019</span></div><div class="post-content"><p>这是计算机网络相关的第一篇文章。要想了解HTTP协议，必然要从最基本的计算机网络知识开始入手。本篇文章从下到上具体介绍五层经典模型，极速入门计算机网络。</p>
 <a id="more"></a>
-<h2 id="经典五层模型"><a class="header-anchor" href="#经典五层模型">¶</a>经典五层模型</h2>
+<h2 id="经典五层模型"><a class="header-anchor" href="#经典五层模型">null</a>经典五层模型</h2>
 <p><img src="http://bloghello.oursnail.cn/http1-6.png" alt="image"></p>
 <p>下面我们先来了解一下各层做的事情！</p>
-<h2 id="1-物理层"><a class="header-anchor" href="#1-物理层">¶</a>1.物理层</h2>
+<h2 id="1-物理层"><a class="header-anchor" href="#1-物理层">null</a>1.物理层</h2>
 <p>电脑要组网，第一件事要干什么？当然是先把电脑连起来，可以用光缆、电缆、双绞线、无线电波等方式。</p>
 <p>这就叫做&quot;物理层&quot;，它就是把电脑连接起来的物理手段。它主要规定了网络的一些电气特性，作用是负责传送0和1的电信号。</p>
-<h2 id="2-数据链路层"><a class="header-anchor" href="#2-数据链路层">¶</a>2.数据链路层</h2>
+<h2 id="2-数据链路层"><a class="header-anchor" href="#2-数据链路层">null</a>2.数据链路层</h2>
 <p>单纯的0和1没有任何意义，必须规定解读方式：多少个电信号算一组？每个信号位有何意义？</p>
 <p>这就是&quot;链接层&quot;的功能，它在&quot;实体层&quot;的上方，确定了0和1的分组方式。</p>
-<h3 id="2-1-以太网协议"><a class="header-anchor" href="#2-1-以太网协议">¶</a>2.1 以太网协议</h3>
+<h3 id="2-1-以太网协议"><a class="header-anchor" href="#2-1-以太网协议">null</a>2.1 以太网协议</h3>
 <p>早期的时候，每家公司都有自己的电信号分组方式。逐渐地，一种叫做&quot;以太网&quot;（Ethernet）的协议，占据了主导地位。</p>
 <p>以太网规定，一组电信号构成一个数据包，叫做&quot;帧&quot;（Frame）。每一帧分成两个部分：<strong>标头</strong>（Head）和<strong>数据</strong>（Data）。</p>
 <p><img src="http://bloghello.oursnail.cn/http1-2.png" alt="image"></p>
 <p>&quot;标头&quot;包含数据包的一些说明项，比如发送者、接受者、数据类型等等；&quot;数据&quot;则是数据包的具体内容。</p>
 <p>&quot;标头&quot;的长度，固定为18字节。&quot;数据&quot;的长度，最短为46字节，最长为1500字节。因此，整个&quot;帧&quot;最短为64字节，最长为1518字节。如果数据很长，就必须分割成多个帧进行发送。</p>
-<h3 id="2-2-mac地址"><a class="header-anchor" href="#2-2-mac地址">¶</a>2.2 MAC地址</h3>
+<h3 id="2-2-mac地址"><a class="header-anchor" href="#2-2-mac地址">null</a>2.2 MAC地址</h3>
 <p>上面提到，以太网数据包的&quot;标头&quot;，包含了发送者和接受者的信息。那么，发送者和接受者是如何标识呢？</p>
 <p>以太网规定，连入网络的所有设备，都必须具有&quot;网卡&quot;接口。数据包必须是从一块网卡，传送到另一块网卡。网卡的地址，就是数据包的发送地址和接收地址，这叫做MAC地址。</p>
 <p>每块网卡出厂的时候，都有一个全世界独一无二的MAC地址，长度是48个二进制位，通常用12个十六进制数表示。</p>
 <p>前6个十六进制数是厂商编号，后6个是该厂商的网卡流水号。有了MAC地址，就可以定位网卡和数据包的路径了。</p>
-<h3 id="2-3-广播"><a class="header-anchor" href="#2-3-广播">¶</a>2.3 广播</h3>
+<h3 id="2-3-广播"><a class="header-anchor" href="#2-3-广播">null</a>2.3 广播</h3>
 <p>定义地址只是第一步，后面还有更多的步骤。</p>
 <p>首先，一块网卡怎么会知道另一块网卡的MAC地址？</p>
 <p>回答是有一种ARP协议，可以解决这个问题。下面介绍ARP。</p>
@@ -29,7 +29,7 @@
 <p><img src="http://bloghello.oursnail.cn/http1-1.png" alt="image"></p>
 <p>上图中，1号计算机向2号计算机发送一个数据包，同一个子网络的3号、4号、5号计算机都会收到这个包。它们读取这个包的&quot;标头&quot;，找到接收方的MAC地址，然后与自身的MAC地址相比较，如果两者相同，就接受这个包，做进一步处理，否则就丢弃这个包。这种发送方式就叫做&quot;广播&quot;（broadcasting）。</p>
 <p>有了数据包的定义、网卡的MAC地址、广播的发送方式，&quot;链接层&quot;就可以在多台计算机之间传送数据了。</p>
-<h2 id="3-网络层"><a class="header-anchor" href="#3-网络层">¶</a>3.网络层</h2>
+<h2 id="3-网络层"><a class="header-anchor" href="#3-网络层">null</a>3.网络层</h2>
 <p>以太网协议，依靠MAC地址发送数据。理论上，单单依靠MAC地址，上海的网卡就可以找到洛杉矶的网卡了，技术上是可以实现的。</p>
 <p>但是，这样做有一个重大的缺点。以太网采用广播方式发送数据包，所有成员人手一&quot;包&quot;，不仅效率低，而且局限在发送者所在的子网络。也就是说，如果两台计算机不在同一个子网络，广播是传不过去的。这种设计是合理的，否则互联网上每一台计算机都会收到所有包，那会引起灾难。</p>
 <p>互联网是无数子网络共同组成的一个巨型网络，很像想象上海和洛杉矶的电脑会在同一个子网络，这几乎是不可能的。</p>
@@ -37,7 +37,7 @@
 <p>这就导致了&quot;网络层&quot;的诞生。它的作用是引进一套新的地址，使得我们能够区分不同的计算机是否属于同一个子网络。这套地址就叫做&quot;网络地址&quot;，简称&quot;网址&quot;。</p>
 <p>于是，&quot;网络层&quot;出现以后，每台计算机有了两种地址，一种是MAC地址，另一种是网络地址。两种地址之间没有任何联系，MAC地址是绑定在网卡上的，网络地址则是管理员分配的，它们只是随机组合在一起。</p>
 <p>网络地址帮助我们确定计算机所在的子网络，MAC地址则将数据包送到该子网络中的目标网卡。因此，从逻辑上可以推断，必定是先处理网络地址，然后再处理MAC地址。</p>
-<h3 id="3-1-ip协议"><a class="header-anchor" href="#3-1-ip协议">¶</a>3.1 IP协议</h3>
+<h3 id="3-1-ip协议"><a class="header-anchor" href="#3-1-ip协议">null</a>3.1 IP协议</h3>
 <p>规定网络地址的协议，叫做IP协议。它所定义的地址，就被称为IP地址。</p>
 <p>目前，广泛采用的是IP协议第四版，简称IPv4。这个版本规定，网络地址由32个二进制位组成。</p>
 <p>习惯上，我们用分成四段的十进制数表示IP地址，从0.0.0.0一直到255.255.255.255。</p>
@@ -48,40 +48,40 @@
 <p>知道&quot;子网掩码&quot;，我们就能判断，任意两个IP地址是否处在同一个子网络。方法是将两个IP地址与子网掩码分别进行AND运算（两个数位都为1，运算结果为1，否则为0），然后比较结果是否相同，如果是的话，就表明它们在同一个子网络中，否则就不是。</p>
 <p>比如，已知IP地址172.16.254.1和172.16.254.233的子网掩码都是255.255.255.0，请问它们是否在同一个子网络？两者与子网掩码分别进行AND运算，结果都是172.16.254.0，因此它们在同一个子网络。</p>
 <p>总结一下，IP协议的作用主要有两个，一个是为每一台计算机分配IP地址，另一个是确定哪些地址在同一个子网络。</p>
-<h3 id="3-2-ip数据包"><a class="header-anchor" href="#3-2-ip数据包">¶</a>3.2 IP数据包</h3>
+<h3 id="3-2-ip数据包"><a class="header-anchor" href="#3-2-ip数据包">null</a>3.2 IP数据包</h3>
 <p>根据IP协议发送的数据，就叫做IP数据包。不难想象，其中必定包括IP地址信息。</p>
 <p>但是前面说过，以太网数据包只包含MAC地址，并没有IP地址的栏位。那么是否需要修改数据定义，再添加一个栏位呢？</p>
 <p>回答是不需要，我们可以把IP数据包直接放进以太网数据包的&quot;数据&quot;部分，因此完全不用修改以太网的规格。这就是互联网分层结构的好处：上层的变动完全不涉及下层的结构。</p>
 <p>具体来说，IP数据包也分为&quot;标头&quot;和&quot;数据&quot;两个部分。&quot;标头&quot;部分主要包括版本、长度、IP地址等信息，&quot;数据&quot;部分则是IP数据包的具体内容。它放进以太网数据包后，以太网数据包就变成了下面这样。</p>
 <p><img src="http://bloghello.oursnail.cn/http1-3.png" alt="image"></p>
 <p>IP数据包的&quot;标头&quot;部分的长度为20个字节，整个数据包的总长度最大为65,535字节。因此，理论上，一个IP数据包的&quot;数据&quot;部分，最长为65,515字节。前面说过，以太网数据包的&quot;数据&quot;部分，最长只有1500字节。因此，如果IP数据包超过了1500字节，它就需要分割成几个以太网数据包，分开发送了。</p>
-<h3 id="3-3-arp协议"><a class="header-anchor" href="#3-3-arp协议">¶</a>3.3 ARP协议</h3>
+<h3 id="3-3-arp协议"><a class="header-anchor" href="#3-3-arp协议">null</a>3.3 ARP协议</h3>
 <p>关于&quot;网络层&quot;，还有最后一点需要说明。</p>
 <p>因为IP数据包是放在以太网数据包里发送的，所以我们必须同时知道两个地址，一个是对方的MAC地址，另一个是对方的IP地址。通常情况下，对方的IP地址是已知的，但是我们不知道它的MAC地址。</p>
 <p>所以，我们需要一种机制，能够从IP地址得到MAC地址。</p>
 <p>这里又可以分成两种情况。第一种情况，如果两台主机不在同一个子网络，那么事实上没有办法得到对方的MAC地址，只能把数据包传送到两个子网络连接处的&quot;网关&quot;（gateway），让网关去处理。</p>
 <p>第二种情况，如果两台主机在同一个子网络，那么我们可以用ARP协议，得到对方的MAC地址。ARP协议也是发出一个数据包（包含在以太网数据包中），其中包含它所要查询主机的IP地址，在对方的MAC地址这一栏，填的是FF:FF:FF:FF:FF:FF，表示这是一个&quot;广播&quot;地址。它所在子网络的每一台主机，都会收到这个数据包，从中取出IP地址，与自身的IP地址进行比较。如果两者相同，都做出回复，向对方报告自己的MAC地址，否则就丢弃这个包。</p>
 <p>总之，有了ARP协议之后，我们就可以得到同一个子网络内的主机MAC地址，可以把数据包发送到任意一台主机之上了。</p>
-<h2 id="4-传输层"><a class="header-anchor" href="#4-传输层">¶</a>4. 传输层</h2>
+<h2 id="4-传输层"><a class="header-anchor" href="#4-传输层">null</a>4. 传输层</h2>
 <p>有了MAC地址和IP地址，我们已经可以在互联网上任意两台主机上建立通信。</p>
 <p>接下来的问题是，同一台主机上有许多程序都需要用到网络，比如，你一边浏览网页，一边与朋友在线聊天。当一个数据包从互联网上发来的时候，你怎么知道，它是表示网页的内容，还是表示在线聊天的内容？</p>
 <p>也就是说，我们还需要一个参数，表示这个数据包到底供哪个程序（进程）使用。这个参数就叫做&quot;端口&quot;（port），它其实是每一个使用网卡的程序的编号。每个数据包都发到主机的特定端口，所以不同的程序就能取到自己所需要的数据。</p>
 <p>&quot;端口&quot;是0到65535之间的一个整数，正好16个二进制位。0到1023的端口被系统占用，用户只能选用大于1023的端口。不管是浏览网页还是在线聊天，应用程序会随机选用一个端口，然后与服务器的相应端口联系。</p>
 <p>&quot;传输层&quot;的功能，就是建立&quot;端口到端口&quot;的通信。相比之下，“网络层&quot;的功能是建立&quot;主机到主机&quot;的通信。只要确定主机和端口，我们就能实现程序之间的交流。因此，Unix系统就把主机+端口，叫做&quot;套接字”（socket）。有了它，就可以进行网络应用程序开发了。</p>
-<h3 id="4-1-udp协议"><a class="header-anchor" href="#4-1-udp协议">¶</a>4.1 UDP协议</h3>
+<h3 id="4-1-udp协议"><a class="header-anchor" href="#4-1-udp协议">null</a>4.1 UDP协议</h3>
 <p>现在，我们必须在数据包中加入端口信息，这就需要新的协议。最简单的实现叫做UDP协议，它的格式几乎就是在数据前面，加上端口号。</p>
 <p>UDP数据包，也是由&quot;标头&quot;和&quot;数据&quot;两部分组成。</p>
 <p><img src="http://bloghello.oursnail.cn/http1-2.png" alt="image"></p>
 <p>&quot;标头&quot;部分主要定义了发出端口和接收端口，&quot;数据&quot;部分就是具体的内容。然后，把整个UDP数据包放入IP数据包的&quot;数据&quot;部分，而前面说过，IP数据包又是放在以太网数据包之中的，所以整个以太网数据包现在变成了下面这样：</p>
 <p><img src="http://bloghello.oursnail.cn/http1-4.png" alt="image"></p>
 <p>UDP数据包非常简单，&quot;标头&quot;部分一共只有8个字节，总长度不超过65,535字节，正好放进一个IP数据包。</p>
-<h3 id="4-2-tcp协议"><a class="header-anchor" href="#4-2-tcp协议">¶</a>4.2 TCP协议</h3>
+<h3 id="4-2-tcp协议"><a class="header-anchor" href="#4-2-tcp协议">null</a>4.2 TCP协议</h3>
 <p>UDP协议的优点是比较简单，容易实现，但是缺点是可靠性较差，一旦数据包发出，无法知道对方是否收到。</p>
 <p>为了解决这个问题，提高网络可靠性，TCP协议就诞生了。这个协议非常复杂，但可以近似认为，它就是有确认机制的UDP协议，每发出一个数据包都要求确认。如果有一个数据包遗失，就收不到确认，发出方就知道有必要重发这个数据包了。</p>
 <p>因此，TCP协议能够确保数据不会遗失。它的缺点是过程复杂、实现困难、消耗较多的资源。</p>
 <p>TCP数据包和UDP数据包一样，都是内嵌在IP数据包的&quot;数据&quot;部分。TCP数据包没有长度限制，理论上可以无限长，但是为了保证网络的效率，通常TCP数据包的长度不会超过IP数据包的长度，以确保单个TCP数据包不必再分割。</p>
 <p>关于TCP细节以后再探讨。</p>
-<h2 id="5-应用层"><a class="header-anchor" href="#5-应用层">¶</a>5. 应用层</h2>
+<h2 id="5-应用层"><a class="header-anchor" href="#5-应用层">null</a>5. 应用层</h2>
 <p>应用程序收到&quot;传输层&quot;的数据，接下来就要进行解读。由于互联网是开放架构，数据来源五花八门，必须事先规定好格式，否则根本无法解读。</p>
 <p>&quot;应用层&quot;的作用，就是规定应用程序的数据格式。</p>
 <p>举例来说，TCP协议可以为各种各样的程序传递数据，比如Email、WWW、FTP等等。那么，必须有不同协议规定电子邮件、网页、FTP数据的格式，这些应用程序协议就构成了&quot;应用层&quot;。</p>
