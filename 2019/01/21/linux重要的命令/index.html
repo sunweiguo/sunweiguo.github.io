@@ -45,15 +45,16 @@
 <p>那么如何查找 <code>test.java</code> 中的 <code>java</code> 呢？</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep "java" test*</span><br></pre></td></tr></table></figure>
 <p>这句话意思就是查找以 <code>test</code> 打头的文件中的包含 <code>java</code> 字符串所在的行。</p>
+<p>直接输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep "hello"</span><br></pre></td></tr></table></figure>
-<p>会等待用户输入文本。然后对输入的内容进行检索。</p>
+<p>会等待用户输入文本。然后再对输入的内容进行检索。</p>
 <h3 id="3-2-管道操作符"><a href="#3-2-管道操作符" class="headerlink" title="3.2 管道操作符 |"></a>3.2 管道操作符 |</h3><blockquote>
 <p>可将指令连接起来，前一个指令的输出作为后一个指令的输入。</p>
 </blockquote>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / | grep "test"</span><br></pre></td></tr></table></figure>
 <p>作用同：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name "test"</span><br></pre></td></tr></table></figure>
-<div class="tip"><br><br>注意：<br>- 只有前一个指令正确才会再处理。<br>- 管道右边命令必须能接收标准输入流，否则传递过程中数据会被抛弃<br><br></div>
+<div class="tip"><br><br>注意：<br><br>只有前一个指令正确才会再处理。<br><br>管道右边命令必须能接收标准输入流，否则传递过程中数据会被抛弃<br><br></div>
 
 
 
@@ -91,7 +92,7 @@
 <p>默认是以空格分隔，那么以逗号或者其他符号可以吗？答案当然是可以。对于这样的文件text2.txt：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">adas,123</span><br><span class="line">wqe,544</span><br><span class="line">12321,dddf</span><br><span class="line">sdaasd,1235</span><br><span class="line">465547,fjigj</span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F "," '&#123;print $2&#125;' text2.txt</span><br></pre></td></tr></table></figure>
-<h2 id="五、WC统计"><a href="#五、WC统计" class="headerlink" title="五、WC统计"></a>五、WC统计</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swg123eh shwf</span><br><span class="line">shsfswg7 121 32n dswg17328 123swg1 2h1jhw</span><br><span class="line">jqbsjwqbsh ddddh wg ehdedhd  dhsjh</span><br></pre></td></tr></table></figure>
+<h2 id="五、WC统计"><a href="#五、WC统计" class="headerlink" title="五、WC统计"></a>五、WC统计</h2><p>有一个文件test2.txt，里面的内容是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swg123eh shwf</span><br><span class="line">shsfswg7 121 32n dswg17328 123swg1 2h1jhw</span><br><span class="line">jqbsjwqbsh ddddh wg ehdedhd  dhsjh</span><br></pre></td></tr></table></figure></p>
 <p><img src="http://bloghello.oursnail.cn/linux1-10.png" alt="image"></p>
 <h2 id="六、sed命令"><a href="#六、sed命令" class="headerlink" title="六、sed命令"></a>六、sed命令</h2><p>sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作</p>
 <blockquote>
