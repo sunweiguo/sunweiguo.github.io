@@ -1,23 +1,28 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> HashMap和LinkedHashMap遍历机制 · FourColor</title><meta name="description" content="HashMap和LinkedHashMap遍历机制 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">HashMap和LinkedHashMap遍历机制</h1><div class="post-meta"><span class="post-time">Jan 20, 2019</span></div><div class="post-content"><p>本篇单独讲一下HashMap和LinkedHashMap遍历方式。<br><a id="more"></a></p>
-<h2 id="一、对HashMap和LinkedHashMap遍历的几种方法"><a href="#一、对HashMap和LinkedHashMap遍历的几种方法" class="headerlink" title="一、对HashMap和LinkedHashMap遍历的几种方法"></a>一、对HashMap和LinkedHashMap遍历的几种方法</h2><p>这里以<code>HashMap</code>为例，<code>LinkedHashMap</code>一样的方式。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;Map.Entry&lt;String, Integer&gt;&gt; entryIterator = map.entrySet().iterator();</span><br><span class="line"><span class="keyword">while</span> (entryIterator.hasNext()) &#123;</span><br><span class="line">    Map.Entry&lt;String, Integer&gt; next = entryIterator.next();</span><br><span class="line">    System.out.println(<span class="string">"key="</span> + next.getKey() + <span class="string">" value="</span> + next.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> HashMap和LinkedHashMap遍历机制 · FourColor</title><meta name="description" content="HashMap和LinkedHashMap遍历机制 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">HashMap和LinkedHashMap遍历机制</h1><div class="post-meta"><span class="post-time">Jan 20, 2019</span></div><div class="post-content"><p>本篇单独讲一下HashMap和LinkedHashMap遍历方式。</p>
+<a id="more"></a>
+<h2 id="一-对hashmap和linkedhashmap遍历的几种方法"><a class="header-anchor" href="#一-对hashmap和linkedhashmap遍历的几种方法">¶</a>一、对HashMap和LinkedHashMap遍历的几种方法</h2>
+<p>这里以<code>HashMap</code>为例，<code>LinkedHashMap</code>一样的方式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;Map.Entry&lt;String, Integer&gt;&gt; entryIterator = map.entrySet().iterator();</span><br><span class="line"><span class="keyword">while</span> (entryIterator.hasNext()) &#123;</span><br><span class="line">    Map.Entry&lt;String, Integer&gt; next = entryIterator.next();</span><br><span class="line">    System.out.println(<span class="string">"key="</span> + next.getKey() + <span class="string">" value="</span> + next.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;String&gt; iterator = map.keySet().iterator();</span><br><span class="line"><span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">    String key = iterator.next();</span><br><span class="line">    System.out.println(<span class="string">"key="</span> + key + <span class="string">" value="</span> + map.get(key));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">map.forEach((key,value)-&gt;&#123;</span><br><span class="line">    System.out.println(<span class="string">"key="</span> + key + <span class="string">" value="</span> + value);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 <p><strong>强烈建议使用第一种 <code>EntrySet</code> 进行遍历。</strong></p>
 <p>第一种可以把 <code>key value</code> 同时取出，第二种还得需要通过 <code>key</code> 取一次 <code>value</code>，效率较低, 第三种需要 <code>JDK1.8</code> 以上，通过外层遍历 <code>table</code>，内层遍历链表或红黑树。</p>
 <p>我们知道，<code>HashMap</code>的输出顺序与元素的输入顺序无关，<code>LinkedHashMap</code>可以按照输入顺序输出，也可以根据读取元素的顺序输出。这一现象，已经在上一篇中展示出来了。</p>
-<h2 id="二、HashMap的遍历机制"><a href="#二、HashMap的遍历机制" class="headerlink" title="二、HashMap的遍历机制"></a>二、HashMap的遍历机制</h2><p><code>HashMap</code> 提供了两个遍历访问其内部元素<code>Entry&lt;k,v&gt;</code>的接口：</p>
+<h2 id="二-hashmap的遍历机制"><a class="header-anchor" href="#二-hashmap的遍历机制">¶</a>二、HashMap的遍历机制</h2>
+<p><code>HashMap</code> 提供了两个遍历访问其内部元素<code>Entry&lt;k,v&gt;</code>的接口：</p>
 <ol>
-<li><code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code>——-&gt;返回此映射所包含的映射关系的 Set 视图。</li>
-<li><code>Set&lt;K&gt; keySet()</code>——–&gt;返回此映射中所包含的键的 Set 视图。</li>
+<li><code>Set&lt;Map.Entry&lt;K,V&gt;&gt; entrySet()</code>-------&gt;返回此映射所包含的映射关系的 Set 视图。</li>
+<li><code>Set&lt;K&gt; keySet()</code>--------&gt;返回此映射中所包含的键的 Set 视图。</li>
 </ol>
 <blockquote>
-<p>实际上，第二个接口表示的<code>Key</code>的顺序，和第一个接口返回的<code>Entry</code>顺序是对应的，也就是说：这两种接口对<code>HashMap</code>的元素遍历的顺序相相同的。  那么，<code>HashMap</code>遍历内部<code>Entry&lt;K,V&gt;</code> 的顺序是什么呢？ 搞清楚这个问题，先要知道其内部结构是怎样的。          </p>
+<p>实际上，第二个接口表示的<code>Key</code>的顺序，和第一个接口返回的<code>Entry</code>顺序是对应的，也就是说：这两种接口对<code>HashMap</code>的元素遍历的顺序相相同的。  那么，<code>HashMap</code>遍历内部<code>Entry&lt;K,V&gt;</code> 的顺序是什么呢？ 搞清楚这个问题，先要知道其内部结构是怎样的。</p>
 </blockquote>
 <p><code>HashMap</code>在存储<code>Entry</code>对象的时候，是根据<code>Key</code>的<code>hash</code>值判定存储到<code>Entry[] table</code>数组的哪一个索引值表示的链表上。</p>
 <p>对<code>HashMap</code>遍历<code>Entry</code>对象的顺序和<code>Entry</code>对象的存储顺序之间没有任何关系。</p>
 <p><strong><code>HashMap</code>散列图、<code>Hashtable</code>散列表是按“有利于随机查找的散列(hash)的顺序”。并非按输入顺序。遍历时只能全部输出，而没有顺序</strong>。甚至可以<code>rehash()</code>重新散列，来获得更利于随机存取的内部顺序。</p>
 <p>所以对<code>HashMap</code>的遍历，由内部的机制决定的，这个机制是只考虑利于快速存取，不考虑输入等顺序。</p>
-<h2 id="三、LinkedHashMap-的遍历机制"><a href="#三、LinkedHashMap-的遍历机制" class="headerlink" title="三、LinkedHashMap 的遍历机制"></a>三、LinkedHashMap 的遍历机制</h2><p><code>LinkedHashMap</code> 是<code>HashMap</code>的子类，它可以实现对容器内Entry的存储顺序和对Entry的遍历顺序保持一致。</p>
+<h2 id="三-linkedhashmap-的遍历机制"><a class="header-anchor" href="#三-linkedhashmap-的遍历机制">¶</a>三、LinkedHashMap 的遍历机制</h2>
+<p><code>LinkedHashMap</code> 是<code>HashMap</code>的子类，它可以实现对容器内Entry的存储顺序和对Entry的遍历顺序保持一致。</p>
 <p>为了实现这个功能，<strong><code>LinkedHashMap</code>内部使用了一个<code>Entry</code>类型的双向链表，用这个双向链表记录<code>Entry</code>的存储顺序</strong>。当需要对该<code>Map</code>进行遍历的时候，实际上是遍历的是这个双向链表。</p>
 <p><code>LinkedHashMap</code>内部使用的<code>LinkedHashMap.Entry</code>类继承自<code>Map.Entry</code>类，在其基础上增加了<code>LinkedHashMap.Entry</code>类型的两个字段，用来引用该<code>Entry</code>在双向链表中的前面的<code>Entry</code>对象和后面的<code>Entry</code>对象。</p>
 <p>它的内部会在<code>Map.Entry</code>类的基础上，增加两个<code>Entry</code>类型的引用：<code>before</code>，<code>after</code>。<code>LinkedHashMap</code>使用一个双向连表，将其内部所有的<code>Entry</code>串起来。</p>
@@ -27,14 +32,19 @@
 <p>根据<code>Entry&lt;K,V&gt;</code>插入<code>LinkedHashMap</code>的顺序进行遍历的方式叫做：按插入顺序遍历。</p>
 <p>另外，<code>LinkedHashMap</code>还支持一种遍历顺序，叫做：Get读取顺序。</p>
 <p>如果<code>LinkedHashMap</code>的这个<code>Get</code>读取遍历顺序开启，那么，当我们在<code>LinkedHashMap</code>上调用<code>get(key)</code> 方法时，会导致内部<code>key</code>对应的<code>Entry</code>在双向链表中的位置移动到双向链表的最后。</p>
-<h2 id="四、遍历机制的总结"><a href="#四、遍历机制的总结" class="headerlink" title="四、遍历机制的总结"></a>四、遍历机制的总结</h2><ol>
-<li><p><code>HashMap</code>对元素的遍历顺序跟<code>Entry</code>插入的顺序无关，而<code>LinkedHashMap</code>对元素的遍历顺序可以跟<code>Entry&lt;K,V&gt;</code>插入的顺序保持一致：从双向。</p>
+<h2 id="四-遍历机制的总结"><a class="header-anchor" href="#四-遍历机制的总结">¶</a>四、遍历机制的总结</h2>
+<ol>
+<li>
+<p><code>HashMap</code>对元素的遍历顺序跟<code>Entry</code>插入的顺序无关，而<code>LinkedHashMap</code>对元素的遍历顺序可以跟<code>Entry&lt;K,V&gt;</code>插入的顺序保持一致：从双向。</p>
 </li>
-<li><p>当<code>LinkedHashMap</code>处于<code>Get</code>获取顺序遍历模式下，当执行<code>get()</code> 操作时，会将对应的<code>Entry&lt;k,v&gt;</code>移到遍历的最后位置。</p>
+<li>
+<p>当<code>LinkedHashMap</code>处于<code>Get</code>获取顺序遍历模式下，当执行<code>get()</code> 操作时，会将对应的<code>Entry&lt;k,v&gt;</code>移到遍历的最后位置。</p>
 </li>
-<li><p><code>LinkedHashMap</code>处于按插入顺序遍历的模式下，如果新插入的<code>&lt;key,value&gt;</code> 对应的<code>key</code>已经存在，对应的<code>Entry</code>在遍历顺序中的位置并不会改变。</p>
+<li>
+<p><code>LinkedHashMap</code>处于按插入顺序遍历的模式下，如果新插入的<code>&lt;key,value&gt;</code> 对应的<code>key</code>已经存在，对应的<code>Entry</code>在遍历顺序中的位置并不会改变。</p>
 </li>
-<li><p>除了遍历顺序外，其他特性<code>HashMap</code>和<code>LinkedHashMap</code>基本相同。</p>
+<li>
+<p>除了遍历顺序外，其他特性<code>HashMap</code>和<code>LinkedHashMap</code>基本相同。</p>
 </li>
 </ol>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/01/20/9.HashTable/" class="prev">PRVE</a><a href="/2019/01/20/7.LinkedHashMap/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

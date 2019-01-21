@@ -1,4 +1,5 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 2018年的最后一天，对商城项目的架构做个改造 · FourColor</title><meta name="description" content="2018年的最后一天，对商城项目的架构做个改造 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">2018年的最后一天，对商城项目的架构做个改造</h1><div class="post-meta"><span class="post-time">Jan 20, 2019</span></div><div class="post-content"><p>一直以来都是学习慕课的实战视频，虽然也跟着做出了一些东西，但是思路都是别人提供好的，脱离了老师，我一直在问自己一个问题：能不能独立地按照自己的思路做出一些东西来？<br><a id="more"></a></p>
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 2018年的最后一天，对商城项目的架构做个改造 · FourColor</title><meta name="description" content="2018年的最后一天，对商城项目的架构做个改造 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">2018年的最后一天，对商城项目的架构做个改造</h1><div class="post-meta"><span class="post-time">Jan 20, 2019</span></div><div class="post-content"><p>一直以来都是学习慕课的实战视频，虽然也跟着做出了一些东西，但是思路都是别人提供好的，脱离了老师，我一直在问自己一个问题：能不能独立地按照自己的思路做出一些东西来？</p>
+<a id="more"></a>
 <p>前方图片高能…更有几十兆gif演示动画，图片全部存放于七牛云上。</p>
 <p><img src="http://bloghello.oursnail.cn/wallpaper.jpg" alt="image"></p>
 <p>在去年，即2017年年底，我在慕课上学习了这两门课程：</p>
@@ -8,7 +9,8 @@
 <p>第二期实现了tomcat集群，配合redis实现分布式session，还有一些定时任务、redis分布式锁、maven环境隔离的一些东西，还涉及很多spring和springmvc的有用的机巧。</p>
 <p>整体感觉是：一期实现业务，二期对于一期的提高不是太大，跟分布式无太大关系，仅仅实现了单点登陆和分布式session存储而已。</p>
 <p>个人感觉下一期的课程应该是springCloud的分布式改造，进行服务拆分和治理。所以，在整合这两个课程的基础上用springCloud进行微服务治理。</p>
-<h2 id="项目详细描述"><a href="#项目详细描述" class="headerlink" title="项目详细描述"></a>项目详细描述</h2><p>项目源码地址：<a href="https://github.com/sunweiguo/MMall" target="_blank" rel="noopener">https://github.com/sunweiguo/MMall</a></p>
+<h2 id="项目详细描述"><a class="header-anchor" href="#项目详细描述">¶</a>项目详细描述</h2>
+<p>项目源码地址：<a href="https://github.com/sunweiguo/MMall" target="_blank" rel="noopener">https://github.com/sunweiguo/MMall</a></p>
 <p>整体效果演示：</p>
 <p><img src="http://bloghello.oursnail.cn/jdfw.gif" alt="image"></p>
 <p>下面贴个小一点的gif:</p>
@@ -63,7 +65,7 @@
 <p>针对这些问题，我想说一下我的思路。</p>
 <p>对于幂等性，这里产生幂等性的主要原因在于MQ的重传机制，可能第一个消息久久没有发出去，然后重新发送一条，结果第一条消息突然又好了，那么就会重复发两跳，对于用户来说，只下一次单，但是服务器下了多次订单。网上解决这个问题的思路是创建一张表，如果是重复的订单号，就不可能创建多次了。还有一种可能方案是用分布式锁对该订单号锁住一段时间，由于只是锁住订单号，所以不影响性能，在这一段时间内是不可以再放同一个订单号的请求进来。</p>
 <p>对于MQ消息不丢失，只能是订阅模式了。消息发出去之后，消费端给MQ回复一个接收到的信息，MQ本次消费成功，给订阅者一个回复。</p>
-<p>对于全局唯一ID生成，这里用的是雪花算法，具体介绍可以看<a href="https://github.com/sunweiguo/swgBook/blob/master/mamabuy/05-%E4%BA%A4%E6%98%93%E5%B7%A5%E7%A8%8B(%E4%B8%8A" target="_blank" rel="noopener">我的笔记</a>.md)</p>
+<p>对于全局唯一ID生成，这里用的是雪花算法，具体介绍可以看<a href="https://github.com/sunweiguo/swgBook/blob/master/mamabuy/05-%E4%BA%A4%E6%98%93%E5%B7%A5%E7%A8%8B(%E4%B8%8A).md" target="_blank" rel="noopener">我的笔记</a></p>
 <p>对于分布式事务，比较复杂，这里其实并没有真正处理，对于数据库扣减库存和数据库插入订单，他们在不同的数据库，廖师兄比较倾向的方式是：</p>
 <p><img src="http://bloghello.oursnail.cn/order-2.png" alt="image"></p>
 <p><img src="http://bloghello.oursnail.cn/order-3.png" alt="image"></p>
@@ -87,40 +89,48 @@
 <p>这个流程是多么地简单而理所当然！</p>
 <p>对应于代码层面，其实就是两个接口，一个是用户点击去支付按钮，此时发起预下单，展示付款二维码，另一个是接收支付宝回调：</p>
 <p>预下单：</p>
-<p><img src="http://bloghello.oursnail.cn/pay-3.png" alt="image"><br><img src="http://bloghello.oursnail.cn/pay-4.png" alt="image"><br><img src="http://bloghello.oursnail.cn/pay-5.png" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/pay-3.png" alt="image"><br>
+<img src="http://bloghello.oursnail.cn/pay-4.png" alt="image"><br>
+<img src="http://bloghello.oursnail.cn/pay-5.png" alt="image"></p>
 <p>接收支付宝支付状态回调：</p>
 <p><img src="http://bloghello.oursnail.cn/pay-6.png" alt="image"></p>
-<h2 id="项目进展"><a href="#项目进展" class="headerlink" title="项目进展"></a>项目进展</h2><ul>
-<li style="list-style: none"><input type="checkbox" checked> 2018/12/31 完成了聚合工程的创建、Eureka服务注册中心、spring cloud config+gitHub+spring cloud bus（rabbitMQ）实现配置自动刷新–v1.0</li>
-<li style="list-style: none"><input type="checkbox" checked> 2018/12/31 将Eureka注册中心(单机)和配置中心部署到服务器上，这比较固定，所以先部署上去，以后本地就直接用这两个即可，对配置进行了一点点修改</li>
-<li style="list-style: none"><input type="checkbox"> 2018/12/31 关于配置的自动刷新，用postman发送post请求是可以的，但是用github webhook不行，不知道是不是这个版本的问题</li>
-<li style="list-style: none"><input type="checkbox" checked> 2018/12/31 用户模块的逻辑实现,首先增加了一些pom文件的支持，整合mybatis，测试数据库都通过，下面就可以真正去实现业务代码了</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/1 完成用户注册、登陆、校验用户名邮箱有效性、查看登陆用户信息、根据用户名去拿到对应的问题、校验答案是否正确、重置密码这个几个接口，在注册这个接口，增加一个ZK分布式锁来防止在高并发场景下出现用户名或邮箱重复问题</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/2 上午完成门户用户模块所有接口–v2.0</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/2 下午完成品类管理模块，关于繁琐的获取用户并且鉴权工作，这里先放每个接口里面处理，后面放到网关中去实现–v3.0</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/3 上午引入网关服务，将后台重复的权限校验统一放到网关中去做，并且加了限流，解决了一下跨域问题。–v4.0</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/3 下午和晚上完成门户和后台的商品管理模块所有的接口功能，除了上传文件的两个接口没有测试以外，其他接口都进行了简单的测试，其中还用Feign去调用了品类服务接口–v5.0</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/3 初步把购物车模块和模块引入，通过基础测试，后面在此基础上直接开发代码即可，明天下午看《大黄蜂》，晚上师门聚餐吃火锅，明天早上赶一赶吧，今天任务结束！</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/4 整理了接口文档，并且画了一下购物车模块的流程图以及订单服务的流程图，针对订单服务中，记录了需要一些注意的问题，尽可能地完善，提高可用性和性能。并且完成购物车模块的controller层。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/5 完成购物车模块，并且进行了简单的测试，这里进行了两处改造，一个是判断了一下是否需要判断库存；另一个是商品信息从redis中取，取不出来则调用商品服务初始化值</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/5 收货地址管理模块，这个模块就是个增删改查，没啥东西写，这里就不加缓存了。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/6 完成了后台订单管理模块并且进行了测试，调用收货地址服务时，发现收货地址服务无法读取到cookie，通过这个方法(<a href="https://blog.csdn.net/WYA1993/article/details/84304243" target="_blank" rel="noopener">https://blog.csdn.net/WYA1993/article/details/84304243</a>) 暂时解决了问题</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/6 预置所有商品库存到redis中；预置所有商品到redis中；大概确定好订单服务思路：预减库存（redis判断库存）—对userID增加分布式锁防止用户重复提交订单–MQ异步下订单</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/6 新增全局唯一ID生成服务，雪花算法实现</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/7 完善订单服务-这一块涉及跨库操作，并且不停地调用其他服务，脑子都快晕了，这里采取的策略是：用到购物车的时候，去调用购物车服务获取；产品详情从redis中获取。首先将商品以及商品库存全部缓存到redis中，然后用户下单，先从redis中判断库存，够则减，判断<br>和扣减放在lua脚本中原子执行，然后MQ异步出去生成订单（生成订单主表和订单详情表放在一个本地事务中），这两步操作成功之后，再用MQ去异步删除购物车。MQ消费不成功则重试。<br>对于扣减库存这一步，想法是用定时任务，定时与redis中进行同步。这里是模拟了秒杀场景，预减库存+MQ异步，提交订单–&gt;redis判断并且减库存–&gt;调用cart-service获取购物车–&gt;MQ异步(userId,shippingId)生成订单主表和详情表–&gt;上面都成功，则MQ异步(userId)<br>去清除购物车，库存用定时任务去同步(未做)，理想的做法是：MQ异步扣减库存，订单服务订阅扣减库存消息，一旦库存扣减成功，则进行订单生成。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/8 继续完善订单接口，完成支付服务，就直接放在订单服务里面了，因为与订单逻辑紧密，就放在一起了。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/8 使用了一下swagger，发现代码侵入比较强，每一个接口上面都要手动打上响应的注解</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/8 关于hystrix熔断与降级，可以引入hystrix的依赖，用@HystrixCommand注解来控制超时时间、服务降级以及服务熔断。也可以直接再@FeignClient接口中指定服务降级的类，这里不演示了，因为设置比如超时时间，我还要重新测试，写起来很简单，测起来有点儿麻烦</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/9 服务跟踪，服务端是直接用的线程的，只需要下载：wget -O zipkin.jar  ‘<a href="https://search.maven.org/remote_content?g=io.zipkin.java&amp;a=zipkin-server&amp;v=LATEST&amp;c=exec&#39;，然后nohup" target="_blank" rel="noopener">https://search.maven.org/remote_content?g=io.zipkin.java&amp;a=zipkin-server&amp;v=LATEST&amp;c=exec&#39;，然后nohup</a> java -jar zipkin.jar &gt; zipkin.server.out &amp; ，开放9411端口，打开浏览器<a href="http://ip:9411看到页面即可。" target="_blank" rel="noopener">http://ip:9411看到页面即可。</a><br>客户端只需要添加相应依赖和配置文件即可。用客户端测试，发现死活不出现我的请求，经过搜索，发现需要增加spring.zipkin.sender.type= web这个配置项才行.</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/10 初步把项目部署到服务器上，进行测试，bug多多，修改中…</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/10 改了一天的bug，其中网关的超时时间以及feign的超时时间都要改大一点，否则会超时报错。最终成功，花了三台服务器，部署了11个服务。后面把部署过程写一下。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/11 将注册中心做成集群，因为早上一起来，注册中心挂了？？？</li>
-<li style="list-style: none"><input type="checkbox"> 2019/1/11 docker部署(商城第四期的改造目标:容器化+容器编排)，本期改造结束。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/11 完善readme文档</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/12 两次发现redis数据被莫名其妙清空，我确定不是缓存到期，为了安全起见，设置了redis的密码，明天看缓存数据还在不在。</li>
-<li style="list-style: none"><input type="checkbox" checked> 2019/1/14 redis数据没有再丢失，修复用户更新信息的bug</li>
+<h2 id="项目进展"><a class="header-anchor" href="#项目进展">¶</a>项目进展</h2>
+<ul>
+<li>[x] 2018/12/31 完成了聚合工程的创建、Eureka服务注册中心、spring cloud config+gitHub+spring cloud bus（rabbitMQ）实现配置自动刷新–v1.0</li>
+<li>[x] 2018/12/31 将Eureka注册中心(单机)和配置中心部署到服务器上，这比较固定，所以先部署上去，以后本地就直接用这两个即可，对配置进行了一点点修改</li>
+<li>[ ] 2018/12/31 关于配置的自动刷新，用postman发送post请求是可以的，但是用github webhook不行，不知道是不是这个版本的问题</li>
+<li>[x] 2018/12/31 用户模块的逻辑实现,首先增加了一些pom文件的支持，整合mybatis，测试数据库都通过，下面就可以真正去实现业务代码了</li>
+<li>[x] 2019/1/1 完成用户注册、登陆、校验用户名邮箱有效性、查看登陆用户信息、根据用户名去拿到对应的问题、校验答案是否正确、重置密码这个几个接口，在注册这个接口，增加一个ZK分布式锁来防止在高并发场景下出现用户名或邮箱重复问题</li>
+<li>[x] 2019/1/2 上午完成门户用户模块所有接口–v2.0</li>
+<li>[x] 2019/1/2 下午完成品类管理模块，关于繁琐的获取用户并且鉴权工作，这里先放每个接口里面处理，后面放到网关中去实现–v3.0</li>
+<li>[x] 2019/1/3 上午引入网关服务，将后台重复的权限校验统一放到网关中去做，并且加了限流，解决了一下跨域问题。–v4.0</li>
+<li>[x] 2019/1/3 下午和晚上完成门户和后台的商品管理模块所有的接口功能，除了上传文件的两个接口没有测试以外，其他接口都进行了简单的测试，其中还用Feign去调用了品类服务接口–v5.0</li>
+<li>[x] 2019/1/3 初步把购物车模块和模块引入，通过基础测试，后面在此基础上直接开发代码即可，明天下午看《大黄蜂》，晚上师门聚餐吃火锅，明天早上赶一赶吧，今天任务结束！</li>
+<li>[x] 2019/1/4 整理了接口文档，并且画了一下购物车模块的流程图以及订单服务的流程图，针对订单服务中，记录了需要一些注意的问题，尽可能地完善，提高可用性和性能。并且完成购物车模块的controller层。</li>
+<li>[x] 2019/1/5 完成购物车模块，并且进行了简单的测试，这里进行了两处改造，一个是判断了一下是否需要判断库存；另一个是商品信息从redis中取，取不出来则调用商品服务初始化值</li>
+<li>[x] 2019/1/5 收货地址管理模块，这个模块就是个增删改查，没啥东西写，这里就不加缓存了。</li>
+<li>[x] 2019/1/6 完成了后台订单管理模块并且进行了测试，调用收货地址服务时，发现收货地址服务无法读取到cookie，通过这个方法(<a href="https://blog.csdn.net/WYA1993/article/details/84304243" target="_blank" rel="noopener">https://blog.csdn.net/WYA1993/article/details/84304243</a>) 暂时解决了问题</li>
+<li>[x] 2019/1/6 预置所有商品库存到redis中；预置所有商品到redis中；大概确定好订单服务思路：预减库存（redis判断库存）—对userID增加分布式锁防止用户重复提交订单–MQ异步下订单</li>
+<li>[x] 2019/1/6 新增全局唯一ID生成服务，雪花算法实现</li>
+<li>[x] 2019/1/7 完善订单服务-这一块涉及跨库操作，并且不停地调用其他服务，脑子都快晕了，这里采取的策略是：用到购物车的时候，去调用购物车服务获取；产品详情从redis中获取。首先将商品以及商品库存全部缓存到redis中，然后用户下单，先从redis中判断库存，够则减，判断<br>
+和扣减放在lua脚本中原子执行，然后MQ异步出去生成订单（生成订单主表和订单详情表放在一个本地事务中），这两步操作成功之后，再用MQ去异步删除购物车。MQ消费不成功则重试。<br>
+对于扣减库存这一步，想法是用定时任务，定时与redis中进行同步。这里是模拟了秒杀场景，预减库存+MQ异步，提交订单–&gt;redis判断并且减库存–&gt;调用cart-service获取购物车–&gt;MQ异步(userId,shippingId)生成订单主表和详情表–&gt;上面都成功，则MQ异步(userId)<br>
+去清除购物车，库存用定时任务去同步(未做)，理想的做法是：MQ异步扣减库存，订单服务订阅扣减库存消息，一旦库存扣减成功，则进行订单生成。</li>
+<li>[x] 2019/1/8 继续完善订单接口，完成支付服务，就直接放在订单服务里面了，因为与订单逻辑紧密，就放在一起了。</li>
+<li>[x] 2019/1/8 使用了一下swagger，发现代码侵入比较强，每一个接口上面都要手动打上响应的注解</li>
+<li>[x] 2019/1/8 关于hystrix熔断与降级，可以引入hystrix的依赖，用@HystrixCommand注解来控制超时时间、服务降级以及服务熔断。也可以直接再@FeignClient接口中指定服务降级的类，这里不演示了，因为设置比如超时时间，我还要重新测试，写起来很简单，测起来有点儿麻烦</li>
+<li>[x] 2019/1/9 服务跟踪，服务端是直接用的线程的，只需要下载：wget -O zipkin.jar  ‘<a href="https://search.maven.org/remote_content?g=io.zipkin.java&amp;a=zipkin-server&amp;v=LATEST&amp;c=exec" target="_blank" rel="noopener">https://search.maven.org/remote_content?g=io.zipkin.java&amp;a=zipkin-server&amp;v=LATEST&amp;c=exec</a>’，然后nohup java -jar zipkin.jar &gt; zipkin.server.out &amp; ，开放9411端口，打开浏览器http://ip:9411看到页面即可。<br>
+客户端只需要添加相应依赖和配置文件即可。用客户端测试，发现死活不出现我的请求，经过搜索，发现需要增加spring.zipkin.sender.type= web这个配置项才行.</li>
+<li>[x] 2019/1/10 初步把项目部署到服务器上，进行测试，bug多多，修改中…</li>
+<li>[x] 2019/1/10 改了一天的bug，其中网关的超时时间以及feign的超时时间都要改大一点，否则会超时报错。最终成功，花了三台服务器，部署了11个服务。后面把部署过程写一下。</li>
+<li>[x] 2019/1/11 将注册中心做成集群，因为早上一起来，注册中心挂了？？？</li>
+<li>[ ] 2019/1/11 docker部署(商城第四期的改造目标:容器化+容器编排)，本期改造结束。</li>
+<li>[x] 2019/1/11 完善readme文档</li>
+<li>[x] 2019/1/12 两次发现redis数据被莫名其妙清空，我确定不是缓存到期，为了安全起见，设置了redis的密码，明天看缓存数据还在不在。</li>
+<li>[x] 2019/1/14 redis数据没有再丢失，修复用户更新信息的bug</li>
 </ul>
-<h2 id="项目启动"><a href="#项目启动" class="headerlink" title="项目启动"></a>项目启动</h2><p>安装redis、zookeeper、mysql、jdk、nginx以及rabbitMQ。</p>
+<h2 id="项目启动"><a class="header-anchor" href="#项目启动">¶</a>项目启动</h2>
+<p>安装redis、zookeeper、mysql、jdk、nginx以及rabbitMQ。</p>
 <p>对代码进行maven-package操作。打包成jar包。将其放到服务器上：</p>
 <p><img src="http://bloghello.oursnail.cn/start.png" alt="image"></p>
 <p>执行<code>nohup java -jar snailmall-user-service.8081 &gt; user-service.out &amp;</code>后台启动即可。</p>
@@ -128,6 +138,7 @@
 <p>补充：针对配置刷新，修改了github信息，用<code>postman</code>请求<code>http://xxxxx:8079/actuator/bus-refresh</code> 触发更新。</p>
 <p>本改造是基于<a href="https://coding.imooc.com/class/96.html" target="_blank" rel="noopener">快乐慕商城一期</a>和<a href="https://coding.imooc.com/class/162.html" target="_blank" rel="noopener">快乐慕商城二期</a>的基础上进行改造。所以需要在其业务基础上改造会比较顺手。关于微服务，尤其是电商中的一些处理手段，很多思路都是学习于<a href="http://coder520.com/" target="_blank" rel="noopener">码吗在线</a>中分布式电商项目。再加上慕课网廖师兄的<a href="https://coding.imooc.com/class/187.html" target="_blank" rel="noopener">spring cloud微服务实践</a>。</p>
 </blockquote>
-<h2 id="前台项目"><a href="#前台项目" class="headerlink" title="前台项目"></a>前台项目</h2><p>只要阅读<code>readme</code>文档即可。代码仓库为：<a href="https://github.com/sunweiguo/snailmall-front" target="_blank" rel="noopener">https://github.com/sunweiguo/snailmall-front</a></p>
+<h2 id="前台项目"><a class="header-anchor" href="#前台项目">¶</a>前台项目</h2>
+<p>只要阅读<code>readme</code>文档即可。代码仓库为：<a href="https://github.com/sunweiguo/snailmall-front" target="_blank" rel="noopener">https://github.com/sunweiguo/snailmall-front</a></p>
 <p>学习不仅要有输入，更要有自己的输出，实践是提升的捷径！</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/01/20/1.ArrayList和Vector/" class="prev">PRVE</a><a href="/2019/01/19/面试-进程与线程/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
