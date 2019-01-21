@@ -1,6 +1,6 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Linux重要的一些命令 · FourColor</title><meta name="description" content="Linux重要的一些命令 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Linux重要的一些命令</h1><div class="post-meta"><span class="post-time">Jan 21, 2019</span></div><div class="post-content"><p>很多命令之所以重要，是因为用它们会大幅提高工作效率。所以，熟悉它们是我们必须要做的一件事情。下面着重提取了find、grep、管道、wc、awk以及sed等几个命令来看看如何使用。</p>
 <a id="more"></a>
-<h2 id="一-linux体系结构"><a class="header-anchor" href="#一-linux体系结构">null</a>一、Linux体系结构</h2>
+<h2>一、Linux体系结构</h2>
 <div align="center">
     <img src="http://bloghello.oursnail.cn/linux1-1.png" style="width:300px;">
 </div>
@@ -14,7 +14,7 @@
 <li><code>Shell</code>下通系统调用，上通各种应用，是上层和下层之间粘合的胶水，让不同程序可以偕同工作。</li>
 <li>在没有图形界面之前，用户通过<code>shell</code>命令行或者可编程的<code>shell</code>脚本可以完成很多事情。</li>
 </ul>
-<h2 id="二-如何根据文件名检索文件"><a class="header-anchor" href="#二-如何根据文件名检索文件">null</a>二、如何根据文件名检索文件</h2>
+<h2>二、如何根据文件名检索文件</h2>
 <ul>
 <li>find</li>
 <li>在指定目录下查找文件</li>
@@ -22,27 +22,27 @@
 <blockquote>
 <p>语法 find path [options] params</p>
 </blockquote>
-<h3 id="2-1-精确查找文件"><a class="header-anchor" href="#2-1-精确查找文件">null</a>2.1 精确查找文件</h3>
+<h3>2.1 精确查找文件</h3>
 <p>比如我在当前目录(可能在子目录下)下找一个文件叫做<code>test.java</code>：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name "test.java"</span><br></pre></td></tr></table></figure>
 <p>这个指令就可以在本目录以及子目录下递归查找这个文件了。</p>
 <p>实例：精确查询名字叫<code>snailmall-api-gateway-8080.jar</code>这个文件：</p>
 <p><img src="http://bloghello.oursnail.cn/linux1-4.png" alt="image"></p>
-<h3 id="2-2-全局搜索"><a class="header-anchor" href="#2-2-全局搜索">null</a>2.2 全局搜索</h3>
+<h3>2.2 全局搜索</h3>
 <p>如果是全局查找，也很简单，无非是从根目录开始递归查找。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name "test.java"</span><br></pre></td></tr></table></figure>
 <p>实例：我对这台服务器全局查找文件名以<code>snailmall</code>开头的所有文件：</p>
 <p><img src="http://bloghello.oursnail.cn/linux1-3.png" alt="image"></p>
-<h3 id="2-3-模糊查询"><a class="header-anchor" href="#2-3-模糊查询">null</a>2.3 模糊查询</h3>
+<h3>2.3 模糊查询</h3>
 <p>如果找以test打头的文件：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name "test*"</span><br></pre></td></tr></table></figure>
 <p>即用 <code>*</code> 通配符就可以模糊查询到以 <code>test</code> 打头的文件。</p>
 <p>实例，我的这台服务器上部署了几个关于商城的服务，这个目录下我放了jar包和相应的启动信息文件。我对其进行模糊查询：</p>
 <p><img src="http://bloghello.oursnail.cn/linux1-2.png" alt="image"></p>
-<h3 id="2-4-忽略大小写"><a class="header-anchor" href="#2-4-忽略大小写">null</a>2.4 忽略大小写</h3>
+<h3>2.4 忽略大小写</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -iname "test*"</span><br></pre></td></tr></table></figure>
-<h2 id="三-如何根据文件内的内容进行检索"><a class="header-anchor" href="#三-如何根据文件内的内容进行检索">null</a>三、如何根据文件内的内容进行检索</h2>
-<h3 id="3-1-grep命令"><a class="header-anchor" href="#3-1-grep命令">null</a>3.1 grep命令</h3>
+<h2>三、如何根据文件内的内容进行检索</h2>
+<h3>3.1 grep命令</h3>
 <ul>
 <li>grep</li>
 <li>查找文件里符合条件的字符串</li>
@@ -58,7 +58,7 @@
 <p>直接输入：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep "hello"</span><br></pre></td></tr></table></figure>
 <p>会等待用户输入文本。然后再对输入的内容进行检索。</p>
-<h3 id="3-2-管道操作符"><a class="header-anchor" href="#3-2-管道操作符">null</a>3.2 管道操作符 |</h3>
+<h3>3.2 管道操作符 |</h3>
 <blockquote>
 <p>可将指令连接起来，前一个指令的输出作为后一个指令的输入。</p>
 </blockquote>
@@ -70,7 +70,7 @@
 <p>只有前一个指令正确才会再处理。</p>
 <p>管道右边命令必须能接收标准输入流，否则传递过程中数据会被抛弃</p>
 </div>
-<h3 id="3-3-grep结合管道"><a class="header-anchor" href="#3-3-grep结合管道">null</a>3.3 grep结合管道</h3>
+<h3>3.3 grep结合管道</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep 'xxx' hello.info</span><br></pre></td></tr></table></figure>
 <p>可以将 <code>xxx</code> 所在的行全部筛选出来，但是还是特别多，我比如关心这每一行中某个字段的信息，比如是 <code>param[xx12]</code>这种信息。如何实现筛选呢？</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep 'xxx' hello.info | grep -o 'param\[[0-9a-z]*\]'</span><br></pre></td></tr></table></figure>
@@ -82,7 +82,7 @@
 <p>我们会发现，不仅 <code>tomcat</code> 的信息展现出来了，执行 <code>grep</code> 命令本身的进程信息也展示出来了。我们要将这个 <code>grep</code> 命令过滤掉，只展现 <code>tomcat</code> 进程信息，可以：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat | grep -v "grep"</span><br></pre></td></tr></table></figure>
 <p>这样就把 <code>grep</code> 进程信息过滤掉了。</p>
-<h2 id="四-如何对文件内容做统计"><a class="header-anchor" href="#四-如何对文件内容做统计">null</a>四、如何对文件内容做统计</h2>
+<h2>四、如何对文件内容做统计</h2>
 <ul>
 <li>awk</li>
 <li>一次读取一行文本，按输入分隔符进行切片，切成多个组成部分</li>
@@ -108,11 +108,11 @@
 <p>默认是以空格分隔，那么以逗号或者其他符号可以吗？答案当然是可以。对于这样的文件text2.txt：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">adas,123</span><br><span class="line">wqe,544</span><br><span class="line">12321,dddf</span><br><span class="line">sdaasd,1235</span><br><span class="line">465547,fjigj</span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F "," '&#123;print $2&#125;' text2.txt</span><br></pre></td></tr></table></figure>
-<h2 id="五-wc统计"><a class="header-anchor" href="#五-wc统计">null</a>五、WC统计</h2>
+<h2>五、WC统计</h2>
 <p>有一个文件test2.txt，里面的内容是：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swg123eh shwf</span><br><span class="line">shsfswg7 121 32n dswg17328 123swg1 2h1jhw</span><br><span class="line">jqbsjwqbsh ddddh wg ehdedhd  dhsjh</span><br></pre></td></tr></table></figure>
 <p><img src="http://bloghello.oursnail.cn/linux1-10.png" alt="image"></p>
-<h2 id="六-sed命令"><a class="header-anchor" href="#六-sed命令">null</a>六、sed命令</h2>
+<h2>六、sed命令</h2>
 <p>sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作</p>
 <blockquote>
 <p>sed [-n/e/f/r/i] ‘command’ 输入文本</p>

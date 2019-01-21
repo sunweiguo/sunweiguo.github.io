@@ -9,7 +9,7 @@
 <p>第二期实现了tomcat集群，配合redis实现分布式session，还有一些定时任务、redis分布式锁、maven环境隔离的一些东西，还涉及很多spring和springmvc的有用的机巧。</p>
 <p>整体感觉是：一期实现业务，二期对于一期的提高不是太大，跟分布式无太大关系，仅仅实现了单点登陆和分布式session存储而已。</p>
 <p>个人感觉下一期的课程应该是springCloud的分布式改造，进行服务拆分和治理。所以，在整合这两个课程的基础上用springCloud进行微服务治理。</p>
-<h2 id="项目详细描述"><a class="header-anchor" href="#项目详细描述">null</a>项目详细描述</h2>
+<h2>项目详细描述</h2>
 <p>项目源码地址：<a href="https://github.com/sunweiguo/MMall" target="_blank" rel="noopener">https://github.com/sunweiguo/MMall</a></p>
 <p>整体效果演示：</p>
 <p><img src="http://bloghello.oursnail.cn/jdfw.gif" alt="image"></p>
@@ -94,7 +94,7 @@
 <img src="http://bloghello.oursnail.cn/pay-5.png" alt="image"></p>
 <p>接收支付宝支付状态回调：</p>
 <p><img src="http://bloghello.oursnail.cn/pay-6.png" alt="image"></p>
-<h2 id="项目进展"><a class="header-anchor" href="#项目进展">null</a>项目进展</h2>
+<h2>项目进展</h2>
 <ul>
 <li>[x] 2018/12/31 完成了聚合工程的创建、Eureka服务注册中心、spring cloud config+gitHub+spring cloud bus（rabbitMQ）实现配置自动刷新–v1.0</li>
 <li>[x] 2018/12/31 将Eureka注册中心(单机)和配置中心部署到服务器上，这比较固定，所以先部署上去，以后本地就直接用这两个即可，对配置进行了一点点修改</li>
@@ -129,7 +129,7 @@
 <li>[x] 2019/1/12 两次发现redis数据被莫名其妙清空，我确定不是缓存到期，为了安全起见，设置了redis的密码，明天看缓存数据还在不在。</li>
 <li>[x] 2019/1/14 redis数据没有再丢失，修复用户更新信息的bug</li>
 </ul>
-<h2 id="项目启动"><a class="header-anchor" href="#项目启动">null</a>项目启动</h2>
+<h2>项目启动</h2>
 <p>安装redis、zookeeper、mysql、jdk、nginx以及rabbitMQ。</p>
 <p>对代码进行maven-package操作。打包成jar包。将其放到服务器上：</p>
 <p><img src="http://bloghello.oursnail.cn/start.png" alt="image"></p>
@@ -138,7 +138,7 @@
 <p>补充：针对配置刷新，修改了github信息，用<code>postman</code>请求<code>http://xxxxx:8079/actuator/bus-refresh</code> 触发更新。</p>
 <p>本改造是基于<a href="https://coding.imooc.com/class/96.html" target="_blank" rel="noopener">快乐慕商城一期</a>和<a href="https://coding.imooc.com/class/162.html" target="_blank" rel="noopener">快乐慕商城二期</a>的基础上进行改造。所以需要在其业务基础上改造会比较顺手。关于微服务，尤其是电商中的一些处理手段，很多思路都是学习于<a href="http://coder520.com/" target="_blank" rel="noopener">码吗在线</a>中分布式电商项目。再加上慕课网廖师兄的<a href="https://coding.imooc.com/class/187.html" target="_blank" rel="noopener">spring cloud微服务实践</a>。</p>
 </blockquote>
-<h2 id="前台项目"><a class="header-anchor" href="#前台项目">null</a>前台项目</h2>
+<h2>前台项目</h2>
 <p>只要阅读<code>readme</code>文档即可。代码仓库为：<a href="https://github.com/sunweiguo/snailmall-front" target="_blank" rel="noopener">https://github.com/sunweiguo/snailmall-front</a></p>
 <p>学习不仅要有输入，更要有自己的输出，实践是提升的捷径！</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/01/20/1.ArrayList和Vector/" class="prev">PRVE</a><a href="/2019/01/19/面试-进程与线程/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
