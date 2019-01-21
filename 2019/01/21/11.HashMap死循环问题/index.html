@@ -76,6 +76,6 @@
 <li>newTable[3] = key3</li>
 <li>e = null</li>
 </ul>
-<h5>5.e为null，跳出循环。此时发现key3指向了key7。发生死循环。</h5>
+<h5>5.e为null，跳出循环。此时发现key3又指向了key7，结合key7已经指向了key3，所以线程2发生死循环。</h5>
 <p>整理自:<a href="https://coolshell.cn/articles/9606.html/comment-page-2#comments" target="_blank" rel="noopener">https://coolshell.cn/articles/9606.html/comment-page-2#comments</a></p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/01/21/linux重要的命令/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
