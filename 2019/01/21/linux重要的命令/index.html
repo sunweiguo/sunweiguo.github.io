@@ -66,7 +66,7 @@
 <p>比如我们查询 <code>tomcat</code> 进程信息：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat</span><br></pre></td></tr></table></figure>
 <p>我们会发现，不仅 <code>tomcat</code> 的信息展现出来了，执行 <code>grep</code> 命令本身的进程信息也展示出来了。我们要将这个 <code>grep</code> 命令过滤掉，只展现 <code>tomcat</code> 进程信息，可以：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat | grep "grep"</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat | grep -v "grep"</span><br></pre></td></tr></table></figure>
 <p>这样就把 <code>grep</code> 进程信息过滤掉了。</p>
 <h2 id="四、如何对文件内容做统计"><a href="#四、如何对文件内容做统计" class="headerlink" title="四、如何对文件内容做统计"></a>四、如何对文件内容做统计</h2><ul>
 <li>awk</li>
