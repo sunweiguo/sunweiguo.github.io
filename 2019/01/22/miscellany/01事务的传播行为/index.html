@@ -1,0 +1,28 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> spring事务的传播行为 · FourColor</title><meta name="description" content="spring事务的传播行为 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">spring事务的传播行为</h1><div class="post-meta"><span class="post-time">Jan 22, 2019</span></div><div class="post-content"><p>经常听到拿别人说事务传播行为</p>
+<a id="more"></a>
+<h2>1.什么是事务？</h2>
+<p>在数据库系统中，一个事务是指：由一系列数据库操作组成的一个完整的逻辑过程。例如银行转帐，从原账户扣除金额，以及向目标账户添加金额，这两个数据库操作的总和，构成一个完整的逻辑过程，不可拆分。这个过程被称为一个事务，具有ACID特性。</p>
+<p>（这里注意，其实事务就是数据库才能保证的，所以抛开数据库层面来谈事务本身就是不存在的，所以事务的概念就是数据库一系列操作的一个完整单元。）</p>
+<h2>2.什么是ACID？</h2>
+<p><code>ACID</code>，是指数据库管理系统（<code>DBMS</code>）在写入或更新资料的过程中，为保证事务（<code>transaction</code>）是正确可靠的，所必须具备的四个特性：原子性（<code>atomicity</code>，或称不可分割性）、一致性（<code>consistency</code>）、隔离性（<code>isolation</code>，又称独立性）、持久性（<code>durability</code>）。</p>
+<ul>
+<li><b>Atomicity（原子性）</b>：一个事务（<code>transaction</code>）中的所有操作，或者全部完成，或者全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被恢复（<code>Rollback</code>）到事务开始前的状态，就像这个事务从来没有执行过一样。即，事务不可分割、不可约简。</li>
+<li><b>Consistency（一致性）</b>：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设约束、触发器、级联回滚等。</li>
+<li><b>Isolation（隔离性）</b>：数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括读未提交（<code>Read uncommitted</code>）、读提交（<code>read committed</code>）、可重复读（<code>repeatable read</code>）和串行化（<code>Serializable</code>）。</li>
+<li><b>Durability（持久性）</b>：事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。</li>
+</ul>
+<h2>3.spring事务传播行为</h2>
+<p>在我们用SSM开发项目的时候，我们一般都是将事务设置在<code>Service</code>层 那么当我们调用<code>Service</code>层的一个方法的时候它能够保证我们的这个方法中执行的所有的对数据库的更新操作保持在一个事务中，在事务层里面调用的这些方法要么全部成功，要么全部失败。那么事务的传播特性也是从这里说起的。</p>
+<p><strong>&lt;重点1&gt; 如果你在你的<code>Service</code>层的这个方法中，除了调用了<code>Dao</code>层的方法之外，还调用了本类的其他的<code>Service</code>方法，那么在调用其他的<code>Service</code>方法的时候，这个事务是怎么规定的呢，我必须保证我在我方法里调用的这个方法与我本身的方法处在同一个事务中，否则如果保证事物的一致性。事务的传播特性就是解决这个问题的.</strong></p>
+<p>在Spring中有针对传播特性的多种配置我们大多数情况下只用其中的一种:<code>PROPGATION_REQUIRED</code>：这个配置项的意思是说当我调用<code>service</code>层的方法的时候开启一个事务(具体调用那一层的方法开始创建事务，要看你的aop的配置),那么在调用这个<code>service</code>层里面的其他的方法的时候,如果当前方法产生了事务就用当前方法产生的事务，否则就创建一个新的事务。这个工作使由Spring来帮助我们完成的。</p>
+<p><strong>&lt;重点2&gt; 默认情况下当发生<code>RuntimeException</code>的情况下，事务才会回滚，所以要注意一下：如果你在程序发生错误的情况下，有自己的异常处理机制定义自己的<code>Exception</code>，必须从<code>RuntimeException</code>类继承，这样事务才会回滚！</strong></p>
+<h2>4.事务隔离级别</h2>
+<ul>
+<li>1、<strong>Serializable</strong>：最严格的级别，事务串行执行，资源消耗最大；</li>
+<li>2、<strong>REPEATABLE READ</strong>：<strong><font color="red">保证了一个事务不会修改已经由另一个事务读取但未提交（回滚）的数据</font></strong>。避免了“脏读取”和“不可重复读取”的情况，但是带来了更多的性能损失。</li>
+<li>3、<strong>READ COMMITTED</strong>:大多数主流数据库的默认事务等级，<strong><font color="red">保证了一个事务不会读到另一个并行事务已修改但未提交的数据</font></strong>，避免了“脏读取”。该级别适用于大多数系统。</li>
+<li>4、<strong>Read Uncommitted</strong>：保证了读取过程中不会读取到非法数据。</li>
+</ul>
+<h2>5.总结</h2>
+<p>本文的重点是在于理解事务的传播行为这个概念，从事务的概念，到事务的ACID介绍，引出事务传播传播行为和隔离级别这两个概念加以理解。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/02Redisson实现Redis分布式锁/" class="prev">PRVE</a><a href="/2019/01/22/12.ConcurrentHashMap/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
