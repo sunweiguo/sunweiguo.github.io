@@ -19,54 +19,30 @@
 <p><img src="http://bloghello.oursnail.cn/zaji4-1.png" alt="image"></p>
 <p>针对包扫描只要记住以下几点即可：</p>
 <ul>
-<li>
-<p><code>spring</code>是父容器，<code>springmvc</code>是子容器，子容器可以访问父容器的<code>bean</code>,父容器不能访问子容器的<code>bean</code>。</p>
-</li>
-<li>
-<p>只有顶级容器（<code>spring</code>）才有加强的事务能力，而<code>springmvc</code>容器的<code>service</code>是没有的。</p>
-</li>
-<li>
-<p>如果<code>springmvc</code>不配置包扫描的话，页面404.</p>
-</li>
+<li><code>spring</code>是父容器，<code>springmvc</code>是子容器，子容器可以访问父容器的<code>bean</code>,父容器不能访问子容器的<code>bean</code>。</li>
+<li>只有顶级容器（<code>spring</code>）才有加强的事务能力，而<code>springmvc</code>容器的<code>service</code>是没有的。</li>
+<li>如果<code>springmvc</code>不配置包扫描的话，页面404.</li>
 </ul>
 <p>针对事务，不得不展开说明spring事务的几种传播机制了。<br>
 在 <code>spring</code> 的 <code>TransactionDefinition</code> 接口中一共定义了七种事务传播属性：</p>
 <ol>
-<li>
-<p><code>PROPAGATION_REQUIRED</code> – 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择（默认）。</p>
-</li>
-<li>
-<p><code>PROPAGATION_SUPPORTS</code> – 支持当前事务，如果当前没有事务，就以非事务方式执行。</p>
-</li>
-<li>
-<p><code>PROPAGATION_MANDATORY</code> – 支持当前事务，如果当前没有事务，就抛出异常。</p>
-</li>
-<li>
-<p><code>PROPAGATION_REQUIRES_NEW</code> – 新建事务，如果当前存在事务，把当前事务挂起。</p>
-</li>
-<li>
-<p><code>PROPAGATION_NOT_SUPPORTED</code> – 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</p>
-</li>
-<li>
-<p><code>PROPAGATION_NEVER</code> – 以非事务方式执行，如果当前存在事务，则抛出异常。</p>
-</li>
-<li>
-<p><code>PROPAGATION_NESTED</code> – 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与<code>PROPAGATION_REQUIRED</code>类似的操作。</p>
-</li>
+<li><code>PROPAGATION_REQUIRED</code> – 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择（默认）。</li>
+<li><code>PROPAGATION_SUPPORTS</code> – 支持当前事务，如果当前没有事务，就以非事务方式执行。</li>
+<li><code>PROPAGATION_MANDATORY</code> – 支持当前事务，如果当前没有事务，就抛出异常。</li>
+<li><code>PROPAGATION_REQUIRES_NEW</code> – 新建事务，如果当前存在事务，把当前事务挂起。</li>
+<li><code>PROPAGATION_NOT_SUPPORTED</code> – 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</li>
+<li><code>PROPAGATION_NEVER</code> – 以非事务方式执行，如果当前存在事务，则抛出异常。</li>
+<li><code>PROPAGATION_NESTED</code> – 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与<code>PROPAGATION_REQUIRED</code>类似的操作。</li>
 </ol>
 <h2>4、补充</h2>
 <p><code>Spring</code>默认情况下，会对运行期例外(<code>RunTimeException</code>)，即<code>uncheck</code>异常，进行事务回滚。</p>
 <p>如果遇到<code>checked</code>异常就不回滚。</p>
 <p>如何改变默认规则：</p>
-<blockquote>
-<p>1 让checked例外也回滚：在整个方法前加上 @Transactional(rollbackFor=Exception.class)</p>
-</blockquote>
-<blockquote>
-<p>2 让unchecked例外不回滚： @Transactional(notRollbackFor=RunTimeException.class)</p>
-</blockquote>
-<blockquote>
-<p>3 不需要事务管理的(只查询的)方法：@Transactional(propagation=Propagation.NOT_SUPPORTED)</p>
-</blockquote>
+<ul>
+<li>让<code>checked</code>例外也回滚：在整个方法前加上 <code>@Transactional(rollbackFor=Exception.class)</code></li>
+<li>让<code>unchecked</code>例外不回滚： <code>@Transactional(notRollbackFor=RunTimeException.class)</code></li>
+<li>不需要事务管理的(只查询的)方法：<code>@Transactional(propagation=Propagation.NOT_SUPPORTED)</code></li>
+</ul>
 <h2>5、那么什么是嵌套事务呢？</h2>
 <p>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫做<code>save point</code>，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点在于那个<code>save point</code>，看以下几个问题：</p>
 <p><strong>如果子事务回滚，会发生什么？</strong></p>
@@ -89,4 +65,4 @@
 <p>这个是<code>SpringMVC</code>必须要配置的，因为它声明了<code>@RequestMapping</code>、<code>@RequestBody</code>、<code>@ResponseBody</code>等。并且，该配置默认加载很多的参数绑定方法，比如<code>json</code>转换解析器等。</p>
 <h2>7、总结</h2>
 <p>在实际工程中会包括很多配置，我们按照官方推荐根据不同的业务模块来划分不同容器中注册不同类型的<code>Bean</code>：<code>Spring</code>父容器负责所有其他非<code>@Controller</code>注解的<code>Bean</code>的注册，而<code>SpringMVC</code>只负责<code>@Controller</code>注解的<code>Bean</code>的注册，使得他们各负其责、明确边界。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/03redis实现分布式锁/" class="next">下一篇</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/03redis实现分布式锁/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
