@@ -58,8 +58,8 @@
   
   <entry>
     <title>ConcurrentHashMap</title>
-    <link href="http://yoursite.com/2019/01/22/12.ConcurrentHashMap/"/>
-    <id>http://yoursite.com/2019/01/22/12.ConcurrentHashMap/</id>
+    <link href="http://yoursite.com/2019/01/22/java-collection/12.ConcurrentHashMap/"/>
+    <id>http://yoursite.com/2019/01/22/java-collection/12.ConcurrentHashMap/</id>
     <published>2019-01-22T09:49:11.237Z</published>
     <updated>2019-01-22T11:40:00.121Z</updated>
     
@@ -78,8 +78,8 @@
   
   <entry>
     <title>HashMap死循环问题</title>
-    <link href="http://yoursite.com/2019/01/21/11.HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98/"/>
-    <id>http://yoursite.com/2019/01/21/11.HashMap死循环问题/</id>
+    <link href="http://yoursite.com/2019/01/21/java-collection/11.HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98/"/>
+    <id>http://yoursite.com/2019/01/21/java-collection/11.HashMap死循环问题/</id>
     <published>2019-01-21T14:25:51.037Z</published>
     <updated>2019-01-22T06:43:45.198Z</updated>
     
@@ -121,9 +121,9 @@
     <link href="http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/"/>
     <id>http://yoursite.com/2019/01/21/站点文章汇总/</id>
     <published>2019-01-21T11:53:05.000Z</published>
-    <updated>2019-01-22T11:42:49.367Z</updated>
+    <updated>2019-01-22T12:10:22.693Z</updated>
     
-    <content type="html"><![CDATA[<p>🔝🔝🔝本文为置顶文章，由于之前整理的笔记有几百篇，为了方便管理和查阅，在这里详细展示目录索引。</p><a id="more"></a><h2>计算机网络🐭🐭🐭</h2><p>这一部分主要是关于<code>HTTP</code>和<code>TCP</code>的必备知识。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">《计算机网络相关系列》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/17/1.%E4%BB%8E%E4%B8%8B%E5%88%B0%E4%B8%8A%E7%9C%8B%E4%BA%94%E5%B1%82%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">《从下到上看五层模型》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/17/2.%E4%BB%8E%E4%B8%8A%E5%88%B0%E4%B8%8B%E7%9C%8B%E4%BA%94%E5%B1%82%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">《从上到下看五层模型》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/17/3.http%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/" target="_blank" rel="noopener">《HTTP的前世今生》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/4.TCP%E5%8D%8F%E8%AE%AE%E5%85%A5%E9%97%A8/" target="_blank" rel="noopener">《TCP协议入门》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/5.TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" target="_blank" rel="noopener">《TCP三次握手和四次挥手》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/6.HTTP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%8F%90%E7%82%BC/" target="_blank" rel="noopener">《HTTP基础知识提炼》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/7.%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3HTTPS/" target="_blank" rel="noopener">《一步一步理解HTTPS》</a></li></ul></li></ul><h2>JAVA容器🐱🐱🐱</h2><p>这一部分是<code>JAVA</code>容器一系列文章，主要讲了常用<code>JAVA</code>容器的源码和一些特性，面试必问点。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/java%E5%AE%B9%E5%99%A8/" target="_blank" rel="noopener">《JAVA容器》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/20/1.ArrayList%E5%92%8CVector/" target="_blank" rel="noopener">《ArrayList/Vector》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/2.LinkedList/" target="_blank" rel="noopener">《LinkedList》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/3.CopyOnWriteArrayList/" target="_blank" rel="noopener">《CopyOnWriteArrayList》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/4.hashcode%E5%92%8Cequals/" target="_blank" rel="noopener">《HashCode/Equals》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/5.HashMap/" target="_blank" rel="noopener">《HashMap》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/6.HashSet/" target="_blank" rel="noopener">《HashSet》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/7.LinkedHashMap/" target="_blank" rel="noopener">《LinkedHashMap》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/8.HashMap%E5%92%8CLinkedHashMap%E9%81%8D%E5%8E%86%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">《HashMap和LinkedHashMap遍历机制》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/9.HashTable/" target="_blank" rel="noopener">《HashTable》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/10.LinkedHashSet/" target="_blank" rel="noopener">《LinkedHashSet》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/21/11.HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">《JDK7中HashMap死循环原因剖析》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/22/12.ConcurrentHashMap/" target="_blank" rel="noopener">《ConcurrentHashMap》</a></li></ul></li></ul><h2>Linux&amp;操作系统🐶🐶🐶</h2><p>一些必备的<code>Liunx</code>相关的知识点整理。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/Linux/" target="_blank" rel="noopener">《Linux》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/21/linux%E9%87%8D%E8%A6%81%E7%9A%84%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">《Linux面试重要命令》</a></li></ul></li><li><a href="http://fourcolor.oursnail.cn/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">《操作系统相关》</a>：<ul><li><a href="">《面试-进程与线程》</a></li></ul></li></ul><h2>实战作品🐰🐰🐰</h2><p>记录一些实战作品，代码主要存放在<code>github</code>上。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/%E5%AE%9E%E6%88%98/" target="_blank" rel="noopener">《我的实战》</a>：<ul><li><a href="https://github.com/sunweiguo/MMall" target="_blank" rel="noopener">《快乐蜗牛商城代码》</a></li><li><a href="https://github.com/sunweiguo/mama-buy" target="_blank" rel="noopener">《码码购分布式电商实战代码》</a></li></ul></li></ul>]]></content>
+    <content type="html"><![CDATA[<p>🔝🔝🔝本文为置顶文章，由于之前整理的笔记有几百篇，为了方便管理和查阅，在这里详细展示目录索引。</p><a id="more"></a><h2>计算机网络🐭🐭🐭</h2><p>这一部分主要是关于<code>HTTP</code>和<code>TCP</code>的必备知识。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">《计算机网络相关系列》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/17/network/1.%E4%BB%8E%E4%B8%8B%E5%88%B0%E4%B8%8A%E7%9C%8B%E4%BA%94%E5%B1%82%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">《从下到上看五层模型》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/17/network/2.%E4%BB%8E%E4%B8%8A%E5%88%B0%E4%B8%8B%E7%9C%8B%E4%BA%94%E5%B1%82%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">《从上到下看五层模型》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/17/network/3.http%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/" target="_blank" rel="noopener">《HTTP的前世今生》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/network/4.TCP%E5%8D%8F%E8%AE%AE%E5%85%A5%E9%97%A8/" target="_blank" rel="noopener">《TCP协议入门》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/network/5.TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/" target="_blank" rel="noopener">《TCP三次握手和四次挥手》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/network/6.HTTP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%8F%90%E7%82%BC/" target="_blank" rel="noopener">《HTTP基础知识提炼》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/18/network/7.%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3HTTPS/" target="_blank" rel="noopener">《一步一步理解HTTPS》</a></li></ul></li></ul><h2>JAVA容器🐱🐱🐱</h2><p>这一部分是<code>JAVA</code>容器一系列文章，主要讲了常用<code>JAVA</code>容器的源码和一些特性，面试必问点。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/java%E5%AE%B9%E5%99%A8/" target="_blank" rel="noopener">《JAVA容器》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/1.ArrayList%E5%92%8CVector/" target="_blank" rel="noopener">《ArrayList/Vector》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/2.LinkedList/" target="_blank" rel="noopener">《LinkedList》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/3.CopyOnWriteArrayList/" target="_blank" rel="noopener">《CopyOnWriteArrayList》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/4.hashcode%E5%92%8Cequals/" target="_blank" rel="noopener">《HashCode/Equals》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/5.HashMap/" target="_blank" rel="noopener">《HashMap》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/6.HashSet/" target="_blank" rel="noopener">《HashSet》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/7.LinkedHashMap/" target="_blank" rel="noopener">《LinkedHashMap》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/8.HashMap%E5%92%8CLinkedHashMap%E9%81%8D%E5%8E%86%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">《HashMap和LinkedHashMap遍历机制》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/9.HashTable/" target="_blank" rel="noopener">《HashTable》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/20/java-collection/10.LinkedHashSet/" target="_blank" rel="noopener">《LinkedHashSet》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/21/java-collection/11.HashMap%E6%AD%BB%E5%BE%AA%E7%8E%AF%E9%97%AE%E9%A2%98/" target="_blank" rel="noopener">《JDK7中HashMap死循环原因剖析》</a></li><li><a href="http://fourcolor.oursnail.cn/2019/01/22/java-collection/12.ConcurrentHashMap/" target="_blank" rel="noopener">《ConcurrentHashMap》</a></li></ul></li></ul><h2>Linux&amp;操作系统🐶🐶🐶</h2><p>一些必备的<code>Liunx</code>相关的知识点整理。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/Linux/" target="_blank" rel="noopener">《Linux》</a>：<ul><li><a href="http://fourcolor.oursnail.cn/2019/01/21/linux%E9%87%8D%E8%A6%81%E7%9A%84%E5%91%BD%E4%BB%A4/" target="_blank" rel="noopener">《Linux面试重要命令》</a></li></ul></li><li><a href="http://fourcolor.oursnail.cn/tags/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">《操作系统相关》</a>：<ul><li><a href="">《面试-进程与线程》</a></li></ul></li></ul><h2>实战作品🐰🐰🐰</h2><p>记录一些实战作品，代码主要存放在<code>github</code>上。</p><ul><li><a href="http://fourcolor.oursnail.cn/tags/%E5%AE%9E%E6%88%98/" target="_blank" rel="noopener">《我的实战》</a>：<ul><li><a href="https://github.com/sunweiguo/MMall" target="_blank" rel="noopener">《快乐蜗牛商城代码》</a></li><li><a href="https://github.com/sunweiguo/mama-buy" target="_blank" rel="noopener">《码码购分布式电商实战代码》</a></li></ul></li></ul>]]></content>
     
     <summary type="html">
     
@@ -138,8 +138,8 @@
   
   <entry>
     <title>LinkedHashSet</title>
-    <link href="http://yoursite.com/2019/01/20/10.LinkedHashSet/"/>
-    <id>http://yoursite.com/2019/01/20/10.LinkedHashSet/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/10.LinkedHashSet/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/10.LinkedHashSet/</id>
     <published>2019-01-20T12:43:12.169Z</published>
     <updated>2019-01-20T12:43:14.826Z</updated>
     
@@ -158,8 +158,8 @@
   
   <entry>
     <title>Hashtable</title>
-    <link href="http://yoursite.com/2019/01/20/9.HashTable/"/>
-    <id>http://yoursite.com/2019/01/20/9.HashTable/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/9.HashTable/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/9.HashTable/</id>
     <published>2019-01-20T12:26:26.250Z</published>
     <updated>2019-01-20T12:40:29.498Z</updated>
     
@@ -178,8 +178,8 @@
   
   <entry>
     <title>HashMap和LinkedHashMap遍历机制</title>
-    <link href="http://yoursite.com/2019/01/20/8.HashMap%E5%92%8CLinkedHashMap%E9%81%8D%E5%8E%86%E6%9C%BA%E5%88%B6/"/>
-    <id>http://yoursite.com/2019/01/20/8.HashMap和LinkedHashMap遍历机制/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/8.HashMap%E5%92%8CLinkedHashMap%E9%81%8D%E5%8E%86%E6%9C%BA%E5%88%B6/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/8.HashMap和LinkedHashMap遍历机制/</id>
     <published>2019-01-20T12:07:31.483Z</published>
     <updated>2019-01-20T12:08:05.754Z</updated>
     
@@ -198,8 +198,8 @@
   
   <entry>
     <title>LinkedHashMap</title>
-    <link href="http://yoursite.com/2019/01/20/7.LinkedHashMap/"/>
-    <id>http://yoursite.com/2019/01/20/7.LinkedHashMap/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/7.LinkedHashMap/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/7.LinkedHashMap/</id>
     <published>2019-01-20T11:17:21.878Z</published>
     <updated>2019-01-20T11:49:07.463Z</updated>
     
@@ -218,8 +218,8 @@
   
   <entry>
     <title>HashSet</title>
-    <link href="http://yoursite.com/2019/01/20/6.HashSet/"/>
-    <id>http://yoursite.com/2019/01/20/6.HashSet/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/6.HashSet/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/6.HashSet/</id>
     <published>2019-01-20T10:32:18.891Z</published>
     <updated>2019-01-20T10:36:33.916Z</updated>
     
@@ -238,8 +238,8 @@
   
   <entry>
     <title>HashMap</title>
-    <link href="http://yoursite.com/2019/01/20/5.HashMap/"/>
-    <id>http://yoursite.com/2019/01/20/5.HashMap/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/5.HashMap/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/5.HashMap/</id>
     <published>2019-01-20T10:07:36.921Z</published>
     <updated>2019-01-20T12:07:09.930Z</updated>
     
@@ -258,8 +258,8 @@
   
   <entry>
     <title>Hashcode/Equals</title>
-    <link href="http://yoursite.com/2019/01/20/4.hashcode%E5%92%8Cequals/"/>
-    <id>http://yoursite.com/2019/01/20/4.hashcode和equals/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/4.hashcode%E5%92%8Cequals/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/4.hashcode和equals/</id>
     <published>2019-01-20T09:11:49.986Z</published>
     <updated>2019-01-20T09:23:58.091Z</updated>
     
@@ -278,8 +278,8 @@
   
   <entry>
     <title>CopyOnWriteArrayList</title>
-    <link href="http://yoursite.com/2019/01/20/3.CopyOnWriteArrayList/"/>
-    <id>http://yoursite.com/2019/01/20/3.CopyOnWriteArrayList/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/3.CopyOnWriteArrayList/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/3.CopyOnWriteArrayList/</id>
     <published>2019-01-20T06:20:50.227Z</published>
     <updated>2019-01-20T09:15:41.459Z</updated>
     
@@ -298,8 +298,8 @@
   
   <entry>
     <title>LinkedList</title>
-    <link href="http://yoursite.com/2019/01/20/2.LinkedList/"/>
-    <id>http://yoursite.com/2019/01/20/2.LinkedList/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/2.LinkedList/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/2.LinkedList/</id>
     <published>2019-01-20T05:01:33.094Z</published>
     <updated>2019-01-20T05:29:36.587Z</updated>
     
@@ -318,8 +318,8 @@
   
   <entry>
     <title>ArrayList/Vector</title>
-    <link href="http://yoursite.com/2019/01/20/1.ArrayList%E5%92%8CVector/"/>
-    <id>http://yoursite.com/2019/01/20/1.ArrayList和Vector/</id>
+    <link href="http://yoursite.com/2019/01/20/java-collection/1.ArrayList%E5%92%8CVector/"/>
+    <id>http://yoursite.com/2019/01/20/java-collection/1.ArrayList和Vector/</id>
     <published>2019-01-20T04:24:15.307Z</published>
     <updated>2019-01-20T05:29:33.574Z</updated>
     
@@ -378,8 +378,8 @@
   
   <entry>
     <title>一步一步理解HTTPS</title>
-    <link href="http://yoursite.com/2019/01/18/7.%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3HTTPS/"/>
-    <id>http://yoursite.com/2019/01/18/7.一步一步理解HTTPS/</id>
+    <link href="http://yoursite.com/2019/01/18/network/7.%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E7%90%86%E8%A7%A3HTTPS/"/>
+    <id>http://yoursite.com/2019/01/18/network/7.一步一步理解HTTPS/</id>
     <published>2019-01-18T08:50:28.577Z</published>
     <updated>2019-01-20T03:04:21.184Z</updated>
     
@@ -398,8 +398,8 @@
   
   <entry>
     <title>HTTP基础知识提炼</title>
-    <link href="http://yoursite.com/2019/01/18/6.HTTP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%8F%90%E7%82%BC/"/>
-    <id>http://yoursite.com/2019/01/18/6.HTTP基础知识提炼/</id>
+    <link href="http://yoursite.com/2019/01/18/network/6.HTTP%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%8F%90%E7%82%BC/"/>
+    <id>http://yoursite.com/2019/01/18/network/6.HTTP基础知识提炼/</id>
     <published>2019-01-18T04:14:06.263Z</published>
     <updated>2019-01-20T03:04:17.986Z</updated>
     

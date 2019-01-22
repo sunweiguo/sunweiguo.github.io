@@ -1,0 +1,117 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> http的前世今生 · FourColor</title><meta name="description" content="http的前世今生 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">http的前世今生</h1><div class="post-meta"><span class="post-time">Jan 17, 2019</span></div><div class="post-content"><p>这是计算机网络相关的第三篇文章。作为一个后端攻城狮，每天打交道最多的就是HTTP协议，在如今火热的微服务实现方案中，除了阿里的dubbo，就是spring cloud，而spring cloud目前适用的服务间通信方式也就是基于HTTP 的 restful接口来实现。并且作为浏览器上用的最多的协议，无论是前端、后端还是测试都应该去熟悉它，软件的发展是循序渐进的，每次的迭代升级都是为了解决上一版本的痛点，HTTP协议的发展也是如此，本章着重讲解HTTP的前世今生，让我们更加了解HTTP。</p>
+<a id="more"></a>
+<p>HTTP 是基于 TCP/IP 协议的应用层协议。它不涉及数据包（packet）传输，主要规定了客户端和服务器之间的通信格式，默认使用80端口。</p>
+<h2>一、HTTP/0.9</h2>
+<h3>1.1 简介</h3>
+<p>这是第一个定稿的HTTP协议。</p>
+<ul>
+<li>内容非常简单，只有一个命令GET</li>
+<li>没有HEADER等描述数据的信息</li>
+<li>服务器发送完毕，就关闭TCP连接（一个HTTP请求在一个TCP连接中完成）</li>
+</ul>
+<h3>1.2 请求格式</h3>
+<p>比如发起一个GET请求：</p>
+<blockquote>
+<p>GET /index.html</p>
+</blockquote>
+<p>上面命令表示，TCP 连接（connection）建立后，客户端向服务器请求（request）网页index.html。</p>
+<h3>1.3 响应格式</h3>
+<p>协议规定，服务器只能回应HTML格式的字符串，不能回应别的格式。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">body</span>&gt;</span>Hello World<span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>服务器发送完毕，就关闭TCP连接。</p>
+<h2>二、HTTP/1.0</h2>
+<h3>2.1 简介</h3>
+<p>跟现在比较普遍适用的1.1版本已经相差不多。</p>
+<ul>
+<li>增加很多命令，比如POST、HEAD等命令</li>
+<li>增加status code 和 header</li>
+<li>多字符集支持、多部分发送、权限、缓存等</li>
+</ul>
+<p>首先，任何格式的内容都可以发送。这使得互联网不仅可以传输文字，还能传输图像、视频、二进制文件。这为互联网的大发展奠定了基础。</p>
+<p>其次，除了GET命令，还引入了POST命令和HEAD命令，丰富了浏览器与服务器的互动手段。</p>
+<p>再次，HTTP请求和回应的格式也变了。除了数据部分，每次通信都必须包括头信息（HTTP header），用来描述一些元数据。</p>
+<p>其他的新增功能还包括状态码（status code）、多字符集支持、多部分发送（multi-part type）、权限（authorization）、缓存（cache）、内容编码（content encoding）等。</p>
+<h3>2.2 请求格式</h3>
+<p>下面是一个1.0版的HTTP请求的例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET / HTTP/1.0</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5)</span><br><span class="line">Accept: */*</span><br></pre></td></tr></table></figure>
+<p>可以看到，这个格式与0.9版有很大变化。<br>
+第一行是请求命令，必须在尾部添加协议版本（HTTP/1.0）。后面就是多行头信息，描述客户端的情况。</p>
+<p>客户端请求的时候，可以使用Accept字段声明自己可以接受哪些数据格式。上面代码中，客户端声明自己可以接受任何格式的数据。</p>
+<h3>2.3 响应格式</h3>
+<p>服务器的回应如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.0 200 OK </span><br><span class="line">Content-Type: text/plain</span><br><span class="line">Content-Length: 137582</span><br><span class="line">Expires: Thu, 05 Dec 1997 16:00:00 GMT</span><br><span class="line">Last-Modified: Wed, 5 August 1996 15:55:28 GMT</span><br><span class="line">Server: Apache 0.84</span><br><span class="line"></span><br><span class="line">&lt;html&gt;</span><br><span class="line">  &lt;body&gt;Hello World&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>回应的格式是&quot;头信息 + 一个空行（\r\n） + 数据&quot;。其中，第一行是&quot;协议版本 + 状态码（status code） + 状态描述&quot;。</p>
+<h3>2.4 Content-Type 字段</h3>
+<p>关于字符的编码，1.0版规定，头信息必须是 ASCII 码，后面的数据可以是任何格式。因此，服务器回应的时候，必须告诉客户端，数据是什么格式，这就是Content-Type字段的作用。</p>
+<h3>2.5 缺点</h3>
+<p>每个TCP连接只能发送一个请求。发送数据完毕，连接就关闭，如果还要请求其他资源，就必须再新建一个连接。</p>
+<p>为了解决这个问题，有些浏览器在请求时，用了一个非标准的Connection字段。</p>
+<blockquote>
+<p>Connection: keep-alive</p>
+</blockquote>
+<p>这个字段要求服务器不要关闭TCP连接，以便其他请求复用。服务器同样回应这个字段。</p>
+<blockquote>
+<p>Connection: keep-alive</p>
+</blockquote>
+<p>一个可以复用的TCP连接就建立了，直到客户端或服务器主动关闭连接。但是，这不是标准字段，不同实现的行为可能不一致，因此不是根本的解决办法。</p>
+<h2>三、HTTP/1.1</h2>
+<h3>3.1 持久连接和管道机制</h3>
+<ul>
+<li>持久连接（以前的版本中，一个HTTP请求就创建一个TCP连接，请求返回之后就关闭TCP连接，然而建立一次TCP连接的过程是比较耗时的，效率会比较低，现在建立一个TCP连接后，后面的HTTP请求都可以复用这个TCP连接，即允许了在同一个连接里面发送多个请求，会提高效率）</li>
+<li>pipeline（解决了同一个TCP连接中客户端可以发送多个HTTP请求，但是对于服务端来说，对于进来的请求要按照顺序进行内容的返回，如果前一个请求处理时间长，而后一个请求处理时间端，即便后面一个请求已经处理完毕了，也要等待前一个请求处理完毕返回他才可以返回结果，这种串行的方式比较慢）</li>
+</ul>
+<p>在1.1版本以前，每次HTTP请求，都会重新建立一次TCP连接，服务器响应后，就立刻关闭。众所周知，建立TCP连接的新建成本很高，因为需要三次握手，并且有着慢启动的特性导致发送速度较慢。而1.1版本添加的持久连接功能可以让一次TCP连接中发送多条HTTP请求，<strong>值得一提的是默认是，控制持久连接的Connection字段默认值是keep-alive，也就是说是默认打开持久连接，如果想要关闭，只需将该字段的值改为close。</strong></p>
+<blockquote>
+<p>Connection: close</p>
+</blockquote>
+<p>而管道化则赋予了客户端在一个TCP连接中连续发送多个请求的能力，而不需要等到前一个请求响应，这大大提高了效率。值得一提的是，虽然客户端可以连续发送多个请求，但是服务器返回依然是按照发送的顺序返回。（强调的是request不需要等待上一个request的response，其实发送的request还是有顺序的，服务端按照这个顺序接收，依次返回响应）</p>
+<p>HTTP/1.1允许多个http请求通过一个套接字同时被输出 ，而不用等待相应的响应。然后请求者就会等待各自的响应，这些响应是按照之前请求的顺序依次到达。（me：所有请求保持一个FIFO的队列，一个请求发送完之后，不必等待这个请求的响应被接受到，下一个请求就可以被再次发出；同时，服务器端返回这些请求的响应时也是按照FIFO的顺序）。管道化的表现可以大大提高页面加载的速度，尤其是在高延迟连接中。</p>
+<h3>3.2 Content-Length 字段</h3>
+<p>一个TCP连接现在可以传送多个回应，势必就要有一种机制，区分数据包是属于哪一个回应的。这就是Content-length字段的作用，声明本次回应的数据长度。</p>
+<blockquote>
+<p>Content-Length: 3495</p>
+</blockquote>
+<p>上面代码告诉浏览器，本次回应的长度是3495个字节，后面的字节就属于下一个回应了。</p>
+<p>在1.0版中，Content-Length字段不是必需的，因为浏览器发现服务器关闭了TCP连接，就表明收到的数据包已经全了。</p>
+<h3>3.3 分块传输编码</h3>
+<p>对于一些很耗时的动态操作来说，这意味着，服务器要等到所有操作完成，才能发送数据，显然这样的效率不高。更好的处理方法是，产生一块数据，就发送一块，采用&quot;流模式&quot;（stream）取代&quot;缓存模式&quot;（buffer）。</p>
+<p>因此，1.1版规定可以不使用Content-Length字段，而使用&quot;分块传输编码&quot;（chunked transfer encoding）。只要请求或回应的头信息有Transfer-Encoding字段，就表明回应将由数量未定的数据块组成。</p>
+<blockquote>
+<p>Transfer-Encoding: chunked</p>
+</blockquote>
+<p>每个非空的数据块之前，会有一个16进制的数值，表示这个块的长度。最后是一个大小为0的块，就表示本次回应的数据发送完了。下面是一个例子。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Content-Type: text/plain</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line">25</span><br><span class="line">This is the data in the first chunk</span><br><span class="line"></span><br><span class="line">1C</span><br><span class="line">and this is the second one</span><br><span class="line"></span><br><span class="line">3</span><br><span class="line">con</span><br><span class="line"></span><br><span class="line">8</span><br><span class="line">sequence</span><br><span class="line"></span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<h3>3.3 其他功能</h3>
+<p>1.1版还新增了许多动词方法：PUT、PATCH、HEAD、 OPTIONS、DELETE。</p>
+<p>另外，客户端请求的头信息新增了Host字段，用来指定服务器的域名。</p>
+<blockquote>
+<p>Host: <a href="http://www.example.com" target="_blank" rel="noopener">www.example.com</a></p>
+</blockquote>
+<p>有了Host字段，就可以将请求发往同一台服务器上的不同网站，为虚拟主机的兴起打下了基础。</p>
+<h3>3.4 缺点</h3>
+<p>虽然1.1版允许复用TCP连接，但是同一个TCP连接里面，所有的数据通信是按次序进行的。服务器只有处理完一个回应，才会进行下一个回应。要是前面的回应特别慢，后面就会有许多请求排队等着。这称为&quot;队头堵塞&quot;（Head-of-line blocking）。</p>
+<h2>四、SPDY 协议</h2>
+<p>2009年，谷歌公开了自行研发的 SPDY 协议，主要解决 HTTP/1.1 效率不高的问题。</p>
+<p>这个协议在Chrome浏览器上证明可行以后，就被当作 HTTP/2 的基础，主要特性都在 HTTP/2 之中得到继承。</p>
+<h2>五、HTTP/2</h2>
+<h3>5.1 二进制协议</h3>
+<p>HTTP/1.1 版的头信息肯定是文本（ASCII编码），数据体可以是文本，也可以是二进制。</p>
+<p>HTTP/2 则是一个彻底的二进制协议，头信息和数据体都是二进制，并且统称为&quot;帧&quot;（frame）：头信息帧和数据帧。</p>
+<p>二进制协议的一个好处是，可以定义额外的帧。HTTP/2 定义了近十种帧，为将来的高级应用打好了基础。如果使用文本实现这种功能，解析数据将会变得非常麻烦，二进制解析则方便得多。</p>
+<h3>5.2 多工</h3>
+<p>HTTP/2 复用TCP连接，在一个连接里，客户端和浏览器都可以同时发送多个请求或回应，而且不用按照顺序一一对应，这样就避免了&quot;队头堵塞&quot;。</p>
+<p><strong>举例来说，在一个TCP连接里面，服务器同时收到了A请求和B请求，于是先回应A请求，结果发现处理过程非常耗时，于是就发送A请求已经处理好的部分， 接着回应B请求，完成后，再发送A请求剩下的部分。</strong></p>
+<p>这样双向的、实时的通信，就叫做多工（Multiplexing）。</p>
+<h3>5.3 数据流</h3>
+<p><strong>因为 HTTP/2 的数据包是不按顺序发送的</strong>，同一个连接里面连续的数据包，可能属于不同的回应。因此，必须要对数据包做标记，指出它属于哪个回应。</p>
+<p>HTTP/2 将每个请求或回应的所有数据包，称为一个数据流（stream）。每个数据流都有一个独一无二的编号。数据包发送的时候，都必须标记数据流ID，用来区分它属于哪个数据流。另外还规定，客户端发出的数据流，ID一律为奇数，服务器发出的，ID为偶数。</p>
+<p>数据流发送到一半的时候，客户端和服务器都可以发送信号（RST_STREAM帧），取消这个数据流。1.1版取消数据流的唯一方法，就是关闭TCP连接。这就是说，HTTP/2 可以取消某一次请求，同时保证TCP连接还打开着，可以被其他请求使用。</p>
+<p>客户端还可以指定数据流的优先级。优先级越高，服务器就会越早回应。</p>
+<h3>5.4 头信息压缩</h3>
+<p>HTTP 协议不带有状态，每次请求都必须附上所有信息。所以，请求的很多字段都是重复的，比如Cookie和User Agent，一模一样的内容，每次请求都必须附带，这会浪费很多带宽，也影响速度。</p>
+<p>HTTP/2 对这一点做了优化，引入了头信息压缩机制（header compression）。一方面，头信息使用gzip或compress压缩后再发送；另一方面，客户端和服务器同时维护一张头信息表，所有字段都会存入这个表，生成一个索引号，以后就不发送同样字段了，只发送索引号，这样就提高速度了。</p>
+<h3>5.5 服务器推送</h3>
+<p>HTTP/2 允许服务器未经请求，主动向客户端发送资源，这叫做服务器推送（server push）。</p>
+<p>常见场景是客户端请求一个网页，这个网页里面包含很多静态资源。正常情况下，客户端必须收到网页后，解析HTML源码，发现有静态资源，再发出静态资源请求。其实，服务器可以预期到客户端请求网页后，很可能会再请求静态资源，所以就主动把这些静态资源随着网页一起发给客户端了。</p>
+<p>整理自：<a href="http://www.ruanyifeng.com/blog/2016/08/http.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2016/08/http.html</a></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/18/network/4.TCP协议入门/" class="prev">上一篇</a><a href="/2019/01/17/network/2.从上到下看五层模型/" class="next">下一篇</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
