@@ -10,10 +10,10 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionResolver</span> <span class="keyword">implements</span> <span class="title">HandlerExceptionResolver</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">resolveException</span><span class="params">(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e)</span> </span>&#123;</span><br><span class="line">        log.error(<span class="string">"exception:&#123;&#125;"</span>,httpServletRequest.getRequestURI(),e);</span><br><span class="line">        ModelAndView mv = <span class="keyword">new</span> ModelAndView(<span class="keyword">new</span> MappingJacksonJsonView());</span><br><span class="line">        mv.addObject(<span class="string">"status"</span>,ResponseEnum.ERROR.getCode());</span><br><span class="line">        mv.addObject(<span class="string">"msg"</span>,<span class="string">"接口异常，详情请查看日志中的异常信息"</span>);</span><br><span class="line">        mv.addObject(<span class="string">"data"</span>,e.toString());</span><br><span class="line">        <span class="keyword">return</span> mv;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>那么，再执行登陆操作之后，就不会在页面上直接显示异常信息了。有效地屏蔽了关键信息。</p>
 <h2>3、spring和springmvc配置文件的优化</h2>
+<h5>3.1 包隔离优化</h5>
 <p>在编写全局异常之前，先进行了包隔离和优化，一期中的扫描包的写法是：</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#spring:</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">#springmvc:</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
-<p>即<code>spring</code>和<code>springmvc</code>扫描包下面的所有的<code>bean</code>和<code>controller</code>.</p>
-<p>优化后的代码配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--spring:--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!--springmvc:--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>即<code>spring</code>和<code>springmvc</code>扫描包下面的所有的<code>bean</code>和<code>controller</code>.优化后的代码配置：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#spring</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--将controller的扫描排除掉--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:exclude-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span> <span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br><span class="line"></span><br><span class="line">#springmvc</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg.controller"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span> <span class="attr">use-default-filters</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--添加白名单，只扫描controller，总之要将service给排除掉即可--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span> <span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>这样做的原因是：<code>Spring</code>和<code>SpringMVC</code>是有父子容器关系的，而且正是因为这个才往往会出现包扫描的问题。</p>
 <p><img src="http://bloghello.oursnail.cn/zaji4-1.png" alt="image"></p>
@@ -23,8 +23,8 @@
 <li>只有顶级容器（<code>spring</code>）才有加强的事务能力，而<code>springmvc</code>容器的<code>service</code>是没有的。</li>
 <li>如果<code>springmvc</code>不配置包扫描的话，页面404.</li>
 </ul>
-<p>针对事务，不得不展开说明spring事务的几种传播机制了。<br>
-在 <code>spring</code> 的 <code>TransactionDefinition</code> 接口中一共定义了七种事务传播属性：</p>
+<h5>3.2 事务的传播机制</h5>
+<p>针对事务，不得不展开说明spring事务的几种传播机制了。在 <code>spring</code> 的 <code>TransactionDefinition</code> 接口中一共定义了七种事务传播属性：</p>
 <ol>
 <li><code>PROPAGATION_REQUIRED</code> – 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择（默认）。</li>
 <li><code>PROPAGATION_SUPPORTS</code> – 支持当前事务，如果当前没有事务，就以非事务方式执行。</li>
@@ -35,9 +35,7 @@
 <li><code>PROPAGATION_NESTED</code> – 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与<code>PROPAGATION_REQUIRED</code>类似的操作。</li>
 </ol>
 <h2>4、补充</h2>
-<p><code>Spring</code>默认情况下，会对运行期例外(<code>RunTimeException</code>)，即<code>uncheck</code>异常，进行事务回滚。</p>
-<p>如果遇到<code>checked</code>异常就不回滚。</p>
-<p>如何改变默认规则：</p>
+<p><code>Spring</code>默认情况下，会对运行期例外(<code>RunTimeException</code>)，即<code>uncheck</code>异常，进行事务回滚。如果遇到<code>checked</code>异常就不回滚。如何改变默认规则：</p>
 <ul>
 <li>让<code>checked</code>例外也回滚：在整个方法前加上 <code>@Transactional(rollbackFor=Exception.class)</code></li>
 <li>让<code>unchecked</code>例外不回滚： <code>@Transactional(notRollbackFor=RunTimeException.class)</code></li>
@@ -45,11 +43,11 @@
 </ul>
 <h2>5、那么什么是嵌套事务呢？</h2>
 <p>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫做<code>save point</code>，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点在于那个<code>save point</code>，看以下几个问题：</p>
-<p><strong>如果子事务回滚，会发生什么？</strong></p>
+<p><strong>问题1：如果子事务回滚，会发生什么？</strong></p>
 <p>父事务会回到进入子事务前建立的<code>save point</code>，然后尝试其他的事务或者其他的业务逻辑，父事务之前的操作不会受到影响，更不会自动回滚。</p>
-<p><strong>如果父事务回滚，会发生什么？</strong></p>
+<p><strong>问题2：如果父事务回滚，会发生什么？</strong></p>
 <p>父事务回滚，子事务也会跟着回滚，为什么呢？因为父事务结束之前，子事务是不会提交的，我们说子事务是父事务的一部分，正是这个道理/</p>
-<p><strong>父事务先提交，然后子事务再提交；还是子事务先提交，然后父事务再提交呢？</strong></p>
+<p><strong>问题3：父事务先提交，然后子事务再提交；还是子事务先提交，然后父事务再提交呢？</strong></p>
 <p>答案是第二种情况，子事务是父事务的一部分，由父事务同意提交。</p>
 <h2>6、spring配置文件的一些理解：</h2>
 <blockquote>
