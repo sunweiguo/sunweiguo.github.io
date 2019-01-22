@@ -55,24 +55,24 @@
 <h3>8、扩展</h3>
 <h6>mysql四种事务隔离机制</h6>
 <ol>
-<li>read uncommitted:读取未提交内容</li>
+<li><code>read uncommitted</code>:读取未提交内容</li>
 </ol>
 <p>两个线程，其中一个线程执行了更新操作，但是没有提交，另一个线程在事务内就会读到该线程未提交的数据。</p>
 <ol start="2">
-<li>read committed:读取提交内容（不可重复读）</li>
+<li><code>read committed</code>:读取提交内容（不可重复读）</li>
 </ol>
 <p>针对第一种情况，一个线程在一个事务内不会读取另一个线程未提交的数据了。但是，读到了另一个线程更新后提交的数据，也就是说重复读表的时候，数据会不一致。显然这种情况也是不合理的，所以叫不可重复读。</p>
 <ol start="3">
-<li>repeatable read:可重复读（默认）</li>
+<li><code>repeatable read</code>:可重复读（默认）</li>
 </ol>
 <p>可重复读，显然解决2中的问题，即一个线程在一个事务内不会再读取到另一个线程提交的数据，保证了该线程在这个事务内的数据的一致性。</p>
 <p>对于某些情况，这种方案会出现幻影读，他对于更新操作是没有任何问题的了，但是对于插入操作，有可能在一个事务内读到新插入的数据（但是MySQL中用多版本并发控制机制解决了这个问题），所以默认使用的就是这个机制，没有任何问题。</p>
 <ol start="4">
-<li>serializable:序列化</li>
+<li><code>serializable</code>:序列化</li>
 </ol>
 <p>略。</p>
 <h6>存储引擎</h6>
-<p>MySQL默认使用的是InnoDB，支持事务。还有例如MyISAM,这种存储引擎不支持事务，只支持只读操作，在用到数据的修改的地方，一般都是用默认的InnoDB存储引擎。</p>
+<p><code>MySQL</code>默认使用的是<code>InnoDB</code>，支持事务。还有例如<code>MyISAM</code>,这种存储引擎不支持事务，只支持只读操作，在用到数据的修改的地方，一般都是用默认的<code>InnoDB</code>存储引擎。</p>
 <h6>索引的一个注意点</h6>
 <p>一般类型为<code>normal</code>和<code>unique</code>，用<code>btree</code>实现，对于联合索引(字段1和字段2)，在执行查询的时候，例如</p>
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> xxx <span class="keyword">where</span> 字段<span class="number">1</span>=<span class="string">"xxx"</span> ...</span><br></pre></td></tr></table></figure>
