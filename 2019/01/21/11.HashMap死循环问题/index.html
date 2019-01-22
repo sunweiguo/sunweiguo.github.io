@@ -52,6 +52,7 @@
 <li>线程二： 数组3号位置 arr2[3] -&gt; key7 -&gt; key3</li>
 </ul>
 <p>注意此时 <code>key7</code> 指向 <code>key3</code> .</p>
+<p>我们要明确一下，发生死循环，是指在<code>put</code>操作完毕之后，最终生成的数组中有死循环引用才行，千万不要一开始看线程一种key3指向key7，然后线程二种key7指向key3就是死循环了。。。</p>
 <h5>2. 线程一继续执行</h5>
 <p><img src="http://bloghello.oursnail.cn/collection11-6.png" alt="image"></p>
 <ul>
@@ -64,7 +65,7 @@
 <ul>
 <li>上一步 e 为 key7，所以 next = key7.next ，到线程2中一看是 key3 ，所以 next = key3（线程2中key7.next就是key3）</li>
 <li>i = 3</li>
-<li>e.next = key3</li>
+<li>e.next = key3------<strong>注意，这里就是Key7指向了key3,key7的next引用下面没有变过，所以这里做一下记录，即key7指向key3</strong></li>
 <li>newTable[3] = key7</li>
 <li>e = key3</li>
 </ul>
@@ -72,10 +73,11 @@
 <ul>
 <li>上一步 e=key3 , next=null</li>
 <li>i=3</li>
-<li>key3.next = key7，注意，此时发生死循环</li>
+<li>key3.next = key7，注意,由于key7已经指向了key3，<strong>此时key3又指向key7</strong>,发生死循环</li>
 <li>newTable[3] = key3</li>
 <li>e = null</li>
 </ul>
-<h5>5.e为null，跳出循环。此时发现key3又指向了key7，结合key7已经指向了key3，所以线程2发生死循环。</h5>
+<h5>5.e为null，跳出循环。</h5>
+<p>此时发现key3又指向了key7。发生死循环。</p>
 <p>整理自:<a href="https://coolshell.cn/articles/9606.html/comment-page-2#comments" target="_blank" rel="noopener">https://coolshell.cn/articles/9606.html/comment-page-2#comments</a></p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/21/linux重要的命令/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/21/linux重要的命令/" class="next">下一篇</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
