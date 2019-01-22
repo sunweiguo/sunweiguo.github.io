@@ -1,0 +1,92 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> springMVC全局异常+spring包扫描包隔离+spring事务传播 · FourColor</title><meta name="description" content="springMVC全局异常+spring包扫描包隔离+spring事务传播 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">springMVC全局异常+spring包扫描包隔离+spring事务传播</h1><div class="post-meta"><span class="post-time">Jan 22, 2019</span></div><div class="post-content"><p>在开发中，springMVC全局异常+spring包扫描包隔离+spring事务传播这三个不可能不会遇到。下面来好好说说他们吧。</p>
+<a id="more"></a>
+<h2>1、全局异常引入原因</h2>
+<p>假设在我们的<code>login.do</code>的<code>controller</code>方法中第一行增加一句：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">1</span>/<span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>重新启动服务器进行用户登录操作，那么就会抛出异常：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.lang.ArithmeticException: / by zero</span><br><span class="line">    com.swg.controller.portal.UserController.login(UserController.java:<span class="number">37</span>)</span><br><span class="line">    ...其他的堆栈信息</span><br></pre></td></tr></table></figure>
+<p>这些信息会直接显示在网页上，如果是关于数据库的错误，同样，会详细地将数据库中的字段都显示在页面上，这对于我们的项目来说是存在很大的安全隐患的。这个时候，需要用全局异常来处理，如果发生异常，我们就对其进行拦截，并且在页面上显示我们给出的提示信息。</p>
+<h2>2、引入全局异常</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExceptionResolver</span> <span class="keyword">implements</span> <span class="title">HandlerExceptionResolver</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">resolveException</span><span class="params">(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, Exception e)</span> </span>&#123;</span><br><span class="line">        log.error(<span class="string">"exception:&#123;&#125;"</span>,httpServletRequest.getRequestURI(),e);</span><br><span class="line">        ModelAndView mv = <span class="keyword">new</span> ModelAndView(<span class="keyword">new</span> MappingJacksonJsonView());</span><br><span class="line">        mv.addObject(<span class="string">"status"</span>,ResponseEnum.ERROR.getCode());</span><br><span class="line">        mv.addObject(<span class="string">"msg"</span>,<span class="string">"接口异常，详情请查看日志中的异常信息"</span>);</span><br><span class="line">        mv.addObject(<span class="string">"data"</span>,e.toString());</span><br><span class="line">        <span class="keyword">return</span> mv;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，再执行登陆操作之后，就不会在页面上直接显示异常信息了。有效地屏蔽了关键信息。</p>
+<h2>3、spring和springmvc配置文件的优化</h2>
+<p>在编写全局异常之前，先进行了包隔离和优化，一期中的扫描包的写法是：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#spring:</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line">#springmvc:</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>即<code>spring</code>和<code>springmvc</code>扫描包下面的所有的<code>bean</code>和<code>controller</code>.</p>
+<p>优化后的代码配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#spring</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--将controller的扫描排除掉--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:exclude-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span> <span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br><span class="line"></span><br><span class="line">#springmvc</span><br><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.swg.controller"</span> <span class="attr">annotation-config</span>=<span class="string">"true"</span> <span class="attr">use-default-filters</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--添加白名单，只扫描controller，总之要将service给排除掉即可--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"annotation"</span> <span class="attr">expression</span>=<span class="string">"org.springframework.stereotype.Controller"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样做的原因是：<code>Spring</code>和<code>SpringMVC</code>是有父子容器关系的，而且正是因为这个才往往会出现包扫描的问题。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji4-1.png" alt="image"></p>
+<p>针对包扫描只要记住以下几点即可：</p>
+<ul>
+<li>
+<p><code>spring</code>是父容器，<code>springmvc</code>是子容器，子容器可以访问父容器的<code>bean</code>,父容器不能访问子容器的<code>bean</code>。</p>
+</li>
+<li>
+<p>只有顶级容器（<code>spring</code>）才有加强的事务能力，而<code>springmvc</code>容器的<code>service</code>是没有的。</p>
+</li>
+<li>
+<p>如果<code>springmvc</code>不配置包扫描的话，页面404.</p>
+</li>
+</ul>
+<p>针对事务，不得不展开说明spring事务的几种传播机制了。<br>
+在 <code>spring</code> 的 <code>TransactionDefinition</code> 接口中一共定义了七种事务传播属性：</p>
+<ol>
+<li>
+<p><code>PROPAGATION_REQUIRED</code> – 支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择（默认）。</p>
+</li>
+<li>
+<p><code>PROPAGATION_SUPPORTS</code> – 支持当前事务，如果当前没有事务，就以非事务方式执行。</p>
+</li>
+<li>
+<p><code>PROPAGATION_MANDATORY</code> – 支持当前事务，如果当前没有事务，就抛出异常。</p>
+</li>
+<li>
+<p><code>PROPAGATION_REQUIRES_NEW</code> – 新建事务，如果当前存在事务，把当前事务挂起。</p>
+</li>
+<li>
+<p><code>PROPAGATION_NOT_SUPPORTED</code> – 以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。</p>
+</li>
+<li>
+<p><code>PROPAGATION_NEVER</code> – 以非事务方式执行，如果当前存在事务，则抛出异常。</p>
+</li>
+<li>
+<p><code>PROPAGATION_NESTED</code> – 如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与<code>PROPAGATION_REQUIRED</code>类似的操作。</p>
+</li>
+</ol>
+<h2>4、补充</h2>
+<p><code>Spring</code>默认情况下，会对运行期例外(<code>RunTimeException</code>)，即<code>uncheck</code>异常，进行事务回滚。</p>
+<p>如果遇到<code>checked</code>异常就不回滚。</p>
+<p>如何改变默认规则：</p>
+<blockquote>
+<p>1 让checked例外也回滚：在整个方法前加上 @Transactional(rollbackFor=Exception.class)</p>
+</blockquote>
+<blockquote>
+<p>2 让unchecked例外不回滚： @Transactional(notRollbackFor=RunTimeException.class)</p>
+</blockquote>
+<blockquote>
+<p>3 不需要事务管理的(只查询的)方法：@Transactional(propagation=Propagation.NOT_SUPPORTED)</p>
+</blockquote>
+<h2>5、那么什么是嵌套事务呢？</h2>
+<p>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫做<code>save point</code>，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点在于那个<code>save point</code>，看以下几个问题：</p>
+<p><strong>如果子事务回滚，会发生什么？</strong></p>
+<p>父事务会回到进入子事务前建立的<code>save point</code>，然后尝试其他的事务或者其他的业务逻辑，父事务之前的操作不会受到影响，更不会自动回滚。</p>
+<p><strong>如果父事务回滚，会发生什么？</strong></p>
+<p>父事务回滚，子事务也会跟着回滚，为什么呢？因为父事务结束之前，子事务是不会提交的，我们说子事务是父事务的一部分，正是这个道理/</p>
+<p><strong>父事务先提交，然后子事务再提交；还是子事务先提交，然后父事务再提交呢？</strong></p>
+<p>答案是第二种情况，子事务是父事务的一部分，由父事务同意提交。</p>
+<h2>6、spring配置文件的一些理解：</h2>
+<blockquote>
+<p>容器</p>
+</blockquote>
+<p>在<code>Spring</code>整体框架的核心概念中，容器是核心思想，就是用来管理<code>Bean</code>的整个生命周期的，而在一个项目中，容器不一定只有一个，<code>Spring</code>中可以包括多个容器，而且容器有上下层关系，目前最常见的一种场景就是在一个项目中引入<code>Spring</code>和<code>SpringMVC</code>这两个框架，那么它其实就是两个容器，<code>Spring</code>是父容器，<code>SpringMVC</code>是其子容器，并且在<code>Spring</code>父容器中注册的<code>Bean</code>对于<code>SpringMV</code>C容器中是可见的，而在<code>SpringMVC</code>容器中注册的<code>Bean</code>对于<code>Spring</code>父容器中是不可见的，也就是子容器可以看见父容器中的注册的<code>Bean</code>，反之就不行。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">"com.springmvc.test"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我们可以使用统一的如下注解配置来对<code>Bean</code>进行批量注册，而不需要再给每个<code>Bean</code>单独使用<code>xml</code>的方式进行配置。</p>
+<p>从<code>Spring</code>提供的参考手册中我们得知该配置的功能是扫描配置的<code>base-package</code>包下的所有使用了<code>@Component</code>注解的类，并且将它们自动注册到容器中，同时也扫描<code>@Controller</code>，<code>@Service</code>，<code>@Respository</code>这三个注解，因为他们是继承自<code>@Component</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context:annotation-config</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其实有了上面的配置，这个是可以省略掉的，因为上面的配置会默认打开以下配置。以下配置会默认声明了<code>@Required</code>、<code>@Autowired</code>、 <code>@PostConstruct</code>、<code>@PersistenceContext</code>、<code>@Resource</code>、<code>@PreDestroy</code>等注解。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个是<code>SpringMVC</code>必须要配置的，因为它声明了<code>@RequestMapping</code>、<code>@RequestBody</code>、<code>@ResponseBody</code>等。并且，该配置默认加载很多的参数绑定方法，比如<code>json</code>转换解析器等。</p>
+<h2>7、总结</h2>
+<p>在实际工程中会包括很多配置，我们按照官方推荐根据不同的业务模块来划分不同容器中注册不同类型的<code>Bean</code>：<code>Spring</code>父容器负责所有其他非<code>@Controller</code>注解的<code>Bean</code>的注册，而<code>SpringMVC</code>只负责<code>@Controller</code>注解的<code>Bean</code>的注册，使得他们各负其责、明确边界。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/03redis实现分布式锁/" class="next">NEXT</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
