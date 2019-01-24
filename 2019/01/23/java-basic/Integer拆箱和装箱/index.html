@@ -46,4 +46,14 @@
 <li><code>Integer</code> 与 <code>Integer</code> 比较的时候，由于直接赋值的时候会进行自动的装箱，那么这里就需要注意两个问题，一个是 <code>-128&lt;= x&lt;=127</code> 的整数，将会直接缓存在 <code>IntegerCache</code> 中，那么当赋值在这个区间的时候，不会创建新的 <code>Integer</code> 对象，而是从缓存中获取已经创建好的 <code>Integer</code> 对象。二：当大于这个范围的时候，直接 <code>new Integer</code> 来创建 <code>Integer</code> 对象。</li>
 <li><code>new Integer(1)</code> 和 <code>Integer a = 1</code> 不同，前者会创建对象，存储在堆中，而后者因为在-128到127的范围内，不会创建新的对象，而是从 <code>IntegerCache</code> 中获取的。那么 <code>Integer a = 128</code>, 大于该范围的话才会直接通过 <code>new Integer(128)</code>创建对象，进行装箱。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/23/java-basic/java字符串/" class="prev">上一篇</a><a href="/2019/01/23/miscellany/10分布式事务解决方案思考/" class="next">下一篇</a></div><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/23/java-basic/java字符串/" class="prev">上一篇</a><a href="/2019/01/23/miscellany/10分布式事务解决方案思考/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Wed Jan 23 2019 16:30:12 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
