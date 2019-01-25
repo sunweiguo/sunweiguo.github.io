@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[delete和truncate以及drop区别]]></title>
+    <url>%2F2019%2F01%2F25%2Fmysql%2Fdelete%E5%92%8Ctruncate%E4%BB%A5%E5%8F%8Adrop%E5%8C%BA%E5%88%AB%2F</url>
+    <content type="text"><![CDATA[这个题目我自己也被问过，这里简单整理一下。 先来个总结： drop直接删掉表； truncate删除的是表中的数据，再插入数据时自增长的数据id又重新从1开始； delete删除表中数据，可以在后面添加where字句。 日志是否记录 DELETE语句执行删除操作的过程是每次从表中删除一行，并且同时将该行的删除操作作为事务记录在日志中保存以便进行进行回滚操作。 TRUNCATE TABLE 则一次性地从表中删除所有的数据并不把单独的删除操作记录记入日志保存，删除行是不能恢复的。并且在删除的过程中不会激活与表有关的删除触发器。执行速度快。 是否可以回滚 delete 这个操作会被放到 rollback segment 中,事务提交后才生效。truncate、drop是DLL（data define language),操作立即生效，原数据不放到 rollback segment 中，不能回滚. 所以在没有备份情况下，谨慎使用 drop 与 truncate。 表和索引占的空间 当表被 TRUNCATE 后，这个表和索引所占用的空间会恢复到初始大小。 而 DELETE 操作不会减少表或索引所占用的空间。 drop语句将表所占用的空间全释放掉。 TRUNCATE 和 DELETE 只删除数据，而 DROP 则删除整个表（结构和数据） 所以从干净程度，drop &gt; truncate &gt; delete ok，差不多了。]]></content>
+      <tags>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[mysql最基础知识小结]]></title>
     <url>%2F2019%2F01%2F25%2Fmysql%2Fmysql%E6%9C%80%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E5%B0%8F%E7%BB%93%2F</url>
     <content type="text"><![CDATA[本文介绍关于数据库的最最最最基本的一些语法知识，如果这些都不熟悉，建议多多练习，因为后续的文章会比较深入原理。 一、DDL语句 1、创建数据库：create database dbname; 2、删除数据库：drop database dbname; 3、创建表：create table tname; 4、删除表：drop table tname; 5、修改表：略，懒得看 二、DML语句 插入： 1insert into table(字段1，字段2，...) values (value1,value2,...) , (value3,value4,..) 更新： 1update table set 字段=value where ... 删除： 1delete from table where ... 这里要注意下delete和truncate以及drop三者的区别，下篇文章详解。 单表查询： 1select 字段 from table 连表查询方式1： 1select 别名1.字段,别名2.字段 from table1 别名1,table2 别名2 where ... 连表查询方式2： 1select 别名1.字段,别名2.字段 from table1 别名1 join table2 别名2 on ... 这是全连接，这里就要了解一下笛卡儿积，简单来说，最后行数是左边表的函数乘以右边表的行数。详细的可以自行google. 查询不重复的记录： 1select distinct 字段 from table ... 排序：默认是升序 1select 字段 from table where ... order by ... asc/desc limit：主要用于分页 1select * from table where ... order by ... asc/desc limit 起始偏移位置，显示条数 聚合： 1select count(*)/avg(..)/sum(...)/max(...)/min(...) from table group by ... having .... 注意这里的having和where的区别：where是对表结果进行筛选，having 是对查询结果进行筛选，与group by 合用 左连接和右连接 左连接意思就是左表中的记录都在，右表没有匹配项就以null显示。记录数等于左表的行数。 右连接与之同理，尽量转为左连接做。 子查询： 1select * from table where ... in (select ....) 所谓子查询就是根据另一个select的结果再进行筛选，常用的是in,not in,=,!=,exits,not exits union 主要用于两张表中的数据的合并： 1select 字段 from table1 union all select 字段 from table2 要想不重复用union]]></content>
