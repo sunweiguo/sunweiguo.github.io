@@ -1,0 +1,80 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> mysql最基础知识小结 · FourColor</title><meta name="description" content="mysql最基础知识小结 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">mysql最基础知识小结</h1><div class="post-meta"><span class="post-time">Jan 25, 2019</span></div><div class="post-content"><p>本文介绍关于数据库的最最最最基本的一些语法知识，如果这些都不熟悉，建议多多练习，因为后续的文章会比较深入原理。</p>
+<a id="more"></a>
+<p>一、DDL语句</p>
+<p>1、创建数据库：<code>create database dbname;</code></p>
+<p>2、删除数据库：<code>drop database dbname;</code></p>
+<p>3、创建表：<code>create table tname;</code></p>
+<p>4、删除表：<code>drop table tname;</code></p>
+<p>5、修改表：略，懒得看</p>
+<hr>
+<p>二、DML语句</p>
+<ul>
+<li>插入：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">table</span>(字段<span class="number">1</span>，字段<span class="number">2</span>，...) <span class="keyword">values</span> (value1,value2,...) , (value3,value4,..)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>更新：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">update</span> <span class="keyword">table</span> <span class="keyword">set</span> 字段=<span class="keyword">value</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>删除：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">delete</span> <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<p>这里要注意下<code>delete</code>和<code>truncate</code>以及<code>drop</code>三者的区别，下篇文章详解。</p>
+<ul>
+<li>单表查询：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>连表查询方式1：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 别名<span class="number">1.</span>字段,别名<span class="number">2.</span>字段 <span class="keyword">from</span> table1 别名<span class="number">1</span>,table2 别名<span class="number">2</span> <span class="keyword">where</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>连表查询方式2：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 别名<span class="number">1.</span>字段,别名<span class="number">2.</span>字段 <span class="keyword">from</span> table1 别名<span class="number">1</span> <span class="keyword">join</span> table2 别名<span class="number">2</span> <span class="keyword">on</span> ...</span><br></pre></td></tr></table></figure>
+<p>这是全连接，这里就要了解一下笛卡儿积，简单来说，最后行数是左边表的函数乘以右边表的行数。详细的可以自行google.</p>
+<ul>
+<li>查询不重复的记录：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">distinct</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span> ...</span><br></pre></td></tr></table></figure>
+<ul>
+<li>排序：默认是升序</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">order</span> <span class="keyword">by</span> ... <span class="keyword">asc</span>/<span class="keyword">desc</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>limit：主要用于分页</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">order</span> <span class="keyword">by</span> ... <span class="keyword">asc</span>/<span class="keyword">desc</span> <span class="keyword">limit</span> 起始偏移位置，显示条数</span><br></pre></td></tr></table></figure>
+<ul>
+<li>聚合：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(*)/<span class="keyword">avg</span>(..)/<span class="keyword">sum</span>(...)/<span class="keyword">max</span>(...)/<span class="keyword">min</span>(...) <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">group</span> <span class="keyword">by</span> ... <span class="keyword">having</span> ....</span><br></pre></td></tr></table></figure>
+<p>注意这里的<code>having</code>和<code>where</code>的区别：<code>where</code>是对表结果进行筛选，<code>having</code> 是对查询结果进行筛选，与<code>group by</code> 合用</p>
+<ul>
+<li>左连接和右连接</li>
+</ul>
+<p>左连接意思就是左表中的记录都在，右表没有匹配项就以null显示。记录数等于左表的行数。</p>
+<p>右连接与之同理，尽量转为左连接做。</p>
+<ul>
+<li>子查询：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> <span class="keyword">table</span> <span class="keyword">where</span> ... <span class="keyword">in</span> (<span class="keyword">select</span> ....)</span><br></pre></td></tr></table></figure>
+<p>所谓子查询就是根据另一个<code>select</code>的结果再进行筛选，常用的是in,not in,=,!=,exits,not exits</p>
+<ul>
+<li>union<br>
+主要用于两张表中的数据的合并：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> 字段 <span class="keyword">from</span> table1 <span class="keyword">union</span> all <span class="keyword">select</span> 字段 <span class="keyword">from</span> table2</span><br></pre></td></tr></table></figure>
+<p>要想不重复用<code>union</code></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/25/network/8.一些常见的面试题/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Fri Jan 25 2019 21:51:16 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
