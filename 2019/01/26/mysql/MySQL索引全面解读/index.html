@@ -1,0 +1,123 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> MySQL索引全面解读 · FourColor</title><meta name="description" content="MySQL索引全面解读 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">MySQL索引全面解读</h1><div class="post-meta"><span class="post-time">Jan 26, 2019</span></div><div class="post-content"><p>彻底理解MySQL的存储引擎数据结构以及聚集索引。</p>
+<a id="more"></a>
+<h2>1.为什么需要索引</h2>
+<p>如果不用索引，那么最简单的方案是：将数据全部或者分批次地加载到内存，因为数据是以页的形式存储的，所以我们可以轮询这些页，找出有没有我们需要的数据。</p>
+<p>在大数据量的情况下，显然是会非常慢的。因为它要进行全表的扫描。</p>
+<p>而索引的灵感来源于字典，我们知道，新华字典前面有按照拼音或者按偏旁部首排序的一个列表页，我们可以快速地根据这个索引目录迅速定位到某几页，然后我们到这个某几页找一下就可以找到了。不需要全表扫描。</p>
+<h2>2.索引的数据结构</h2>
+<h5>2.1 二叉查找树上阵</h5>
+<p>二叉查找树的特点：</p>
+<ul>
+<li>二分搜索树本质上是一棵二叉树。不需要是一棵完全二叉树。</li>
+<li>每个节点的键值大于左孩子</li>
+<li>每个节点的键值小于右孩子</li>
+<li>以左右孩子为根的子树仍为二分搜索树</li>
+</ul>
+<p>二叉查找树有点很明显，我们查询一个数据只需要O(logn)的时间。但是它存在一个致命问题：</p>
+<p>我们有时会删除增加数据，搞的不好，会把他恶化成一个链表。</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-1.jpg" alt="image"></p>
+<p>但是有的同学说，我们可以利用红黑树之类的数据结构来维持住平衡二叉树的特性，这样不就好了吗？</p>
+<p>这里还存在另一个问题，就是IO。我们知道从磁盘查询数据，影响性能的关键点是iO的次数，然后这种一个节点只有两个孩子，在海量数据里，IO的次数还是太多，影响性能。</p>
+<p>我们这个时候就知道了方向，我们想找一个数据结构，它既包含了二叉树的优点，还要是平衡的树，还能使树的高度变矮，并且每个节点存储更多的数据。</p>
+<h5>2.2 BTree上阵</h5>
+<p>B数又叫平衡多路查找树。M阶代表一个树节点最多有多少个查找路径，M=M路,当M=2则是2叉树,M=3则是3叉</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-2.jpg" alt="image"></p>
+<p>有几个特点：</p>
+<ul>
+<li>根节点至少包含两个孩子</li>
+<li>排序方式：所有节点关键字是按递增次序排列，并遵循左小右大原则</li>
+<li><strong>子节点数</strong>：树中每个节点最多包含m个孩子(m&gt;=2)；除根节点和叶节点外，其他每个节点至少有ceil(m/2)个孩子</li>
+<li><strong>关键字数</strong>：枝节点的关键字数量大于等于ceil(m/2)-1个且小于等于m-1个（<strong>分别比孩子数少一个</strong>）</li>
+<li>所有叶子节点都位于同一层，即所有叶子节点高度都一样</li>
+</ul>
+<p>我们结合这个图来理解。</p>
+<p>可以看到，我们这是一个3路B树，根节点有3个孩子，有2个关键字。根据规则，子节点数最多为m个即3个，最少为ceil(1.5)个即2个；关键字数最多为m-1个即2个，最少为于ceil(1.5)-1个即1个.</p>
+<p>那么我们进行插入的时候，关键字这里最多为2个，所以大于2就要进行拆分。</p>
+<p>如何拆分呢？拿个例子来：</p>
+<p>定义一个5阶树（平衡5路查找树;），现在我们要把3、8、31、11、23、29、50、28 这些数字构建出一个5阶树出来;</p>
+<p>那么关键字最多为4个，超过4个就拆分。</p>
+<p>先插入 3、8、31、11</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-23jpg.jpg" alt="image"></p>
+<p>再插入23、29</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-3.jpg" alt="image"></p>
+<p>再插入50、28</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-4.jpg" alt="image"></p>
+<p>大概就是这样的流程。总之要维护一个从左到右逐渐增大的一个特性，并且必须是平衡的。(大概忽略里面可能存在的一些小错误，理解其中意思即可)</p>
+<p>对于删除也是如此，要满足以上的特性才行，这里就不再赘述了。</p>
+<p>对B树总结一下：</p>
+<p>B树相对于平衡二叉树的不同是，每个节点包含的关键字增多了，特别是在B树应用到数据库中的时候，数据库充分利用了磁盘块的原理（磁盘数据存储是采用块的形式存储的，每个块的大小为4K，每次IO进行数据读取时，同一个磁盘块的数据可以一次性读取出来）把节点大小限制和充分使用在磁盘快大小范围；把树的节点关键字增多后树的层级比原来的二叉树少了，减少数据查找的次数和复杂度;</p>
+<h5>2.3 B+树</h5>
+<p>是B树的变体，其定义基本上与B树是差不多的。除了：</p>
+<ul>
+<li><strong>非叶子节点的子树指针与关键字个数相同</strong></li>
+<li><strong>非叶子节点仅用来索引，数据都保存在叶子节点中</strong></li>
+<li><strong>所有叶子节点均有一个链指针指向下一个叶子节点</strong></li>
+</ul>
+<p>这就是B+树相对于B树的改进的几个点。</p>
+<p>由于数据存在叶子节点，优点是非叶子节点保存的关键字更多了，树的高度就会更矮。</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-5.jpg" alt="image"></p>
+<h5>2.4 总结</h5>
+<p>B+树更适合用来做存储索引：</p>
+<ul>
+<li>B+树的磁盘读写代价更低（因为内部不存放数据，一次性读取的关键字更多，IO次数降低）</li>
+<li>B+树的查询效率更加稳定（任何关键字的查找都要到叶子节点，导致每个查询都差不多）</li>
+<li>B+树有利于对数据库扫描（遍历叶子节点就可以直接扫描整个表，这个适合做范围查询）</li>
+</ul>
+<h5>2.5 Hash索引也可以考虑一下</h5>
+<p>Hash结构可以一次性地定位到响应位置。如果遇到碰撞的情况，只需要遍历链表即可。那么性能这么高，为什么我们不用Hash索引呢？</p>
+<p>它也有缺点：</p>
+<ul>
+<li>只能做等值操作，不能使用范围查询</li>
+<li>hash索引不是按照索引值顺序存储，无法使用于排序。</li>
+<li>不能利用部分索引键查询（比如组合索引，hash索引是对这几个索引一起hash计算的，而我们用组合索引中的部分索引时就无法用了）</li>
+<li>不能避免表扫描（会出现hashs冲突，必然要扫描里面具体的数据才行）</li>
+<li>遇到大量hash值相等的时候性能不一定比B树高(同上)</li>
+</ul>
+<h2>3. 聚集索引</h2>
+<h5>3.1 什么是聚集索引</h5>
+<p>在聚集索引中，表中行的物理顺序与键值的逻辑（索引）顺序相同。一个表只能包含一个聚集索引。</p>
+<p>如果某索引不是聚集索引，则表中行的物理顺序与键值的逻辑顺序不匹配。与非聚集索引相比，聚集索引通常提供更快的数据访问速度。</p>
+<h5>3.2 MyISAM和InnoDB索引实现</h5>
+<p><strong>第一个不同是：InnoDB的数据文件本身就是索引文件。而MyISAM的索引和数据是分开的。</strong></p>
+<p><code>MyISAM</code>引擎使用<code>B+Tree</code>作为索引结构，叶节点的<code>data</code>域存放的是数据记录的地址，是没有任何顺序而言的，所以<strong>MyISAM的索引方式也叫做“非聚集”的</strong>，之所以这么称呼是为了与InnoDB的聚集索引区分。</p>
+<p><code>MyISAM</code>中索引检索的算法为首先按照<code>B+Tree</code>搜索算法搜索索引，如果指定的Key存在，则取出其<code>data</code>域的值，然后以<code>data</code>域的值为地址，读取相应数据记录。</p>
+<p><img src="http://bloghello.oursnail.cn/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9523.png" alt="image"></p>
+<p>在<code>MyISAM</code>中，主索引和辅助索引（<code>Secondary key</code>）在结构上没有任何区别，只是主索引要求<code>key</code>是唯一的，而辅助索引的<code>key</code>可以重复。</p>
+<p><code>InnoDB</code>也使用<code>B+Tree</code>作为索引结构。<code>InnoDB</code>的数据文件本身就是索引文件，即  <code>InnoDB</code> 表是基于聚簇索引建立的。</p>
+<p><code>MyISAM</code>索引文件和数据文件是分离的，索引文件仅保存数据记录的地址（这一点可以通过在<code>data</code>目录下查看数据库文件验证。<code>Innodb</code>每一个数据库只有一个数据文件，而<code>Myisam</code>则有三个（数据文件、索引文件、表结构文件））。</p>
+<p>而在<code>InnoDB</code>中，表数据文件本身就是按<code>B+Tree</code>组织的一个索引结构，这棵树的叶节点<code>data</code>域保存了完整的数据记录。这个索引的<code>key</code>是数据表的主键，因此<code>InnoDB</code>表数据文件本身就是主索引。</p>
+<p><img src="http://bloghello.oursnail.cn/%E8%81%9A%E7%B0%87%E7%B4%A2%E5%BC%9524.png" alt="image"></p>
+<p>上图是<code>InnoDB</code>主索引（同时也是数据文件）的示意图，可以看到叶节点包含了完整的数据记录。这种索引叫做聚集索引。聚集索引的确定规则为：</p>
+<ul>
+<li>若一个主键被定义，该主键则作为聚集索引</li>
+<li>若没有主键被定义，该表的第一个唯一非空索引作为聚集索引</li>
+<li>若上述都找不到，innodb内部会生成一个隐藏主键(聚集索引)</li>
+<li>非主键索引存储相关键位和其对应的主键值，包含两次查找</li>
+</ul>
+<p><strong>第二个与<code>MyISAM</code>索引的不同是<code>InnoDB</code>的辅助索引<code>data</code>域存储相应记录主键的值而不是地址。</strong></p>
+<p>换句话说，<code>InnoDB</code>的所有辅助索引都引用主键作为<code>data</code>域。</p>
+<p>聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录。</p>
+<p><img src="http://bloghello.oursnail.cn/mysql4-6.jpg" alt="image"></p>
+<p>了解不同存储引擎的索引实现方式对于正确使用和优化索引都非常有帮助，例如知道了<code>InnoDB</code>的索引实现后，就很容易明白为什么不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大。再例如，用非单调的字段作为主键在<code>InnoDB</code>中不是个好主意，因为<code>InnoDB</code>数据文件本身是一颗<code>B+Tree</code>，非单调的主键会造成在插入新记录时数据文件为了维持<code>B+Tree</code>的特性而频繁的分裂调整，十分低效，而使用自增字段作为主键则是一个很好的选择</p>
+<h2>4. 总结</h2>
+<p>本文首先介绍的是为什么要索引。这个问题很简单。</p>
+<p>然后介绍了几种数据结构：二叉搜索树、二叉平衡树、B树以及B+树。一步一步引出为什么最终是B+树。面试的时候就看解决：为什么不能用二叉搜索树、为什么不用红黑树、B树和B+树各自的数据结构特点、B+树的优点</p>
+<p>最后介绍了聚集索引，因为这是MyISAM与InnoDB索引结构最大的不同。</p>
+<p>之前还是不能太准确理解聚集索引，这两种存储引擎都是以B+树数据结构建立索引结构的，但是InnoDB本身这个B+树就作为了索引文件，即索引与数据是放在一起的，所以逻辑上这样排的数据，它物理上也是这么排。</p>
+<p>而MyISAM的索引结构(B+树)与数据是分离的，虽然B+树可能是按照主键有序地组织，但是表的数据在另一个地方是随机放的，找数据是根据地址来找即可，所以这种结构就不是聚集的。</p>
+<p>理解了这个，下面就非常好理解了，InnoDB这个B+树，我们知道，叶子节点的核心数据就是主键。所以是按照主键递增的方式进行排列。这样子，无论是按照主键排序还是范围搜索，都会非常地快。</p>
+<p>那么如果是非主键索引的辅助索引呢？InnoDB只能通过两次查询来实现了，首先第一步是根据这个辅助索引找到存放在叶子节点中的主键值，然后根据主键再去主键索引中去查找对应的数据。</p>
+<p>而MyISAM索引，主键索引和辅助索引就区别不大了。都是单独一个索引结构，然后根据最后叶子节点中的该条数据的地址去找。</p>
+<p>上面说的按照主键排列，就是这里所谓的聚集索引啦。当然了，如果没有指定主键，会按照上面所说的规则去构建聚集索引。</p>
+<p>那么，面试的时候，就可以应对InnoDB与MyISAM索引结构的各自的实现和不同点啦。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/26/mysql/数据库索引入门/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Jan 26 2019 21:04:35 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
