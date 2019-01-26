@@ -1,0 +1,52 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 如何设计一个关系型数据库 · FourColor</title><meta name="description" content="如何设计一个关系型数据库 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">如何设计一个关系型数据库</h1><div class="post-meta"><span class="post-time">Jan 26, 2019</span></div><div class="post-content"><p>这是一个比较空的面试题，这里说一下如何回答。</p>
+<a id="more"></a>
+<h2>如何设计一个关系型数据库</h2>
+<p>我们考虑开发一个数据库最重要的模块是什么。首先数据存储是其核心功能。因此会有一个存储模块来存储数据。介质主要是硬盘。</p>
+<p>可是，光有存储是不行的。我们需要有以下程序模块对数据进行组织。</p>
+<ul>
+<li>存储管理</li>
+</ul>
+<p>我们需要对数据的格式和文件的分隔进行统一的管理，通过逻辑的形式来组合和表示出来。</p>
+<p>我们知道程序处理，需要将数据先加载到内存中去，不可能直接在硬盘上进行处理。</p>
+<p>我们通过io读取磁盘数据，磁盘的io是非常耗时的，所以硬盘以页的形式存储数据，根据局部性原理，往往用户要查询的数据周围的数据也会被查询到，所以取数据都是以页为单位查取多个数据，提高效率。</p>
+<ul>
+<li>缓存机制</li>
+</ul>
+<p>也就是上面提到的，一次IO不会只取用户所需要的一点数据，所以会涉及到缓存，缓存可能会不够放，那就涉及一些缓存淘汰的算法，比如比较常用的是LRU算法。</p>
+<ul>
+<li>SQL解析</li>
+</ul>
+<p>将SQL进行编译执行。如何提高SQL解析效率呢？可能也用缓存，缓存好SQL解析后的结果，下次再执行一样的SQL就可以免去解析的过程。</p>
+<ul>
+<li>日志管理</li>
+</ul>
+<p>要记录SQL操作，方便主从同步、灾难恢复等。这里要了解一下binlog.</p>
+<ul>
+<li>权限划分</li>
+</ul>
+<p>就是权限。</p>
+<ul>
+<li>容灾机制</li>
+</ul>
+<p>要对异常情况做好准备，比如数据库挂了怎么办。</p>
+<ul>
+<li>索引管理</li>
+</ul>
+<p>优化数据库执行效率。</p>
+<ul>
+<li>锁模块</li>
+</ul>
+<p>使得数据库支持并发操作。</p>
+<h2>总结</h2>
+<p>了解了上面的内容，我们就可以对这个问题做一个简单的总结性回答了，如何设计关系型数据库呢？首先数据库有一个存储的功能，使得它能存储在比如机械硬盘或者固态硬盘上面。其次，我们需要一个存储管理模块来映射程序逻辑与物理地址，实现存储管理。还需要缓存机制，对一些数据进行缓存提高效率，并且缓存不能太大，必须配备缓存淘汰机制；然后需要一个SQL解析模块，来解析SQL；然后需要日志管理来提供主从赋值、主从同步等功能；还需要一个权限划分模块，来提供给多用户使用场景；还需要容灾机制面对异常情况；最后，为了提高数据查询效率需要有索引管理模块；为了支持并发操作需要有锁模块。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/25/mysql/delete和truncate以及drop区别/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Jan 26 2019 16:23:31 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
