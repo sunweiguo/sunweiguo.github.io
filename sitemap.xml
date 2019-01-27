@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2019/01/27/mysql/%E5%A4%8D%E6%9D%82%E6%9F%A5%E8%AF%A2%E8%AE%AD%E7%BB%83/</loc>
+    <loc>http://yoursite.com/2019/01/27/mysql/mysql%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E7%90%86%E8%AE%BA%E7%9F%A5%E8%AF%86/</loc>
     
-    <lastmod>2019-01-27T14:25:36.834Z</lastmod>
+    <lastmod>2019-01-27T14:27:38.204Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://yoursite.com/2019/01/27/mysql/SQL%E5%BF%85%E7%9F%A5%E5%BF%85%E4%BC%9A/</loc>
     
-    <lastmod>2019-01-27T14:23:28.789Z</lastmod>
+    <lastmod>2019-01-27T14:26:55.942Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/01/27/mysql/%E5%A4%8D%E6%9D%82%E6%9F%A5%E8%AF%A2%E8%AE%AD%E7%BB%83/</loc>
+    
+    <lastmod>2019-01-27T14:25:36.834Z</lastmod>
     
   </url>
   
