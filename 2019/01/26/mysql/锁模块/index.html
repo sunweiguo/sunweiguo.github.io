@@ -1,5 +1,45 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 锁模块 · FourColor</title><meta name="description" content="锁模块 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">锁模块</h1><div class="post-meta"><span class="post-time">Jan 26, 2019</span></div><div class="post-content"><p>本章对行锁表所、共享锁排他锁进行详细说明。这是数据库锁的核心知识。</p>
 <a id="more"></a>
+<h2>MySQL中几种重要的锁概念</h2>
+<h6>共享锁（S）和 排他锁（X）</h6>
+<p>InnoDB 实现了标准的行级锁，包括两种：共享锁（简称 s 锁）、排它锁（简称 x 锁）</p>
+<ul>
+<li>共享锁允许持锁事务读取一行</li>
+<li>排它锁允许持锁事务更新或者删除一行</li>
+</ul>
+<p>如果事务 T1 持有行 r 的 s 锁，那么另一个事务 T2 请求 r 的锁时，会做如下处理：</p>
+<ul>
+<li>T2 请求 s 锁立即被允许，结果 T1 T2 都持有 r 行的 s 锁</li>
+<li>T2 请求 x 锁不能被立即允许</li>
+</ul>
+<p>如果 T1 持有 r 的 x 锁，那么 T2 请求 r 的 x、s 锁都不能被立即允许，T2 必须等待T1释放 x 锁才行。</p>
+<h6>意向锁</h6>
+<p>innodb的意向锁主要用户多粒度的锁并存的情况。比如事务A要在一个表上加S锁，如果表中的一行已被事务B加了X锁，那么该锁的申请也应被阻塞。如果表中的数据很多，逐行检查锁标志的开销将很大，系统的性能将会受到影响。为了解决这个问题，可以在表级上引入新的锁类型来表示其所属行的加锁情况，这就引出了“意向锁”的概念。</p>
+<p>举个例子，如果表中记录1亿，事务A把其中有几条记录上了行锁了，这时事务B需要给这个表加表级锁，如果没有意向锁的话，那就要去表中查找这一亿条记录是否上锁了。如果存在意向锁，那么假如事务Ａ在更新一条记录之前，先加意向锁，再加Ｘ锁，事务B先检查该表上是否存在意向锁，存在的意向锁是否与自己准备加的锁冲突，如果有冲突，则等待直到事务Ａ释放，而无须逐条记录去检测。事务Ｂ更新表时，其实无须知道到底哪一行被锁了，它只要知道反正有一行被锁了就行了。</p>
+<p>说白了意向锁的主要作用是处理行锁和表锁之间的矛盾，能够显示“某个事务正在某一行上持有了锁，或者准备去持有锁”</p>
+<ul>
+<li>意向排它锁（简称 IX 锁）表明一个事务意图在某个表中设置某些行的 x 锁</li>
+<li>意向共享锁（简称 IS 锁）表明一个事务意图在某个表中设置某些行的 s 锁</li>
+</ul>
+<p>例如， <code>SELECT ... LOCK IN SHARE MODE</code> 设置一个 IS 锁, <code>SELECT ... FOR UPDATE</code> 设置一个 IX 锁。</p>
+<p>意向锁的原则如下：</p>
+<ul>
+<li>一个事务必须先持有该表上的 IS 或者更强的锁才能持有该表中某行的 S 锁</li>
+<li>一个事务必须先持有该表上的 IX 锁才能持有该表中某行的 X 锁</li>
+</ul>
+<h6>next-key锁</h6>
+<p>InnoDB有三种行锁的算法：</p>
+<ul>
+<li>Record Lock：单个行记录上的锁。分为S Lock和X Lock</li>
+<li>Gap Lock：间隙锁，锁定一个范围，但不包括记录本身。GAP锁的目的，是为了防止同一事务的两次当前读，出现幻读的情况。</li>
+<li>Next-Key Lock：1+2，锁定一个范围，并且锁定记录本身。对于行的查询，都是采用该方法，主要目的是解决幻读的问题。</li>
+</ul>
+<p>在默认情况下，mysql的事务隔离级别是可重复读，并且<code>innodb_locks_unsafe_for_binlog</code>参数为0，这时默认采用<code>next-key locks</code>。所谓<code>Next-Key Locks</code>，就是<code>Record lock</code>和<code>gap lock</code>的结合，即除了锁住记录本身，还要再锁住索引之间的间隙。</p>
+<p>例子：假设一个索引包含值 10,11,13和20，索引上可能的NK 锁包括如下几个区间（注意开闭区间）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(negative infinity, 10]</span><br><span class="line">(10, 11]</span><br><span class="line">(11, 13]</span><br><span class="line">(13, 20]</span><br><span class="line">(20, positive infinity)</span><br></pre></td></tr></table></figure>
+<p>Innodb使用NK 锁来进行索引搜索和扫描，阻止了幻读。</p>
+<p>间隙锁在Innodb中是被“十足的抑制”的，也就是说，他们只阻止其他事务插入到间隙中，他们不阻止其他事物在同一个间隙上获得间隙锁。</p>
+<p>下篇文章会详细介绍一下。</p>
 <h2>MyISAM和InnoDB关于锁方面的区别</h2>
 <p>结论：</p>
 <ul>
