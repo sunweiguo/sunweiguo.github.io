@@ -1,0 +1,151 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Redis其他的功能介绍 · FourColor</title><meta name="description" content="Redis其他的功能介绍 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Redis其他的功能介绍</h1><div class="post-meta"><span class="post-time">Jan 29, 2019</span></div><div class="post-content"><p>本文为redis学习笔记的第三篇文章，本文主要介绍redis一些其他的功能。遇到某些场景的时候可以想到redis是不是可以实现。</p>
+<a id="more"></a>
+<p>除了String,Hash,List,Set以及SortedSet五种数据结构以外，还有一些重要的数据结构和功能。下面逐一简单介绍一下。</p>
+<!-- more -->
+<h2>一、慢查询日志</h2>
+<h4>1.1 什么是慢查询日志</h4>
+<p>慢查询日志帮助开发和运维人员定位系统存在的慢操作。慢查询日志就是系统在命令执行前后计算每条命令的执行时间，当超过预设阀值，就将这条命令的相关信息（慢查询ID，发生时间戳，耗时，命令的详细信息）记录下来。</p>
+<h4>1.2 redis一条命令简单的生命周期</h4>
+<p><img src="http://xiaozhao.oursnail.cn/redis%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%E7%AE%80%E5%8D%95%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.png" alt="image"></p>
+<p>慢查询只会出现在【<strong>3.执行命令</strong>】这个阶段，即慢查询只记录命令执行时间，并不包括命令排队时间和网络传输时间。</p>
+<h4>1.3 慢查询配置参数</h4>
+<blockquote>
+<p>慢查询的预设阀值  <code>slowlog-log-slower-than</code></p>
+</blockquote>
+<ul>
+<li><code>slowlog-log-slower-than</code>参数就是预设阀值，单位是微秒,默认值是10000，如果一条命令的执行时间超过10000微妙(10毫秒)，那么它将被记录在慢查询日志中。</li>
+<li>如果<code>slowlog-log-slower-than</code>的值是0，则会记录所有命令。</li>
+<li>如果<code>slowlog-log-slower-than</code>的值小于0，则任何命令都不会记录日志。</li>
+<li><code>redis</code>的操作一般是微妙级，<code>slowlog-log-slower-than</code>不要设置太大，一般设置为1毫秒。支持动态设置。</li>
+</ul>
+<blockquote>
+<p>慢查询日志的长度<code>slowlog-max-len</code></p>
+</blockquote>
+<ul>
+<li><code>slowlog-max-len</code>只是说明了慢查询日志最多存储多少条。</li>
+<li><code>Redis</code>使用一个列表来存储慢查询日志，<code>showlog-max-len</code>就是列表的最大长度。</li>
+<li>当慢查询日志已经到达列表的最大长度时，又有慢查询日志要进入列表，则最早插入列表的日志将会被移出列表，新日志被插入列表的末尾。</li>
+<li>默认是128，但是<code>slowlog-max-len</code>不要设置太小，可以设置为1000以上.</li>
+</ul>
+<p><strong>慢查询日志是一个先进先出队列，慢查询较多的情况下，可能会丢失部分慢查询命令，可以定期执行<code>slow get</code>命令将慢查询日志持久化到其他存储中。然后制作可视化界面查询。</strong></p>
+<h2>二、pipeline</h2>
+<h4>2.1 为什么会出现Pipeline</h4>
+<p>用普通的<code>get</code>和<code>set</code>，如果同时需要执行大量的命令，那就是等待上一条命令应答后再执行，这中间不仅仅多了<code>RTT（Round Time Trip）</code>，而且还频繁的调用系统IO，发送网络请求。</p>
+<p><img src="http://bloghello.oursnail.cn/%E6%89%B9%E9%87%8F%E7%BD%91%E7%BB%9C%E5%91%BD%E4%BB%A4%E9%80%9A%E4%BF%A1%E6%A8%A1%E5%9E%8B.png" alt="image"></p>
+<p>对于多条命令不是有<code>mget</code>和<code>mset</code>吗？确实对于一批的<code>get</code>和<code>set</code>可以用<code>mget</code>和<code>mset</code>，但是它的问题在于如果我们需要同时传输<code>get</code>和<code>hget</code>呢？此时<code>pipeline</code>(流水线)就出现了。</p>
+<p><img src="http://bloghello.oursnail.cn/%E6%B5%81%E6%B0%B4%E7%BA%BF.png" alt="image"></p>
+<p>所以流水线解决的问题是N条命令网络通信的减少。</p>
+<p><img src="http://bloghello.oursnail.cn/%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E4%BD%9C%E7%94%A8.png" alt="image"></p>
+<p>为什么说网络耗费时间大呢？这里给出一个极端的例子。</p>
+<p><img src="http://bloghello.oursnail.cn/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E6%97%B6%E9%97%B4.png" alt="image"></p>
+<p><code>pipeline</code>与原生M操作的对比。</p>
+<ul>
+<li>原生M操作是一个原子操作。</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/%E5%8E%9F%E7%94%9FM%E6%93%8D%E4%BD%9C.png" alt="image"></p>
+<ul>
+<li><code>pipeline</code>非原子命令。</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/pipeline%E9%9D%9E%E5%8E%9F%E5%AD%90%E5%91%BD%E4%BB%A4.png" alt="image"></p>
+<p>当某个命令的执行需要依赖前一个命令的返回结果时，无法使用<code>pipeline</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mset a “a1” b “b” c “c1” </span><br><span class="line">mget a b c</span><br></pre></td></tr></table></figure>
+<p><code>mget</code>和<code>mset</code>命令也是为了减少网络连接和传输时间所设置的，其本质和<code>pipeline</code>的应用区别不大，但是在特定场景下只能用<code>pipeline</code>实现，例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">get a</span><br><span class="line">set b ‘1’</span><br></pre></td></tr></table></figure>
+<p><code>pipeline</code>适合执行这种连续，且无相关性的命令。</p>
+<h4>2.2 一个demo</h4>
+<p>搭建一个<code>quickstart</code>的<code>maven</code>工程。过程略。</p>
+<p>引入依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.9.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>直接再单元测试中进行测试：普通的直接<code>hset</code> 10000条数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">"127.0.0.1"</span>,<span class="number">6379</span>);</span><br><span class="line">    <span class="keyword">long</span> before = System.currentTimeMillis();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10000</span>;i++)&#123;</span><br><span class="line">        jedis.hset(<span class="string">"hashkey"</span>+i,<span class="string">"filed"</span>+i,<span class="string">"value"</span>+i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">long</span> after = System.currentTimeMillis();</span><br><span class="line">    System.out.println(<span class="string">"一共耗时: "</span>+(after-before)+<span class="string">"ms"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<blockquote>
+<p>一共耗时: 1526ms</p>
+</blockquote>
+<p>但是用pipeline后：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test2</span><span class="params">()</span></span>&#123;</span><br><span class="line">    Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">"127.0.0.1"</span>,<span class="number">6379</span>);</span><br><span class="line">    <span class="keyword">long</span> before = System.currentTimeMillis();</span><br><span class="line">    <span class="comment">//分为10次批量发送</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">        Pipeline pipeline = jedis.pipelined();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">1000</span>*i;j&lt;(i+<span class="number">1</span>)*<span class="number">1000</span>;j++)&#123;</span><br><span class="line">            pipeline.hset(<span class="string">"hashkey:"</span>+j,<span class="string">"field:"</span>+j,<span class="string">"value:"</span>+j);</span><br><span class="line">        &#125;</span><br><span class="line">        pipeline.syncAndReturnAll();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">long</span> after = System.currentTimeMillis();</span><br><span class="line">    System.out.println(<span class="string">"使用pipeline一共耗时: "</span>+(after-before)+<span class="string">"ms"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>运行结果：使用<code>pipeline</code>一共耗时: 139ms</p>
+</blockquote>
+<p>可以预见，对于更多的传输次数，<code>pipeline</code>的优势将越来越明显。但是<code>pipeline</code>每次只能作用在一个<code>redis</code>节点上。</p>
+<h2>三、发布订阅</h2>
+<h4>3.1 角色</h4>
+<p>发布者----频道----订阅者</p>
+<h4>3.2 模型</h4>
+<p><img src="http://bloghello.oursnail.cn/%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85%E6%A8%A1%E5%9E%8B.png" alt="image"></p>
+<p>注意，新订阅的，是不能收到之前的消息的。</p>
+<ul>
+<li>订阅者1：subscribe mytopic</li>
+<li>订阅者2：subscribe mytopic</li>
+<li>订阅者3：subscribe mytopic</li>
+<li>发布者：publish mytopic “hello”</li>
+</ul>
+<p>缺点是不能保证消息可达，所以还是用专业的消息队列传达比较保障。</p>
+<p>与发布订阅模型很类似的是<strong>消息队列</strong>模型。</p>
+<p><img src="http://bloghello.oursnail.cn/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E6%A8%A1%E5%9E%8B.png" alt="image"></p>
+<p>只有一个是可以收到消息的。</p>
+<h2>四、bitMap</h2>
+<h5>4.1 位图是什么</h5>
+<p>就是通过一个<code>bit</code>位来表示某个元素对应的值或者状态,其中的<code>key</code>就是对应元素本身。我们知道8个<code>bit</code>可以组成一个<code>Byte</code>，所以<code>bitmap</code>本身会极大的节省储存空间。</p>
+<p><code>Bitmap</code>不是一个确切的数据类型，而是基于<code>String</code>类型定义的一系列面向位操作的方法。因为<code>String</code>是二进制安全的并且它们的最大长度是512MB，<br>
+所以<code>String</code>类型很合适去作为一个2^32长度的位数组。</p>
+<p>比如我们执行 <code>set hello big</code></p>
+<p>那么这个<code>big</code>其实是这个形态：</p>
+<p><img src="http://bloghello.oursnail.cn/%E5%AD%97%E7%AC%A6%E4%B8%B2big%E5%AF%B9%E5%BA%94%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6.png" alt="image"></p>
+<p>执行<code>getbit hello 0</code>  得到0； 执行<code>getbit hello 1</code> 得到1</p>
+<p><code>setbit hello 7 1</code>，那么再<code>get hello</code> 将得到<code>cig</code></p>
+<h5>4.2 位图有什么用呢？</h5>
+<p>位图除了<code>getbit</code>和<code>setbit</code>之外，还有<code>bitcount key [start end]</code>，就是获取执行范围内的1的个数。</p>
+<p><code>bitop</code>作用是做多个<code>Bitmap</code>的<code>and</code>,<code>or</code>,<code>not</code>,<code>xor</code>操作。</p>
+<blockquote>
+<p>以一个场景为例：日活跃用户</p>
+</blockquote>
+<p>每次用户登录时会执行一次<code>redis.setbit(daily_active_users, user_id, 1)</code></p>
+<p>因为日活跃用户每天都变化，所以需要每天创建一个新的<code>bitmap</code>。我们简单地把日期（年月日）添加到key后面，以后就可以根据年月日这个key找到某天活跃用户。实现了这个功能。</p>
+<blockquote>
+<p>第二个场景：用户签到情况</p>
+</blockquote>
+<p>将那天所代表的网站的上线日作为<code>offset</code>参数， 比如,如果今天是网站上线的第100天,而用户$uid=10001在今天阅览过网站, 那么执行命令<code>SETBIT peter 100 1</code>. 如果明天<code>$uid=10001</code>也继续阅览网站,那么执行命令<code>SETBIT peter 101 1</code> ,以此类推.</p>
+<p>仔细想想，用位图，一天签到一次只要占一个bit，8天才占一个字节。那么一年这个用户签到占的数据是365/8=45.625个字节.如果不用位图实现，保存一条记录将远远大于一个比特吧，那么当用户量很大的时候，差距将会特别大。</p>
+<h2>五、hyperLogLog</h2>
+<p>基于<code>HyperLogLog</code>算法：极小空间完成独立数量统计。本质还是字符串。</p>
+<ul>
+<li><code>pfadd key element [element...]</code>:向<code>hyperloglog</code>添加元素</li>
+<li><code>pfcount key [key...]</code>:计算<code>hyperloglog</code>的独立总数</li>
+<li><code>pfmerge destkey sourcekey [sourcekey...]</code>:合并多个<code>hyperloglog</code></li>
+</ul>
+<h4>api例子</h4>
+<p><img src="http://bloghello.oursnail.cn/hyperloglogdemo.png" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/hyperloglogdemo2.png" alt="image"></p>
+<h4>为什么要用hyperLogLog呢</h4>
+<p>我们上面例子可以看到，他的功能类似于去重，统计出所有不一样元素的个数。</p>
+<p>他的优点是：占用内存极小。</p>
+<p><img src="http://bloghello.oursnail.cn/hyperloglog%E5%86%85%E5%AD%98%E6%B6%88%E8%80%97.png" alt="image"></p>
+<p>缺点也有：</p>
+<ul>
+<li>他可能会出错，错误率为0.81%，看你是否能够容忍错误了</li>
+<li>不能拿到单条数据</li>
+</ul>
+<h2>六、geo</h2>
+<p>存储经纬度、计算两地距离、范围计算等。</p>
+<p>提到<code>LBS(Location Based Service)</code>，基于位置的服务。我立即想起<code>Mongodb</code>的<code>GEO</code>实现地理坐标查询等功能，具体介绍为<a href="http://fourcolor.oursnail.cn/2019/01/29/miscellany/12%E5%9C%B0%E7%90%86%E4%BD%8D%E7%BD%AE%E9%99%84%E8%BF%91%E6%9F%A5%E8%AF%A2%E7%9A%84GEOHASH%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" target="_blank" rel="noopener">地理位置附近查询的GEOHASH解决方案</a>。</p>
+<p><code>mongodb</code>最大的特点是灵活，因为其数据是以<code>json</code>的格式存储，所以字段随时可以增加或减少；<code>Redis</code>的特点是快，适合单一的，简单的，大量数据的存储；<code>HBase</code>我没有做深入研究，它的特点是大，适合做离线缓存。在处理社交这种关系复杂的数据存储时，依然还是需要用<code>mysql</code>这种关系型数据库，<code>nosql</code>并不能完全替代。</p>
+<h2>七、总结</h2>
+<ul>
+<li>首先是慢查询日志，可以定时地持久化，并且用一个可视化页面进行监测。</li>
+<li>pipeline解决的是对没有相互依赖的操作的批量执行，减少网络传输和IO时间。但是呢，需要注意一般只能往一个节点放数据，面对集群的时候，就需要采取一些策略了。mset、mget，目前只支持具有相同slot值的key执行批量操作。后文再讲。</li>
+<li>可以实现发布订阅模型以及消息队列，但是消息是无状态的，不能保证消息一定送达，所以需要用专业的MQ来实现。</li>
+<li>位图，可以实现极小的空间完成对大量用户信息的统计。</li>
+<li>地理坐标服务</li>
+</ul>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/29/redis/Redis基本数据结构和操作/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Jan 29 2019 21:49:41 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
