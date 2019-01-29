@@ -36,7 +36,7 @@
 <ul>
 <li><strong>缓存系统</strong>：这个就不多说了，<code>redis</code>作为高速缓存是其主要存在价值。</li>
 <li><strong>计数器</strong>：因为是原子操作<code>incr</code>+单线程，作为计数器永远不会出错</li>
-<li><strong>消息队列系统</strong>：数据结构可以实现这种生产者-消费者模式的消息队列。</li>
+<li><strong>消息队列系统</strong>：数据结构<code>list</code>可以实现这种生产者-消费者模式的消息队列。</li>
 <li><strong>排行榜</strong>：有序集合<code>sorted set</code>就可以实现</li>
 <li><strong>社交网络</strong>：<code>redis</code>与社交网络就是一家，非常方便用<code>set</code>就能实现诸如共同好友这些功能。</li>
 </ul>
