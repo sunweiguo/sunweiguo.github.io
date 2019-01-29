@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/29/redis/Redis%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E6%93%8D%E4%BD%9C/</loc>
+    
+    <lastmod>2019-01-29T12:14:13.025Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/29/redis/%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86Redis/</loc>
     
     <lastmod>2019-01-29T09:40:28.068Z</lastmod>
