@@ -1,7 +1,7 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 初步认识Redis · FourColor</title><meta name="description" content="初步认识Redis - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">初步认识Redis</h1><div class="post-meta"><span class="post-time">Jan 29, 2019</span></div><div class="post-content"><p>本文为redis学习笔记的第一篇文章，主要从感性层面来认识一下这个开发中的宠儿，无论是什么应用，只要有点用户量的，不上redis是不可能的。作为当今最优秀的缓存中间件，没有理由不去深入了解它！</p>
 <a id="more"></a>
 <h2>一、redis是什么</h2>
-<p>redis很快，官方宣布QPS达10万。</p>
+<p>redis很快，官方宣称QPS(每秒查询率)达10万。</p>
 <p><code>Redis</code>是一个开源的使用<code>ANSI C</code>语言编写、支持网络、<strong>单进程单线程</strong>、<strong>可基于内存亦可持久化</strong>、一个高性能的<code>key-value</code>数据库。</p>
 <p>简而言之，就是一个缓存数据库，基于内存，也可以持久化，速度贼快，几乎所有互联网公司都在使用。</p>
 <p>有的初学者可能看到数据库这个字眼，就把他归类于mysql之类，其实不是，mysql是一种关系型数据库，是存在磁盘中的。核心的数据是一定要落地到mysql之类的数据库中的。redis其实使用最多的功能是缓存，既然能存东西，那么必然也有数据库的功能，但是有可能会造成数据的缺失。所以，数据一定是要落入数据库才保险，redis可以作为缓存，缓存热点数据或者只读数据，提高性能并保护数据库。</p>
