@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/30/miscellany/13%E6%B7%B1%E5%85%A5%E6%8E%A2%E7%A9%B6Nginx%E5%8E%9F%E7%90%86/</loc>
+    
+    <lastmod>2019-01-30T09:12:37.405Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/30/redis/Redis%E4%B8%BA%E4%BB%80%E4%B9%88%E5%BF%AB/</loc>
     
     <lastmod>2019-01-30T09:00:35.737Z</lastmod>
