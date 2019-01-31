@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 数值计算精度丢失问题 · FourColor</title><meta name="description" content="数值计算精度丢失问题 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">数值计算精度丢失问题</h1><div class="post-meta"><span class="post-time">Jan 31, 2019</span></div><div class="post-content"><p>无论在什么业务中，钱是非常重要的东西，对账的时候一定要对的上，不能这边少一分那边多一分。对于数值的计算，尤其是小数，<code>double</code>和<code>double</code>都是禁止使用的。</p>
+<a id="more"></a>
+<blockquote>
+<p>阿里强制要求存放小数时使用 decimal，禁止使用 float 和 double。</p>
+<p>说明：float 和 double 在存储的时候，存在精度损失的问题，很可能在值的比较时，得到不正确的结果。如果存储的数据范围超过 <code>decimal</code> 的范围，建议将数据拆成整数和小数分开存储。</p>
+</blockquote>
+<p>处理方式可以为：<code>mysql</code> 可以用 <code>decimal</code> ，如果你是用 <code>java</code>， 在商业计算中我们要用 <code>java.math.BigDecimal</code>，注意：如果需要精确计算，非要用<code>String</code>来够造<code>BigDecimal</code>不可！</p>
+<p>那么到底是什么情况？</p>
+<h2>一个例子说明</h2>
+<p>废话不多说，上图：</p>
+<p><img src="http://bloghello.oursnail.cn/zaji8-1.png" alt="image"></p>
+<h2>问题原因</h2>
+<p>无论是我们本文提到的<code>double</code>，还是<code>float</code>，都是浮点数。</p>
+<p>在计算机科学中，浮点（英语：<code>floating point</code>，缩写为FP）<strong>是一种对于实数的近似值数值表现法</strong>，由一个有效数字（即尾数）加上幂数来表示，通常是乘以某个基数的整数次指数得到。以这种表示法表示的数值，称为浮点数（<code>floating-point number</code>）。</p>
+<p>其实我觉得很好理解，我们之前说过，计算机计算加减乘除啊，都是用的加法器，实质都是二进制的加法处理。那么这里就有一个二进制表示的问题。试想，4，2，8之流都是2的幂次方，可以完美用二进制表示，计算当然不会出现问题。对于0，1，3，5之类也都可以用二进制来表示出来，所以，正数肯定是没问题的。</p>
+<p>但是对于小数呢？1、0.5、0.25那都是可以转换成二进制的小数，如十进制的0.1，就无法用二进制准确的表示出来。因此只能使用近似值的方式表达。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji8-2.png" alt="image"></p>
+<p>如果我们尝试着把10进制的0.1转化成二进制，会怎么转呢？</p>
+<p>在十进制中，0.1如何计算出来的呢？</p>
+<blockquote>
+<p>0.1 = 1 ÷ 10</p>
+</blockquote>
+<p>那么二进制中也是同理：</p>
+<blockquote>
+<p>1 ÷ 1010</p>
+</blockquote>
+<p>我们回到小学的课堂，来列竖式吧：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">       0.000110011...</span><br><span class="line">      ------------------</span><br><span class="line">1010 ) 1 0000</span><br><span class="line">         1010</span><br><span class="line">       ------</span><br><span class="line">          1100</span><br><span class="line">          1010</span><br><span class="line">          ----</span><br><span class="line">            10000</span><br><span class="line">             1010</span><br><span class="line">            -----</span><br><span class="line">              1100</span><br><span class="line">              1010</span><br><span class="line">              ----</span><br><span class="line">                10</span><br></pre></td></tr></table></figure>
+<p>很显然，除不尽，除出了一个无限循环小数：二进制的 0.0001100110011…</p>
+<p>那么，如何在计算机中表示这个无限不循环的小数呢？只能考虑按照不同的精度保理不同的位数。</p>
+<p>我们知道float是单精度的，double是双精度的。不同的精度，其实就是保留的有效数字位数不同，保留的位数越多，精度越高。</p>
+<p>所以，浮点数在Java中是无法精确表示的，因为大部分浮点数转换成二进制是一个无限不循环的小数，只能通过保留精度的方式进行近似表示。</p>
+<h2>问题的解决</h2>
+<p><code>String</code> 构造方法是完全可预知的：写入 <code>newBigDecimal(&quot;0.1&quot;)</code> 将创建一个 <code>BigDecimal</code>，它正好等于预期的 0.1。因此，比较而言，通常建议优先使用<code>String</code>构造方法。</p>
+<p>使用<code>BigDecimal(String val)</code>！</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//加法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">add</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span></span>&#123;</span><br><span class="line">    BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">    BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">    <span class="keyword">return</span> b1.add(b2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//减法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">sub</span><span class="params">(<span class="keyword">double</span> v1,<span class="keyword">double</span> v2)</span></span>&#123;</span><br><span class="line">    BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">    BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">    <span class="keyword">return</span> b1.subtract(b2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//乘法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">mul</span><span class="params">(<span class="keyword">double</span> v1,<span class="keyword">double</span> v2)</span></span>&#123;</span><br><span class="line">    BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">    BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">    <span class="keyword">return</span> b1.multiply(b2);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//除法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">div</span><span class="params">(<span class="keyword">double</span> v1,<span class="keyword">double</span> v2)</span></span>&#123;</span><br><span class="line">    BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">    BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">    <span class="keyword">return</span> b1.divide(b2,<span class="number">2</span>,BigDecimal.ROUND_HALF_UP);<span class="comment">//四舍五入,保留2位小数,应对除不尽的情况</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么，上面的精度丢失问题就迎刃而解了。但是除不尽怎么办？比如10.0除以这里的3.0，保留小数点后三位有效数字：</p>
+<p><img src="http://bloghello.oursnail.cn/zaji8-3.png" alt="image"></p>
+<p>那么，每个用户得到的都是3.333元，三个用户加起来是得不到10块钱的。</p>
+<p>对于除法，始终会产生除不尽的情况怎么办？有个词叫轧差</p>
+<p>什么意思呢？举个简单例子。假如现在需要把10元分成3分，如果是10除以3这么除，会发现为3.33333无穷尽的3。这些数字完全无法在程序或数据库中进行精确的存储。</p>
+<p>简单理解就是，当除不尽或需去除小数点的时候，前面的n-1笔（这里n=3）做四舍五入。最后一笔做兜底（总金额减去前面n-1笔之和）。这样保证总金额的不会丢失。</p>
+<p>比如10块钱，三个用户分，前面两个用户只能各分到3。333块钱，最后一个用户分到3.334块钱。保证总额不变。</p>
+<p>至于原理，有一点点数学化，以后再作探讨吧。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/31/redis/Redis主从复制/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Thu Jan 31 2019 21:48:54 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
