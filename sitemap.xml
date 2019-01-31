@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/31/redis/Redis%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</loc>
+    
+    <lastmod>2019-01-31T12:45:39.983Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/31/redis/Redis%E6%8C%81%E4%B9%85%E5%8C%96/</loc>
     
-    <lastmod>2019-01-31T12:37:36.742Z</lastmod>
+    <lastmod>2019-01-31T12:38:25.820Z</lastmod>
     
   </url>
   
