@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-02-01T12:50:12.033Z</updated>
+  <updated>2019-02-01T13:18:07.079Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2019/02/01/redis/Redis-Cluster%E7%90%86%E8%AE%BA%E8%AF%A6%E8%A7%A3/"/>
+    <id>http://yoursite.com/2019/02/01/redis/Redis-Cluster理论详解/</id>
+    <published>2019-02-01T13:18:07.079Z</published>
+    <updated>2019-02-01T13:18:07.079Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>简明理解一致性hash算法</title>
@@ -388,26 +402,6 @@
     <summary type="html">
     
       &lt;p&gt;理解最左前缀原则，可以帮助我们避免索引失效。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="mysql" scheme="http://yoursite.com/tags/mysql/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MySQL调优</title>
-    <link href="http://yoursite.com/2019/01/26/mysql/MySQL%E8%B0%83%E4%BC%98/"/>
-    <id>http://yoursite.com/2019/01/26/mysql/MySQL调优/</id>
-    <published>2019-01-26T14:01:10.286Z</published>
-    <updated>2019-01-26T14:02:08.396Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文介绍最基本的sql调优手段。</p><a id="more"></a><h2>根据慢日志定位慢查询sql</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--这里是用模糊查询查出关于查询的一些配置项--&gt;</span><br><span class="line"><span class="keyword">show</span> <span class="keyword">variables</span> <span class="keyword">like</span> <span class="string">'%query%'</span></span><br></pre></td></tr></table></figure><p>我们关注<code>slow_query_log</code>：<code>OFF</code>，表示慢查询处于关闭状态。关注<code>long_query_time</code>：超出这个时间就是慢查询，记录到<code>slow_query_log_file</code>文件中。</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">status</span> <span class="keyword">like</span> <span class="string">'%slow_queries%'</span></span><br></pre></td></tr></table></figure><p>这一句作用是统计慢查询的数量。</p><p>如何打开慢查询呢？</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--打开慢查询--&gt;</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> slow_query_log = <span class="keyword">on</span>;</span><br><span class="line">&lt;!--慢查询的标准是1秒--&gt;</span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> long_query_time = <span class="number">1</span>;</span><br></pre></td></tr></table></figure><p>注意要重启一下客户端。或者在配置文件中设置，重启服务端就永久保留了。</p><h2>explain分析慢日志</h2><p>上一步时打开慢查询日志。下面要进行分析。</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> <span class="keyword">select</span> ...</span><br></pre></td></tr></table></figure><p>对这个命令进行分析。有两个关键字段：</p><p><code>type</code>：表示mysql找到数据行的方式，下面的顺序是由快到慢：</p><p><code>system</code>&gt;<code>const</code>&gt; <code>eq_ref</code>&gt;<code>ref</code>&gt;<code>fulltext</code>&gt;<code>ref_or_null</code>&gt;<code>index_merge</code>&gt;<code>unique_subquery</code>&gt;<code>index_subquery</code>&gt;<code>range</code>&gt;<code>index</code>&gt;<code>all</code></p><p><strong>其中<code>index</code>和<code>all</code>为全表扫描。说明需要优化。</strong></p><p><code>extra</code>：</p><ul><li><code>using_filesort</code>：表示MySQL会对结果使用一个外部索引排序，而不是从表里按索引次序读到相关内容。可能在内存或者磁盘上进行排序。MqSQL中无法利用索引完成的排序操作称为“文件排序”</li><li><code>using temporary</code>：表示MySQL在对查询结果排序时使用临时表。常见于排序order by 和分组查询 group by。</li></ul><p><strong>当<code>extra</code>中出现以上两项意味着MYSQL根本不能使用索引，效率会受到重大影响，应尽可能对此进行优化。</strong></p><h2>修改sql或者尽量让sql走索引</h2><p>上一步分析完之后，就要采取一定的措施来修正。</p><p>如果是没有加索引，可以对其加上索引。<code>extra</code>就会变成<code>using index</code>，表示走了索引。</p><h2>索引是越多越好吗</h2><ul><li>数据量小的表不需要建立索引，建立会增加额外的索引开销</li><li>数据变更需要维护索引，因此更多的索引意味着更多的维护成本</li><li>更多的索引意味着也需要更多的空间</li></ul><p>可以理解为，一个几页的宣传手册</p><ul><li>对于几页的宣传手册我们还需要建立一个目录吗？</li><li>变更这个小的宣传手册里面的章节还要修改目录不是更烦吗？</li><li>一个宣传手册内容就两页，结果你的目录就占了一页，这合理吗？</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文介绍最基本的sql调优手段。&lt;/p&gt;
     
     </summary>
     
