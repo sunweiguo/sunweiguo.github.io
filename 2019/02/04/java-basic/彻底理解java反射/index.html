@@ -48,7 +48,9 @@
 <li><code>getMethods</code>取得的<code>method</code>对应的方法<strong>包括从父类中继承的那一部分</strong>，而</li>
 <li><code>getDeclaredMethods</code>取得的<code>method</code>对应的方法<strong>不包括从父类中继承的那一部分</strong></li>
 </ul>
-<p>一个普通的类，他们的基类都是<code>Object</code>，那么如果用<code>getMethods</code>，遍历得到的结果，会发现<code>Object</code>中的基础方法名都会被打印出来。诸如<code>wait()</code>,<code>equals()</code>,<code>toString()</code>,<code>getClass()</code>,<code>notify()</code>,<code>notifyAll()</code>,<code>hashCode()</code>等等。</p>
+<p>一个普通的类，他们的基类都是<code>Object</code>，那么如果用<code>getMethods</code>，遍历得到的结果，会发现<code>Object</code>中的基础方法名都会被打印出来。</p>
+<p>诸如<code>wait()</code>,<code>equals()</code>,<code>toString()</code>,<code>getClass()</code>,<br>
+<code>notify()</code>,<code>notifyAll()</code>,<code>hashCode()</code>等等。</p>
 <h5>通过method.getReturnType()获取方法返回值对应的Class对象</h5>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class returnClass = method.getReturnType(); <span class="comment">// 获取方法返回值对应的Class对象</span></span><br><span class="line">String returnName = returnClass.getName();  <span class="comment">//获取返回值所属类的类名——也即返回值类型</span></span><br></pre></td></tr></table></figure>
 <h5>通过method.getParameterTypes()获取方法各参数的Class对象组成的数组</h5>
@@ -89,7 +91,8 @@
 </ul>
 <h4>反射的原理是什么</h4>
 <p>当我们编写完一个Java项目之后，每个java文件都会被编译成一个.class文件，这些Class对象承载了这个类的所有信息，包括父类、接口、构造函数、方法、属性等，这些class文件在程序运行时会被ClassLoader加载到虚拟机中。当一个类被加载以后，Java虚拟机就会在内存中自动产生一个Class对象。我们通过new的形式创建对象实际上就是通过这些Class来创建，只是这个过程对于我们是透明的而已。</p>
-<p>反射的工作原理就是借助<code>Class.java</code>、<code>Constructor.java</code>、<code>Method.java</code>、<code>Field.java</code>这四个类在程序运行时动态访问和修改任何类的行为和状态。</p>
+<p>反射的工作原理就是借助<code>Class.java</code>、<code>Constructor.java</code>、<br>
+<code>Method.java</code>、<code>Field.java</code>这四个类在程序运行时动态访问和修改任何类的行为和状态。</p>
 <h4>如何获取Class对象</h4>
 <ul>
 <li><code>Class</code>的<code>forName()</code>方法的返回值就是<code>Class</code>类型，也就是动态导入类的<code>Class</code>对象的引用</li>
