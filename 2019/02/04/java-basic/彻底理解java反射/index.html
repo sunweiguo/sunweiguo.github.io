@@ -1,0 +1,145 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> java反射 · FourColor</title><meta name="description" content="java反射 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">java反射</h1><div class="post-meta"><span class="post-time">Feb 4, 2019</span></div><div class="post-content"><p>反射机制这一块也是面试经常会被问到的，我从反射的基本概念到反射的一些面试题出发，好好理一理反射的知识。</p>
+<a id="more"></a>
+<h2>1. 什么是反射</h2>
+<p>标准定义：JAVA反射机制是在运行状态中，对于任意一个类，都能够知道这个类的所有属性和方法；对于任意一个对象，都能够调用它的任意方法和属性；这种动态获取信息以及动态调用方法的功能成为反射机制。</p>
+<p>注意几个关键字：运行状态中，动态获取。</p>
+<h2>2. Class对象和实例对象</h2>
+<p>想要理解反射首先需要知道<code>Class</code>这个类，它的全称是<code>java.lang.Class</code>类。java是面向对象的语言，讲究万物皆对象，即使强大到一个类，它依然是另一个类（<code>Class</code>类）的对象，换句话说，普通类是<code>Class</code>类的对象，即<code>Class</code>是所有类的类（<code>There is a class named Class</code>）。</p>
+<p>我们知道java世界是运行在JVM之上的，我们编写的类代码，在经过编译器编译之后，会为每个类生成对应的<code>.class</code>文件，这个就是JVM可以加载执行的字节码。</p>
+<p>运行时期间，当我们需要实例化任何一个类时，JVM会首先尝试看看在内存中是否有这个类，如果有，那么会直接创建类实例；如果没有，那么就会根据类名去加载这个类，当加载一个类，或者当加载器(<code>class loader</code>)的<code>defineClass()</code>被JVM调用，便会为这个类产生一个<code>Class</code>对象（一个<code>Class</code>类的实例），用来表达这个类，该类的所有实例都共同拥有着这个<code>Class</code>对象，而且是唯一的。</p>
+<p>也就是说，加载<code>.class</code>文件之后会生成一个对应的<code>Class</code>对象。下面说说如何获取这个<code>Class</code>对象。</p>
+<h2>3. 取得Class对象的三种方式</h2>
+<p>我们假设有这么一个类叫<code>MyClass</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一种方式：通过“类名.class”的方式取得</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class classInstance= MyClass.class;</span><br></pre></td></tr></table></figure>
+<p>例如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class clazz = Car.class;</span><br><span class="line">Class cls1 = int.class;</span><br><span class="line">Class cls2 = String.class;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第二种方式：通过类创建的实例对象的<code>getClass</code>方法取得</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MyClass myClass = <span class="keyword">new</span> MyClass();</span><br><span class="line">Class classInstance = myClass.getClass();</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第三种方式：通过<code>Class</code>类的静态方法<code>forName</code>方法取得（参数是带包名的完整的类名）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  Class classInstance = Class.forName(<span class="string">"mypackage.MyClass"</span>);</span><br><span class="line">&#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">  e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面三种方法取得的对象都是相同的，所以效果上等价。</p>
+<p><code>classInstance</code>是类类型，通过类类型可以得到一个类的属性和方法等参数，这是反射的基础。</p>
+<h2>4. 利用反射API全面分析类的信息——方法，成员变量，构造器</h2>
+<p>反射的一大作用是用于分析类的结构，或者说用于分析和这个类有关的所有信息。而这些信息就是类的基本的组成： 方法，成员变量和构造器。</p>
+<p>在java种万物皆对象，一个类中的方法，成员变量和构造器也分别对应着一个对象</p>
+<ol>
+<li>每个方法都对应有一个保存和该方法有关信息的<strong>Method对象</strong>， 这个对象所属的类是<code>java.lang.reflect.Method</code>;</li>
+<li>每个成员变量都对应有一个保存和该变量有关信息的<strong>Field对象</strong>，这个对象所属的类是 <code>java.lang.reflect.Field</code></li>
+<li>每个构造器都对应有一个保存和该构造器有关信息的<strong>Constructor对象</strong>，这个对象所属的类是<code>java.lang.reflect.Constructor</code></li>
+</ol>
+<p>假设c是一个类的Class对象：</p>
+<ul>
+<li>通过 <code>c.getDeclaredMethods()</code>可取得这个类中所有声明方法对应的<code>Method</code>对象组成的数组</li>
+<li>通过 <code>c.getDeclaredFields()</code>可取得这个类中所有声明的成员变量对应的<code>Field</code>对象组成的数组</li>
+<li>通过 <code>c.getConstructors()</code>; 可取得这个类中所有构造函数所对应的<code>Constructor</code>对象所组成的数组</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Method [] methods = c.getDeclaredMethods(); <span class="comment">// 获取方法对象列表</span></span><br><span class="line"> </span><br><span class="line">Field [] fields = c.getDeclaredFields();   <span class="comment">// 获取成员变量对象列表</span></span><br><span class="line"></span><br><span class="line">Constructor [] constructors = c.getConstructors();  <span class="comment">// 获取构造函数对象列表</span></span><br><span class="line"></span><br><span class="line">xxx.getName()就可以打印出对应的名字了。</span><br></pre></td></tr></table></figure>
+<h2>5. 更多的反射api</h2>
+<h5>getMethods和getDeclaredMethods方法</h5>
+<ul>
+<li><code>getMethods</code>取得的<code>method</code>对应的方法<strong>包括从父类中继承的那一部分</strong>，而</li>
+<li><code>getDeclaredMethods</code>取得的<code>method</code>对应的方法<strong>不包括从父类中继承的那一部分</strong></li>
+</ul>
+<p>一个普通的类，他们的基类都是<code>Object</code>，那么如果用<code>getMethods</code>，遍历得到的结果，会发现<code>Object</code>中的基础方法名都会被打印出来。诸如<code>wait()</code>,<code>equals()</code>,<code>toString()</code>,<code>getClass()</code>,<code>notify()</code>,<code>notifyAll()</code>,<code>hashCode()</code>等等。</p>
+<h5>通过method.getReturnType()获取方法返回值对应的Class对象</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class returnClass = method.getReturnType(); <span class="comment">// 获取方法返回值对应的Class对象</span></span><br><span class="line">String returnName = returnClass.getName();  <span class="comment">//获取返回值所属类的类名——也即返回值类型</span></span><br></pre></td></tr></table></figure>
+<h5>通过method.getParameterTypes()获取方法各参数的Class对象组成的数组</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class [] paramsClasses = method.getParameterTypes();</span><br><span class="line"><span class="keyword">for</span> (Class pc: paramsClasses) &#123;</span><br><span class="line">    String paramStr = pc.getName(); <span class="comment">// 获取当前参数类型</span></span><br><span class="line">    paramsStr+=paramStr + <span class="string">"  "</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5>获取成员变量类型对应的的Class对象</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Field field = c.getDeclaredField(<span class="string">"name"</span>);  <span class="comment">// 取得名称为name的field对象</span></span><br><span class="line">field.setAccessible(<span class="keyword">true</span>); <span class="comment">// 这一步很重要！！！设置为true才能访问私有成员变量name的值！</span></span><br><span class="line">String nameValue = (String) field.get(obj); <span class="comment">// 获取obj中name成员变量的值</span></span><br></pre></td></tr></table></figure>
+<h5>通过getType方法读取成员变量类型的Class对象</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Field field = class1.getDeclaredField(number<span class="string">");</span></span><br><span class="line"><span class="string">System.out.print(field.getType().getName());</span></span><br></pre></td></tr></table></figure>
+<p>因为java权限的原因，直接读取私有成员变量的值是非法的（加了<code>field.setAccessible(true)</code>后就可以了），但仍可以直接读取私有成员变量的类型</p>
+<h5>利用反射API分析类中构造器信息</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyClass</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">MyClass</span><span class="params">(<span class="keyword">int</span> a, String str)</span></span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">printContructorsMessage</span> <span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">Class c = obj.getClass();  <span class="comment">// 取得obj所属类对应的Class对象</span></span><br><span class="line">Constructor [] constructors = c.getDeclaredConstructors();</span><br><span class="line"><span class="keyword">for</span> (Constructor constructor : constructors) &#123;</span><br><span class="line">  Class [] paramsClasses =  constructor.getParameterTypes();</span><br><span class="line">  String paramsStr = <span class="string">""</span>;</span><br><span class="line">  <span class="keyword">for</span> (Class pc : paramsClasses) &#123;</span><br><span class="line">    String paramStr = pc.getName();</span><br><span class="line">    paramsStr+=paramStr + <span class="string">"  "</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  System.out.println(<span class="string">"构造函数的所有参数的类型列表："</span> + paramsStr);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造函数的所有参数的类型列表：<span class="keyword">int</span>  java.lang.String</span><br></pre></td></tr></table></figure>
+<h2>6. 利用反射动态加载类，并用该类创建实例对象</h2>
+<p>我们用普通的方式使用一个类的时候，类是静态加载的<br>
+，<strong>而使用Class.forName(“XXX”)这种方式，则属于动态加载一个类</strong></p>
+<p>静态加载的类在编译的时候就能确定该类是否存在，但动态加载一个类的时候却无法在编译阶段确定是否存在该类，而是在运行时候才能够确定是否有这个类，所以要捕捉可能发生的异常.</p>
+<p>Class对象有一个<code>newInstance</code>方法，我们可以用它来创建实例对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class classInstance = Class.forName(<span class="string">"mypackage.MyClass"</span>);</span><br><span class="line">MyClass myClass = (MyClass) classInstance.newInstance();</span><br></pre></td></tr></table></figure>
+<h2>7. 总结</h2>
+<ul>
+<li>反射为我们提供了全面的分析类信息的能力，例如类的方法，成员变量和构造器等的相关信息，反射能够让我们很方便的获取这些信息， 而实现这个获取过程的关键是取得类的<code>Class</code>对象，然后根据<code>Class</code>对象取得相应的<code>Method</code>对象，<code>Field</code>对象和<code>Constructor</code>对象，再分别根据各自的API取得信息。</li>
+<li>反射还为我们提供动态加载类的能力</li>
+<li>API中<code>getDeclaredXXX</code>和<code>getXXX</code>的区别在于前者只获取本类声明的XXX（如成员变量或方法），而不获取超类中继承的XXX， 后者都可以获取</li>
+<li>API中， <code>getXXXs</code>（注意后面的s）返回的是一个数组， 而对应的 <code>getXXX</code>（“键”）按键获取一个值（这个时候因为可能报已检查异常所以要用try*catch语句包裹）</li>
+<li>私有成员变量是不能直接获取到值的！因为java本身的保护机制，允许你取得私有成员变量的类型，但是不允许直接获取值，所以要对对应的<code>field</code>对象调用<code>field.setAccessible(true)</code> 放开权限</li>
+</ul>
+<h2>8. 面试</h2>
+<h4>什么是反射</h4>
+<p>反射是一种能够在程序运行时动态访问、修改某个类中任意属性（状态）和方法（行为）的机制</p>
+<h4>反射到底有什么具体的用处</h4>
+<ul>
+<li>操作因访问权限限制的属性和方法；</li>
+<li>实现自定义注解；</li>
+<li>动态加载第三方jar包，解决android开发中方法数不能超过65536个的问题；</li>
+<li>按需加载类，节省编译和初始化APK的时间；</li>
+</ul>
+<h4>反射的原理是什么</h4>
+<p>当我们编写完一个Java项目之后，每个java文件都会被编译成一个.class文件，这些Class对象承载了这个类的所有信息，包括父类、接口、构造函数、方法、属性等，这些class文件在程序运行时会被ClassLoader加载到虚拟机中。当一个类被加载以后，Java虚拟机就会在内存中自动产生一个Class对象。我们通过new的形式创建对象实际上就是通过这些Class来创建，只是这个过程对于我们是透明的而已。</p>
+<p>反射的工作原理就是借助<code>Class.java</code>、<code>Constructor.java</code>、<code>Method.java</code>、<code>Field.java</code>这四个类在程序运行时动态访问和修改任何类的行为和状态。</p>
+<h4>如何获取Class对象</h4>
+<ul>
+<li><code>Class</code>的<code>forName()</code>方法的返回值就是<code>Class</code>类型，也就是动态导入类的<code>Class</code>对象的引用</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; forName(String className) <span class="keyword">throws</span> ClassNotFoundException</span><br></pre></td></tr></table></figure>
+<ul>
+<li>每个类都会有一个名称为<code>Class</code>的静态属性，通过它也是可以获取到<code>Class</code>对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;Student&gt; clazz = Student.class;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Object</code>类中有一个名为<code>getClass</code>的成员方法，它返回的是对象的运行时类的<code>Class</code>对象。因为<code>Object</code>类是所有类的父类，所以，所有的对象都可以使用该方法得到它运行时类的<code>Class</code>对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Student stu = <span class="keyword">new</span> Student();</span><br><span class="line">Class&lt;Student&gt; clazz = stu.getClass();</span><br></pre></td></tr></table></figure>
+<h4>反射的特点</h4>
+<blockquote>
+<p>优点</p>
+</blockquote>
+<ul>
+<li>灵活、自由度高：不受类的访问权限限制，想对类做啥就做啥</li>
+</ul>
+<blockquote>
+<p>缺点</p>
+</blockquote>
+<ul>
+<li>性能问题</li>
+</ul>
+<p>通过反射访问、修改类的属性和方法时会远慢于直接操作，但性能问题的严重程度取决于在程序中是如何使用反射的。如果使用得很少，不是很频繁，性能将不会是什么问题；</p>
+<ul>
+<li>安全性问题</li>
+</ul>
+<p>反射可以随意访问和修改类的所有状态和行为，破坏了类的封装性，如果不熟悉被反射类的实现原理，随意修改可能导致潜在的逻辑问题；</p>
+<h4>如何提高反射性能</h4>
+<p>java应用反射的时候，性能往往是java程序员担心的地方，那么在大量运用反射的时候，性能的微弱提升，对这个系统而言都是如旱地逢甘霖。</p>
+<ul>
+<li><code>setAccessible(true)</code>,可以防止安全性检查（做这个很费时）</li>
+<li>做缓存，把要经常访问的元数据信息放入内存中，<code>class.forName</code> 太耗时</li>
+<li><code>getMethods()</code> 等方法尽量少用，尽量调用<code>getMethod(name)</code>指定方法的名称，减少遍历次数</li>
+</ul>
+<h4>java面试中面试官让你讲讲反射，应该从何讲起？</h4>
+<p>先讲反射机制，反射就是程序运行期间JVM会对任意一个类洞悉它的属性和方法，对任意一个对象都能够访问它的属性和方法。依靠此机制，可以动态的创建一个类的对象和调用对象的方法。</p>
+<p>其次就是反射相关的API，只讲一些常用的，比如获取一个<code>Class</code>对象。<code>Class.forName(完整类名)</code>。通过<code>Class</code>对象获取类的构造方法，<code>class.getConstructor</code>。根据<code>Class</code>对象获取类的方法，<code>getMethod</code>和<code>getMethods</code>。使用<code>Class</code>对象创建一个对象，<code>class.newInstance</code>等。</p>
+<p>最后可以说一下反射的优点和缺点，优点就是增加灵活性，可以在运行时动态获取对象实例。缺点是反射的效率很低，而且会破坏封装，通过反射可以访问类的私有方法，不安全。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/03/java-basic/Java如何执行一个最简单的程序/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Feb 04 2019 16:33:13 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
