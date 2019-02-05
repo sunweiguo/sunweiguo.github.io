@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 细谈loadClass · FourColor</title><meta name="description" content="细谈loadClass - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">细谈loadClass</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>对于获取Class对象，其实我们不知不觉中已经接触过两种了，一种就是loadClass，一种就是<a href="http://fourcolor.oursnail.cn/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/" target="_blank" rel="noopener">反射</a>中的forName，它们到底有什么区别呢？其实涉及了类加载过程的区别。下面好好来探讨一下。</p>
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 细谈loadClass · FourColor</title><meta name="description" content="细谈loadClass - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">细谈loadClass</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>本篇为学习JAVA虚拟机的第四篇文章，对于获取Class对象，其实我们不知不觉中已经接触过两种了，一种就是loadClass，一种就是<a href="http://fourcolor.oursnail.cn/2019/02/04/java-basic/%E5%BD%BB%E5%BA%95%E7%90%86%E8%A7%A3java%E5%8F%8D%E5%B0%84/" target="_blank" rel="noopener">反射</a>中的forName，它们到底有什么区别呢？其实涉及了类加载过程的区别。下面好好来探讨一下。</p>
 <a id="more"></a>
 <h2>一、问题的提出</h2>
 <p>对于之前的 测试代码：</p>
@@ -58,12 +58,10 @@
 <h5>2.4 解析</h5>
 <p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程。解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行。</p>
 <p>对于这里说的：将符号引用替换为直接引用。很多人包括我第一次看到的时候感觉莫名其妙，教材上也是直接用这些专用名词，给我们的学习带来了极大的困扰。这里还是要解释一下。</p>
-<p>由上一篇文章知道，加载完class文件之后很多类的信息以及Class对象都是存放再方法区中的。在JVM运行时区域的方法区中，有一块区域是运行时常量池，主要用来存储编译期生成的各种字面量和符号引用。</p>
-<p>了解过JVM就会知道，在java代码被javac编译之后，文件结构中是包含一部分<code>Constant pool</code>的。比如以下代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    String s = &quot;abc&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>s</code>就是前面提到的符号引用，而<code>abc</code>就是前面提到的字面量。而<code>Class</code>文件中的常量池部分的内容，会在运行期被运行时常量池加载进去。</p>
-<p>此时，知道了什么是符号引用就好办了，因为符号引用一般都是放在栈中的，这个玩意肯定是依赖于实际的东西，相当于一个指针，多以我们程序需要将其解析成这个实际东西所在的真正的地址。而上面提到的运行时常量池，其实就是某一部分，比如字符串，就会把字面量放在运行时常量池中，只要不是new的，都可以从这个池子里拿出来即可，此时就是将运行时常量池中这个字面量的地址作为直接引用即可，提高效率也降低内存的使用。</p>
-<p>简单而言，对于这个简单的例子，<code>s</code>是符号引用，解析阶段会将其解析为运行时常量池中&quot;abc&quot;的地址，这个地址就是直接引用。</p>
+<p>比如以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    String s = <span class="string">"abc"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>s</code>是符号引用，而<code>abc</code>是字面量。</p>
+<p>此时，知道了什么是符号引用就好办了，因为符号引用一般都是放在栈中的，这个玩意肯定是依赖于实际的东西，相当于一个指针，多以我们程序需要将其解析成这个实际东西所在的真正的地址。所以，一旦解析了，那么内存中必然实际存在了这个对象，即拥有实际的物理地址了。</p>
 <h5>2.5 初始化</h5>
 <p>类初始化阶段是类加载过程的最后一步，到了初始化阶段，才真正开始执行类中定义的java程序代码。在准备阶段，变量已经赋过一次系统要求的初始值，而在初始化阶段，则根据程序猿通过程序制定的主观计划去初始化类变量和其他资源，或者说：初始化阶段是执行类构造器<code>&lt;clinit&gt;()</code>方法的过程.</p>
 <h2>三、new、loadClass、forName</h2>
@@ -90,7 +88,7 @@
 <p><img src="http://bloghello.oursnail.cn/jvm4-12.png" alt="image"></p>
 <p>我们这个时候发现，里面是一个<code>static</code>方法，也就是说，我们要立即创建驱动。所以这个时候必须用<code>forname</code>方法啦！</p>
 <p>那么对于<code>loadClass</code>，其实上面已经提及了，就是懒加载，这个思想再<code>spring</code>中是到处可见的，<code>bean</code>只是加载，但是步进行初始化，等用的时候再去初始化，提高性能。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/双亲委派模型/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/JAVA内存模型-线程私有/" class="prev">PRVE</a><a href="/2019/02/05/JVM/双亲委派模型/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Tue Feb 05 2019 19:10:58 GMT+0800',
     owner: 'sunweiguo',

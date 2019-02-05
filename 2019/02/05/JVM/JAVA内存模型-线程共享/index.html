@@ -1,0 +1,129 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> JAVA内存模型-线程共享 · FourColor</title><meta name="description" content="JAVA内存模型-线程共享 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">JAVA内存模型-线程共享</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>本篇为学习JAVA虚拟机的第六篇文章，介绍线程共享区域。</p>
+<a id="more"></a>
+<h2>一、内存模型–JAVA堆</h2>
+<ul>
+<li>
+<p>java堆一般是java虚拟机所管理的内存中最大的一块。</p>
+</li>
+<li>
+<p>java堆是被所有线程共享的一块内存区域，在虚拟机启动时创建。</p>
+</li>
+<li>
+<p>堆上存放对象实例和数组。</p>
+</li>
+<li>
+<p>java堆可以处于物理上不连续的内存空间中，只要逻辑上是连续的即可。</p>
+</li>
+<li>
+<p>如果在堆中没有内存完成实例分配，并且堆也无法再扩展时，将会抛出<code>OutOfMemoryError</code>异常。</p>
+</li>
+</ul>
+<h2>二、内存模型–方法区</h2>
+<p><img src="http://bloghello.oursnail.cn/jvm5-4.png" alt="image"></p>
+<blockquote>
+<p>方法区和堆一样，是各个线程共享的内存区域。</p>
+</blockquote>
+<blockquote>
+<p>它用于存储已被虚拟机加载的类信息、常量、静态变量、及时编译器编译后的代码等数据。</p>
+</blockquote>
+<blockquote>
+<p>其中，类信息包含类的版本、字段、接口、方法</p>
+</blockquote>
+<h2>八、PermGen与Metaspace</h2>
+<p>其实，方法区可以理解为一个规范，jdk6的具体实现是<code>PermGen</code>,而后来的版本具体实现是<code>Metaspace</code>。它们有一定的区别。</p>
+<p>在 <code>HotSpot JVM</code> 中，永久代中用于存放类和方法的元数据以及常量池，比如<code>Class</code>和<code>Method</code>。每当一个类初次被加载的时候，它的元数据都会放到永久代中。</p>
+<p>永久代是有大小限制的，它用的是JVM内存，即与堆内存等价的<code>no heap</code>区域，因此如果加载的类太多，很有可能导致永久代内存溢出，即万恶的 <code>java.lang.OutOfMemoryError: PermGen</code> ，为此我们不得不对虚拟机做调优。</p>
+<ol>
+<li>由于 <code>PermGen</code> 内存经常会溢出，引发恼人的 <code>java.lang.OutOfMemoryError: PermGen</code>，因此 <code>JVM</code> 的开发者希望这一块内存可以更灵活地被管理，不要再经常出现这样的 OOM</li>
+<li>移除 <code>PermGen</code> 可以促进 <code>HotSpot JVM</code> 与 <code>JRockit VM</code> 的融合，因为 <code>JRockit</code> 没有永久代。</li>
+</ol>
+<p>根据上面的各种原因，<code>PermGen</code> 最终被移除，方法区移至 <code>Metaspace</code>，字符串常量移至 <code>Java Heap</code>。<code>Metaspace</code>并不在虚拟机中，而是使用本地内存,十分方便管理，不会出现永久带内存溢出问题，垃圾回收的时候这个单独区域方便处理。</p>
+<h2>三、运行时常量池</h2>
+<blockquote>
+<p>是方法区的一部分。</p>
+</blockquote>
+<blockquote>
+<p>类文件中除了类的版本、字段、方法、接口等描述信息外，还有一项信息是常量池，用于存放编译期生成的各种字面量和符号引用，这部分内容将在类加载后进入方法的运行时常量池中存放。</p>
+</blockquote>
+<blockquote>
+<p>这里尤其值得注意的是字符串的创建，会被扔到字符串常量池中。如果是new，那么还是在堆重创建的。当然，运行时也可以产生新的常量放入池中，比如讲new出来的字符串用<code>intern()</code>方法便可以在运行时将其放到常量池中。</p>
+</blockquote>
+<p><strong>举例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">	String str1 = <span class="string">"hello"</span>;</span><br><span class="line">	String str2 = <span class="string">"hello"</span>;</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str2); <span class="comment">//true</span></span><br><span class="line">	</span><br><span class="line">	String str3 = <span class="keyword">new</span> String(<span class="string">"hello"</span>);</span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3); <span class="comment">//false</span></span><br><span class="line">	</span><br><span class="line">	System.out.println(str1 == str3.intern()); <span class="comment">//true	</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>说明</strong></p>
+<blockquote>
+<p>对于直接声明的内容相同的字符串，对于str2来说是不需要重新分配地址的，因为str1的hello这个常量已经存在于常量池中了。所以他们两个其实是一个东西。</p>
+</blockquote>
+<blockquote>
+<p>对于new出来的str3，是不会直接扔到常量池中的，他是在堆中分配，地址不一样，所以显然是false。</p>
+</blockquote>
+<blockquote>
+<p>String类的<code>intern()</code>方法，使得运行时将堆中产生的对象放入常量池中，所以是true。</p>
+</blockquote>
+<p>这里我在<a href="http://fourcolor.oursnail.cn/2019/01/23/java-basic/java%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A0%B8%E5%BF%83%E4%B8%80%E7%BD%91%E6%89%93%E5%B0%BD/" target="_blank" rel="noopener">java字符串核心一网打尽</a>中已经详细说明了，不再赘述。</p>
+<h2>四、对象探秘</h2>
+<h5>4.1 对象的创建过程</h5>
+<ul>
+<li>
+<p>类加载检查：检查该对象的类是否已经被加载、解析、初始化过，如果没有则先进行类加载操作。</p>
+</li>
+<li>
+<p>分配内存：如果内存规整使用“指针碰撞”分配，否则一般使用“空闲列表”分配，具体看垃圾回收器是否带有整理（<code>Compact</code>）空闲内存功能。</p>
+</li>
+<li>
+<p>初始化：将内存区初始化置零，不包含对象头，这一步保证了对象的实例字段在java代码中可以不赋初值就直接使用，程序能访问到这些字段的数据类型所对应的零值。</p>
+</li>
+<li>
+<p>对象头设置：这个对象是哪个类的实例、如何找到类的元数据信息、哈希码、GC分代年龄信息等即为对象头</p>
+</li>
+<li>
+<p>对象的方法：即按照程序员的意愿进行初始化</p>
+</li>
+</ul>
+<h5>4.2 对象的内存布局</h5>
+<ul>
+<li>对象头</li>
+</ul>
+<p><strong>一部分称为<code>Mark Word</code>，存储对象自身运行时的数据</strong>，包含哈希码、GC分代年龄、锁状态标志等等。</p>
+<p>采用压缩存储，压缩到虚拟机位数（32位/64位）。由于对象头信息是与对象自身定义的数据无关的额外存储成本，考虑到虚拟机的空间效率，<code>Mark Word</code>被设计为一个非固定的数据结构以便在极小的空间内存储尽量多的信息，它会根据对象的状态复用自己的存储空间。</p>
+<p><strong>另一部分为类型指针，指向它的类元数据，虚拟机通过这个指针来确定这个对象是哪个类的实例</strong>。并不是所有虚拟机实现都必须在对象数据上保留类型指针，换句话说，查找对象的元数据信息不一定要经过对象本身。</p>
+<p>如果对象是一个java数组，那么在对象头中还必须有一块用于记录数组长度的数据，因为虚拟机可以通过普通java对象的元数据信息确定java对象的大小，但是从数组的元数据中却无法确定数组的大小。</p>
+<ul>
+<li>
+<p>实例数据</p>
+<ul>
+<li>实例数据部分是对象真正存储的有效信息，也是在程序中定义的各种类型的字段内容。</li>
+<li>无论是从父类继承下来的，还是在子类中定义的，都需要记录起来。</li>
+<li>从分配策略中可以看出，相同宽度的字段总是分配在一起，在满足这个前提条件的情况下，在父类中定义的变量会出现在子类之前。</li>
+</ul>
+</li>
+<li>
+<p>对齐填充</p>
+<ul>
+<li>非必需，只有前两者加起来非8的倍数时才会有。</li>
+<li>因为<code>HotSpot VM</code> 的自动内存管理系统要求对象起始地址必须是8字节的整数倍，也就是说，对象的大小必须是8字节的整数倍。不对齐的时候，需要通过它来填充对齐。</li>
+</ul>
+</li>
+</ul>
+<h2>九、对象的访问定位</h2>
+<ul>
+<li>通过句柄访问</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20160720214130162?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>通过句柄访问对象：当java虚拟机GC移动堆对象时，并不需要修改<code>reference</code>，只需修改句柄对象的实例数据指针。</p>
+<ul>
+<li>通过直接指针访问</li>
+</ul>
+<p><img src="http://img.blog.csdn.net/20160720214145756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p>通过直接指针访问对象：加快了对象访问速度，比间接访问少一次对象实例数据的访问，<code>HotSpot</code>则采用的这种访问方式。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/JAVA内存模型-线程私有/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 05 2019 21:31:10 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
