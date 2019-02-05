@@ -109,12 +109,12 @@
 <ul>
 <li>通过句柄访问</li>
 </ul>
-<p><img src="http://img.blog.csdn.net/20160720214130162?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/jvm5-5.png" alt="image"></p>
 <p>通过句柄访问对象：当java虚拟机GC移动堆对象时，并不需要修改<code>reference</code>，只需修改句柄对象的实例数据指针。</p>
 <ul>
 <li>通过直接指针访问</li>
 </ul>
-<p><img src="http://img.blog.csdn.net/20160720214145756?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/jvm5-6.png" alt="image"></p>
 <p>通过直接指针访问对象：加快了对象访问速度，比间接访问少一次对象实例数据的访问，<code>HotSpot</code>则采用的这种访问方式。</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/JAVA内存模型-线程私有/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
