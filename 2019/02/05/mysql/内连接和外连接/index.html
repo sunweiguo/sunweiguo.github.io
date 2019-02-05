@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 内连接和外连接 · FourColor</title><meta name="description" content="内连接和外连接 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">内连接和外连接</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>最近上班，天天有人来面试，问的问题我都听的蛮清楚的，比如内连接和外连接的区别，好像很简单，但还是说的不好，这里总结一下。</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">    A表                         B表</span><br><span class="line">id      name                id      name </span><br><span class="line">1          a                1       b </span><br><span class="line">2          b                3       c</span><br><span class="line">4          c</span><br></pre></td></tr></table></figure>
+<h3>内连接</h3>
+<p>内连接就是左表和右表相同的数据:</p>
+<p><img src="http://bloghello.oursnail.cn/mysql9-1.png" alt="image"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> A <span class="keyword">inner</span> <span class="keyword">join</span> B <span class="keyword">on</span> A.id=B.id</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">id      name            id      name </span><br><span class="line">1         a              1       b</span><br></pre></td></tr></table></figure>
+<h3>左外连接</h3>
+<p>左外连接就是以左表为准，去匹配右表，左表有多少条数据，结果就是多少条数据</p>
+<p><img src="http://bloghello.oursnail.cn/mysql9-2.png" alt="image"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> A <span class="keyword">left</span> <span class="keyword">join</span> B <span class="keyword">on</span> A.id=B.id</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">id      name        id     name </span><br><span class="line">1         a          1       b </span><br><span class="line">2         b         null    null</span><br><span class="line">4         c         null    null</span><br></pre></td></tr></table></figure>
+<h3>右外连接</h3>
+<p>右外连接就是与左外连接反之，以右表为准，去匹配左表，右表有多少条数据，结果就是多少条数据</p>
+<p><img src="http://bloghello.oursnail.cn/mysql9-3.png" alt="image"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> A <span class="keyword">right</span> <span class="keyword">join</span> B <span class="keyword">on</span> A.id=B.id</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id      name            id     name </span><br><span class="line">1         a             1       b </span><br><span class="line">null    null            3       c</span><br></pre></td></tr></table></figure>
+<h3>交叉连接</h3>
+<p>交叉连接不带 <code>WHERE</code> 子句，它返回被连接的两个表所有数据行的笛卡尔积，返回到<br>
+结果集合中的数据行数等于第一个表中符合查询条件的数据行数乘以第二个表中符合查<br>
+询条件的数据行数。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> A <span class="keyword">join</span> B</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">id  name  id  name</span><br><span class="line">1	 a	  1	   b</span><br><span class="line">1	 a	  3	   c</span><br><span class="line">2	 b    1    b</span><br><span class="line">2	 b	  3	   c</span><br><span class="line">4	 c	  1	   b</span><br><span class="line">4	 c	  3	   c</span><br></pre></td></tr></table></figure>
+<h3>内连接和外连接的区别</h3>
+<p>内连接只列出两张表共同匹配的数据行，而外连接的结果集中不仅包含符合连接条件的数据行，还包括左表(左外连接或左连接)或右表(右外连接或右连接)中的所有数据行。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/JAVA内存模型-线程共享/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 05 2019 22:19:25 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
