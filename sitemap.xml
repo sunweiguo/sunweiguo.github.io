@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/05/JVM/%E7%BB%86%E8%B0%88loadClass/</loc>
+    
+    <lastmod>2019-02-05T11:13:03.264Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/05/JVM/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/</loc>
     
     <lastmod>2019-02-05T08:26:50.082Z</lastmod>
