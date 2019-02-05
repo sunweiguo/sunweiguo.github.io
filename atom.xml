@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-02-04T08:42:30.505Z</updated>
+  <updated>2019-02-05T05:39:59.727Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2019年展望</title>
+    <link href="http://yoursite.com/2019/02/05/suibi/2019%E5%B9%B4%E5%B1%95%E6%9C%9B/"/>
+    <id>http://yoursite.com/2019/02/05/suibi/2019年展望/</id>
+    <published>2019-02-05T05:38:52.590Z</published>
+    <updated>2019-02-05T05:39:59.727Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天是大年初一，算是真正步入2019年了。保存几张老家门口拍的照片，以作纪念。</p><a id="more"></a><p><img src="http://bloghello.oursnail.cn/suibi1-2.jpg" alt="image"></p><p>老家的后面是一片田地。</p><p><img src="http://bloghello.oursnail.cn/suibi1-3.jpg" alt="image"></p><p>老家越来越冷清，越来越萧条。</p><p>今年四月底顺利毕业的话，就真的工作了，在南京，本科+研究生读了七年书，加上小时候每年暑假都来南京玩，对南京的熟悉的程度远远大于家乡盐城。</p><p>所以希望可以努力，在南京能扎下根，然后一家人全搬过去。</p><p>在找工作方面，找的并不理想，可能还在不好的几个offer之中选择了更不好的一个，心里甚是难受。不过，凡事都没有绝对，往好处多想想就好了，关键还是靠自己努力。</p><p>在2018年，算是学习java的进阶之年，自己学习了很多新的技术，也好好地夯实了基础，把以前很多模糊的问题搞清楚了，确实，基础真的太重要的，光学时髦的框架，可以写写简单的CRUD应用，是远远不够的，我觉得程序员的目标是可以造出大家都认可并且乐于使用的开源作品，没有好的基础，便是天方夜谭，也只能永远做一个普通的码农。</p><p>所以，我给自己定一个三年的目标，三年以后，无论是搞java还是搞大数据还是其他，我希望能达到中高级水平，在这个行业方向上有较好的基础和较深的认识。为后续更高的发展打下坚实的基础。</p><p>我希望，github真正能成为我出发的地方，并且能够走很远。犹记得，14年在大神室友的推荐下，注册了github，但是真正使用还是从去年开始吧。所以甚是惭愧，如果早一点上路，虽然追赶不上大神的脚步（已经进了google），但是进个二线比如京东、美团等都是轻而易举吧，但是谈这些确实是废话，没有人有假如。</p><p>除了对未来三年的一些初步想法之外，我还是希望我与家人都有一个健健康康的身体，所以工作以后身体的锻炼时必不可少的，八块腹肌是不指望了，至少爬几层楼不用喘吧。</p><p>一切还是视实际情况而定，但是终身学习的信念要埋藏在心里，这个时代以及未来的时代，选择了这一行，掉头发是注定的了，但是如果仅仅以掉头发的代价，可以让家人舒舒服服，健健康康，开开心心的话，那给我剃个光头也无妨了。</p><p>废话不多说了，我要继续完成本笔记的JVM部分了，不忘初心，套用喜剧之王的台词：努力，奋斗！</p><p><img src="http://bloghello.oursnail.cn/suibi1-4.jpg" alt="image"></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;今天是大年初一，算是真正步入2019年了。保存几张老家门口拍的照片，以作纪念。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="随笔" scheme="http://yoursite.com/tags/%E9%9A%8F%E7%AC%94/"/>
+    
+  </entry>
   
   <entry>
     <title>彻底理解java反射机制</title>
@@ -393,26 +413,6 @@
     
     
       <category term="miscellany" scheme="http://yoursite.com/tags/miscellany/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>补码的前世今生</title>
-    <link href="http://yoursite.com/2019/01/29/java-basic/%E8%A1%A5%E7%A0%81%E7%9A%84%E5%89%8D%E4%B8%96%E4%BB%8A%E7%94%9F/"/>
-    <id>http://yoursite.com/2019/01/29/java-basic/补码的前世今生/</id>
-    <published>2019-01-29T06:32:32.323Z</published>
-    <updated>2019-01-29T07:33:31.138Z</updated>
-    
-    <content type="html"><![CDATA[<p>计算机如何来保存负数呢？其实只要达到这样的目的：正数负数都有一个唯一标识即可，但是，正如人类用+1和-1来表示可以提高效率一样，也得有一个比较适当的适合我们的计算机识别的一个方式。下面来详细讲解。</p><a id="more"></a><h2>问题的由来</h2><p>下面为了表示方便，先假设存储一个整型数字用4个bit。</p><p>举例来说，+2在计算机中表示为二进制的0010，那么-2怎么表示呢？</p><p>很容易想到，可以将一个二进制位（bit）专门规定为符号位，它等于0时就表示正数，等于1时就表示负数。比如，在8位机中，规定每个字节的最高位为符号位。那么，+2就是<code>0010</code>，而-8则是<code>1010</code>。</p><p>更多的例子如下：</p><p><img src="http://bloghello.oursnail.cn/javabasic5-1.png" alt="image"></p><p>这就是直接用原码的方式来存储，虽然说这种方式理论上是可行的，毕竟每个数我都唯一标识了。</p><p>但是这种方式存在问题，我们希望+1和-1相加为0，但是通过这个方式算出来的是：0001+1001=1010 (-2)。也就是说，按照正常一步头的方式得不到我们想要的结果。</p><p>为了解决了“正负相加等于0”的问题，人们发明了反码。</p><h2>反码</h2><p>“反码”表示方式是用来处理负数的，符号位置不变，其余位置相反。</p><p><img src="http://bloghello.oursnail.cn/javabasic5-2.png" alt="image"></p><p>此时，我们再来算一下+1和-1相加，变成了0001+1110=1111，刚好反码表示方式中，1111象征-0。</p><p>此时，好像是解决了这个问题，但是我们发现，0这个时候有了两种表达：0000和1111。</p><p>即在用反码表示的情况下，0竟然可以用两个值来表示，这显然不好吧。毕竟+0和-0就是同一个玩意啊。</p><p>这个时候补码闪亮登场。</p><h2>补码</h2><p>很简单，在刚才反码的基础上加1。</p><p><img src="http://bloghello.oursnail.cn/javabasic5-3.png" alt="image"></p><p>此时，我们这里假定整形只有4位。那么-0表示为1111+1=10000，显然溢出了，就需要丢弃最高位，变成0000.</p><p>此时，神奇地发现，达到了统一，+0和-0都是用0000来表示了。</p><p>此时，也满足正负数相加为0的条件。比如+2为0010，-2为1110.此时两者相加为：0010+1110=(0)0000，丢掉最高位就是0000</p><p>那么对于普通情况，比如7+(-4)呢?即0111+1100=0011，就是3。OK，大功告成。</p><h2>补码怎么求</h2><p>上面已经说的很详细啦，比如-4，就是在4(0100)的基础上取反(1011)再加一(1100).</p><p>上面也解释了为什么要用补码。即保证了对称的正负数相加为0并且0只有一种表示方式。</p><p>还有一个重要的点就是，我们注意到，7-4其实我们都是转换成7+(-4)，也就是说，在计算机中，减法都是用加法的逻辑实现的。</p><p>即：一套加法的电路实现加减法。此外，乘法和除法其实都是加法这套电路实现的。</p><h2>补码的本质</h2><p>这里假设存储一个整型用8个bit。</p><p>要将正数转成对应的负数，其实只要用0减去这个数就可以了。比如，-8其实就是0-8。</p><p>则8的二进制是00001000，-8就可以用下面的式子求出：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">　００００００００</span><br><span class="line">－００００１０００</span><br><span class="line">－－－－－－－－－</span><br></pre></td></tr></table></figure><p>因为00000000（被减数）小于0000100（减数），所以不够减。请回忆一下小学算术，如果被减数的某一位小于减数，我们怎么办？很简单，问上一位借1就可以了。</p><p>所以，0000000也问上一位借了1，也就是说，被减数其实是100000000，算式也就改写成：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">１００００００００</span><br><span class="line">－００００１０００</span><br><span class="line">－－－－－－－－－</span><br><span class="line">　１１１１１０００</span><br></pre></td></tr></table></figure><p>进一步观察，可以发现100000000 = 11111111 + 1，所以上面的式子可以拆成两个：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">　１１１１１１１１</span><br><span class="line">－００００１０００</span><br><span class="line">－－－－－－－－－</span><br><span class="line">　１１１１０１１１</span><br><span class="line">＋０００００００１</span><br><span class="line">－－－－－－－－－</span><br><span class="line">　１１１１１０００</span><br></pre></td></tr></table></figure><p>通过这一步，我们就从数学上知道了为什么补码是取反加一了。</p><p>你看，求任何一个负数，都是0-正数，那么就用借位的思想来，则变成100000000。</p><p>100000000则可以分解为11111111+00000001。</p><p>此时求负数的过程就就变成11111111-X+1</p><ul><li>而先用11111111来减这个正数，这个结果就是对正数取反。</li><li>此时再加上另外一个1.</li></ul><p>这与我们求补码的过程是一样的，这也解释了为什么要这样求补码。</p><h2>证明(可不看)</h2><p>将上面的特例抽象一下，用统一表达式来证明一下。</p><p>我们要证明的是，X-Y或X+(-Y)可以用X加上Y的补码完成。</p><p>Y的补码等于(11111111-Y)+1。所以，X加上Y补码，就等于：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">X + (11111111-Y) + 1</span><br></pre></td></tr></table></figure><p>我们假定这个算式的结果等于Z，即</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Z = X + (11111111-Y) + 1</span><br></pre></td></tr></table></figure><p>接下来，分成两种情况讨论。</p><ul><li>第一种情况，如果X小于Y，那么Z是一个负数。</li></ul><p>由Y的补码等于(11111111-Y)+1，标记为F=(11111111-Y)+1,那么如何根据F逆向求Y呢？</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Y=1111111-(F-1)</span><br></pre></td></tr></table></figure><p>OK,因为此时Z是一个负数，那么Z进行补码的逆运算就可以求出它的绝对值，即正数。再加一个符号，两者相等。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Z = -[11111111-(Z-1)] = -[11111111-(X + (11111111-Y) + 1-1)] = X - Y</span><br></pre></td></tr></table></figure><ul><li>第二种情况，如果X大于Y</li></ul><p>这意味着Z肯定大于11111111，但是我们规定了这是8位机，最高的第9位是溢出位，必须被舍去，这相当于减去100000000。所以，</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Z = Z - 100000000 = X + (11111111-Y) + 1 - 100000000 = X - Y</span><br></pre></td></tr></table></figure><p>这就证明了，在正常的加法规则下，可以利用2的补码得到正数与负数相加的正确结果。换言之，计算机只要部署加法电路和补码电路，就可以完成所有整数的加法。</p><p>本文整理自：</p><ul><li><a href="http://www.ruanyifeng.com/blog/2009/08/twos_complement.html" target="_blank" rel="noopener">关于2的补码</a></li><li><a href="https://www.zhihu.com/question/20159860" target="_blank" rel="noopener">知乎第一条评论</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;计算机如何来保存负数呢？其实只要达到这样的目的：正数负数都有一个唯一标识即可，但是，正如人类用+1和-1来表示可以提高效率一样，也得有一个比较适当的适合我们的计算机识别的一个方式。下面来详细讲解。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="java基础" scheme="http://yoursite.com/tags/java%E5%9F%BA%E7%A1%80/"/>
     
   </entry>
   
