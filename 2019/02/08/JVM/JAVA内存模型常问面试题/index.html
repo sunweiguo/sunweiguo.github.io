@@ -116,6 +116,8 @@ s2指向的是字符串常量池中的<code>&quot;a&quot;</code>，这个字符�
 <p>会先在堆中创建两个对象<code>&quot;a&quot;</code>，拷贝一个副本到字符串常量池中，此时<code>&quot;a&quot;</code>已经存在于字符串常量池中了。然后拼接生成一个新的对象<code>&quot;aa&quot;</code>在堆中，这种拼接出来的<code>&quot;aa&quot;</code>此时是不会把副本放进字符串常量池的，因为字符串常量池只保存已确定的字面量，这种拼接的属于运行完成才能确定，所以字符串常量池中没有，直到执行第6句，才会尝试把<code>&quot;aa&quot;</code>副本放入字符串常量池，但是还是跟上面一样，一个指向堆，一个指向字符串常量池，肯定不相等。</p>
 <p>在JDK6+情况下，第一个返回false，第二个返回true。原因是：第一种情况下，执行第一句，首先是创建<code>&quot;a&quot;</code>本体对象，并且把引用放进字符串常量池中，然后new，开辟新的地址空间，此时<code>str1</code>指向的是new出来的空间的引用。执行第二句，尝试将<code>str1</code>的引用放入字符串常量池，但是池中已经存在了，所以不能放，所以一个指向堆，一个是本体对象的引用，不一样，所以为false。第二种情况，<code>&quot;a&quot;</code>跟上面一样，在堆中开辟，然后引用放入字符串常量池中，后面拼接成<code>&quot;aa&quot;</code>，此时只是在堆中开辟空间，下面执行<code>intern</code>尝试把它的引用传给字符串常量池，由于字符串常量池中没有，所以就放进去了。此时字符串常量池中的引用与<code>&quot;aa&quot;</code>对象实际的堆地址是一样的，所以为true.</p>
 <p>这边有一个事实：在执行<code>String s1 = new String(&quot;a&quot;)</code>的<code>new</code>之前，JVM先看到有一个字符串<code>&quot;a&quot;</code>，则会先看看字符串常量池中是否有这个<code>&quot;a&quot;</code>，有则直接返回字符串常量池引用，没有则给它开辟空间，并且把这个空间的引用传给字符串常量池。</p>
+<p><img src="http://bloghello.oursnail.cn/jvm7-7.png" alt="image"></p>
+<p>整理自：<a href="https://www.zhihu.com/question/55994121/answer/147296098" target="_blank" rel="noopener">木女孩的回答</a></p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/mysql/内连接和外连接/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Fri Feb 08 2019 23:19:47 GMT+0800',
