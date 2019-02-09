@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-02-09T11:26:05.405Z</updated>
+  <updated>2019-02-09T11:33:03.051Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>补充阅读1-Class类文件结构</title>
+    <link href="http://yoursite.com/2019/02/09/JVM/%E8%A1%A5%E5%85%85%E9%98%85%E8%AF%BB-Class%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84/"/>
+    <id>http://yoursite.com/2019/02/09/JVM/补充阅读-Class类文件结构/</id>
+    <published>2019-02-09T11:32:35.940Z</published>
+    <updated>2019-02-09T11:33:03.051Z</updated>
+    
+    <content type="html"><![CDATA[<p>总体概览一下Class文件是什么以及有什么。</p><a id="more"></a><h2>整体感知</h2><p><code>class</code>文件是一种8位字节的二进制流文件， 各个数据项按顺序紧密的从前向后排列， 相邻的项之间没有间隙， 这样可以使得<code>class</code>文件非常紧凑， 体积轻巧， 可以被JVM快速的加载至内存， 并且占据较少的内存空间。 我们的Java源文件， 在被编译之后， 每个类（或者接口）都单独占据一个<code>class</code>文件， 并且类中的所有信息都会在<code>class</code>文件中有相应的描述， 由于<code>class</code>文件很灵活， 它甚至比Java源文件有着更强的描述能力。</p><h2>Class文件格式</h2><p><img src="http://javajvm.oursnail.cn/Class%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F.png" alt="image"></p><p><strong>换成表格的形式：</strong></p><table><thead><tr><th>类型</th><th>名称</th><th>数量</th></tr></thead><tbody><tr><td>u4</td><td>magic</td><td>1</td></tr><tr><td>u2</td><td>minor_version</td><td>1</td></tr><tr><td>u2</td><td>major_version</td><td>1</td></tr><tr><td>u2</td><td>constant_pool_count</td><td>1</td></tr><tr><td>cp_info</td><td>constant_pool</td><td>constant_pool_count - 1</td></tr><tr><td>u2</td><td>access_flags</td><td>1</td></tr><tr><td>u2</td><td>this_class</td><td>1</td></tr><tr><td>u2</td><td>super_class</td><td>1</td></tr><tr><td>u2</td><td>interfaces_count</td><td>1</td></tr><tr><td>u2</td><td>interfaces</td><td>interfaces_count</td></tr><tr><td>u2</td><td>fields_count</td><td>1</td></tr><tr><td>field_info</td><td>fields</td><td>fields_count</td></tr><tr><td>u2</td><td>methods_count</td><td>1</td></tr><tr><td>method_info</td><td>methods</td><td>methods_count</td></tr><tr><td>u2</td><td>attribute_count</td><td>1</td></tr><tr><td>attribute_info</td><td>attributes</td><td>attributes_count</td></tr></tbody></table><h3>NO1. 魔数(magic)</h3><p>所有的由Java编译器编译而成的class文件的前4个字节都是“0xCAFEBABE”</p><p>它的作用在于：</p><blockquote><p>当JVM在尝试加载某个文件到内存中来的时候，会首先判断此class文件有没有JVM认为可以接受的“签名”，即JVM会首先读取文件的前4个字节，判断该4个字节是否是“0xCAFEBABE”，如果是，则JVM会认为可以将此文件当作class文件来加载并使用。</p></blockquote><h3>NO2.版本号(minor_version,major_version)</h3><p>主版本号和次版本号在class文件中各占两个字节，<strong>副版本号占用第5、6两个字节，而主版本号则占用第7，8两个字节</strong>。JDK1.0的主版本号为45，以后的每个新主版本都会在原先版本的基础上加1。若现在使用的是JDK1.7编译出来的class文件，则相应的主版本号应该是51,对应的7，8个字节的十六进制的值应该是 0x33。</p><p>JVM在加载class文件的时候，会读取出主版本号，然后比较这个class文件的主版本号和JVM本身的版本号，如果JVM本身的版本号小于class文件的版本号，JVM会认为加载不了这个class文件，会抛出我们经常见到的<code>&quot;java.lang.UnsupportedClassVersionError: Bad version number in .class file &quot; Error</code>错误；反之，JVM会认为可以加载此class文件，继续加载此class文件。</p><h3>NO3.常量池计数器(constant_pool_count)</h3><p>常量池是class文件中非常重要的结构，它描述着整个class文件的字面量信息。 常量池是由一组<code>constant_pool</code>结构体数组组成的，而数组的大小则由常量池计数器指定。常量池计数器<code>constant_pool_count</code> 的值等于<code>constant_pool</code>表中的成员数+ 1。<code>constant_pool</code>表的索引值只有在大于 0 且小于<code>constant_pool_count</code>时(即1~(constant_pool_count-1))才会被认为是有效的。</p><p>这个容量计数是从1而不是从0开始的，如果常量池容量为十六进制数0x0016，即十进制22，这就代表着常量池中有21个常量，索引值范围为1-21。在Class文件格式规范制定时，设计者将第0项常量空出来是有特殊考虑的，用于在特定情况下表达“不引用任何一个常量池项目”。</p><h3>NO4.常量池数据区(constant_pool[contstant_pool_count-1])</h3><p>常量池，constant_pool是一种表结构,它包含 Class 文件结构及其子结构中引用的所有字符串常量、 类或接口名、字段名和其它常量。 常量池中的每一项都具备相同的格式特征——第一个字节作为类型标记用于识别该项是哪种类型的常量，称为 “tag byte” 。常量池的索引范围是 1 至constant_pool_count−1。常量池的具体细节我们会稍后讨论。</p><h3>NO6.访问标志(access_flags)</h3><p>访问标志，access_flags 是一种掩码标志，用于表示某个类或者接口的访问权限及基础属性。</p><p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97.png" alt="image"></p><h3>NO7.类索引(this_class)</h3><p>类索引，this_class的值必须是对constant_pool表中项目的一个有效索引值。constant_pool表在这个索引处的项必须为CONSTANT_Class_info 类型常量，表示这个 Class 文件所定义的类或接口。</p><h3>NO8.父类索引(super_class)</h3><p>父类索引，对于类来说，super_class 的值必须为 0 或者是对constant_pool 表中项目的一个有效索引值。如果它的值不为 0，那 constant_pool 表在这个索引处的项必须为CONSTANT_Class_info 类型常量，表示这个 Class 文件所定义的类的直接父类。当前类的直接父类，以及它所有间接父类的access_flag 中都不能带有ACC_FINAL 标记。对于接口来说，它的Class文件的super_class项的值必须是对constant_pool表中项目的一个有效索引值。constant_pool表在这个索引处的项必须为代表 java.lang.Object 的 CONSTANT_Class_info 类型常量 。如果 Class 文件的 super_class的值为 0，那这个Class文件只可能是定义的是java.lang.Object类，只有它是唯一没有父类的类。</p><h3>NO9.接口计数器(interfaces_count)</h3><p>接口计数器，interfaces_count的值表示当前类或接口的直接父接口数量。</p><h3>NO10.接口信息数据区(interfaces[interfaces_count])</h3><p>接口表，interfaces[]数组中的每个成员的值必须是一个对constant_pool表中项目的一个有效索引值， 它的长度为 interfaces_count。每个成员 interfaces[i]  必须为 CONSTANT_Class_info类型常量，其中 0 ≤ i &lt;interfaces_count。在interfaces[]数组中，成员所表示的接口顺序和对应的源代码中给定的接口顺序（从左至右）一样，即interfaces[0]对应的是源代码中最左边的接口。</p><h3>NO11.字段计数器(fields_count)</h3><p>字段计数器，fields_count的值表示当前 Class 文件 fields[]数组的成员个数。 fields[]数组中每一项都是一个field_info结构的数据项，它用于表示该类或接口声明的类字段或者实例字段。</p><h3>NO12.字段信息数据区(fields[fields_count])</h3><p>字段表，fields[]数组中的每个成员都必须是一个fields_info结构的数据项，用于表示当前类或接口中某个字段的完整描述。 fields[]数组描述当前类或接口声明的所有字段，但不包括从父类或父接口继承的部分。</p><h3>NO13.方法计数器(methods_count)</h3><p>方法计数器， methods_count的值表示当前Class 文件 methods[]数组的成员个数。Methods[]数组中每一项都是一个 method_info 结构的数据项。</p><h3>NO14.方法信息数据区(methods[methods_count])</h3><p>方法表，methods[] 数组中的每个成员都必须是一个 method_info 结构的数据项，用于表示当前类或接口中某个方法的完整描述。如果某个method_info 结构的access_flags 项既没有设置 ACC_NATIVE 标志也没有设置ACC_ABSTRACT 标志，那么它所对应的方法体就应当可以被 Java 虚拟机直接从当前类加载，而不需要引用其它类。 method_info结构可以表示类和接口中定义的所有方法，包括实例方法、类方法、实例初始化方法方法和类或接口初始化方法方法 。methods[]数组只描述当前类或接口中声明的方法，不包括从父类或父接口继承的方法。</p><h3>NO15.属性计数器(attributes_count)</h3><p>属性计数器，attributes_count的值表示当前 Class 文件attributes表的成员个数。attributes表中每一项都是一个attribute_info 结构的数据项。</p><h3>NO16.属性信息数据区(attributes[attributes_count])</h3><p>属性表，attributes 表的每个项的值必须是attribute_info结构。</p><p>在Java 7 规范里，Class文件结构中的attributes表的项包括下列定义的属性： InnerClasses  、 EnclosingMethod 、 Synthetic  、Signature、SourceFile，SourceDebugExtension 、Deprecated、RuntimeVisibleAnnotations 、RuntimeInvisibleAnnotations以及BootstrapMethods属性。</p><p>对于支持 Class 文件格式版本号为 49.0 或更高的 Java 虚拟机实现，必须正确识别并读取attributes表中的Signature、RuntimeVisibleAnnotations和RuntimeInvisibleAnnotations属性。对于支持Class文件格式版本号为 51.0 或更高的 Java 虚拟机实现，必须正确识别并读取 attributes表中的BootstrapMethods属性。Java 7 规范 要求任一 Java 虚拟机实现可以自动忽略 Class 文件的 attributes表中的若干 （甚至全部） 它不可识别的属性项。任何本规范未定义的属性不能影响Class文件的语义，只能提供附加的描述信息 。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;总体概览一下Class文件是什么以及有什么。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="JVM" scheme="http://yoursite.com/tags/JVM/"/>
+    
+  </entry>
   
   <entry>
     <title>内存分配和回收策略</title>
@@ -393,26 +413,6 @@
     
     
       <category term="redis" scheme="http://yoursite.com/tags/redis/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>简明理解一致性hash算法</title>
-    <link href="http://yoursite.com/2019/02/01/miscellany/15%E7%AE%80%E6%98%8E%E7%90%86%E8%A7%A3%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95/"/>
-    <id>http://yoursite.com/2019/02/01/miscellany/15简明理解一致性hash算法/</id>
-    <published>2019-02-01T12:49:04.348Z</published>
-    <updated>2019-02-01T12:50:12.033Z</updated>
-    
-    <content type="html"><![CDATA[<p>在分布式集群中，对机器的添加删除，或者机器故障后自动脱离集群这些操作是分布式集群管理最基本的功能。如果采用常用的hash(object)%N算法，那么在有机器添加或者删除后，很多原有的数据就无法找到了，这样严重的违反了单调性原则。接下来主要讲解一下一致性哈希算法是如何设计的。</p><a id="more"></a><h2>环形Hash空间</h2><p>按照常用的hash算法来将对应的key哈希到一个具有2^32 次方个桶的空间中，即0~(2^32)-1的数字空间中。现在我们可以将这些数字头尾相连，想象成一个闭合的环形。如下图</p><p><img src="http://bloghello.oursnail.cn/zaji15-1.png" alt="image"></p><p>把数据通过一定的hash算法处理后映射到环上<br>现在我们将<code>object1</code>、<code>object2</code>、<code>object3</code>、<code>object4</code>四个对象通过特定的<code>Hash</code>函数计算出对应的<code>key</code>值，然后散列到<code>Hash</code>环上。如下图：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Hash(object1) = key1；</span><br><span class="line">Hash(object2) = key2；</span><br><span class="line">Hash(object3) = key3；</span><br><span class="line">Hash(object4) = key4；</span><br></pre></td></tr></table></figure><p><img src="http://bloghello.oursnail.cn/zaji15-2.png" alt="image"></p><p>将机器通过hash算法映射到环上<br>在采用一致性哈希算法的分布式集群中将新的机器加入，其原理是通过使用与对象存储一样的Hash算法将机器也映射到环中（一般情况下对机器的hash计算是采用机器的IP或者机器唯一的别名作为输入值），然后以顺时针的方向计算，将所有对象存储到离自己最近的机器中。<br>假设现在有<code>NODE1</code>，<code>NODE2</code>，<code>NODE3</code>三台机器，通过Hash算法得到对应的KEY值，映射到环中，其示意图如下：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Hash(NODE1) = KEY1;</span><br><span class="line">Hash(NODE2) = KEY2;</span><br><span class="line">Hash(NODE3) = KEY3;</span><br></pre></td></tr></table></figure><p><img src="http://bloghello.oursnail.cn/zaji15-3.png" alt="image"></p><p>通过上图可以看出对象与机器处于同一哈希空间中，这样按顺时针转动<code>object1</code>存储到了<code>NODE1</code>中，<code>object3</code>存储到了<code>NODE2</code>中，<code>object2</code>、<code>object4</code>存储到了<code>NODE3</code>中。在这样的部署环境中，hash环是不会变更的，因此，通过算出对象的hash值就能快速的定位到对应的机器中，这样就能找到对象真正的存储位置了。</p><h2>机器的删除与添加</h2><p>普通hash求余算法最为不妥的地方就是在有机器的添加或者删除之后会照成大量的对象存储位置失效，这样就大大的不满足单调性了。下面来分析一下一致性哈希算法是如何处理的。</p><h3>节点（机器）的删除</h3><p>以上面的分布为例，如果<code>NODE2</code>出现故障被删除了，那么按照顺时针迁移的方法，<code>object3</code>将会被迁移到<code>NODE3</code>中，这样仅仅是<code>object3</code>的映射位置发生了变化，其它的对象没有任何的改动。如下图：</p><p><img src="http://bloghello.oursnail.cn/zaji15-4.png" alt="image"></p><h3>节点（机器）的添加</h3><p>如果往集群中添加一个新的节点<code>NODE4</code>，通过对应的哈希算法得到<code>KEY4</code>，并映射到环中，如下图：</p><p><img src="http://bloghello.oursnail.cn/zaji15-5.png" alt="image"></p><p>通过按顺时针迁移的规则，那么<code>object2</code>被迁移到了<code>NODE4</code>中，其它对象还保持这原有的存储位置。通过对节点的添加和删除的分析，一致性哈希算法在保持了单调性的同时，还是数据的迁移达到了最小，这样的算法对分布式集群来说是非常合适的，避免了大量数据迁移，减小了服务器的的压力。</p><h2>平衡性</h2><p>根据上面的图解分析，一致性哈希算法满足了单调性和负载均衡的特性以及一般hash算法的分散性，但这还并不能当做其被广泛应用的原由，因为还缺少了平衡性。下面将分析一致性哈希算法是如何满足平衡性的。</p><p>hash算法是不保证平衡的，如上面只部署了<code>NODE1</code>和<code>NODE3</code>的情况（<code>NODE2</code>被删除的图），<code>object1</code>存储到了<code>NODE1</code>中，而<code>object2</code>、<code>object3</code>、<code>object4</code>都存储到了<code>NODE3</code>中，这样就照成了非常不平衡的状态。在一致性哈希算法中，为了尽可能的满足平衡性，其引入了虚拟节点。</p><blockquote><p>“虚拟节点”（ virtual node ）是实际节点（机器）在 hash 空间的复制品（ replica ），一实际个节点（机器）对应了若干个“虚拟节点”，这个对应个数也成为“复制个数”，“虚拟节点”在 hash 空间中以hash值排列。</p></blockquote><p>以上面只部署了<code>NODE1</code>和<code>NODE3</code>的情况（<code>NODE2</code>被删除的图）为例，之前的对象在机器上的分布很不均衡，现在我们以2个副本（复制个数）为例，这样整个hash环中就存在了4个虚拟节点，最后对象映射的关系图如下：</p><p><img src="http://bloghello.oursnail.cn/zaji15-6.png" alt="image"></p><p>根据上图可知对象的映射关系：<code>object1</code>-&gt;<code>NODE1-1</code>，<code>object2</code>-&gt;<code>NODE1-2</code>，<code>object3</code>-&gt;<code>NODE3-2</code>，<code>object4</code>-&gt;<code>NODE3-1</code>。通过虚拟节点的引入，对象的分布就比较均衡了。那么在实际操作中，真正的对象查询是如何工作的呢？对象从hash到虚拟节点到实际节点的转换如下图：</p><p><img src="http://bloghello.oursnail.cn/zaji15-7.png" alt="image"></p><p>“虚拟节点”的hash计算可以采用对应节点的IP地址加数字后缀的方式。例如假设<code>NODE1</code>的IP地址为<code>192.168.1.100</code>。引入“虚拟节点”前，计算 <code>cache A</code> 的 <code>hash</code> 值：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Hash(“192.168.1.100”);</span><br></pre></td></tr></table></figure><p>引入“虚拟节点”后，计算“虚拟节”点<code>NODE1-1</code>和<code>NODE1-2</code>的<code>hash</code>值为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Hash(“192.168.1.100#1”); // NODE1-1</span><br><span class="line">Hash(“192.168.1.100#2”); // NODE1-2</span><br></pre></td></tr></table></figure><p>整理自：</p><ul><li><a href="https://blog.csdn.net/cywosp/article/details/23397179" target="_blank" rel="noopener">五分钟理解一致性哈希算法</a></li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在分布式集群中，对机器的添加删除，或者机器故障后自动脱离集群这些操作是分布式集群管理最基本的功能。如果采用常用的hash(object)%N算法，那么在有机器添加或者删除后，很多原有的数据就无法找到了，这样严重的违反了单调性原则。接下来主要讲解一下一致性哈希算法是如何设计的。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="miscellany" scheme="http://yoursite.com/tags/miscellany/"/>
     
   </entry>
   
