@@ -90,7 +90,7 @@
 <p>了解了这些核心方法之后，就可以对下面这幅图简单说一说啦：</p>
 <p><img src="http://bloghello.oursnail.cn/thread2-9.jpg" alt="image"></p>
 <p>首先是<code>new Thread()</code>只是新建状态，只有<code>start</code>之后才会进入<code>runnable</code>状态，注意这个状态里面可能有两种状态，一种是正在运行，即<code>running</code>，还有一种是就绪状态即<code>ready</code>，这两个状态归属于一类的原因是他们之间是在不断切换的，即CPU的时间片内临幸到这个进程，这个进程中有若干个线程的话，就会高速地切换各个线程逐个执行，达到宏观上是并行执行的效果。我们知道<code>yield</code>是给线程调度器一个暗示让出当前执行的线程的时间片，至于这个线程调度器听不听那就不知道了，所以存在一定的随机性。如果正常执行结束就进入最后的终止状态。往右边看，如果发生带时间的超时等待，如<code>sleep(100)</code>，本线程会阻塞，让出CPU执行权并且不改变锁状态，与之区别的是<code>wait(100)</code>这个方法不仅让出CPU执行权，还会释放锁，所以要调用<code>wait</code>方法必然要先获取锁，所以一般都是在<code>synchronized</code>中调用它。至于<code>join(100)</code>是指阻塞当前线程，让其他的线程先执行，底层是<code>wait</code>所以也会释放锁。超时等待只要等它时间过了就可以跳出阻塞状态了，或者用<code>notify</code>或者<code>interrupt</code>之类的来唤醒或者打断它。往左下角看，是锁获取的时候可能发生阻塞，这个时候只能等其他线程释放锁才行了。往左边看，是无限期等待的代表，唤醒手段与有限期等待是一样的。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/10/thread/从卖票程序初步看synchronized的特性/" class="prev">上一篇</a><a href="/2019/02/10/thread/线程的状态/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/10/thread/从卖票程序初步看synchronized的特性/" class="prev">PRVE</a><a href="/2019/02/10/thread/线程的状态/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Feb 10 2019 17:41:16 GMT+0800',
     owner: 'sunweiguo',
