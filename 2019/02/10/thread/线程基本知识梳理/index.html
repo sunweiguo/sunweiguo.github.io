@@ -5,7 +5,7 @@
 <h2>二、start()和run()方法的区别</h2>
 <p>以一个小例子入手，在主函数中尝试新建一个线程，并且以<code>t.run()</code>的形式去调用，从结果可以看出，java默认开启主线程来执行，当我们用<code>t.run()</code>去执行的时候，只是相当于简单的函数调用，因为从打印结果可以看出都是<code>main</code>进程，那么，实质上并没有新建一个子线程。</p>
 <p><img src="http://bloghello.oursnail.cn/thread1-1.jpg" alt="image"></p>
-<p>当换成<code>t.start()</code>的时候，就会真正地新建一个线程去执行了：</p>
+<p>（注意，不是一调用就会去执行，而是说这个线程处于就绪状态，将有资格获得CPU的临幸，关于线程状态，后文会再次详细说明，关于start之后处于就绪状态这一点默认读者是清楚的，下面表述可能不会太顾及说明这一点）：</p>
 <p><img src="http://bloghello.oursnail.cn/thread1-2.jpg" alt="image"></p>
 <p>那么，从表象上我们已经知道，<code>run</code>只是简单的函数调用，<code>start</code>才会真正地开启一个新线程来执行，下面从源码层面来看看<code>start()</code>的基本实现方式。</p>
 <p><img src="http://bloghello.oursnail.cn/thread1-3.jpg" alt="image"></p>
@@ -40,7 +40,7 @@
 <li><code>Thread</code>有<code>start</code>方法，结合<code>run()</code>可以实现多线程，但是<code>Runnable</code>没有<code>start()</code>方法，所以要通过<code>Thread()</code>来实现，所以，两种方式最终都是通过<code>Thread</code>的<code>start()</code>来实现<code>run()</code>的多线程特性</li>
 <li>由于JAVA是单一继承的，所以推荐多使用<code>Runnable</code>接口</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/09/JVM/实例说明类加载过程/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/10/thread/java多线程之传参和返回值处理/" class="prev">上一篇</a><a href="/2019/02/09/JVM/实例说明类加载过程/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Feb 10 2019 12:15:17 GMT+0800',
     owner: 'sunweiguo',
