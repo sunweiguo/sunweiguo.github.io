@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2019/02/11/thread/%E4%BB%8EReentrantLock%E5%BC%95%E5%87%BAAQS%E7%9A%84%E5%8E%9F%E7%90%86/</loc>
+    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
     
-    <lastmod>2019-02-11T11:28:48.109Z</lastmod>
+    <lastmod>2019-02-11T11:38:58.534Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
+    <loc>http://yoursite.com/2019/02/11/thread/%E8%AF%BB%E5%86%99%E9%94%81ReentrantReadWriteLock/</loc>
     
-    <lastmod>2019-02-11T10:48:24.997Z</lastmod>
+    <lastmod>2019-02-11T11:38:36.811Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/02/11/thread/%E4%BB%8EReentrantLock%E5%BC%95%E5%87%BAAQS%E7%9A%84%E5%8E%9F%E7%90%86/</loc>
+    
+    <lastmod>2019-02-11T11:28:48.109Z</lastmod>
     
   </url>
   
