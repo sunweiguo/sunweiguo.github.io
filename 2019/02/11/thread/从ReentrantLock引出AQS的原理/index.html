@@ -27,7 +27,8 @@
 <p>不仅仅是这个，JUC包基本都是以<code>AQS</code>为基础构成，因此<code>AQS</code>可以理解为JUC的一个实现框架。既然<code>AQS</code>这么重要，下面有必要挖地三尺掘出它的原理。</p>
 <h2>二、AQS简介</h2>
 <p>java的内置锁一直都是备受争议的，在JDK 1.6之前，<code>synchronized</code>这个重量级锁性能一直都是较为低下，虽然在1.6后，进行大量的锁优化策略,但是与<code>Lock</code>相比<code>synchronized</code>还是存在一些缺陷的：虽然<code>synchronized</code>提供了便捷性的隐式获取锁释放锁机制（基于JVM机制），但是它却缺少了获取锁与释放锁的可操作性，可中断、超时获取锁，且它为独占式在高并发场景下性能大打折扣。</p>
-<p>AQS：<code>AbstractQueuedSynchronizer</code>，即队列同步器。它是构建锁或者其他同步组件的基础框架（如<code>ReentrantLock</code>、<code>ReentrantReadWriteLock</code>、<code>Semaphore</code>等），JUC并发包的作者（<code>Doug Lea</code>）期望它能够成为实现大部分同步需求的基础。它是JUC并发包中的核心基础组件。</p>
+<p>AQS：<code>AbstractQueuedSynchronizer</code>，即队列同步器。它是构建锁或者其他同步组件的基础框架（如<code>ReentrantLock</code>、<code>ReentrantReadWriteLock</code>、<br>
+<code>Semaphore</code>等），JUC并发包的作者（<code>Doug Lea</code>）期望它能够成为实现大部分同步需求的基础。它是JUC并发包中的核心基础组件。</p>
 <p>AQS解决了在实现同步器时涉及当的大量细节问题，例如获取同步状态、FIFO同步队列。基于AQS来构建同步器可以带来很多好处。它不仅能够极大地减少实现工作，而且也不必处理在多个位置上发生的竞争问题。</p>
 <p>AQS的主要使用方式是继承，子类通过继承同步器并实现它的抽象方法来管理同步状态。</p>
 <p>AQS使用一个<code>int</code>类型的成员变量<code>state</code>来表示同步状态，当<code>state&gt;0</code>时表示已经获取了锁，当<code>state = 0</code>时表示释放了锁。它提供了三个方法（<code>getState()</code>、<code>setState(int newState)</code>、<code>compareAndSetState(int expect,int update)</code>）来对同步状态<code>state</code>进行操作，当然AQS可以确保对<code>state</code>的操作是安全的。</p>
@@ -152,7 +153,7 @@
 <li>公平锁每次获取到锁为同步队列中的第一个节点，保证请求资源时间上的绝对顺序，而非公平锁有可能刚释放锁的线程下次继续获取该锁，则有可能导致其他线程永远无法获取到锁，造成“饥饿”现象。</li>
 <li>公平锁为了保证时间上的绝对顺序，需要频繁的上下文切换，而非公平锁会降低一定的上下文切换，降低性能开销。因此，<code>ReentrantLock</code>默认选择的是非公平锁，则是为了减少一部分上下文切换，保证了系统更大的吞吐量。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Mon Feb 11 2019 18:45:59 GMT+0800',
     owner: 'sunweiguo',
