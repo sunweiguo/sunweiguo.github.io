@@ -35,10 +35,10 @@
 <p>AQS通过内置的<code>FIFO</code>同步队列来完成资源获取线程的排队工作，如果当前线程获取同步状态失败（锁）时，AQS则会将当前线程以及等待状态等信息构造成一个节点（Node）并将其加入同步队列，同时会阻塞当前线程，当同步状态释放时，则会把节点中的线程唤醒，使其再次尝试获取同步状态。</p>
 <h2>三、CLH同步队列</h2>
 <p><code>CLH</code>同步队列是一个<code>FIFO</code>双向队列，AQS依赖它来完成同步状态的管理，当前线程如果获取同步状态失败时，AQS则会将当前线程已经等待状态等信息构造成一个节点（Node）并将其加入到CLH同步队列，同时会阻塞当前线程，当同步状态释放时，会把首节点唤醒（公平锁），使其再次尝试获取同步状态。</p>
-<p>在<code>CLH</code>同步队列中，一个节点表示一个线程，它保存着线程的引用（<code>thread</code>）、状态（<code>waitStatus</code>）、前驱节点（<code>prev</code>）、后继节点（<code>next</code>），<code>CLH</code>同步队列结构图如下（注意图中有个小错误，就是第一个<code>node</code>的<code>prev</code>要指向<code>head</code>，由于不会太影响理解，所以就不改图了）：</p>
-<p><img src="http://bloghello.oursnail.cn/thread7-3.jpg" alt="image"></p>
+<p>在<code>CLH</code>同步队列中，一个节点表示一个线程，它保存着线程的引用（<code>thread</code>）、状态（<code>waitStatus</code>）、前驱节点（<code>prev</code>）、后继节点（<code>next</code>），<code>CLH</code>同步队列结构图如下：</p>
+<p><img src="http://bloghello.oursnail.cn/thread7-9.jpg" alt="image"></p>
 <p>举例理解：假设目前有三个线程<code>Thread1</code>、<code>Thread2</code>、<code>Thread3</code>同时去竞争锁，如果结果是<code>Thread1</code>获取了锁，<code>Thread2</code>和<code>Thread3</code>进入了等待队列，那么他们的样子如下：</p>
-<p><img src="http://bloghello.oursnail.cn/thread7-6.jpg" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/thread7-10.jpg" alt="image"></p>
 <p>AQS的等待队列基于一个双向链表实现的，<code>HEAD</code>节点不关联线程，后面两个节点分别关联<code>Thread2</code>和<code>Thread3</code>，他们将会按照先后顺序被串联在这个队列上。这个时候如果后面再有线程进来的话将会被当做队列的<code>TAIL</code>。</p>
 <h2>四、入列</h2>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> Node <span class="title">addWaiter</span><span class="params">(Node mode)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//新建Node</span></span><br><span class="line">    Node node = <span class="keyword">new</span> Node(Thread.currentThread(), mode);</span><br><span class="line">    <span class="comment">//快速尝试添加尾节点</span></span><br><span class="line">    Node pred = tail;</span><br><span class="line">    <span class="keyword">if</span> (pred != <span class="keyword">null</span>) &#123;</span><br><span class="line">        node.prev = pred;</span><br><span class="line">        <span class="comment">//CAS设置尾节点</span></span><br><span class="line">        <span class="keyword">if</span> (compareAndSetTail(pred, node)) &#123;</span><br><span class="line">            pred.next = node;</span><br><span class="line">            <span class="keyword">return</span> node;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    enq(node);</span><br><span class="line">    <span class="keyword">return</span> node;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -153,7 +153,7 @@
 <li>公平锁每次获取到锁为同步队列中的第一个节点，保证请求资源时间上的绝对顺序，而非公平锁有可能刚释放锁的线程下次继续获取该锁，则有可能导致其他线程永远无法获取到锁，造成“饥饿”现象。</li>
 <li>公平锁为了保证时间上的绝对顺序，需要频繁的上下文切换，而非公平锁会降低一定的上下文切换，降低性能开销。因此，<code>ReentrantLock</code>默认选择的是非公平锁，则是为了减少一部分上下文切换，保证了系统更大的吞吐量。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">PRVE</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">上一篇</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Mon Feb 11 2019 18:45:59 GMT+0800',
     owner: 'sunweiguo',
