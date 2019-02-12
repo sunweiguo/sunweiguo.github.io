@@ -65,11 +65,11 @@
 <div class="tip">
 缺陷：统计的时候，如果有并发更新，会有统计的误差，例如获取一个全局唯一的ID还是采用`AtomicLong`更好一点。
 </div>
-<h2>5.2 AtomicReference</h2>
+<h5>5.2 AtomicReference</h5>
 <p>这个其实很简单，用法如下：</p>
 <p><img src="http://bloghello.oursnail.cn/thread9-9.jpg" alt="image"></p>
 <p>其实这个方法实现的是对一个共享对象的原子性操作，保证对象更新的原子性。</p>
-<h2>5.3 AtomicIntegerFieldUpdater</h2>
+<h5>5.3 AtomicIntegerFieldUpdater</h5>
 <p>假设现在有这样的一个场景： 一百个线程同时对一个int对象进行修改，要求只能有一个线程可以修改。</p>
 <p>可能有的同学会这么写：</p>
 <p><img src="http://bloghello.oursnail.cn/thread9-10.jpg" alt="image"></p>
@@ -88,11 +88,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">update success 1:200</span><br><span class="line">update fail</span><br></pre></td></tr></table></figure>
 <p>用<code>AtomicIntegerFieldUpdater.newUpdater</code>指定类里面的属性。这里我们要更新<code>Test</code>类里面的<code>A</code>字段（必须是<code>volatile</code>且不是<code>static</code>对象）。<code>update.compareAndSet()</code>方法使用<code>cas</code>机制，每次提交的时候都比较下<code>test.a</code>是不是100，如果是，则更新。</p>
 <p>注意，不能使用<code>final</code>变量，因为语义冲突。对于<code>AtomicIntegerFieldUpdater</code>和<code>AtomicLongFieldUpdater</code>只能修改<code>int</code>/<code>long</code>类型的字段，不能修改其包装类型（<code>Integer</code>/<code>Long</code>）。如果要修改包装类型就需要使用<code>AtomicReferenceFieldUpdater</code>。</p>
-<h2>7. AtomicStampedReference</h2>
+<h5>5.4 AtomicStampedReference</h5>
 <p>对于上面说的<code>AtomicInteger</code>等存在一个问题就是ABA问题。</p>
 <p>ABA问题：其他线程将A改为B，又重新改为了A，本线程用期望值A与之进行比较，发现是相等的，则进行下面的操作。因为这个值已经被改变过，这就是ABA问题。</p>
 <p>解决：用个版本号来控制，来防止ABA问题。</p>
-<h2>8. AtomicBoolean</h2>
+<h5>5.5 AtomicBoolean</h5>
 <p>场景：若干个线程进来，但是这个方法只能执行一次。</p>
 <p><img src="http://bloghello.oursnail.cn/thread9-13.jpg" alt="image"></p>
 <p>好了，其实<code>Atomic</code>包最核心的思想就是用无阻塞的<code>CAS</code>来代替锁实现高性能操作，是实现线程安全的一种可行方法，理解了<code>CAS</code>原理和他们的基本用法和场景使用，基本就可以了。</p>
