@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/12/thread/JUC%E7%BB%84%E4%BB%B6%E6%8B%93%E5%B1%95-BlockingQueue/</loc>
+    
+    <lastmod>2019-02-12T09:37:32.361Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/12/thread/JUC%E7%BB%84%E4%BB%B6%E6%8B%93%E5%B1%95-ForkJoin%E7%AE%80%E4%BB%8B/</loc>
     
     <lastmod>2019-02-12T09:36:00.427Z</lastmod>
