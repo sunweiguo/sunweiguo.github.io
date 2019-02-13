@@ -114,11 +114,7 @@
 <li><code>awaitTermination(long timeOut, TimeUnit unit)</code></li>
 </ul>
 <blockquote>
-<p>当前线程阻塞，直到等所有已提交的任务（包括正在跑的和队列中等待的）执行完或者等超时时间到或者线程被中断，抛出<code>InterruptedException</code></p>
-<p>然后返回true（<code>shutdown</code>请求后所有任务执行完毕）或false（已超时）</p>
-<p><code>shuntdown()</code>和<code>awaitTermination()</code>效果差不多，方法执行之后，都要等到提交的任务全部执行完才停。</p>
-<p><code>shutdown()</code>后，不能再提交新的任务进去；但是<code>awaitTermination()</code>后，可以继续提交。</p>
-<p><code>awaitTermination()</code>是阻塞的，返回结果是线程池是否已停止（true/false）；<code>shutdown()</code>不阻塞。</p>
+<p>接收<code>timeout</code>和<code>TimeUnit</code>两个参数，用于设定超时时间及单位。当等待超过设定时间时，会监测<code>ExecutorService</code>是否已经关闭，若关闭则返回<code>true</code>，否则返回<code>false</code>。一般情况下会和<code>shutdown</code>方法组合使用。</p>
 </blockquote>
 <h5>5.3 Executors生成线程池</h5>
 <p>要配置一个线程池是比较复杂的，尤其是对于线程池的原理不是很清楚的情况下，很有可能配置的线程池不是较优的，因此在<code>Executors</code>类里面提供了一些静态工厂，生成一些常用的线程池。这个就涉及上面我们反复提及的核心类：<code>ThreadPoolExecutor</code>。</p>
