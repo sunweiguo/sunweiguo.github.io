@@ -1,4 +1,24 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 实现生产者消费者模式 · FourColor</title><meta name="description" content="实现生产者消费者模式 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">实现生产者消费者模式</h1><div class="post-meta"><span class="post-time">Feb 13, 2019</span></div><div class="post-content"></div></article></div></section><footer><div class="paginator"><a href="/2019/02/13/thread/线程间通信方式总结/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 实现生产者消费者模式 · FourColor</title><meta name="description" content="实现生产者消费者模式 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">实现生产者消费者模式</h1><div class="post-meta"><span class="post-time">Feb 13, 2019</span></div><div class="post-content"><p>无论是面试还是工作中，生产者和消费者模式一直是一个比较常见的问题，今天，我们用各种方式来实现它。</p>
+<a id="more"></a>
+<h2>前言</h2>
+<p>生产者和消费者问题是线程模型中的经典问题：生产者和消费者在同一时间段内共用同一个存储空间，生产者往存储空间中添加产品，消费者从存储空间中取走产品，当存储空间为空时，消费者阻塞，当存储空间满时，生产者阻塞。</p>
+<p><img src="http://bloghello.oursnail.cn/thread11-1.jpg" alt="image"></p>
+<h2>一、wait/notify/notifyAll实现</h2>
+<p>有一个天猫小店专门负责生产商品，用户也可以去买商品：</p>
+<p><img src="http://bloghello.oursnail.cn/thread15-1.jpg" alt="image"></p>
+<p>一个生产者的线程：</p>
+<p><img src="http://bloghello.oursnail.cn/thread15-2.jpg" alt="image"></p>
+<p>同理，一个消费者的线程：</p>
+<p><img src="http://bloghello.oursnail.cn/thread15-3.jpg" alt="image"></p>
+<p>下面进行测试：</p>
+<p><img src="http://bloghello.oursnail.cn/thread15-4.jpg" alt="image"></p>
+<p>此时的结果为：</p>
+<p><img src="http://bloghello.oursnail.cn/thread15-5.jpg" alt="image"></p>
+<p>由于生产大于消费，造成产能过剩。</p>
+<h2>二、阻塞队列实现</h2>
+<p>这个的实现已经在<a href="http://fourcolor.oursnail.cn/2019/02/12/thread/JUC%E7%BB%84%E4%BB%B6%E6%8B%93%E5%B1%95-BlockingQueue/" target="_blank" rel="noopener">JUC组件拓展-BlockingQueue</a>中实现了。不再赘述。主要就是用到阻塞的<code>put()</code>和<code>take()</code>两个方法。</p>
+<p>其实还有一些其他的方式也可以实现生产者消费者模型，但是我觉得最核心的就是上面讲的两种，掌握这个就不慌了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/13/thread/线程间通信方式总结/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Wed Feb 13 2019 13:39:59 GMT+0800',
     owner: 'sunweiguo',

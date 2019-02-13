@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-02-13T05:40:16.813Z</updated>
+  <updated>2019-02-13T05:42:50.861Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,9 +21,13 @@
     <link href="http://yoursite.com/2019/02/13/thread/%E5%AE%9E%E7%8E%B0%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85%E6%A8%A1%E5%BC%8F/"/>
     <id>http://yoursite.com/2019/02/13/thread/实现生产者消费者模式/</id>
     <published>2019-02-13T05:39:59.104Z</published>
-    <updated>2019-02-13T05:40:16.813Z</updated>
+    <updated>2019-02-13T05:42:50.861Z</updated>
+    
+    <content type="html"><![CDATA[<p>无论是面试还是工作中，生产者和消费者模式一直是一个比较常见的问题，今天，我们用各种方式来实现它。</p><a id="more"></a><h2>前言</h2><p>生产者和消费者问题是线程模型中的经典问题：生产者和消费者在同一时间段内共用同一个存储空间，生产者往存储空间中添加产品，消费者从存储空间中取走产品，当存储空间为空时，消费者阻塞，当存储空间满时，生产者阻塞。</p><p><img src="http://bloghello.oursnail.cn/thread11-1.jpg" alt="image"></p><h2>一、wait/notify/notifyAll实现</h2><p>有一个天猫小店专门负责生产商品，用户也可以去买商品：</p><p><img src="http://bloghello.oursnail.cn/thread15-1.jpg" alt="image"></p><p>一个生产者的线程：</p><p><img src="http://bloghello.oursnail.cn/thread15-2.jpg" alt="image"></p><p>同理，一个消费者的线程：</p><p><img src="http://bloghello.oursnail.cn/thread15-3.jpg" alt="image"></p><p>下面进行测试：</p><p><img src="http://bloghello.oursnail.cn/thread15-4.jpg" alt="image"></p><p>此时的结果为：</p><p><img src="http://bloghello.oursnail.cn/thread15-5.jpg" alt="image"></p><p>由于生产大于消费，造成产能过剩。</p><h2>二、阻塞队列实现</h2><p>这个的实现已经在<a href="http://fourcolor.oursnail.cn/2019/02/12/thread/JUC%E7%BB%84%E4%BB%B6%E6%8B%93%E5%B1%95-BlockingQueue/" target="_blank" rel="noopener">JUC组件拓展-BlockingQueue</a>中实现了。不再赘述。主要就是用到阻塞的<code>put()</code>和<code>take()</code>两个方法。</p><p>其实还有一些其他的方式也可以实现生产者消费者模型，但是我觉得最核心的就是上面讲的两种，掌握这个就不慌了。</p>]]></content>
     
     <summary type="html">
+    
+      &lt;p&gt;无论是面试还是工作中，生产者和消费者模式一直是一个比较常见的问题，今天，我们用各种方式来实现它。&lt;/p&gt;
     
     </summary>
     
