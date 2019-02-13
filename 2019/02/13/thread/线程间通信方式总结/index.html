@@ -47,7 +47,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">thread A正在运行。。。</span><br><span class="line">thread A正在运行。。。</span><br><span class="line">thread A正在运行。。。</span><br><span class="line">thread A正在运行。。。</span><br><span class="line">thread A执行完毕</span><br></pre></td></tr></table></figure>
 <p>这里的 <code>flag</code> 存放于主内存中，所以主线程和线程 <code>A</code> 都可以看到。<code>flag</code> 采用 <code>volatile</code> 修饰主要是为了内存可见性。</p>
 <h2>五、CountDownLatch 并发工具</h2>
-<p>在前面的文章种我们基本知道它的使用，但是很遗憾，没有找一个比较实际的场景来描述它的功能，下面我将以一个实际场景来用<code>CountDownLatch</code>来解决这个问题。</p>
+<p>在前面的文章中我们基本知道它的使用，但是很遗憾，没有找一个比较实际的场景来描述它的功能，下面我将以一个实际场景来用<code>CountDownLatch</code>来解决这个问题。</p>
 <p>假设小明和小红是一对夫妻，他们两准备烧一个菜，就叫做青椒炒肉丝。我们知道，要想炒出青椒炒肉丝，需要切好青椒，然后切好肉丝，如果想要肉的质感爽嫩，需要用淀粉揉一揉，加点醋，加点料酒去去腥，并且弄好了之后需要先炒一下肉。最后两样都准备好之后：即切好的青椒和预热好的肉丝，那么就可以合在一起炒一下出锅了。</p>
 <p>假设切青椒需要3分钟，准备好肉需要5分钟，这两个同时准备好之后就可以进行烧菜了。如何最大程度上提高效率呢？</p>
 <p>显然，就是小明切青椒，小红搞肉丝，两个人并行。这个时候，我们可以用<code>CountDownLatch</code>来模拟这个场景。</p>
