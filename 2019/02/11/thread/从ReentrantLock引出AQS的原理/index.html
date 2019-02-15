@@ -49,10 +49,28 @@
 <p><img src="http://bloghello.oursnail.cn/thread7-4.jpg" alt="image"></p>
 <h2>五、出列</h2>
 <p>CLH同步队列遵循<code>FIFO</code>，首节点的线程释放同步状态后，将会唤醒它的后继节点（<code>next</code>），而后继节点将会在获取同步状态成功时将自己设置为首节点，这个过程非常简单，head执行该节点并断开原首节点的<code>next</code>和当前节点的<code>prev</code>即可，注意在这个过程是不需要使用CAS来保证的，因为只有一个线程能够成功获取到同步状态。</p>
-<p><img src="http://bloghello.oursnail.cn/thread7-7.jpg" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/thread7-5.jpg" alt="image"></p>
 <p>其实这里按照源码的解释，是将第一个获取到同步状态的<code>node</code>作为新的<code>head</code>，然后将原来的<code>head</code>置空。</p>
 <h2>六、同步状态的获取与释放</h2>
 <p>在前面提到过，AQS是构建Java同步组件的基础，我们期待它能够成为实现大部分同步需求的基础。AQS的设计模式采用的模板方法模式，子类通过继承的方式，实现它的抽象方法来管理同步状态，对于子类而言它并没有太多的活要做，AQS提供了大量的模板方法来实现同步，主要是分为三类：独占式获取和释放同步状态、共享式获取和释放同步状态、查询同步队列中的等待线程情况。自定义子类使用AQS提供的模板方法就可以实现自己的同步语义。</p>
+<p><strong>下面具体来解释一下独占式和共享式的含义</strong></p>
+<p>在具体分析之前，我们先解释两种同步的方式，独占模式和共享模式：</p>
+<ul>
+<li>独占模式：资源是独占的，一次只能一个线程获取。</li>
+<li>共享模式：同时可以被多个线程获取，具体的资源的个数可以通过参数指定。</li>
+</ul>
+<p>如果我们自己实现一个同步器的框架，我们怎么设计呢？下面可能是我们想到的比较通用的设计方案（独占模式）:</p>
+<ul>
+<li>定义一个变量<code>int state=0</code>，使用这个变量表示被获取的资源的数量。</li>
+<li>线程在获取资源前要先检查<code>state</code>的状态，如果为0，则修改为1，表示获取资源成功，否则表示资源已经被其他线程占用，此时线程要堵塞以等待其他线程释放资源。</li>
+<li>为了能使得资源释放后找到那些为了等待资源而堵塞的线程，我们把这些线程保存在FIFO队列中。</li>
+<li>当占有资源的线程释放掉资源后，可以从队列中唤醒一个堵塞的线程，由于此时资源已经释放，因此这个被唤醒的线程可以获取资源并且执行。</li>
+</ul>
+<p>这个<code>state</code>变量到底是什么呢？</p>
+<ul>
+<li>当<code>AQS</code>的子类实现独占功能时，如<code>ReentrantLock</code>，资源是否可以被访问被定义为：只要<code>AQS</code>的<code>state</code>变量不为0，并且持有锁的线程不是当前线程，那么代表资源不可访问。此时，<code>state</code>是用来表示当前线程获取锁的可重入次数；</li>
+<li>当<code>AQS</code>的子类实现共享功能时，如<code>CountDownLatch</code>，资源是否可以被访问被定义为：只要<code>AQS</code>的<code>state</code>变量不为0，那么代表资源不可以为访问。此时，<code>state</code>用来表示当前计数器的值。</li>
+</ul>
 <h2>七、独占式-独占式同步状态获取</h2>
 <p>独占式，同一时刻仅有一个线程持有同步状态。</p>
 <p>独占式同步状态获取<code>acquire(int arg)</code>方法为AQS提供的模板方法，该方法为独占式获取同步状态，但是该方法对中断不敏感，也就是说由于线程获取同步状态失败加入到CLH同步队列中，后续对线程进行中断操作时，线程不会从同步队列中移除。代码如下：</p>
@@ -114,7 +132,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">acquireShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tryAcquireShared(arg) &lt; <span class="number">0</span>)</span><br><span class="line">        doAcquireShared(arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>从上面程序可以看出，方法首先是调用<code>tryAcquireShared(int arg)</code>方法尝试获取同步状态，如果获取失败则调用<code>doAcquireShared(int arg)</code>自旋方式获取同步状态，共享式获取同步状态的标志是返回 &gt;= 0 的值表示获取成功。自旋方式获取同步状态如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doAcquireShared</span><span class="params">(<span class="keyword">int</span> arg)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> Node node = addWaiter(Node.SHARED);</span><br><span class="line">    <span class="keyword">boolean</span> failed = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">boolean</span> interrupted = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">for</span> (;;) &#123;</span><br><span class="line">            <span class="keyword">final</span> Node p = node.predecessor();</span><br><span class="line">            <span class="keyword">if</span> (p == head) &#123;</span><br><span class="line">                <span class="keyword">int</span> r = tryAcquireShared(arg);</span><br><span class="line">                <span class="keyword">if</span> (r &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                    setHeadAndPropagate(node, r);</span><br><span class="line">                    p.next = <span class="keyword">null</span>; <span class="comment">// help GC</span></span><br><span class="line">                    <span class="keyword">if</span> (interrupted)</span><br><span class="line">                        selfInterrupt();</span><br><span class="line">                    failed = <span class="keyword">false</span>;</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (shouldParkAfterFailedAcquire(p, node) &amp;&amp;</span><br><span class="line">                parkAndCheckInterrupt())</span><br><span class="line">                interrupted = <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (failed)</span><br><span class="line">            cancelAcquire(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>tryAcquireShared(int arg)</code>方法尝试获取同步状态，返回值为int，当其 &gt;= 0 时，表示能够获取到同步状态，这个时候就可以从自旋过程中退出。</p>
+<p>逻辑几乎和独占式锁的获取一模一样，这里的自旋过程中能够退出的条件是当前节点的前驱节点是头结点并且<code>tryAcquireShared(arg)</code>返回值大于等于0即能成功获得同步状态。</p>
 <p><code>acquireShared(int arg)</code>方法不响应中断，与独占式相似，AQS也提供了响应中断、超时的方法，分别是：<code>acquireSharedInterruptibly(int arg)</code>、<code>tryAcquireSharedNanos(int arg,long nanos)</code>，这里就不做解释了。</p>
 <h2>十一、共享式同步状态释放</h2>
 <p>获取同步状态后，需要调用<code>release(int arg)</code>方法释放同步状态，方法如下：</p>
@@ -153,7 +171,7 @@
 <li>公平锁每次获取到锁为同步队列中的第一个节点，保证请求资源时间上的绝对顺序，而非公平锁有可能刚释放锁的线程下次继续获取该锁，则有可能导致其他线程永远无法获取到锁，造成“饥饿”现象。</li>
 <li>公平锁为了保证时间上的绝对顺序，需要频繁的上下文切换，而非公平锁会降低一定的上下文切换，降低性能开销。因此，<code>ReentrantLock</code>默认选择的是非公平锁，则是为了减少一部分上下文切换，保证了系统更大的吞吐量。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">上一篇</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">PRVE</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Mon Feb 11 2019 18:45:59 GMT+0800',
     owner: 'sunweiguo',
