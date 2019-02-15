@@ -6,6 +6,7 @@
 <p>如果是不加任何控制策略的话，必然是无法保证按照<code>A</code> <code>B</code> <code>C</code>的顺序依次循环执行的，比如：</p>
 <p><img src="http://bloghello.oursnail.cn/thread16-2.jpg" alt="image"></p>
 <p>执行结果是：</p>
+<p>1694620367</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">A</span><br><span class="line">B</span><br><span class="line">C</span><br><span class="line">B</span><br><span class="line">A</span><br><span class="line">C</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
 <p>那么如何保证按照我们这个顺序执行呢？如果还是沿用这个方法，只能这样写：</p>
 <p><img src="http://bloghello.oursnail.cn/thread16-3.jpg" alt="image"></p>
@@ -66,7 +67,7 @@
 <p><img src="http://bloghello.oursnail.cn/thread16-11.jpg" alt="image"></p>
 <p>如图，调用<code>condition.await</code>方法的线程必须是已经获得了<code>lock</code>，也就是当前线程是同步队列中的头结点。调用该方法后会使得当前线程所封装的<code>Node</code>尾插入到等待队列中。</p>
 <p>此外，<code>await</code>也支持超时等待和不响应中断，这里不再赘述。</p>
-<h2>signal/signalAll实现原理</h2>
+<h2>六、signal/signalAll实现原理</h2>
 <p>调用<code>condition</code>的<code>signal</code>或者<code>signalAll</code>方法可以将等待队列中等待时间最长的节点移动到同步队列中，使得该节点能够有机会获得<code>lock</code>。按照等待队列是先进先出（<code>FIFO</code>）的，所以等待队列的头节点必然会是等待时间最长的节点，也就是每次调用<code>condition</code>的<code>signal</code>方法是将头节点移动到同步队列中。</p>
 <p><img src="http://bloghello.oursnail.cn/thread16-12.jpg" alt="image"></p>
 <p><code>signal</code>方法首先会检测当前线程是否已经获取<code>lock</code>，如果没有获取<code>lock</code>会直接抛出异常，如果获取的话再得到等待队列的头指针引用的节点，之后的操作的<code>doSignal</code>方法也是基于该节点。下面我们来看看<code>doSignal</code>方法做了些什么事情，<code>doSignal</code>方法源码为：</p>
