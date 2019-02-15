@@ -45,6 +45,16 @@
 <p><img src="http://bloghello.oursnail.cn/thread2-8.jpg" alt="image"></p>
 <p>我们发现，其实两种方式的根本就是<code>Future</code>这个接口，第一种是直接用了<code>FutureTask</code>这个类来手动实现，即不仅需要它接收一个<code>Callable</code>任务，还需要将其作为一个线程任务去手动执行。而第二种方式就比较简单了，有了线程池，我直接把<code>Callable</code>任务扔线程池去<code>submit</code>，就可以得到一个可以获取返回值的<code>Future</code>类型对象，就可以根据这个对象获取到值了。</p>
 <p>所以两种方式本质上是一样一样的。</p>
+<p>下面补充一下关于<code>Runnable</code>和<code>Callable</code>两者的区别：</p>
+<p>表面区别：</p>
+<ul>
+<li><code>Runnable</code>不返回任务执行结果，<code>Callable</code>可返回任务执行结果</li>
+<li><code>Callable</code>在任务无法计算结果时抛出异常，而<code>Runnable</code>不能</li>
+</ul>
+<p>本质区别：</p>
+<ul>
+<li><code>Runnable</code>的<code>call</code>方法是被线程调用的，在<code>run</code>方法中是异步执行的；而<code>callable</code>的<code>call</code>方法不是异步执行的，是由<code>Future</code>的<code>run</code>方法调用的</li>
+</ul>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/02/10/thread/线程的状态/" class="prev">PRVE</a><a href="/2019/02/10/thread/线程基本知识梳理/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Feb 10 2019 14:36:37 GMT+0800',
