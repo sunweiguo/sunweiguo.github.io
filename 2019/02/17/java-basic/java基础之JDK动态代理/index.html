@@ -1,4 +1,5 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> java基础之JDK动态代理 · FourColor</title><meta name="description" content="java基础之JDK动态代理 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GITHUB</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">java基础之JDK动态代理</h1><div class="post-meta"><span class="post-time">Feb 17, 2019</span></div><div class="post-content"><p>代理模式可以说是经常面试被问的一个东西，因为spring aop的实现原理就是基于它，关于它，只要记住，它是运行时动态生成的一个代理类。在这个基础上，再去看看它底层源码，其实JDK已经帮我们最大程度上封装成简单的函数了，我们只需要传入几个参数就可以生成对应的代理对象。</p>
+<a id="more"></a>
 <h2>代理模式是什么</h2>
 <p>定义：给某个对象提供一个代理对象，并由代理对象控制对于原对象的访问，即客户不直接操控原对象，而是通过代理对象间接地操控原对象。</p>
 <ul>
@@ -87,7 +88,7 @@
 <p><img src="http://bloghello.oursnail.cn/javabasic8-9.png" alt="image"></p>
 <p>通过上面的方法就成功调用了 <code>invoke()</code> 方法，所以这是代理类中已经注定要去执行 <code>invoke()</code> 方法了。</p>
 <p>有一篇文章比较生动地阐述了动态代理的含义：<a href="https://mp.weixin.qq.com/s?__biz=MzAxOTc0NzExNg==&amp;mid=2665513926&amp;idx=1&amp;sn=1c43c5557ba18fed34f3d68bfed6b8bd&amp;chksm=80d67b85b7a1f2930ede2803d6b08925474090f4127eefbb267e647dff11793d380e09f222a8#rd" target="_blank" rel="noopener">Java帝国之动态代理</a></p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/17/java-basic/java基础之注解/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/17/java-basic/java基础之注解/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Feb 17 2019 20:16:53 GMT+0800',
     owner: 'sunweiguo',
