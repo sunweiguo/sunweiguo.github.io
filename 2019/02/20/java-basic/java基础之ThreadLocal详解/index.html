@@ -1,0 +1,97 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> java基础之ThreadLocal详解 · FourColor</title><meta name="description" content="java基础之ThreadLocal详解 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">java基础之ThreadLocal详解</h1><div class="post-meta"><span class="post-time">Feb 20, 2019</span></div><div class="post-content"><p>ThreadLocal是面试重灾区，但是好像我没遇到过有人问，尴尬脸，不过我们不能做砧板上的鱼肉静静等待宰割，分为两篇来讲解其中的用法和原理。这是第一篇。</p>
+<a id="more"></a>
+<h2>一、ThreadLocal简介</h2>
+<p><code>ThreadLocal</code>类用来提供线程内部的局部变量。这些变量在多线程环境下访问(通过<code>get</code>或<code>set</code>方法访问)时能保证各个线程里的变量相对独立于其他线程内的变量，<code>ThreadLocal</code>实例通常来说都是<code>private static</code>类型。</p>
+<p><code>ThreadLocal</code>类提供了四个对外开放的接口方法，这也是用户操作<code>ThreadLocal</code>类的基本方法：</p>
+<ul>
+<li><code>void set(Object value)</code>设置当前线程的线程局部变量的值。</li>
+<li><code>public Object get()</code>该方法返回当前线程所对应的线程局部变量。</li>
+<li><code>public void remove()</code>将当前线程局部变量的值删除，目的是为了减少内存的占用，该方法是JDK 5.0新增的方法。需要指出的是，当线程结束后，对应该线程的局部变量将自动被垃圾回收，所以显式调用该方法清除线程的局部变量并不是必须的操作，但它可以加快内存回收的速度。</li>
+<li><code>protected Object initialValue()</code>返回该线程局部变量的初始值，该方法是一个<code>protected</code>的方法，显然是为了让子类覆盖而设计的。这个方法是一个延迟调用方法，在线程第1次调用<code>get()</code>或<code>set(Object)</code>时才执行，并且仅执行1次，<code>ThreadLocal</code>中的缺省实现直接返回一个<code>null</code>。</li>
+</ul>
+<blockquote>
+<p>一个简单的小例子来感受ThreadLocal到底是什么以及怎么用：</p>
+</blockquote>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-1.png" alt="image"></p>
+<blockquote>
+<p>运行结果：</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Thread-0</span><br><span class="line">张三</span><br><span class="line">李四</span><br><span class="line">王五</span><br><span class="line">Thread-1</span><br><span class="line">Chinese</span><br><span class="line">English</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>分析</p>
+</blockquote>
+<p>可以，看出虽然多个线程对同一个变量进行访问，但是由于<code>threadLocal</code>变量由<code>ThreadLocal</code> 修饰，则不同的线程访问的就是该线程设置的值，这里也就体现出来<code>ThreadLocal</code>的作用。</p>
+<p>当使用<code>ThreadLocal</code>维护变量时，<code>ThreadLocal</code>为每个使用该变量的线程提供独立的变量副本，所以每一个线程都可以独立地改变自己的副本，而不会影响其它线程所对应的副本。</p>
+<h2>二、扒开JDK threadlocal神秘面纱</h2>
+<p>threadlocal的原理图为：</p>
+<p><img src="http://xiaozhao.oursnail.cn/iKjk3GS.png" alt="image"></p>
+<p>那<code>ThreadLocal</code>内部是如何为每一个线程维护变量副本的呢？到底是什么原理呢？</p>
+<p>先来看一下<code>ThreadLocal</code>的<code>set()</code>方法的源码是如何实现的：</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-2.png" alt="image"></p>
+<p>我们看到，首先通过<code>getMap(Thread t)</code>方法获取一个和当前线程相关的<code>ThreadLocalMap</code>，然后将变量的值设置到这个<code>ThreadLocalMap</code>对象中，当然如果获取到的<code>ThreadLocalMap</code>对象为空，就通过<code>createMap</code>方法创建。</p>
+<p>我们再往下面去一点，比如<code>map.set</code>方法到底是怎么实现的？</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-3.png" alt="image"></p>
+<p>结合上面的图，其实我们可以发现，数据并不是放在所谓的<code>Map</code>集合中，而是放进了一个<code>Entry</code>数组中，这个<code>entry</code>索引是上面计算好的，<code>entry</code>的<code>key</code>是指向<code>threadLocal</code>的一个软引用，<code>value</code>是指向真实数据的一个强引用，以后再获取的时候，再以同样的方式计算得到索引下标即可。</p>
+<blockquote>
+<p>上面代码出现的 ThreadLocalMap 是什么？</p>
+</blockquote>
+<p><strong><code>ThreadLocalMap</code>是<code>ThreadLocal</code>类的一个静态内部类，它实现了键值对的设置和获取（对比Map对象来理解），每个线程中都有一个独立的<code>ThreadLocalMap</code>副本，它所存储的值，只能被当前线程读取和修改。</strong></p>
+<p>我们深入看一下<code>getMap</code>和<code>createMap</code>的实现</p>
+<p><code>getMap</code>:</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-4.png" alt="image"></p>
+<p><code>createMap</code>:</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-5.png" alt="image"></p>
+<p>代码非常直白，就是获取和设置<code>Thread</code>内的一个叫<code>threadLocals</code>的变量，而这个变量的类型就是<code>ThreadLocalMap</code>，这样进一步验证了上文中的观点：<strong>每个线程都有自己独立的<code>ThreadLocalMap</code>对象</strong>。</p>
+<p><code>Thread</code>源码中的<code>threadLocals</code>：</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-6.png" alt="image"></p>
+<p>我们接着看<code>ThreadLocal</code>中的<code>get</code>方法如下</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-7.png" alt="image"></p>
+<ul>
+<li>第一步 先获通过<code>Thread.currentThread（）</code>取当前线程</li>
+<li>第二步 然后获取当前线程的<code>threadLocals</code>属性</li>
+<li>第三步 在<code>threadLocals</code>属性里获取<code>Entry</code>实例</li>
+<li>第四部 从<code>Entry</code>实例的<code>value</code>属性里获取到最后所要的<code>Object</code>对象</li>
+</ul>
+<p>接下来讨论一下上面出现的<code>ThreadLocalMap</code>类以及<code>Entry</code>类，直接贴源码</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-8.png" alt="image"></p>
+<p><code>Entry</code>是<code>ThreadLocalMap</code>的内部类，而且<code>ThreadLocalMap</code>里拥有一个类型为<code>Entry[]</code>的<code>table</code>属性，而且每个线程实例有自己的<code>ThreadLocalMap</code>。到这里结论已经很明显了：<strong>负责保存<code>ThreadLocal</code>的<code>key</code>和<code>value</code>根本就不是一个<code>Map</code>类型，而是一个<code>Entry</code>数组!</strong></p>
+<p><code>Entry</code>继承<code>WeakReference</code>，因此继承拥有一个弱引用<code>referent</code>，而且自身也有一个<code>value</code>属性。<code>Entry</code>利用<code>referent</code>来保存<code>threadLocal</code>实例的弱引用，利用<code>value</code>保存<code>Object</code>的强引用。至于为什么一个是强引用，一个是弱引用，我们在下一篇中来探讨。</p>
+<p>最后的问题是怎样在<code>Entry</code>数组里定位我们需要的<code>Entry</code>呢?其实上面在set的时候已经大概知道了，现在再来看看代码吧：</p>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-9.png" alt="image"></p>
+<p>留意<code>key.threadLocalHashCode</code>这个属性，<code>Entry</code>在保存进<code>Entry[]</code>数组之前，会利用<code>ThreadLocal</code>的引用计算出一个<code>hash</code>值，然后利用这个<code>hash</code>值作为下标定位到<code>Entry[]</code>数组的某个位置；</p>
+<p><img src="http://xiaozhao.oursnail.cn/thread_specific_storage_custom.png" alt="image"></p>
+<p>原理总结：<code>ThreadLocal</code>类并没有一个<code>Map</code>来保存数据，数据都是保存在线程实例上的；客户端访问<code>ThreadLocal</code>实例的<code>get</code>方法，<code>get</code>方法通过<code>Thread.getCurrentThread</code>获得当前线程的实例，从而获得当前线程的<code>ThreadLocalMap</code>对象，而<code>ThreadLocalMap</code>里包含了一个<code>Entry</code>数组，里面的每个<code>Entry</code>保存了<code>ThreadLocal</code>引用以及<code>Object</code>引用，<code>Entry</code>的<code>referent</code>保存<code>ThreadLocal</code>的弱引用，<code>Entry</code>的<code>value</code>保存<code>Object</code>的强引用。</p>
+<h2>三、threadLoca应用</h2>
+<blockquote>
+<p><code>threadlocal</code>实现的可复用的耗时统计工具<code>Profiler</code></p>
+</blockquote>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-10.png" alt="image"></p>
+<p>运行结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Thread-0耗时： 1000</span><br><span class="line">Thread-1耗时： 1999</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>threadLocal</code>实现数据库连接线程隔离</p>
+</blockquote>
+<p><img src="http://bloghello.oursnail.cn/javabasic14-11.png" alt="image"></p>
+<p>通过调用<code>ConnectionManager.getConnection()</code>方法，每个线程获取到的，都是和当前线程绑定的那个<code>Connection</code>对象，第一次获取时，是通过<code>initialValue()</code>方法的返回值来设置值的。通过<code>ConnectionManager.setConnection(Connection conn)</code>方法设置的<code>Connection</code>对象，也只会和当前线程绑定。这样就实现了<code>Connection</code>对象在多个线程中的完全隔离。</p>
+<p>在<code>Spring</code>容器中管理多线程环境下的<code>Connection</code>对象时，采用的思路和以上代码非常相似。</p>
+<h2>四、threadLocal缺陷</h2>
+<p><code>ThreadLocal</code>变量的这种隔离策略，也不是任何情况下都能使用的。</p>
+<p>如果多个线程并发访问的对象实例只能创建那么一个，那就没有别的办法了，老老实实的使用同步机制吧。</p>
+<p>下一篇探讨<code>ThreadLocal</code> 内存泄漏问题。</p>
+<p>参考：</p>
+<ul>
+<li><a href="http://rayleung.xyz/2017/03/01/thread/#" target="_blank" rel="noopener">http://rayleung.xyz/2017/03/01/thread/#</a></li>
+<li><a href="http://vence.github.io/2016/05/28/threadlocal-info/" target="_blank" rel="noopener">http://vence.github.io/2016/05/28/threadlocal-info/</a></li>
+<li><a href="https://blog.csdn.net/lovesomnus/article/details/64441426" target="_blank" rel="noopener">https://blog.csdn.net/lovesomnus/article/details/64441426</a></li>
+</ul>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/20/java-basic/java基础之NIO/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Wed Feb 20 2019 20:31:57 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
