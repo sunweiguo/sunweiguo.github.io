@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/1.Eureka%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/</loc>
+    
+    <lastmod>2019-02-21T05:27:16.278Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/21/weather-for-spring-cloud/8.%E5%A4%A9%E6%B0%94%E9%A2%84%E6%8A%A5%E7%B3%BB%E7%BB%9F-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B6%88%E8%B4%B9/</loc>
     
     <lastmod>2019-02-21T05:26:17.654Z</lastmod>
@@ -12,13 +19,6 @@
     <loc>http://yoursite.com/2019/02/21/weather-for-spring-cloud/7.%E5%A4%A9%E6%B0%94%E9%A2%84%E6%8A%A5%E7%B3%BB%E7%BB%9F-%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0/</loc>
     
     <lastmod>2019-02-21T05:25:42.657Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/1.Eureka%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/</loc>
-    
-    <lastmod>2019-02-21T05:24:03.806Z</lastmod>
     
   </url>
   
