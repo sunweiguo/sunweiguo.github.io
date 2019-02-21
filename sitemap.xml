@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/4.Hystrix%E8%AF%B7%E6%B1%82%E5%90%88%E5%B9%B6/</loc>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/6.Zuul%E7%BD%91%E5%85%B3%E6%9C%8D%E5%8A%A1/</loc>
     
-    <lastmod>2019-02-21T07:09:05.089Z</lastmod>
+    <lastmod>2019-02-21T07:17:52.878Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
     
-    <lastmod>2019-02-21T07:05:21.698Z</lastmod>
+    <lastmod>2019-02-21T07:17:03.269Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/4.Hystrix%E8%AF%B7%E6%B1%82%E5%90%88%E5%B9%B6/</loc>
+    
+    <lastmod>2019-02-21T07:09:05.089Z</lastmod>
     
   </url>
   
