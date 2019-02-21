@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/2.Ribbon%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
+    
+    <lastmod>2019-02-21T05:59:35.425Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/1.Eureka%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86/</loc>
     
     <lastmod>2019-02-21T05:27:16.278Z</lastmod>
