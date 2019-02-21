@@ -1,0 +1,86 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 8.Bus消息总线 · FourColor</title><meta name="description" content="8.Bus消息总线 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">8.Bus消息总线</h1><div class="post-meta"><span class="post-time">Feb 21, 2019</span></div><div class="post-content"><p>为了实现依次redresh自动刷新所有服务的配置文件，所以需要引入消息总线进行消息的通知，本文主要采用kafka作为消息队列来实现，当然了，rabbitMQ也是比较简单的。</p>
+<a id="more"></a>
+<h2>一、前言</h2>
+<p>注：本篇文章是基于<code>spring boot 2.x</code>，主要参考 <a href="https://www.cnblogs.com/huangjuncong/p/9077099.html" target="_blank" rel="noopener">https://www.cnblogs.com/huangjuncong/p/9077099.html</a> 这篇文章而写。但是他的版本比较低，有一两个坑需要注意。</p>
+<p>上一篇我们讲到，我们如果要去更新所有微服务的配置，在不重启的情况下去更新配置，只能依靠<code>spring cloud config</code>了，但是，是我们要一个服务一个服务的发送post请求，我们能受的了吗？</p>
+<p>虽然这比之前的没配置中心好多了，那但是我们如何继续避免挨个挨个的向服务发送Post请求来告知服务你的配置信息改变了，需要及时修改内存中的配置信息呢？</p>
+<p>这时候我们就不要忘记消息队列的发布订阅模型。让所有为服务来订阅这个事件，当这个事件发生改变了，就可以通知所有微服务去更新它们的内存中的配置信息。这时Bus消息总线就能解决，你只需要在<code>springcloud Config Server</code>端发出<code>refresh</code>，就可以触发所有微服务更新了。</p>
+<p>如下架构图所示：</p>
+<p><img src="http://bloghello.oursnail.cn/Spring-cloud-1-1.jpg" alt="image"></p>
+<p>根据此图我们可以看出利用Spring Cloud Bus做配置更新的步骤:</p>
+<ul>
+<li>1、提交代码触发post给客户端A发送bus/refresh</li>
+<li>2、客户端A接收到请求从Server端更新配置并且发送给Spring Cloud Bus</li>
+<li>3、Spring Cloud bus接到消息并通知给其它客户端</li>
+<li>4、其它客户端接收到通知，请求Server端获取最新配置</li>
+<li>5、全部客户端均获取到最新的配置</li>
+</ul>
+<p><code>Spring Cloud Bus</code>除了支持<code>RabbitMQ</code>的自动化配置之外，还支持现在被广泛应用的<code>Kafka</code>。在本文中，我们将搭建一个Kafka的本地环境，并通过它来尝试使用<code>Spring Cloud Bus</code>对<code>Kafka</code>的支持，实现消息总线的功能。</p>
+<h2>二、Kafka</h2>
+<p><code>Kafka</code>使用<code>Scala</code>实现，被用作LinkedIn的活动流和运营数据处理的管道，现在也被诸多互联网企业广泛地用作为数据流管道和消息系统。</p>
+<p>Kafak架构图如下:</p>
+<p><img src="http://bloghello.oursnail.cn/kafka%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="image"></p>
+<p><code>Kafka</code>是基于消息发布/订阅模式实现的消息系统，其主要设计目标如下：</p>
+<ol>
+<li><strong>消息持久化</strong>：以时间复杂度为O(1)的方式提供消息持久化能力，即使对TB级以上数据也能保证常数时间复杂度的访问性能。</li>
+<li><strong>高吞吐</strong>：在廉价的商用机器上也能支持单机每秒100K条以上的吞吐量</li>
+<li><strong>分布式</strong>：支持消息分区以及分布式消费，并保证分区内的消息顺序</li>
+<li><strong>跨平台</strong>：支持不同技术平台的客户端（如：Java、PHP、Python等）</li>
+<li><strong>实时性</strong>：支持实时数据处理和离线数据处理</li>
+<li><strong>伸缩性</strong>：支持水平扩展</li>
+</ol>
+<p><code>Kafka</code>中涉及的一些基本概念：</p>
+<ol>
+<li><strong>Broker</strong>：Kafka集群包含一个或多个服务器，这些服务器被称为Broker。</li>
+<li><strong>Topic</strong>：逻辑上同Rabbit的Queue队列相似，每条发布到Kafka集群的消息都必须有一个Topic。（物理上不同Topic的消息分开存储，逻辑上一个Topic的消息虽然保存于一个或多个Broker上，但用户只需指定消息的Topic即可生产或消费数据而不必关心数据存于何处）</li>
+<li><strong>Partition</strong>：Partition是物理概念上的分区，为了提供系统吞吐率，在物理上每个Topic会分成一个或多个Partition，每个Partition对应一个文件夹（存储对应分区的消息内容和索引文件）。</li>
+<li><strong>Producer</strong>：消息生产者，负责生产消息并发送到Kafka Broker。</li>
+<li><strong>Consumer</strong>：消息消费者，向Kafka Broker读取消息并处理的客户端。</li>
+<li><strong>Consumer Group</strong>：每个Consumer属于一个特定的组（可为每个Consumer指定属于一个组，若不指定则属于默认组），组可以用来实现一条消息被组内多个成员消费等功能。</li>
+</ol>
+<p>可以从<code>kafka</code>的架构图看到<code>Kafka</code>是需要<code>Zookeeper</code>支持的，你需要在你的<code>Kafka</code>配置里面指定<code>Zookeeper</code>在哪里，它是通过<code>Zookeeper</code>做一些可靠性的保证，做<code>broker</code>的主从，我们还要知道<code>Kafka</code>的消息是以<code>topic</code>形式作为组织的，<code>Producers</code>发送<code>topic</code>形式的消息，<br>
+<code>Consumer</code>是按照组来分的，所以，一组<code>Consumers</code>都会接收同样的<code>topic</code>形式的消息。在服务端，它还做了一些分片，那么一个<code>Topic</code>可能分布在不同的分片上面，方便我们拓展部署多个机器，<code>Kafka</code>是天生分布式的。</p>
+<p>首先是要下载对应的kafka：<a href="https://www.apache.org/dyn/closer.cgi?path=/kafka/2.1.0/kafka_2.11-2.1.0.tgz" target="_blank" rel="noopener">https://www.apache.org/dyn/closer.cgi?path=/kafka/2.1.0/kafka_2.11-2.1.0.tgz</a></p>
+<p>解压之后进去/bin/windows/目录下：</p>
+<p>首先启动<code>zookeeper</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\zookeeper-server-start.bat D:\kafka_2.11-2.1.0\config\zookeeper.properties</span><br></pre></td></tr></table></figure>
+<p>如果出现错误：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">命令语法不正确。</span><br><span class="line">错误: 找不到或无法加载主类 Files\Java\jdk1.8.0_121\lib\dt.jar;C:\Program</span><br><span class="line">PS D:\kafka_2.11-2.1.0\bin\windows&gt; .\zookeeper-server-start.bat D:\kafka_2.11-2.1.0\config/zookeeper.properties</span><br></pre></td></tr></table></figure>
+<p>方法是：</p>
+<blockquote>
+<p>首先我们进到下载好的Kafka目录中kafka_2.11-1.1.0\bin\windows 下编辑kafka-run-class.bat如下：</p>
+<p>找到这条配置 如下：</p>
+<p>set COMMAND=%JAVA% %KAFKA_HEAP_OPTS% %KAFKA_JVM_PERFORMANCE_OPTS% %KAFKA_JMX_OPTS% %KAFKA_LOG4J_OPTS% -cp %CLASSPATH% %KAFKA_OPTS% %*</p>
+<p>可以看到%CLASSPATH%没有双引号，</p>
+<p>因此用双引号括起来，不然启动不起来的，报你JDK没安装好，修改后如下：</p>
+<p>set COMMAND=%JAVA% %KAFKA_HEAP_OPTS% %KAFKA_JVM_PERFORMANCE_OPTS% %KAFKA_JMX_OPTS% %KAFKA_LOG4J_OPTS% -cp “%CLASSPATH%” %KAFKA_OPTS% %*</p>
+</blockquote>
+<p>后面启动<code>kafka</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.\kafka-server-start.bat D:\kafka_2.11-2.1.0\config\server.properties</span><br></pre></td></tr></table></figure>
+<p>这两者配置文件直接默认即可。启动成功之后，就放那吧！</p>
+<h2>消息总线</h2>
+<p>在上一章的<code>spring-cloud-config-server</code>以及<code>client</code>继续集成。<code>spring boot</code>版本是<code>2.0.3.RELEASE</code>.</p>
+<p>第一步：<code>spring cloud config</code>服务端和客户端(搞两个客户端)都要引入<code>kafka</code>依赖，以<code>config server</code>端为例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--Eureka client--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--config server--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--kafka MQ--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-bus-kafka<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>第二步：配置文件(服务端)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 8085</span><br><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: config-server</span><br><span class="line">  cloud:</span><br><span class="line">    config:</span><br><span class="line">      server:</span><br><span class="line">        git:</span><br><span class="line">          uri: https://github.com/sunweiguo/spring-cloud-config-center.git</span><br><span class="line">          username: sunweiguo</span><br><span class="line">          password: xxxxxxxxx</span><br><span class="line">eureka:</span><br><span class="line">  client:</span><br><span class="line">    service-url:</span><br><span class="line">      defaultZone: http://localhost:8761/eureka,http://localhost:8762/eureka</span><br><span class="line">management:</span><br><span class="line">  endpoints:</span><br><span class="line">    web:</span><br><span class="line">      exposure:</span><br><span class="line">        include: bus-refresh</span><br></pre></td></tr></table></figure>
+<p>注意，在1.x版本中一般配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#是否需要权限拉取，默认是true,如果不false就不允许你去拉取配置中心Server更新的内容</span><br><span class="line">management:</span><br><span class="line">  security:</span><br><span class="line">    enabled: false</span><br></pre></td></tr></table></figure>
+<p>而在2.x版本中已经把这个改掉了。所以要注意。不配置的话会报错405.可以尝试去掉，用postman测试一把。</p>
+<p>第三步：添加注解</p>
+<p>在服务端和客户端的启动函数上都增加一条注解<code>@RefreshScope</code></p>
+<p>ok,至此，集成完毕。消息总线的功能就有了。</p>
+<p>启动全部工程。修改git上的内容。然后发现客户端都没更新。下面启动postman来对<code>config server</code>发送一条post请求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost:8085/actuator/bus-refresh</span><br></pre></td></tr></table></figure>
+<p>再刷新浏览器，就会发现所有的客户端都自动更新了。我们也可以指定要刷新的客户端具体实例或者通配符符合的客户端。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/spring-cloud-modules/7.Config分布式配置管理/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Thu Feb 21 2019 16:10:31 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">FourColor</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
