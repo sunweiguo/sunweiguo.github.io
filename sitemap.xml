@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/10.Sleuth%E6%9C%8D%E5%8A%A1%E8%BF%BD%E8%B8%AA/</loc>
+    
+    <lastmod>2019-02-21T08:28:15.221Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/9.Stream%E6%B6%88%E6%81%AF%E9%A9%B1%E5%8A%A8/</loc>
+    
+    <lastmod>2019-02-21T08:27:23.578Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/8.Bus%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF/</loc>
     
     <lastmod>2019-02-21T08:12:07.800Z</lastmod>
