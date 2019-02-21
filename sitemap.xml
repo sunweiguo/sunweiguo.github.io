@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/8.Bus%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF/</loc>
+    
+    <lastmod>2019-02-21T08:33:10.534Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
+    
+    <lastmod>2019-02-21T08:32:30.176Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/10.Sleuth%E6%9C%8D%E5%8A%A1%E8%BF%BD%E8%B8%AA/</loc>
     
     <lastmod>2019-02-21T08:28:15.221Z</lastmod>
@@ -16,23 +30,9 @@
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/8.Bus%E6%B6%88%E6%81%AF%E6%80%BB%E7%BA%BF/</loc>
-    
-    <lastmod>2019-02-21T08:12:07.800Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/7.Config%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/</loc>
     
     <lastmod>2019-02-21T07:34:58.033Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
-    
-    <lastmod>2019-02-21T07:32:02.691Z</lastmod>
     
   </url>
   
