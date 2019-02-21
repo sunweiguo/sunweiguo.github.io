@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/3.Hystrix%E8%AF%B7%E6%B1%82%E7%86%94%E6%96%AD%E6%9C%8D%E5%8A%A1%E9%99%8D%E7%BA%A7/</loc>
+    
+    <lastmod>2019-02-21T06:59:02.078Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/21/spring-cloud-modules/2.Ribbon%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/</loc>
     
-    <lastmod>2019-02-21T06:11:19.713Z</lastmod>
+    <lastmod>2019-02-21T06:12:37.370Z</lastmod>
     
   </url>
   
