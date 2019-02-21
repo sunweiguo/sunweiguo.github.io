@@ -1,4 +1,83 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 7.天气预报系统-微服务的注册和发现 · FourColor</title><meta name="description" content="7.天气预报系统-微服务的注册和发现 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">7.天气预报系统-微服务的注册和发现</h1><div class="post-meta"><span class="post-time">Feb 21, 2019</span></div><div class="post-content"></div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/weather-for-spring-cloud/8.天气预报系统-微服务的消费/" class="prev">PRVE</a><a href="/2019/02/21/weather-for-spring-cloud/6.天气预报系统-拆分本系统/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 7.天气预报系统-微服务的注册和发现 · FourColor</title><meta name="description" content="7.天气预报系统-微服务的注册和发现 - FourColor"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">7.天气预报系统-微服务的注册和发现</h1><div class="post-meta"><span class="post-time">Feb 21, 2019</span></div><div class="post-content"><p>这是学习的第七篇文章，首先要解决的问题是服务注册和发现。本节介绍eureka的使用。</p>
+<a id="more"></a>
+<h2>1.什么是spring cloud</h2>
+<p><code>Spring Cloud</code>是一系列框架的有序集合。它利用<code>Spring Boot</code>的开发便利性巧妙地简化了分布式系统基础设施的开发，如服务发现注册、配置中心、消息总线、负载均衡、断路器、数据监控等，都可以用<code>Spring Boot</code>的开发风格做到一键启动和部署。Spring并没有重复制造轮子，它只是将目前各家公司开发的比较成熟、经得起实际考验的服务框架组合起来，通过<code>Spring Boot</code>风格进行再封装屏蔽掉了复杂的配置和实现原理，最终给开发者留出了一套简单易懂、易部署和易维护的分布式系统开发工具包。</p>
+<p>微服务是可以独立部署、水平扩展、独立访问（或者有独立的数据库）的服务单元，<code>spring cloud</code>就是这些微服务的大管家，采用了微服务这种架构之后，项目的数量会非常多，<code>spring cloud</code>做为大管家需要管理好这些微服务，自然需要很多小弟来帮忙。</p>
+<p>解决了分布式系统中的一些问题:配置管理、服务注册、服务发现、断路器、智能路由、负载均衡、服务间调用、一次性令牌、全局锁、领导选举、控制总线、思维导图、分布式会话、集群状态、分布式消息。。。</p>
+<h2>2.spring cloud &amp; spring boot</h2>
+<ul>
+<li>SpringBoot是构建spring cloud架构的基石</li>
+</ul>
+<h2>3.spring cloud子项目</h2>
+<p>参考这篇文章：<a href="http://www.ityouknow.com/springcloud/2017/05/01/simple-springcloud.html" target="_blank" rel="noopener">springcloud(一)：大话Spring Cloud</a></p>
+<h2>4.Eureka</h2>
+<h4>4.1.服务中心</h4>
+<p>服务中心又称注册中心，管理各种服务功能包括服务的注册、发现、熔断、负载、降级等，比如<code>dubbo admin</code>后台的各种功能。</p>
+<p>有了服务中心调用关系会有什么变化，画几个简图来帮忙理解.</p>
+<p>项目A调用项目B</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">项目A--&gt;项目B</span><br></pre></td></tr></table></figure>
+<p>有了服务中心之后，任何一个服务都不能直接去掉用，都需要通过服务中心来调用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph LR</span><br><span class="line">项目A--&gt;注册中心再去访问项目B</span><br></pre></td></tr></table></figure>
+<p>由于各种服务都注册到了服务中心，就有了去做很多高级功能条件。比如几台服务提供相同服务来做均衡负载；监控服务器调用成功率来做熔断，移除服务列表中的故障点；监控服务调用时间来对不同的服务器设置不同的权重等等。</p>
+<h4>4.2.Eureka</h4>
+<ul>
+<li><code>Spring Cloud</code> 封装了 <code>Netflix</code> 公司开发的 <code>Eureka</code> 模块来实现服务注册和发现。</li>
+<li><code>Eureka Server</code> 作为服务注册功能的服务器，它是服务注册中心。而系统中的其他微服务，使用 <code>Eureka</code> 的客户端连接到 <code>Eureka Server</code>，并维持心跳连接。</li>
+<li>这样系统的维护人员就可以通过 <code>Eureka Server</code> 来监控系统中各个微服务是否正常运行。</li>
+<li><code>Spring Cloud</code> 的一些其他模块（比如<code>Zuul</code>）就可以通过 <code>Eureka Server</code> 来发现系统中的其他微服务，并执行相关的逻辑。</li>
+<li>Eureka由两个组件组成：Eureka服务器和Eureka客户端。Eureka服务器用作服务注册服务器。Eureka客户端是一个java客户端，用来简化与服务器的交互、作为轮询负载均衡器，并提供服务的故障切换支持。</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/18-11-22/15609057.jpg" alt="image"></p>
+<p>其中有三个角色：</p>
+<ul>
+<li><code>Eureka Server</code>：提供服务注册和发现</li>
+<li><code>Service Provider</code>服务提供方，将自身服务注册到<code>Eureka</code>，从而使服务消费方能够找到</li>
+<li><code>Service Consumer</code>：服务消费方，从<code>Eureka</code>获取注册服务列表，从而能够消费服务</li>
+</ul>
+<h4>4.3.Eureka Server</h4>
+<p>新建一个springboot项目。spring cloud已经帮我实现了服务注册中心，我们只需要很简单的几个步骤就可以完成。</p>
+<p>演示的springboot版本是最新的<code>&lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</code>,springcloud也是最新的<code>&lt;version&gt;Finchley.RELEASE&lt;/version&gt;</code></p>
+<p>1、pom中添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>Finchley.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencyManagement</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">&lt;!--Eureka server--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>2、添加启动代码中添加@EnableEurekaServer注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeatherEurekaServerApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(WeatherEurekaServerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、配置文件</p>
+<p>在默认设置下，该服务注册中心也会将自己作为客户端来尝试注册它自己，所以我们需要禁用它的客户端注册行为，在application.yml：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 8761</span><br><span class="line">eureka:</span><br><span class="line">  instance:</span><br><span class="line">    hostname: localhost</span><br><span class="line">  client:</span><br><span class="line">    register-with-eureka: false</span><br><span class="line">    fetch-registry: false</span><br><span class="line">    service-url:</span><br><span class="line">      defaultZone: http://$&#123;eureka.instance.hostname&#125;:$&#123;server.port&#125;/eureka/</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>eureka.client.register-with-eureka</code> ：表示是否将自己注册到Eureka Server，默认为true。</li>
+<li><code>eureka.client.fetch-registry</code> ：表示是否从Eureka Server获取注册信息，默认为true。</li>
+<li><code>eureka.client.serviceUrl.defaultZone</code> ：设置与Eureka Server交互的地址，查询服务和注册服务都需要依赖这个地址。默认是http://localhost:8761/eureka ；多个地址可使用 , 分隔。</li>
+<li></li>
+</ul>
+<p>启动工程后，访问：<a href="http://localhost:8761/" target="_blank" rel="noopener">http://localhost:8761/</a> ，可以看到下面的页面，其中还没有发现任何服务</p>
+<p><img src="http://bloghello.oursnail.cn/18-11-22/31605865.jpg" alt="image"></p>
+<p>关于集群，参考这篇文章：<a href="http://www.ityouknow.com/springcloud/2017/05/10/springcloud-eureka.html" target="_blank" rel="noopener">http://www.ityouknow.com/springcloud/2017/05/10/springcloud-eureka.html</a></p>
+<h4>4.4.Eureka Client</h4>
+<p>基本与上一个是类似的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@EnableDiscoveryClient</span><br></pre></td></tr></table></figure>
+<p>主要的配置文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  application:</span><br><span class="line">    name: weather-eureka-client</span><br><span class="line">eureka:</span><br><span class="line">  client:</span><br><span class="line">    service-url:</span><br><span class="line">      defaultZone: http://localhost:8761/eureka</span><br></pre></td></tr></table></figure>
+<p>这样同时启动<code>Eureka Server</code>和<code>Eureka Client</code>两个工程。在网站中输入<code>localhost://8761</code>就可以看到注册到<code>Eureka Server</code>的实例了。</p>
+<h2>5.本门实战</h2>
+<p>将之前的四个微服务改造为eureka的客户端。</p>
+<p>即将</p>
+<p><code>mas-weather-collection-server</code></p>
+<p><code>mas-weather-report-server</code></p>
+<p><code>mas-weather-data-server</code></p>
+<p><code>mas-weather-city-server</code></p>
+<p>改为：</p>
+<p><code>mas-weather-collection-eureka</code></p>
+<p><code>mas-weather-report-eureka</code></p>
+<p><code>mas-weather-data-eureka</code></p>
+<p><code>mas-weather-city-eureka</code></p>
+<p>改造过程十分简单，就是引入依赖，修改配置即可。</p>
+<p>同时启动这四个微服务客户端和一个eureka服务端。</p>
+<p>我们可以看到：</p>
+<p><img src="http://bloghello.oursnail.cn/18-11-23/81797360.jpg" alt="image"></p>
+<p>电脑要爆炸了~~~~~~</p>
+<p>下面，这些微服务之间可以相互访问了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/weather-for-spring-cloud/8.天气预报系统-微服务的消费/" class="prev">PRVE</a><a href="/2019/02/21/weather-for-spring-cloud/6.天气预报系统-拆分本系统/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Thu Feb 21 2019 11:27:23 GMT+0800',
     owner: 'sunweiguo',
