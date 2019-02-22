@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/02/22/zookeeper/Zookeeper%E7%AC%94%E8%AE%B03-paxos%E7%AE%97%E6%B3%95/</loc>
+    
+    <lastmod>2019-02-22T08:36:42.860Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/18/network/5.TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B/</loc>
     
     <lastmod>2019-02-22T03:55:44.562Z</lastmod>
