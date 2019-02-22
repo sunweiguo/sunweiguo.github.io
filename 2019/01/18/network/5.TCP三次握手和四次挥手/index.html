@@ -100,12 +100,15 @@
 </blockquote>
 <h2>5.四次挥手</h2>
 <p><img src="http://bloghello.oursnail.cn/http5-4.jpg" alt="image"></p>
+<p>挥手过程的大概说明：</p>
+<blockquote>
 <p>当主机1发出FIN报文段时，只是表示主机1已经没有数据要发送了，主机1告诉主机2，它的数据已经全部发送完毕了；</p>
 <p>但是，这个时候主机1还是可以接受来自主机2的数据；</p>
 <p>当主机2返回ACK报文段时，表示它已经知道主机1没有数据发送了，但是主机2还是可以发送数据到主机1的；</p>
 <p>当主机2也发送了FIN报文段时，这个时候就表示主机2也没有数据要发送了，就会告诉主机1，我也没有数据要发送了；</p>
 <p>主机1告诉主机2知道了，主机2收到这个确认之后就立马关闭自己。</p>
 <p>主机1等待2MSL之后也关闭了自己。</p>
+</blockquote>
 <p><strong>说明完了四次挥手的过程，下面着重解释一下为什么主机1要等待2MSL之后才关闭自己。</strong></p>
 <p>针对最后一条消息，即主机1发送ack后，主机2接收到此消息，即认为双方达成了同步：双方都知道连接可以释放了，此时B可以安全地释放此TCP连接所占用的内存资源、端口号。</p>
 <p><strong>所以被动关闭的主机2无需任何wait time，直接释放资源。</strong></p>
@@ -129,7 +132,7 @@
 <li><a href="https://github.com/jawil/blog/issues/14" target="_blank" rel="noopener">https://github.com/jawil/blog/issues/14</a></li>
 <li><a href="https://www.jianshu.com/p/9968b16b607e" target="_blank" rel="noopener">https://www.jianshu.com/p/9968b16b607e</a></li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/18/network/6.HTTP基础知识提炼/" class="prev">PRVE</a><a href="/2019/01/18/network/4.TCP协议入门/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/18/network/6.HTTP基础知识提炼/" class="prev">上一篇</a><a href="/2019/01/18/network/4.TCP协议入门/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Fri Jan 18 2019 12:10:11 GMT+0800',
     owner: 'sunweiguo',
