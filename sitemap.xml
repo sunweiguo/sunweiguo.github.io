@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
+    
+    <lastmod>2019-02-23T08:58:13.129Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/02/23/zookeeper/Zookeeper%E7%AC%94%E8%AE%B012-%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/</loc>
     
     <lastmod>2019-02-23T08:51:35.857Z</lastmod>
@@ -26,13 +33,6 @@
     <loc>http://yoursite.com/2019/02/23/zookeeper/Zookeeper%E7%AC%94%E8%AE%B09-%E5%8E%9F%E7%94%9FJava%20API%E4%BD%BF%E7%94%A8/</loc>
     
     <lastmod>2019-02-23T08:44:39.765Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
-    
-    <lastmod>2019-02-23T08:19:54.227Z</lastmod>
     
   </url>
   
