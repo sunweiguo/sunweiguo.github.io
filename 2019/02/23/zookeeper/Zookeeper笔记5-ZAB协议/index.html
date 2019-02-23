@@ -145,7 +145,7 @@
 <p>这时<code>Server 1</code>将自身的选票轮次和<code>Server 2</code> 的选票轮次比较，发现<code>LogicClock=1</code>相等，接着<code>Server 2</code>比较比较最大事务ID，发现也<code>zxid=0</code>也相等，最后比较各自的<code>myid</code>，发现<code>Server 2</code>的<code>myid=2</code> 大于自己的<code>myid=1</code>；</p>
 <p>根据选票PK规则，<code>Server 1</code>将自己的选票由 (1, 1) 更正为 (1, 2)，表示选举<code>Server 2</code>为<code>Leader</code>，然后将自己的新选票 (1, 2)广播给 <code>Server 2</code> 和 <code>Server 3</code>，同时更新票箱子中自己的选票并保存<code>Server 2</code>的选票，至此<code>Server 1</code>票箱中的选票为(1, 2) 和 (2, 2)；</p>
 <p><code>Server 2</code>收到<code>Server 1</code>的选票同样经过轮次比较和选票PK后确认自己的选票保持不变，并更新票箱中<code>Server 1</code>的选票由(1, 1)更新为(1, 2)，注意此次<code>Server 2</code>自己的选票并没有改变所有不用对外广播自己的选票。</p>
-<p>此时便认为已经选出了<code>Leader</code>。下面假设是先进行<code>Server 1 PK Server 3</code>的，那么就有可能使<code>Server 3</code>作为<code>Leader</code>了。</p>
+<p>此时便认为已经选出了<code>Leader</code>。但是这里可能会等一会看看有没有最优的情况，可能就会来到下面一步。</p>
 <h5>Server 1 PK Server 3</h5>
 <p><code>Server 1</code> 接收到<code>Server 3</code>的选票(1,3,0) 表示投给<code>server 3</code>.</p>
 <p>根据<code>Server 1 PK Server 2</code>的流程类推，<code>Server 1</code>自己的选票由(1, 2)更新为(1, 3), 同样更新自己的票箱并广播给<code>Server 2</code> 和 <code>Server 3</code>；</p>
@@ -158,7 +158,7 @@
 <li><a href="https://dbaplus.cn/news-141-1875-1.html" target="_blank" rel="noopener">https://dbaplus.cn/news-141-1875-1.html</a></li>
 <li><a href="https://www.jianshu.com/p/3fec1f8bfc5f" target="_blank" rel="noopener">https://www.jianshu.com/p/3fec1f8bfc5f</a></li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/23/zookeeper/Zookeeper笔记4-Zookeeper介绍/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/23/zookeeper/Zookeeper笔记6-zk安装和集群搭建/" class="prev">PRVE</a><a href="/2019/02/23/zookeeper/Zookeeper笔记4-Zookeeper介绍/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Feb 23 2019 15:09:59 GMT+0800',
     owner: 'sunweiguo',
