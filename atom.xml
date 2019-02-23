@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-02-22T08:38:28.648Z</updated>
+  <updated>2019-02-23T03:15:16.676Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Zookeeper笔记4-Zookeeper介绍</title>
+    <link href="http://yoursite.com/2019/02/23/zookeeper/Zookeeper%E7%AC%94%E8%AE%B04-Zookeeper%E4%BB%8B%E7%BB%8D/"/>
+    <id>http://yoursite.com/2019/02/23/zookeeper/Zookeeper笔记4-Zookeeper介绍/</id>
+    <published>2019-02-23T03:12:26.405Z</published>
+    <updated>2019-02-23T03:15:16.676Z</updated>
+    
+    <content type="html"><![CDATA[<p>关于zookeeper最基本的介绍已经在笔记一中介绍了。不再赘述。ZooKeeper 是一个典型的分布式数据一致性解决方案，分布式应用程序可以基于 ZooKeeper 实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。本文再来稍微深入一点介绍一下zookeeper的一些特性。</p><a id="more"></a><p><img src="http://bloghello.oursnail.cn/18-12-3/61282486.jpg" alt="image"></p><ul><li>1、 <strong>配置维护</strong>：在分布式系统中，一般会把服务部署到n台机器上，服务配置文件都是相同的，如果配置文件的配置选项发生了改变，那我们就得一台一台的去改动。这时候zookeeper就起作用了，可以把zk当成一个高可用的配置存储器，把这样配置的事情交给zk去进行管理，将集群的配置文件拷贝到zookeeper的文件系统的某个节点上，然后用zk监控所有分布式系统里的配置文件状态，一旦发现有配置文件发生了变化，那么每台服务器同步zk的配置文件，zk同时保证同步操作的原子性，确保每个服务器的配置文件都能被更新。</li><li>2、 <strong>命名服务</strong>：在分布式应用中，通常需要一个完整的命名规则，既能够产生唯一的名称又便于人识别和记住。Zk就提供了这种服务，类似于域名和ip之间对应关系，域名容易记住，通过名称来获取资源和服务的地址，提供者等信息。</li><li>3、 <strong>分布式锁</strong>：分布式程序分布在不同主机上的进程对互斥资源进行访问的时候需要加锁。这样理解：很多分布式系统有多个服务窗口，但是某个时刻只让一个服务去干活，当这台服务器出问题的时候锁释放，里脊fail over到另外的服务。举例子，比如去某个地方办理证件的时候，只能有一个窗口对你服务，如果这个窗口的柜员有急事走了，那么系统或者经理给你指定另外一个窗口继续服务。</li><li>4、 <strong>集群管理</strong>：分布式集群中，经常会由于各种原因，比如硬件故障，网络问题，有些节点挂掉、有些节点加进来。这个时候机器需要感知到变化，然后根据变化做出对应的决策，那么zk就实现了类似这种集群的管理。</li></ul><h2>一、特性</h2><ul><li><strong>顺序一致性</strong>：<br>从同一个客户端发起的事务请求，最终将会严格按照其发起顺序被应用到ZooKeeper中。</li><li><strong>原子性</strong>：<br>所有事务请求的结果在集群中所有机器上的应用情况是一致的，也就是说要么整个集群所有集群都成功应用了某一个事务，要么都没有应用，一定不会出现集群中部分机器应用了该事务，而另外一部分没有应用的情况。</li><li><strong>单一视图</strong>：<br>无论客户端连接的是哪个ZooKeeper服务器，其看到的服务端数据模型都是一致的。</li><li><strong>可靠性</strong>：<br>一旦服务端成功地应用了一个事务，并完成对客户端的响应，那么该事务所引起的服务端状态变更将会被一直保留下来，除非有另一个事务又对其进行了变更。</li><li><strong>实时性</strong>：<br>通常人们看到实时性的第一反应是，一旦一个事务被成功应用，那么客户端能够立即从服务端上读取到这个事务变更后的最新数据状态。这里需要注意的是，ZooKeeper仅仅保证在一定的时间段内，客户端最终一定能够从服务端上读取到最新的数据状态。</li></ul><h2>二、集群角色</h2><p>最典型集群模式： Master/Slave 模式（主备模式）。在这种模式中，通常 Master服务器作为主服务器提供写服务，其他的 Slave 服务器从服务器通过异步复制的方式获取 Master 服务器最新的数据提供读服务。</p><p>但是，在 ZooKeeper 中没有选择传统的  Master/Slave 概念，而是引入以下三种角色：</p><ul><li>Leader</li><li>Follower</li><li>Observer</li></ul><p><img src="http://bloghello.oursnail.cn/18-12-3/61465262.jpg" alt="image"></p><p><code>zookeeper-server status</code>可以看当前节点的ZooKeeper是什么角色。</p><p>ZooKeeper默认只有Leader和Follower两种角色，没有Observer角色。</p><p>ZooKeeper集群的所有机器通过一个Leader选举过程来选定一台被称为『Leader』的机器，Leader服务器为客户端提供读和写服务。</p><p>Follower和Observer都能提供读服务，不能提供写服务。两者唯一的区别在于，Observer机器不参与Leader选举过程，也不参与写操作的『过半写成功』策略，因此Observer可以在不影响写性能的情况下提升集群的读性能。</p><p><img src="http://bloghello.oursnail.cn/18-12-3/74661512.jpg" alt="image"></p><p>系统模型如图所示：</p><p><img src="http://bloghello.oursnail.cn/18-12-3/19717816.jpg" alt="image"></p><h2>三、关于<code>ZooKeeper</code>的一些重要概念</h2><ul><li><code>ZooKeeper</code>本身就是一个分布式程序（<strong>只要半数以上节点存活，<code>ZooKeeper</code>就能正常服务</strong>）</li><li>为了保证高可用，最好是以集群形态来部署<code>ZooKeeper</code>，这样只要集群中大部分机器是可用的（能够容忍一定的机器故障），那么<code>ZooKeeper</code>本身仍然是可用的。</li><li><code>ZooKeeper</code>将数据保存在内存中，这也就保证了 高吞吐量和低延迟（但是内存限制了能够存储的容量不太大，此限制也是保持<code>znode</code>中存储的数据量较小的进一步原因）。</li><li><strong><code>ZooKeeper</code>是高性能的。 在“读”多于“写”的应用程序中尤其地高性能，因为“写”会导致所有的服务器间同步状态。</strong>（“读”多于“写”是协调服务的典型场景。）</li><li><code>ZooKeeper</code>有临时节点的概念。 当创建临时节点的客户端会话一直保持活动，瞬时节点就一直存在。而当会话终结时，瞬时节点被删除。持久节点是指一旦这个<code>ZNode</code>被创建了，除非主动进行<code>ZNode</code>的移除操作，否则这个<code>ZNode</code>将一直保存在<code>Zookeeper</code>上。</li><li><code>ZooKeeper</code>底层其实只提供了两个功能：①管理（存储、读取）用户程序提交的数据；②为用户程序提交数据节点监听服务。</li></ul><p>只要半数以上节点存活，<code>ZooKeeper</code>就能正常服务，<font color="red">这也解释了为什么集群个数一般是奇数</font>。</p><p>我们知道在<code>Zookeeper</code>中<code>Leader</code>选举算法采用了<code>Zab</code>协议。<code>Zab</code>核心思想是当多数<code>Server</code>写成功，则任务数据写成功。</p><p>①如果有3个<code>Server</code>，则最多允许1个<code>Server</code>挂掉。</p><p>②如果有4个<code>Server</code>，则同样最多允许1个<code>Server</code>挂掉。</p><p>既然3个或者4个<code>Server</code>，同样最多允许1个<code>Server</code>挂掉，那么它们的可靠性是一样的，所以选择奇数个<code>ZooKeeper Server</code>即可，这里选择3个<code>Server</code>。</p><h2>四、会话</h2><p><code>Session</code>是指客户端会话，在讲解客户端会话之前，我们先来了解下客户端连接。在<code>ZooKeeper</code>中，一个客户端连接是指客户端和<code>ZooKeeper</code>服务器之间的TCP长连接。<code>ZooKeeper</code>对外的服务端口默认是2181，客户端启动时，首先会与服务器建立一个TCP连接，从第一次连接建立开始，客户端会话的生命周期也开始了，通过这个连接，客户端能够通过心跳检测和服务器保持有效的会话，也能够向<code>ZooKeeper</code>服务器发送请求并接受响应，同时还能通过该连接接收来自服务器的<code>Watch</code>事件通知。</p><p><code>Session</code>的<code>SessionTimeout</code>值用来设置一个客户端会话的超时时间。当由于服务器压力太大、网络故障或是客户端主动断开连接等各种原因导致客户端连接断开时，只要在<code>SessionTimeout</code>规定的时间内能够重新连接上集群中任意一台服务器，那么之前创建的会话仍然有效。</p><p>在为客户端创建会话之前，服务端首先会为每个客户端都分配一个<code>sessionID</code>。由于<code>sessionID</code> 是<code>Zookeeper</code>会话的一个重要标识，许多与会话相关的运行机制都是基于这个<code>sessionID</code>的，因此，无论是哪台服务器为客户端分配的<code>sessionID</code>，都务必保证全局唯一。</p><h2>五、数据节点</h2><p><code>Zookeeper</code>将所有数据存储在内存中，数据模型是一棵树（<code>Znode Tree</code>)，由斜杠（/）的进行分割的路径，就是一个<code>Znode</code>，例如<code>/foo/path1</code>。每个上都会保存自己的数据内容，同时还会保存一系列属性信息。</p><h2>六、Watcher</h2><p><code>Watcher</code>（事件监听器），是<code>Zookeeper</code>中的一个很重要的特性。<code>Zookeeper</code>允许用户在指定节点上注册一些<code>Watcher</code>，并且在一些特定事件触发的时候，<code>ZooKeeper</code>服务端会将事件通知到感兴趣的客户端上去，该机制是<code>Zookeeper</code>实现分布式协调服务的重要特性。</p><h2>七、版本</h2><p>在前面我们已经提到，<code>Zookeeper</code>的每个<code>ZNode</code>上都会存储数据，对应于每个<code>ZNode</code>，<code>Zookeeper</code>都会为其维护一个叫作<code>Stat</code>的数据结构，<code>Stat</code>中记录了这个<code>ZNode</code>的三个数据版本，分别是<code>version</code>（当前ZNode的版本）、<code>cversion</code>（当前ZNode子节点的版本）和 <code>cversion</code>（当前ZNode的ACL版本）。</p><p><code>Zookeeper</code>采用<code>ACL</code>（<code>AccessControlLists</code>）策略来进行权限控制，类似于<code>UNIX</code>文件系统的权限控制。</p><ul><li>CREATE: 创建子节点的权限。</li><li>READ: 获取节点数据和子节点列表的权限。</li><li>WRITE：更新节点数据的权限。</li><li>DELETE: 删除子节点的权限。</li><li>ADMIN: 设置节点ACL的权限。</li></ul><p>注意：<code>CREATE</code> 和 <code>DELETE</code> 都是针对子节点的权限控制。</p><p>下一节先说说ZAB协议。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;关于zookeeper最基本的介绍已经在笔记一中介绍了。不再赘述。ZooKeeper 是一个典型的分布式数据一致性解决方案，分布式应用程序可以基于 ZooKeeper 实现诸如数据发布/订阅、负载均衡、命名服务、分布式协调/通知、集群管理、Master 选举、分布式锁和分布式队列等功能。本文再来稍微深入一点介绍一下zookeeper的一些特性。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="zookpeeper" scheme="http://yoursite.com/tags/zookpeeper/"/>
+    
+  </entry>
   
   <entry>
     <title>Zookeeper笔记3-paxos算法</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;这是学习的第六篇文章，先初步拆分本系统为四个服务，还没有进行服务治理等，只是简单的业务拆分，为下一步做准备。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="天气项目入门微服务" scheme="http://yoursite.com/tags/%E5%A4%A9%E6%B0%94%E9%A1%B9%E7%9B%AE%E5%85%A5%E9%97%A8%E5%BE%AE%E6%9C%8D%E5%8A%A1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>5.天气预报系统-服务拆分和业务建模</title>
-    <link href="http://yoursite.com/2019/02/21/weather-for-spring-cloud/5.%E5%A4%A9%E6%B0%94%E9%A2%84%E6%8A%A5%E7%B3%BB%E7%BB%9F-%E6%9C%8D%E5%8A%A1%E6%8B%86%E5%88%86%E5%92%8C%E4%B8%9A%E5%8A%A1%E5%BB%BA%E6%A8%A1/"/>
-    <id>http://yoursite.com/2019/02/21/weather-for-spring-cloud/5.天气预报系统-服务拆分和业务建模/</id>
-    <published>2019-02-21T03:27:04.094Z</published>
-    <updated>2019-02-21T04:36:58.528Z</updated>
-    
-    <content type="html"><![CDATA[<p>这是学习的第五篇文章，在进行真正的业务拆分之前，我们来认识一下什么是SOA架构，什么是微服务。确定本系统拆分的几个部分。</p><a id="more"></a><h2>单体架构</h2><p>我们熟悉的单体MVC架构：</p><p>用户&lt;—&gt;表示层&lt;—&gt;业务层&lt;—&gt;数据访问层&lt;—&gt;数据库</p><p>单块结构的优缺点：</p><table><thead><tr><th>优点</th><th>缺点</th></tr></thead><tbody><tr><td>功能划分清楚</td><td>功能仍然太大</td></tr><tr><td>层次关系良好</td><td>支付周期变长</td></tr><tr><td>每一层独立</td><td>升级风险高</td></tr><tr><td>部署简单</td><td>维护成本增加</td></tr><tr><td>技术单一</td><td>可伸缩性差</td></tr><tr><td>用人成本低</td><td>监控困难</td></tr></tbody></table><h2>单体架构如何转化为微服务</h2><h4>什么是SOA？</h4><blockquote><p>SOA是一种设计方法，其中包含多个服务，而服务之间通过配合最终会提供一系列功能。一个服务通常以独立的形式存在于操作系统进程中。服务之间通过网络调用，而非采用进程内调用的方式进行通信。</p></blockquote><p>所以，<code>SOA</code>只是一种架构设计模式，<code>SOAP</code>，<code>REST</code>，<code>RPC</code>是根据这种设计模式构建出来的规范。其中<code>SOAP</code>通俗理解就是<code>http+xml</code>的形式，<code>REST</code>就是<code>http+json</code>的形式，<code>RPC</code>是基于<code>socket</code>的形式。<code>dubbo</code>就是典型的<code>RPC</code>框架，而<code>SpringCloud</code>就是遵守<code>REST</code>规范的生态系统。</p><h4>SOA VS 微服务</h4><blockquote><p>话说1979年，又是一个春天，莆田乡下的赤脚医生吴大牛被改革的春风吹的心潮澎湃，说干就干，吴大牛趁着夜色朦胧找大队支书汇报了汇报思想，第二天就承包了村卫生室，开启了自己的在医疗圈的传奇历程。</p><p>乡村诊所大家都知道，没什么复杂的东东，房子只有一间，一个大柜台中间隔开，一半是诊疗兼候诊区，一半是药房，看病就直接找医生，如果前面有人就自己找个位子坐下，排队等一会，秩序倒也井然，看完病了医生直接给抓药，然后下一个继续，也不需要护士和药剂师，吴大牛一个人全部包办。</p><p>辛辛苦苦忙碌了十年，时间来到了八九年，又是一个春天，昔日的单身汉吴大牛已成为十里八乡的知名人物，媳妇娶上了不说，家里还增加了一对双胞胎儿子，二层的小洋房也甚是气派。可是也有烦心事，尽管乡村诊所扩大到了两间，媳妇还偶尔能去帮帮忙，但是医生还是只有自己一个，天天从早忙到晚挣的都是一份钱，想多挣点怎么办？吴大牛日思夜想，还真给他想出来一招，怎么办，扩大规模，多招几个医生一起干。原来吴大牛只能治头疼脑热和跌打损伤，现在新招了一个医科大学的毕业生刘小明专治感冒发烧，又从邻村请来了老大夫李阿花专治妇科病，现在一个普通的小诊所就变成了有三个独立科室加一个公共药房（吴大牛媳妇负责）的小医院了，吴大牛是外科主任兼院长，收入那可比之前翻了三番。人逢喜事精神爽，大牛院长请县里的书法名家为新医院书写了牌匾–“博爱医院”，挑了一个黄道吉日正式挂了上去。</p><p>一晃十年过去了，又是一个春天，吴大牛的博爱医院已经发展到了内科外科妇科五官科骨科生殖科六个科室，每个科室3到5名医生不等，也耗费巨资购进了血夜化验B超等先进仪器，大牛院长也早已脱离了医疗一线，成为了专职的管理者，但是医院的大事小事大家都找他，就这三十多号员工搞的他每天是焦头烂额，想再扩大规模实在是有心无力了。要说还是大学生有水平，老部下刘小明给大牛院长献了一计，把各个科室独立出去，让各个科室主任自己管理，大牛院长只管科室之间的协调和医院发展的大事，这样既能调动基层的积极性，又能把大牛院长解放出来扩大生产抓大事谋大事，岂不妙哉？就这样，博爱医院的新一轮改革轰轰烈烈的展开了。</p><p>又是一个十年，又是一个春天，大牛院长已成为本地知名的企业家，博爱医院也发展到了二十三个科室数百名员工，发展中也出现了新问题，由于各个科室独立挂号、收费、化验，有的科室整天忙忙碌碌效益好，有的科室就相对平庸些，连分到的各种检查仪器都不能满负荷运行，整个医院养了不少闲人。这时候大牛院长视野也开阔了，请来了管理专家进行了顶层设计，把原来分散到各个科室的非核心服务全部收归集中管理，把原来二十三个挂号窗口整合为十个，二十三个收费窗口整合为八个，集中布设在一楼大厅为全院服务，还把分散在各个科室的检查仪器集中起来成立独立的检验科，也为全院服务，这样人人有活干，整个医院的服务能力又上了一个新台阶，这轮改革后博爱医院通过了各级部门的鉴定成为了远近驰名的三甲医院，吴大牛也换身一变成为了博爱集团的CEO兼董事长，下一步就准备IPO上市了。</p><p>说到这里大家可能有点糊涂，这个跟微服务有嘛关系？在孙老师看来，大牛诊所的1.0阶段就相当于软件开发的单体结构，一个程序员打天下，从头编到尾，很难做大做强。大牛诊所的2.0阶段就相当于软件开发的垂直结构，各科室按照业务划分，很容易横向扩展。博爱医院的1.0阶段就相当于软件开发的SOA结构，除了药房（数据库）外各个服务独立提供（科室主任负责），但需要大牛院长（ESB总线）来协调。博爱医院的2.0阶段就相当于软件开发的微服务结构，公共服务院内共享，科室主任管理功能弱化（只管医生业务），优点是扩容方便，哪个部门缺人直接加，不用看上下游，资源利用率高，人员和设备效率高。为什么要变呢？小诊所有小诊所的活法，大医院有大医院的骄傲。无他，天下熙熙，皆为利来；天下攘攘，皆为利往。</p></blockquote><h4>设计原则</h4><ul><li>拆分足够微：划分比较细，但是也不能太细，增加管理问题</li><li>轻量级通信：rest，rpc等方式在网络上通信</li><li>单一职责原则：高内聚，低耦合，确定服务边界</li></ul><h2>如何设计微服务系统</h2><p><font color="red"><b>服务拆分</b></font>----》<font color="red"><b>服务注册</b></font>----》<font color="red"><b>服务发现</b></font>----》<font color="red"><b>服务消费</b></font>(调用另外一个服务)----》<font color="red"><b>统一入口</b></font>(服务很多的时候需要有一个统一的入口)----》<font color="red"><b>配置管理</b></font>(管理每个服务的配置信息)----》<font color="red"><b>熔断机制</b></font>(保护系统避免崩溃)----》<font color="red"><b>自动扩展</b></font>(根据负荷自动扩展集群)</p><h2>微服务拆分的意义</h2><ul><li>易于实现</li><li>易于部署</li><li>易于维护</li><li>易于更新</li></ul><p>本天气预报系统可以拆分为：</p><ul><li>天气数据采集服务：数据采集和数据存储</li><li>天气预报服务：数据展示</li><li>天气数据API：数据查询</li><li>城市数据API：数据查询</li></ul>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;这是学习的第五篇文章，在进行真正的业务拆分之前，我们来认识一下什么是SOA架构，什么是微服务。确定本系统拆分的几个部分。&lt;/p&gt;
     
     </summary>
     
