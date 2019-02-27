@@ -3,7 +3,7 @@
 <h2>1. 原理</h2>
 <p>归并排序（<code>MERGE-SORT</code>）是利用归并的思想实现的排序方法，该算法采用经典的分治（<code>divide-and-conquer</code>）策略（分治法将问题分(<code>divide</code>)成一些小的问题然后递归求解，而治(<code>conquer</code>)的阶段则将分的阶段得到的各答案&quot;修补&quot;在一起，即分而治之)。</p>
 <p>复杂度为(<code>nlogN</code>),这里采用自顶向下和递归来完成的。</p>
-<p><img src="https://images2015.cnblogs.com/blog/1024555/201612/1024555-20161218163120151-452283750.png" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/suanfa8-1.png" alt="image"></p>
 <p>归并排序的原理是，先把待排序序列分为若干个子序列，每个子序列是有序的。然后再把有序子序列合并为整体有序序列。</p>
 <p>归并的前提是先把要排序的序列分为若干个字序列，然后才归并。在拆分数列的时候，就要用到拆分，直到不能再拆为止。</p>
 <blockquote>
@@ -14,7 +14,7 @@
 <p>然后再合并起来，小在的前面，大的在后面，没有比较的在后面填充数列。</p>
 </blockquote>
 <p>具体如何合并的呢？下面展示的最后的一步合并过程：</p>
-<p><img src="https://images2015.cnblogs.com/blog/1024555/201612/1024555-20161218194508761-468169540.png" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/suanfa8-2.png" alt="image"></p>
 <p>我们注意到，归并排序是需要额外的空间来辅助的。动态图为：</p>
 <p><img src="http://bloghello.oursnail.cn/suanfa7-4.gif" alt="image"></p>
 <h2>2. 代码</h2>
