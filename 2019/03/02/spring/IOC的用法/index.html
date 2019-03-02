@@ -56,7 +56,8 @@
 <li><code>AutowireCapableBeanFactory</code>：定义了将容器中的 <code>Bean</code>按某种规则（如按名字匹配、按类型匹配等）进行自动装配的方法；</li>
 <li><code>SingletonBeanRegistry</code>：定义了允许在运行期间向容器注册单实例 <code>Bean</code> 的方法；</li>
 </ul>
-<p>⭐⭐⭐其中，我们最关心的是<code>BeanDefinition</code>、<code>BeanDefinitionRegistry</code>、<code>BeanFactory</code>。注意，<code>BeanDefinition</code>,它完成了<code>Bean</code>的生成过程。<code>BeanDefinitionRegistry</code>是将定义好的<code>bean</code>，注册到容器中。<code>BeanFactory</code> 是一个<code>bean</code>工厂类，从容器中可以取到任意定义过的<code>bean</code>。</p>
+<p>⭐⭐⭐其中，我们最关心的是<code>BeanDefinition</code>、<code>BeanDefinitionRegistry</code>、<br>
+<code>BeanFactory</code>。注意，<code>BeanDefinition</code>,它完成了<code>Bean</code>的生成过程。<code>BeanDefinitionRegistry</code>是将定义好的<code>bean</code>，注册到容器中。<code>BeanFactory</code> 是一个<code>bean</code>工厂类，从容器中可以取到任意定义过的<code>bean</code>。</p>
 <p><code>Bean</code>的生成大致可以分为两个阶段：容器启动阶段和<code>bean</code>实例化阶段：</p>
 <p><img src="http://bloghello.oursnail.cn/spring2-6.png" alt="image"></p>
 <p>它是面向<code>spring</code>管理<code>bean</code>的最核心的一个接口，但是作为使用者，我们往往更关心的是<code>ApplicationContext</code>.</p>
