@@ -91,12 +91,14 @@
 <li><code>AnnotationAwareAspectJAutoProxyCreator</code>是一个<code>InstantiationAwareBeanPostProcessor</code></li>
 <li>创建流程
 <ul>
-<li><code>registerBeanPostProcessors()</code> 注册后置处理器，创建<code>AnnotationAwareAspectJAutoProxyCreator</code></li>
+<li><code>registerBeanPostProcessors()</code> 注册后置处理器，创建<br>
+<code>AnnotationAwareAspectJAutoProxyCreator</code></li>
 <li><code>finishBeanFactoryInitialization</code> 初始化剩下的单实例<code>Bean</code>
 <ul>
 <li>创建<code>Bean</code>和切面</li>
 <li><code>AnnotationAwareAspectJAutoProxyCreator</code>拦截创建过程</li>
-<li>创建完<code>Bean</code>判断是否需要增强。通过<code>BeanPostProcessorsAfterInitialization</code>，<code>wrapIfNecessary()</code> 包装代理对象</li>
+<li>创建完<code>Bean</code>判断是否需要增强。通过<code>BeanPostProcessorsAfterInitialization</code>，<br>
+<code>wrapIfNecessary()</code> 包装代理对象</li>
 </ul>
 </li>
 </ul>
