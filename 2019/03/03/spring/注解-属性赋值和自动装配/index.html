@@ -1,0 +1,132 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 注解-属性赋值和自动装配 · fossi</title><meta name="description" content="注解-属性赋值和自动装配 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">注解-属性赋值和自动装配</h1><div class="post-meta"><span class="post-time">Mar 3, 2019</span></div><div class="post-content"><h2>1. @Value赋值</h2>
+<p>给一个<code>Person</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@ToString</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注册到容器中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MainConfig3</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Person <span class="title">person</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Person();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动查看一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test03</span><span class="params">()</span></span>&#123;</span><br><span class="line">    AnnotationConfigApplicationContext applicationContext = <span class="keyword">new</span> AnnotationConfigApplicationContext(MainConfig3.class);</span><br><span class="line">    System.out.println(<span class="string">"容器已经启动成功..."</span>);</span><br><span class="line">    Person person = applicationContext.getBean(Person.class);</span><br><span class="line">    System.out.println(person);<span class="comment">//Person(name=null, age=null)</span></span><br><span class="line">    applicationContext.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么在以前写配置文件的时候，我们可以在xml中给属性注入值。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"com.swg.bean.Person"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"age"</span> <span class="attr">value</span>=<span class="string">"10"</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"张三"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>那么现在的注解可以实现这样的功能吗？</p>
+<ul>
+<li>@Value</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value</span>(<span class="string">"hello"</span>)</span><br><span class="line"><span class="keyword">private</span> String name;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>@SpEL表达式</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value</span>(<span class="string">"#&#123;20-6&#125;"</span>)</span><br><span class="line"><span class="keyword">private</span> Integer age;</span><br></pre></td></tr></table></figure>
+<h2>2. @PropertySource加载外部配置文件</h2>
+<h4>${}注入属性文件的值</h4>
+<ul>
+<li>新建一个配置文件<code>db.properties</code>，在里面写:</li>
+</ul>
+<blockquote>
+<p>person.nickname = hello</p>
+</blockquote>
+<ul>
+<li>首先在配置类中声明要引入的配置文件：</li>
+</ul>
+<blockquote>
+<p>@PropertySource(value = “classpath:/db.properties”)</p>
+</blockquote>
+<ul>
+<li>然后再引入：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Value</span>(<span class="string">"$&#123;person.nickname&#125;"</span>)</span><br><span class="line"><span class="keyword">private</span> String nickname;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>以前在用xml的时候，是这样引入这个值的：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">context:property-placeholder</span> <span class="attr">location</span>=<span class="string">"db.properties"</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//然后下面就引入这个属性文件的值</span><br><span class="line"><span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"nickname"</span> <span class="attr">value</span>=<span class="string">"$&#123;person.nickname&#125;"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<hr>
+<p>自动装配：spring利用依赖注入DI，完成对IOC容器中各个组件依赖关系赋值</p>
+<h2>3. @Autowired &amp; @Qualifier &amp; @Primary</h2>
+<p><code>@Autowired</code>：默认是按照类型去容器中找相应的组件。找到就赋值。</p>
+<blockquote>
+<p>applicationContext.getBean(Person.class)</p>
+</blockquote>
+<p>如果找到多个相同类型的组件，再将属性名(默认是小写字母开头的id或者用<code>@Bean(&quot;xxx&quot;)</code>中的xxx为属性名)作为组件的id去容器中查找。</p>
+<blockquote>
+<p>applicationContext.getBean(“person”)</p>
+</blockquote>
+<p>所以，最好名字不一样。</p>
+<p>如果有多个相同类型的组件，可以用<code>@Qualifier(&quot;xxx&quot;)</code>可以指定装配的id，而不是属性名。</p>
+<p><strong>@Primary：让spring自动装配的时候，默认使用首选的bean；但是如果@Qualifier明确指定了要装配哪一个，还是以@Qualifier为准。</strong></p>
+<p>默认，如果容器中没有这个组件，那么@Autowired就会报错。那么可不可以有就装配，没有就算了呢？</p>
+<blockquote>
+<p>@Autowired（required=false）</p>
+</blockquote>
+<h2>4. @Resource &amp; @Inject</h2>
+<p>这两个都是java规范的注解。</p>
+<ul>
+<li>@Resource–JSR250</li>
+</ul>
+<p>默认是按照组件名称进行装配的。没有能支持<code>@Primary</code>和<code>@Autowired（required=false）</code>这个功能。</p>
+<ul>
+<li>@Inject–JSR330</li>
+</ul>
+<p>还需要一个依赖：<code>javax.inject</code></p>
+<p>和<code>@Autowired</code>差不多，但是比<code>@Autowired</code>稍弱，虽然支持<code>@Primary</code>，但是没有<code>required=false</code></p>
+<p><code>@Autowired</code>是<code>spring</code>定义的，后两者都是java的规范。</p>
+<p>那么这些自动装配功能的注解是如何实现的呢？原来是<code>AutowiredAnnotationBeanPostProcessor</code>来实现的。</p>
+<h2>5. 方法、构造器位置的自动装配</h2>
+<p><code>@Autowired</code>能标注的位置：构造器、参数、方法、属性</p>
+<ul>
+<li>写在属性上面：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> Car car;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>写在方法上：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//spring容器创建当前对象，就会调用方法，完成赋值；</span></span><br><span class="line"><span class="comment">//方法使用的参数，自定义类型的值从ioc容器中获取，就是这里的参数car。</span></span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="function">publlic <span class="keyword">void</span> <span class="title">setCar</span><span class="params">(Car car)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.car = car;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>写在构造器上：</li>
+</ul>
+<p>因为注册到ioc容器的组件，容器启动的时候回调用无参构造器创建对象，然后在进行初始化赋值等操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//放在有参构造器上面，这样容器启动的时候就会调用这个有参构造器</span></span><br><span class="line"><span class="comment">//构造器中要用的组件car，也是从容器中获取</span></span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="function">publlic <span class="title">Boss</span><span class="params">(Car car)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.car = car;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>如果当前类只有一个有参构造器，@Autowired是可以省略的。</strong></p>
+<ul>
+<li>写在参数前面：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//car都是从容器中获取的</span></span><br><span class="line"><span class="function">publlic <span class="keyword">void</span> <span class="title">setCar</span><span class="params">(@Autowired Car car)</span></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.car = car;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2>6. Aware注入Spring底层组件及原理</h2>
+<p>自定义组件想使用spring容器底层的一些组件，比如<code>applicationContext</code>或者<code>beanFactory</code>等。只需要实现<code>xxxAware</code>接口即可。在创建对象的时候，会调用接口规定的方法注入相关组件。</p>
+<p>比如<code>ApplicationContextAware</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ApplicationContextAware</span> <span class="keyword">extends</span> <span class="title">Aware</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">setApplicationContext</span><span class="params">(ApplicationContext var1)</span> <span class="keyword">throws</span> BeansException</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>那么我们可以将它传进来的<code>ApplicationContext</code>保存一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Snail</span> <span class="keyword">implements</span> <span class="title">ApplicationContextAware</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ApplicationContext applicationContext;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setApplicationContext</span><span class="params">(ApplicationContext applicationContext)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.applicationContext = applicationContext;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2>7. @Profile环境搭建和根据环境注册bean</h2>
+<p>spring为我们提供的可用根据当前环境，动态地激活和切换一系列组件的功能。</p>
+<p>开发环境、测试环境、生产环境，可能用不同的数据源，那么不想改动很多代码的话，就可以用<code>@Profile</code>切换。</p>
+<p><code>@Profile</code>：指定组件在哪个环境的情况下才能被注册到容器中，<strong>不指定，在任何环境下都能注册这个组件</strong>。</p>
+<p><strong>加了@Profile的@Bean，只有这个环境被激活的时候才能注册到容器中，但是有一个默认注册的：@Profile(“default”)</strong></p>
+<p>那么如何指定某个环境注册到spring容器中呢？</p>
+<ul>
+<li>第一种方式：使用命令行动态参数</li>
+</ul>
+<blockquote>
+<p>VM arguments: -Dspring.profiles.active=test</p>
+</blockquote>
+<ul>
+<li>第二种方式：代码</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1,创建一个applicationContext</span></span><br><span class="line"><span class="comment">//2,设置需要激活的环境</span></span><br><span class="line">applicationContext.getEnvironment().setActiveProfiles(<span class="string">"test"</span>,<span class="string">"dev"</span>);</span><br><span class="line"><span class="comment">//3,注册配置类</span></span><br><span class="line">applicationContext.register(MainConfigOfProfile.class);</span><br><span class="line"><span class="comment">//4,启动刷新容器</span></span><br><span class="line">applicationContext.refresh();</span><br></pre></td></tr></table></figure>
+<h2>8. 总结</h2>
+<ol>
+<li><code>@Value</code>赋值</li>
+<li><code>@PropertySource</code>加载外部配置文件</li>
+<li><code>@Autowired</code> &amp; <code>@Qualifier</code> &amp; <code>@Primary</code> &amp; <code>@Resource</code> &amp; <code>@Inject</code>以及<code>@Autowired</code>在方法、构造器、参数位置的自动装配</li>
+<li>通过实现<code>Aware</code>接口可以注入<code>Spring</code>底层的一些组件</li>
+<li><code>@Profile</code>环境搭建和根据环境注册<code>bean</code></li>
+</ol>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/03/spring/注解-生命周期/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sun Mar 03 2019 12:47:58 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
