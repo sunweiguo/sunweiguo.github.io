@@ -100,7 +100,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Windows 7</span><br><span class="line">---&gt;person</span><br><span class="line">---&gt;bill</span><br><span class="line">&#123;person=Person(name=李四, age=20), bill=Person(name=Bill, age=60)&#125;</span><br></pre></td></tr></table></figure>
 <h2>7. @Import-给容器中快速导入一个组件</h2>
 <p>上面所说得给容器注册组件的方式是：</p>
-<p>包扫描+组件标注注解：<code>@Controller</code>，<code>@Service</code>，<code>@Repository</code>，<code>@Component</code></p>
+<p>包扫描+组件标注注解：<code>@Controller</code>，<code>@Service</code>，<code>@Repository</code>，<br>
+<code>@Component</code></p>
 <p>比较方便，但是有局限性：如果是注册第三方包怎么办呢？</p>
 <p>有一种是：<code>@Bean</code>[导入第三方包里面的组件],对于简单的可用这样用</p>
 <p>还有一种是：<code>@Import</code>，快速给容器导入一个组件</p>
