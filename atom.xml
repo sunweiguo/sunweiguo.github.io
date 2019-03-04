@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-04T13:55:32.086Z</updated>
+  <updated>2019-03-04T13:58:22.719Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -21,18 +21,13 @@
     <link href="http://yoursite.com/2019/03/04/algorithms-basic/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%9514-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
     <id>http://yoursite.com/2019/03/04/algorithms-basic/基础算法14-二叉搜索树/</id>
     <published>2019-03-04T13:55:21.777Z</published>
-    <updated>2019-03-04T13:55:32.086Z</updated>
+    <updated>2019-03-04T13:58:22.719Z</updated>
     
-    <content type="html"><![CDATA[<h2>动态构建二叉搜索树</h2><p>首先明确二叉搜索树基本性质，就是根节点的值一定比左孩子的值要大，一定比右孩子的值要小。(为了简单起见，假定元素都是不重复的)</p><p>如何动态生成一颗二叉搜索树呢？思路其实是很简单的，就是判断与根节点的左孩子和右孩子分别比较大小，一直到末梢就可以插入元素了。</p><p>先准备一个<code>TreeNode</code>：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-1.png" alt="image"></p><p>下面就是对节点进行操作了：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-2.png" alt="image"></p><p>我们来进行前序遍历和中序遍历以及后序遍历看看生成的二叉搜索树是否正确：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-3.png" alt="image"></p><p>运行结果为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前序遍历为：  6 3 2 1 5 8 7 </span><br><span class="line">中序遍历为：  1 2 3 5 6 7 8 </span><br><span class="line">后序遍历为：  1 2 5 3 7 8 6</span><br></pre></td></tr></table></figure><p>经过验证发现完全是正确的。并且我们发现，中序遍历后是一个有序的序列，说明二叉搜索树中序遍历之后有序。</p><p>二叉树天生递归，关于它的很多题目用递归就可以解决，后序会有一个单独的文章专门来刷关于二叉树的题目。这里先不赘述了。</p>]]></content>
+    <content type="html"><![CDATA[<p>本文比较轻松简单，就是动态生成一个二叉搜索而已。</p><a id="more"></a><h2>动态构建二叉搜索树</h2><p>首先明确二叉搜索树基本性质，就是根节点的值一定比左孩子的值要大，一定比右孩子的值要小。(为了简单起见，假定元素都是不重复的)</p><p>如何动态生成一颗二叉搜索树呢？思路其实是很简单的，就是判断与根节点的左孩子和右孩子分别比较大小，一直到末梢就可以插入元素了。</p><p>先准备一个<code>TreeNode</code>：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-1.png" alt="image"></p><p>下面就是对节点进行操作了：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-2.png" alt="image"></p><p>我们来进行前序遍历和中序遍历以及后序遍历看看生成的二叉搜索树是否正确：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-3.png" alt="image"></p><p>运行结果为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前序遍历为：  6 3 2 1 5 8 7 </span><br><span class="line">中序遍历为：  1 2 3 5 6 7 8 </span><br><span class="line">后序遍历为：  1 2 5 3 7 8 6</span><br></pre></td></tr></table></figure><p>经过验证发现完全是正确的。并且我们发现，中序遍历后是一个有序的序列，说明二叉搜索树中序遍历之后有序。</p><p>二叉树天生递归，关于它的很多题目用递归就可以解决，后序会有一个单独的文章专门来刷关于二叉树的题目。这里先不赘述了。</p>]]></content>
     
     <summary type="html">
     
-      
-      
-        &lt;h2&gt;动态构建二叉搜索树&lt;/h2&gt;
-&lt;p&gt;首先明确二叉搜索树基本性质，就是根节点的值一定比左孩子的值要大，一定比右孩子的值要小。(为了简单起见，假定元素都是不重复的)&lt;/p&gt;
-&lt;p&gt;如何动态生成一颗二叉搜索树呢？思路其实是很简单的，就是判断与根节点的左孩子和右孩子分别比较大小，
-      
+      &lt;p&gt;本文比较轻松简单，就是动态生成一个二叉搜索而已。&lt;/p&gt;
     
     </summary>
     
