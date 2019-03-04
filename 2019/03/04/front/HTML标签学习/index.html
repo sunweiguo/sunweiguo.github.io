@@ -1,0 +1,100 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> HTML标签学习 · fossi</title><meta name="description" content="HTML标签学习 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">HTML标签学习</h1><div class="post-meta"><span class="post-time">Mar 4, 2019</span></div><div class="post-content"><p>学习前端的第一步是学习html的基本标签，比较重要的标签并不多，多用用就好了。下面一一过一下，复习一下即可。</p>
+<a id="more"></a>
+<h2>一、文本标签</h2>
+<ul>
+<li>p标签</li>
+</ul>
+<p><code>&lt;p&gt;xxxx&lt;/p&gt;</code>对文本可以进行段落划分。</p>
+<ul>
+<li>斜体</li>
+</ul>
+<p><code>&lt;i&gt;xxx&lt;/i&gt;</code>或者<code>&lt;em&gt;xxx&lt;/em&gt;</code></p>
+<ul>
+<li>删除线</li>
+</ul>
+<p><code>&lt;s&gt;xxx&lt;/s&gt;</code>或者<code>&lt;del&gt;xxx&lt;/del&gt;</code></p>
+<ul>
+<li>加粗</li>
+</ul>
+<p><code>&lt;strong&gt;xxx&lt;/strong&gt;</code>或者<code>&lt;b&gt;xxx&lt;/b&gt;</code></p>
+<ul>
+<li>下划线</li>
+</ul>
+<p><code>&lt;u&gt;xxx&lt;/u&gt;</code>或者<code>&lt;ins&gt;xxx&lt;/ins&gt;</code></p>
+<h2>二、图片</h2>
+<p>没什么好说的：<code>&lt;img src=&quot;xxx&quot; alt=&quot;图裂了&quot; title=&quot;本图片提示信息&quot;&gt;</code></p>
+<h2>三、超链接</h2>
+<ul>
+<li>原地跳转新页面：<code>&lt;a href=&quot;http://www.google.com&quot; target=&quot;_self&quot;&gt;超链接&lt;/a&gt;</code></li>
+<li>新开页面跳转：<code>&lt;a href=&quot;http://www.google.com&quot; target=&quot;_blank&quot;&gt;超链接&lt;/a&gt;</code></li>
+</ul>
+<p>这里顺便说一下锚点定位。就是点一下页面移动到指定的地方开始显示。</p>
+<p><code>&lt;a href=&quot;#hello&quot;&gt;移动到hello处&lt;/a&gt;</code></p>
+<p><code>&lt;h1 id=&quot;hello&quot;&gt;我是hello&lt;/h1&gt;</code></p>
+<p>点一下就移动到对应的地方了。</p>
+<h2>四、列表</h2>
+<ul>
+<li>无序列表：</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>有序列表：</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ol</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span>&gt;</span>3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>所谓的顺序其实只是后者显示了123而已，并不是说对内容进行排序。</p>
+<ul>
+<li>自定义列表</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dl</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dt</span>&gt;</span>标题1<span class="tag">&lt;/<span class="name">dt</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>1<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>2<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>3<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dt</span>&gt;</span>标题2<span class="tag">&lt;/<span class="name">dt</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>4<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>5<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dd</span>&gt;</span>6<span class="tag">&lt;/<span class="name">dd</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dl</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>⭐在<code>webstorm</code>中，我们这样一个一个打有点累，其实是有快捷键的。比如我写一个有5个<code>&lt;li&gt;</code>的<code>&lt;ul&gt;</code>，快捷写法是<code>ul&gt;li*5</code>再按<code>tab</code>即可。</p>
+<p>比如我要五组这样的呢？<code>(ul&gt;li*5)*5</code>+<code>tab</code>即可。</p>
+<h2>五、表格</h2>
+<p>这个也没什么好说的</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">table</span> <span class="attr">border</span>=<span class="string">"1px"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>111<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>222<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>333<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tr</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>444<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>555<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">td</span>&gt;</span>666<span class="tag">&lt;/<span class="name">td</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">tr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">table</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>也可以有表头用<code>&lt;th&gt;</code>即可。下面注意一下，如果我们想要<code>111</code>一下占两列咋办呢？就是跟<code>excel</code>中差不多的单元格合并功能。</p>
+<ul>
+<li>占两列：<code>&lt;td colspan=&quot;2&quot;&gt;111&lt;/td&gt;</code></li>
+<li>占两行：<code>&lt;td rowspan=&quot;2&quot;&gt;111&lt;/td&gt;</code></li>
+</ul>
+<h2>六、表单</h2>
+<ul>
+<li>输入框：<code>&lt;input type=&quot;text&quot;&gt;</code></li>
+</ul>
+<p>往往下面这个是成对出现的：效果是点击<code>label</code>的提示语鼠标的焦点就会进入输入框了。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">"text"</span>&gt;</span>请输入：<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"text"</span> <span class="attr">type</span>=<span class="string">"text"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>按钮：<code>&lt;input type=&quot;button&quot; value=&quot;我是按钮&quot;&gt;</code></li>
+</ul>
+<ul>
+<li>勾选框：<code>&lt;input type=&quot;checkbox&quot;&gt;</code></li>
+</ul>
+<ul>
+<li>单选按钮：<code>&lt;input type=&quot;radio&quot;&gt;</code></li>
+</ul>
+<p>比如男女是一组<code>radio</code>，如何只让用户选择一个呢？</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"sex"</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">value</span>=<span class="string">"male"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">name</span>=<span class="string">"sex"</span> <span class="attr">type</span>=<span class="string">"radio"</span> <span class="attr">value</span>=<span class="string">"female"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>文本输入框：<code>&lt;textarea name=&quot;&quot; id=&quot;&quot; cols=&quot;30&quot; rows=&quot;10&quot;&gt;&lt;/textarea&gt;</code></p>
+</li>
+<li>
+<p>下拉框：</p>
+</li>
+</ul>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">name</span>=<span class="string">""</span> <span class="attr">id</span>=<span class="string">""</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span>1<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span>2<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span>3<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2>七、name属性</h2>
+<p>表单提交，比如登陆功能，我们需要将输入的用户名和密码发送到服务器校验。那么后端如何接收这个参数呢？其实就是根据<code>name</code>来识别的，后端受到的数据形如<code>username:xxx</code>，那么后端就可以根据<code>username</code>这个<code>name</code>属性接受到xxx这个内容。</p>
+<p>id只是标识这个标签，要唯一。两者不要混淆。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"服务器接口地址"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"username"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"password"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"reset"</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>好了，关键的标签就全部说完了。其实猛然回首才发现，这不正是我们初学html的时候一个一个学习的标签吗?真是时光荏苒呐！下面就要进军CSS了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/03/spring/注解-属性赋值和自动装配/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Mar 04 2019 19:32:14 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
