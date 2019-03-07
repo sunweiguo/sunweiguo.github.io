@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-07T11:57:02.054Z</updated>
+  <updated>2019-03-07T12:16:14.298Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题20-包含min函数的栈】</title>
+    <link href="http://yoursite.com/2019/03/07/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9820-%E5%8C%85%E5%90%ABmin%E5%87%BD%E6%95%B0%E7%9A%84%E6%A0%88%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/07/剑指offer/【面试题20-包含min函数的栈】/</id>
+    <published>2019-03-07T12:15:50.331Z</published>
+    <updated>2019-03-07T12:16:14.298Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第二十题。</p><a id="more"></a><h2>题目描述</h2><p>定义栈的数据结构，请在该类型中实现一个能够得到栈中所含最小元素的min函数（时间复杂度应为O（1））。</p><h2>解题思路</h2><p>思路：利用一个辅助栈来存放最小值</p><p>栈 3，4，2，5，1</p><p>辅助栈 3，3，2，2，1</p><p>每入栈一次，就与辅助栈顶比较大小，如果小就入栈，如果大就入栈当前的辅助栈顶；</p><p>当出栈时，辅助栈也要出栈</p><p>这种做法可以保证辅助栈顶一定都当前栈的最小值</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Stack;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//存放元素</span></span><br><span class="line">    Stack&lt;Integer&gt; stack1 = <span class="keyword">new</span> Stack&lt;Integer&gt;();</span><br><span class="line">    <span class="comment">//存放当前stack1中的最小元素</span></span><br><span class="line">    Stack&lt;Integer&gt; stack2 = <span class="keyword">new</span> Stack&lt;Integer&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//stack1直接塞，stack2要塞比栈顶小的元素，要不然就重新塞一下栈顶元素</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">push</span><span class="params">(<span class="keyword">int</span> node)</span> </span>&#123;</span><br><span class="line">        stack1.push(node);</span><br><span class="line">        <span class="keyword">if</span>(stack2.isEmpty() || stack2.peek() &gt; node)&#123;</span><br><span class="line">            stack2.push(node);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            stack2.push(stack2.peek());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//都要pop一下</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">pop</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(stack1.isEmpty())&#123;</span><br><span class="line">           <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"no element valid"</span>); </span><br><span class="line">        &#125;</span><br><span class="line">        stack1.pop();</span><br><span class="line">        stack2.pop();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">top</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(stack1.isEmpty())&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack1.peek();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">min</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(stack2.isEmpty())&#123;</span><br><span class="line">           <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> stack2.peek();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第二十题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题19-顺时针打印矩阵】</title>
@@ -393,26 +413,6 @@
     
     
       <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基础算法14-二叉搜索树</title>
-    <link href="http://yoursite.com/2019/03/04/algorithms-basic/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%9514-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91/"/>
-    <id>http://yoursite.com/2019/03/04/algorithms-basic/基础算法14-二叉搜索树/</id>
-    <published>2019-03-04T13:55:21.777Z</published>
-    <updated>2019-03-04T13:58:22.719Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文比较轻松简单，就是动态生成一个二叉搜索而已。</p><a id="more"></a><h2>动态构建二叉搜索树</h2><p>首先明确二叉搜索树基本性质，就是根节点的值一定比左孩子的值要大，一定比右孩子的值要小。(为了简单起见，假定元素都是不重复的)</p><p>如何动态生成一颗二叉搜索树呢？思路其实是很简单的，就是判断与根节点的左孩子和右孩子分别比较大小，一直到末梢就可以插入元素了。</p><p>先准备一个<code>TreeNode</code>：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-1.png" alt="image"></p><p>下面就是对节点进行操作了：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-2.png" alt="image"></p><p>我们来进行前序遍历和中序遍历以及后序遍历看看生成的二叉搜索树是否正确：</p><p><img src="http://bloghello.oursnail.cn/suanfa14-3.png" alt="image"></p><p>运行结果为：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前序遍历为：  6 3 2 1 5 8 7 </span><br><span class="line">中序遍历为：  1 2 3 5 6 7 8 </span><br><span class="line">后序遍历为：  1 2 5 3 7 8 6</span><br></pre></td></tr></table></figure><p>经过验证发现完全是正确的。并且我们发现，中序遍历后是一个有序的序列，说明二叉搜索树中序遍历之后有序。</p><p>二叉树天生递归，关于它的很多题目用递归就可以解决，后序会有一个单独的文章专门来刷关于二叉树的题目。这里先不赘述了。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文比较轻松简单，就是动态生成一个二叉搜索而已。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="基础算法" scheme="http://yoursite.com/tags/%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95/"/>
     
   </entry>
   
