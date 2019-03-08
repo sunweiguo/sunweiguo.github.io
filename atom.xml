@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-08T03:44:48.178Z</updated>
+  <updated>2019-03-08T05:40:01.670Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题23-二叉搜索树后序遍历序列】</title>
+    <link href="http://yoursite.com/2019/03/08/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9823-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E5%90%8E%E5%BA%8F%E9%81%8D%E5%8E%86%E5%BA%8F%E5%88%97%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/08/剑指offer/【面试题23-二叉搜索树后序遍历序列】/</id>
+    <published>2019-03-08T05:39:37.574Z</published>
+    <updated>2019-03-08T05:40:01.670Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第二十三题。</p><a id="more"></a><h2>题目描述</h2><p>输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出Yes,否则输出No。假设输入的数组的任意两个数字都互不相同。</p><h2>解题思路</h2><p>首先要了解二叉搜索树的重要性质：根节点root的所有左子树的值都小于他，右子树的所有值都大于他。并且一个节点的值大于他的左孩子的值，小于右孩子的值。</p><p>比如这个树就满足二叉搜索树的性质：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">二叉搜索树示例：</span><br><span class="line"></span><br><span class="line">         20</span><br><span class="line">       /  \</span><br><span class="line">      15   25</span><br><span class="line">     / \  </span><br><span class="line">    10 18</span><br></pre></td></tr></table></figure><p>那么它的后续遍历是 10 18 15 25 20</p><p>显然，数组的最后一个值是树的root，25是其右子树，10-15都是其左子树，那么前三个数都要比20小，这样才能满足条件。然后再以15为root，递归判断。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">VerifySquenceOfBST</span><span class="params">(<span class="keyword">int</span> [] sequence)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(sequence.length == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sequence.length == <span class="number">1</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> judge(sequence,<span class="number">0</span>,sequence.length-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">judge</span><span class="params">(<span class="keyword">int</span>[] sequence,<span class="keyword">int</span> start,<span class="keyword">int</span> end)</span></span>&#123;</span><br><span class="line">        <span class="comment">//递归的停止条件</span></span><br><span class="line">        <span class="keyword">if</span>(start &gt;= end)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//从后往前找到第一个比end小的数</span></span><br><span class="line">        <span class="keyword">int</span> i = end-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(i&gt;start &amp;&amp; sequence[i] &gt; sequence[end])&#123;</span><br><span class="line">            i--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//0-end都应该是左子树，所以值必须都比root小，有一个大则false</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;i;j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(sequence[j] &gt; sequence[end])&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//对左右子树再做递归判断</span></span><br><span class="line">        <span class="keyword">return</span> judge(sequence,<span class="number">0</span>,i) &amp;&amp; judge(sequence,i,end-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第二十三题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题22-从上往下打印二叉树】</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第四题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题3-从尾到头打印链表】</title>
-    <link href="http://yoursite.com/2019/03/05/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%983-%E4%BB%8E%E5%B0%BE%E5%88%B0%E5%A4%B4%E6%89%93%E5%8D%B0%E9%93%BE%E8%A1%A8%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/05/剑指offer/【面试题3-从尾到头打印链表】/</id>
-    <published>2019-03-05T13:57:55.460Z</published>
-    <updated>2019-03-05T13:58:12.374Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第三题。</p><a id="more"></a><h2>题目描述</h2><p>输入一个链表，按链表值从尾到头的顺序返回一个ArrayList。</p><h2>解题思路</h2><p>这一题给一个单向链表，然后你反向打印出来。其实最容易想到的就是两个方案，一个是将这个链表进行反置，然后依次打印即可。一个就是通过栈这个数据结构，先进后出，那么也可以反向打印出来。由于用栈比较简单，但是链表的反置稍微难一点并且重要，所以本文用反置链表的方式解决。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;Integer&gt; <span class="title">printListFromTailToHead</span><span class="params">(ListNode listNode)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;Integer&gt; res = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(listNode == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        ListNode pre = <span class="keyword">null</span>;</span><br><span class="line">        ListNode curr = listNode;</span><br><span class="line">        <span class="keyword">while</span>(curr != <span class="keyword">null</span>)&#123;</span><br><span class="line">            ListNode next = curr.next;</span><br><span class="line">            curr.next = pre;</span><br><span class="line">            pre = curr;</span><br><span class="line">            curr = next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//pre就是反向链表的头结点</span></span><br><span class="line">        <span class="keyword">while</span>(pre != <span class="keyword">null</span>)&#123;</span><br><span class="line">            res.add(pre.val);</span><br><span class="line">            pre = pre.next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第三题。&lt;/p&gt;
     
     </summary>
     
