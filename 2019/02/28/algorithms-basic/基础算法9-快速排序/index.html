@@ -23,7 +23,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swap(arr,L+(int)(Math.random()*(R-L+1)),R);</span><br></pre></td></tr></table></figure>
 <p>相比于经典快排，这个优化的快排的优点在于：每一次partition之后，就可能会揪出一串的相等数字，然后左边全是小于这个数，右边都是大于这个数。而经典快排每次只找出一个数字来，左边是小于等于这个数，右边是大于这个数。很显然，优化后的快排要快一点。</p>
 <p>这种从荷兰国旗演变过来的快排，对于重复元素较多的时候是非常有利的，因此这种是我比较喜欢的一种写法，这也意味着快排的实现上有一些差异，但是主要的思想是一致的，即分治处理。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/28/algorithms-basic/基础算法10-堆排序/" class="prev">PRVE</a><a href="/2019/02/27/algorithms-basic/基础算法8-归并排序/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/28/algorithms-basic/基础算法10-堆排序/" class="prev">上一篇</a><a href="/2019/02/27/algorithms-basic/基础算法8-归并排序/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Thu Feb 28 2019 13:25:30 GMT+0800',
     owner: 'sunweiguo',
