@@ -1,0 +1,45 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> CSS之盒子模型 · fossi</title><meta name="description" content="CSS之盒子模型 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">CSS之盒子模型</h1><div class="post-meta"><span class="post-time">Mar 11, 2019</span></div><div class="post-content"><p>盒子模型是比较基础但是比较重要的一点，本文来简单了解一下。</p>
+<a id="more"></a>
+<h2>盒子模型</h2>
+<p><img src="http://bloghello.oursnail.cn/html6-1.png" alt="image"></p>
+<p>CSS盒模型本质上是一个盒子，封装周围的HTML元素，它包括：边距，边框，填充，和实际内容。<br>
+盒模型允许我们在其它元素和周围元素边框之间的空间放置元素。<br>
+下面的图片说明了盒子模型(Box Model)：</p>
+<p><img src="http://bloghello.oursnail.cn/html6-2.png" alt="image"></p>
+<p>由上面我知道了：最终元素的总宽度计算公式是这样的：</p>
+<ul>
+<li>总元素的宽度=宽度+左填充+右填充+左边框+右边框+左边距+右边距</li>
+</ul>
+<p>元素的总高度最终计算公式是这样的：</p>
+<ul>
+<li>总元素的高度=高度+顶部填充+底部填充+上边框+下边框+上边距+下边距</li>
+</ul>
+<p>简单了解了盒子模型之后，我们看到这个margin是在盒子的最外面，那么两个这样的盒子相邻的话可能会出一些问题。</p>
+<p>比如两个盒子一上一下放，两个都设置margin，那么这两者之间上下间隔会是多少呢？是两者的margin之和吗？</p>
+<p>⭐经过验证，间隔是以大的那个为准，而不是两者之和。</p>
+<p>那对于内部嵌套的情况呢？</p>
+<p><img src="http://bloghello.oursnail.cn/html6-5.png" alt="image"></p>
+<p>看起来好像没什么问题，都是符合我们一开始的期望的。但是去掉父盒子中的<code>padding</code>或者同时删除掉<code>padding</code>和<code>border</code>会是什么样子呢？</p>
+<p><img src="http://bloghello.oursnail.cn/html6-6.png" alt="image"></p>
+<p>好像子中<code>margin</code>的设置没什么作用了，此时我增大一下<code>margin</code>：</p>
+<p><img src="http://bloghello.oursnail.cn/html6-4.png" alt="image"></p>
+<p>（删除掉<code>border</code>效果也一样），效果就是两者同时下移了。这就很奇怪了，用比较专业的词汇来说，就是这两者的<code>margin</code>咋合并了呢？这里确实是合并了，<code>div</code>距离最上面的距离由其中较大的<code>margin</code>的值决定。</p>
+<p>解决方法是什么呢？正如上面第一种显示的，要么加一个<code>border</code>要么加一个<code>padding</code>.</p>
+<p><img src="http://bloghello.oursnail.cn/html6-7.png" alt="image"></p>
+<p>还有一种方式是在父元素上增加<code>overflow</code>，顾名思义就是溢出的意思。</p>
+<p><img src="http://bloghello.oursnail.cn/html6-8.png" alt="image"></p>
+<p>这也可以解决边框合并问题。我们稍微来看一下这个溢出是啥意思。起始就是说，如果子元素不在这个父元素范围内了，就直接不显示了。我们也可以显示，调整为<code>auto</code>模式即可，就可以下拉看到子元素了。</p>
+<p><img src="http://bloghello.oursnail.cn/html6-9.png" alt="image"></p>
+<p>我们来稍微总结一下，盒子模型的计算方法跟<code>margin</code>决定的外边距，<code>border</code>决定的边框宽度，<code>padding</code>决定的内边距以及实际内容相关。</p>
+<p>然后就是存在外边距合并的问题，一个是上下关系，一个是嵌套关系。重点是嵌套关系，要解除外边距合并问题，第一个比较可行的方案是给父元素添加一个白色的边框，一个是给父元素增加<code>overflow</code>。那个<code>padding</code>是不大好用的，毕竟增加了<code>padding</code>之后整个父元素的宽度或者高度都变化了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/11/front/CSS之图片/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Mar 11 2019 20:15:10 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
