@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-11T12:16:13.769Z</updated>
+  <updated>2019-03-11T14:05:10.839Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CSS之定位</title>
+    <link href="http://yoursite.com/2019/03/11/front/CSS%E4%B9%8B%E5%AE%9A%E4%BD%8D/"/>
+    <id>http://yoursite.com/2019/03/11/front/CSS之定位/</id>
+    <published>2019-03-11T14:04:48.644Z</published>
+    <updated>2019-03-11T14:05:10.839Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文来研究一下第三个重点：定位。</p><a id="more"></a><h2>绝对定位和相对定位</h2><p>它的主要特性是不占空间。</p><p><img src="http://bloghello.oursnail.cn/html8-1.png" alt="image"></p><p>但是相对定位是占空间的。</p><p><img src="http://bloghello.oursnail.cn/html8-2.png" alt="image"></p><p>我们看到，占用的是原来的空间。说明相对定位的话，原有的空间会给它保留住，实际占用的空间仍然是原来的，而不是现在移动后的。</p><h2>嵌套子元素</h2><p><img src="http://bloghello.oursnail.cn/html8-3.png" alt="image"></p><p>我们可以发现，如果子元素用的是绝对定位，那么定位是跟父元素没有关系的，而是与浏览器边框有关。此时如何做到跟着父元素一起动呢?最简单的方法是将子元素改为相对定位。</p><p>改为相对定位确实可以解决这个问题，但是有的时候我们需要子元素不占用空间，那么怎么办呢？一般情况下，我们给父元素一个定位信息，一般是相对定位，然后子元素是绝对定位，这样子元素就不会占用空间，并且子元素的位置是相对父元素动的。</p><p>为什么父元素要是相对定位呢？因为父元素一般都是需要占用空间的。一举两得，所以口则是子绝父相。</p><p><img src="http://bloghello.oursnail.cn/html8-4.png" alt="image"></p><p>此时就做到子元素相对于父元素定位了。</p><p>固定定位就是<code>fixed</code>，那么网页内容再多一直往下滑，它依然不动。</p><p>简单总结一下，就是相对定位是占空间的，绝对定位是不占空间的。默认情况下，绝对定位是相对于浏览器边框的，但是如果是父子关系，并且父元素设置<code>relative</code>子元素设置<code>absolute</code>的话，子元素就是相对于父元素进行排版。固定定位就是钉死不动。默认情况下是<code>static</code>。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文来研究一下第三个重点：定位。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="前端基础" scheme="http://yoursite.com/tags/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CSS之浮动</title>
+    <link href="http://yoursite.com/2019/03/11/front/CSS%E4%B9%8B%E6%B5%AE%E5%8A%A8/"/>
+    <id>http://yoursite.com/2019/03/11/front/CSS之浮动/</id>
+    <published>2019-03-11T13:11:04.888Z</published>
+    <updated>2019-03-11T13:11:40.613Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文来研究一下第二个重点：浮动。</p><a id="more"></a><h2>浮动</h2><p><img src="http://bloghello.oursnail.cn/html7-1.png" alt="image"></p><p>那么我们如何让他变成一行呢？之前已经说过了，可以用<code>inline-block</code>来实现：</p><p><img src="http://bloghello.oursnail.cn/html7-2.png" alt="image"></p><p>但是我们发现，有该死的间隙存在。此时就需要用到我的浮动了。什么是浮动，顾名思义，就是浮在上面，下面来直观感受一下：</p><p><img src="http://bloghello.oursnail.cn/html7-3.png" alt="image"></p><p>我们会发现，一个加了浮动，一个没有加的话，那么这两个在排版的时候是互相不冲突的，也就是说，浮动的元素根本就不占用标准元素的空间，所以这两者重叠在了一起。浮动就像是飞机，而不是浮动的就是汽车，汽车与汽车之间是互斥的，但是汽车与飞机之间不互斥，下面我们再来解决上面存在间隙的问题，我们只需要将这两个元素全部置为向左浮动即可。</p><p><img src="http://bloghello.oursnail.cn/html7-4.png" alt="image"></p><p>那么既然已经是浮动的元素了，这个元素是属于谁的呢？也就是说，是属于整个body还是属于父元素的呢？如果是属于父元素的话，那么就非常好了，我可以调整好父元素的位置之后，里面的子元素采用浮动来置为一行。我们来测试一下。</p><p><img src="http://bloghello.oursnail.cn/html7-5.png" alt="image"></p><p>这说明确实是属于父元素的。</p><h2>一些问题</h2><p><img src="http://bloghello.oursnail.cn/html7-6.png" alt="image"></p><p>此时下面的<code>div</code>直接就将第一个<code>outer</code>给顶掉了，这不是我们想要的结果。结果方案有三种。</p><p><img src="http://bloghello.oursnail.cn/html7-7.png" alt="image"></p><p>可能有的时候需要用第三种，因为第一种方法有的时候父元素会隐藏掉多出来的子元素。有的时候我们不想隐藏，就需要用到这个方法。</p><p><img src="http://bloghello.oursnail.cn/html7-8.png" alt="image"></p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文来研究一下第二个重点：浮动。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="前端基础" scheme="http://yoursite.com/tags/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80/"/>
+    
+  </entry>
   
   <entry>
     <title>CSS之盒子模型</title>
@@ -368,46 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第二十八题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题27-字符串的排列】</title>
-    <link href="http://yoursite.com/2019/03/09/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9827-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E6%8E%92%E5%88%97%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/09/剑指offer/【面试题27-字符串的排列】/</id>
-    <published>2019-03-09T05:08:17.617Z</published>
-    <updated>2019-03-09T05:08:36.253Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第二十七题。</p><a id="more"></a><h2>题目描述</h2><p>输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所能排列出来的所有字符串abc,acb,bac,bca,cab和cba。</p><h2>解题思路</h2><p>这是一个全排列问题，可以用回溯法一一试探。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Collections;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;String&gt; <span class="title">Permutation</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//存放结果</span></span><br><span class="line">        ArrayList&lt;String&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">       <span class="comment">//判断空的情况</span></span><br><span class="line">        <span class="keyword">if</span>(str == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> res;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//下面利用回溯法处理这个字符串的全排列所有情况</span></span><br><span class="line">        fun(str.toCharArray(),res,<span class="number">0</span>);</span><br><span class="line">        <span class="comment">//按照字典排序</span></span><br><span class="line">        Collections.sort(res);</span><br><span class="line">        <span class="comment">//返回结果</span></span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//回溯获取所有的组合情况</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">fun</span><span class="params">(<span class="keyword">char</span>[] strChar,ArrayList&lt;String&gt; res,<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">        <span class="comment">//主要的思路是：首先固定住i索引处的数字，然后递归对后面的字符递归处理</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果i已经到了字符数组的最后一位，那么说明这一次已经结束了，添加进结果集即可</span></span><br><span class="line">        <span class="keyword">if</span>(i == strChar.length-<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="comment">//去重</span></span><br><span class="line">            <span class="keyword">if</span>(!res.contains(<span class="keyword">new</span> String(strChar)))&#123;</span><br><span class="line">                res.add(<span class="keyword">new</span> String(strChar));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">//可以举个例子比如就是"abc"</span></span><br><span class="line">            <span class="comment">//①第一波是：swap(arr,0,0)，此时第一个元素还是"a"，即"abc"，下面就是对a后面的元素进行全排列（递归）</span></span><br><span class="line">                <span class="comment">//②第1.1波是：swap(arr,1,1)，此时第一个元素"a"是固定的，第二个元素此时就是"b"，即"abc"</span></span><br><span class="line">                <span class="comment">//③第1.2波是：swap(arr,1,2)，此时第二个元素此时就是"c",即"acb"</span></span><br><span class="line">            <span class="comment">//④第二波是：swap(arr,0,1)，此时第一个元素是"b"，即"bac"，下面就是对b后面的元素进行全排列（递归）</span></span><br><span class="line">                <span class="comment">//⑤第2.1波是：swap(arr,1,1)，此时为"bac"</span></span><br><span class="line">                <span class="comment">//⑥第2.2波是：swap(arr,1,2)，此时为"bca"</span></span><br><span class="line">            <span class="comment">//⑦第三波是：swap(arr,0,2)，此时第一个元素是"c"，即"cba"，下面就是对c后面的元素进行全排列（递归）</span></span><br><span class="line">                <span class="comment">//⑧第3.1波是：swap(arr,2,1)，此时为"cba"</span></span><br><span class="line">                <span class="comment">//⑨第3.2波是：swap(arr,2,2)，此时为"cab"</span></span><br><span class="line">            <span class="comment">//注意，上面的顺序可能与实际不一样</span></span><br><span class="line">            <span class="comment">//停止条件就是i达到了数组的最后一个数字。此时已经对所有的字符组合完毕了，符合条件的就全部装进结果集中</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=i;j&lt;strChar.length;j++)&#123;</span><br><span class="line">                swap(strChar,i,j);</span><br><span class="line">                fun(strChar,res,i+<span class="number">1</span>);</span><br><span class="line">                swap(strChar,i,j);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//交换数组的两个下标的元素</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">char</span>[] str, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (i != j) &#123;</span><br><span class="line">            <span class="keyword">char</span> t = str[i];</span><br><span class="line">            str[i] = str[j];</span><br><span class="line">            str[j] = t;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第二十七题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题26-二叉搜索树与双向链表】</title>
-    <link href="http://yoursite.com/2019/03/09/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9826-%E4%BA%8C%E5%8F%89%E6%90%9C%E7%B4%A2%E6%A0%91%E4%B8%8E%E5%8F%8C%E5%90%91%E9%93%BE%E8%A1%A8%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/09/剑指offer/【面试题26-二叉搜索树与双向链表】/</id>
-    <published>2019-03-09T02:00:08.447Z</published>
-    <updated>2019-03-09T02:00:35.129Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第二十六题。</p><a id="more"></a><h2>题目描述</h2><p>输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调整树中结点指针的指向。</p><h2>解题思路</h2><p>我们直到二叉搜索树的一个重要性质就是中序遍历是有序序列，那么本体要求转换为一个有序的双向链表，那么我们就可以通过中序遍历，将遍历到的结点以双向链表的形式串联起来。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">//定义两个指针，分别表示双向链表的头和尾</span></span><br><span class="line">    <span class="comment">//只是指针，不是新创建结点，符合题意</span></span><br><span class="line">    TreeNode head = <span class="keyword">null</span>;</span><br><span class="line">    TreeNode tail = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TreeNode <span class="title">Convert</span><span class="params">(TreeNode pRootOfTree)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//就是一个中序遍历，然后将中序遍历出来的结果以双向链表的形式串起来即可</span></span><br><span class="line">        <span class="keyword">if</span>(pRootOfTree == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        Convert(pRootOfTree.left);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//串成双向链表</span></span><br><span class="line">        <span class="keyword">if</span>(head == <span class="keyword">null</span>)&#123;</span><br><span class="line">            head = tail = pRootOfTree;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            tail.right = pRootOfTree;</span><br><span class="line">            pRootOfTree.left = tail;</span><br><span class="line">            tail = pRootOfTree;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        Convert(pRootOfTree.right);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> head;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第二十六题。&lt;/p&gt;
     
     </summary>
     
