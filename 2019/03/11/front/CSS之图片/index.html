@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> CSS之图片 · fossi</title><meta name="description" content="CSS之图片 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">CSS之图片</h1><div class="post-meta"><span class="post-time">Mar 11, 2019</span></div><div class="post-content"><p>本文来说一说图片相关的一些处理以及精灵图。</p>
+<a id="more"></a>
+<h2>图片</h2>
+<p><img src="http://bloghello.oursnail.cn/html5-1.png" alt="image"></p>
+<p>这就是简单放一张图片，但是我们发现，当图片比我们设定的div要小的时候，它会自动复制取铺满整个div。如果我们仅仅显示原来的图片，不要它铺开呢？</p>
+<p><img src="http://bloghello.oursnail.cn/html5-2.png" alt="image"></p>
+<p>这样就不会重复显示了，那我们能不能移动移动这个图片呢？</p>
+<p><img src="http://bloghello.oursnail.cn/html5-3.png" alt="image"></p>
+<p>注意，正数是让它往左往右移动。这个有什么用呢？这就要说一说精灵图了。</p>
+<p>还可以用<code>background-repeat: repeat-x;</code>表示横向自动填充。</p>
+<h2>精灵图</h2>
+<p>什么是精灵图呢？</p>
+<p>我们去腾讯游戏的官网看一下：</p>
+<p><img src="http://bloghello.oursnail.cn/html5-4.png" alt="image"></p>
+<p>我们注意到有很多的小图标，这些小图片特点是数量多，并且很小。为了减轻与服务器交互带来的不必要的开销，可以将这些小图标全部放在一张大图上，要用哪个图标通过上面说过的<code>background-position</code>来指定即可。</p>
+<p><img src="http://bloghello.oursnail.cn/html5-5.png" alt="image"></p>
+<p>比如我想只显示那个奖杯。</p>
+<p><img src="http://bloghello.oursnail.cn/html5-6.png" alt="image"></p>
+<p>慢慢移动到这个位置就可以了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/11/剑指offer/【面试题40-数组中只出现一次的数字】/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Mar 11 2019 16:00:21 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
