@@ -1,0 +1,78 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Git基本原理 · fossi</title><meta name="description" content="Git基本原理 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Git基本原理</h1><div class="post-meta"><span class="post-time">Mar 12, 2019</span></div><div class="post-content"><p>小伙伴们对git并不陌生，全球最大的同性交友网站github是程序猿们的最爱，这里只有你想不到的，没有你找不到的，各种资源应有尽有，免去了从浏览器中找到若干垃圾的麻烦。因此熟悉git也成为程序猿标配，本文来简单说说git的基本操作和基本原理。</p>
+<a id="more"></a>
+<h2>一、Git工作流程</h2>
+<p><img src="http://bloghello.oursnail.cn/zaji17-1.png" alt="image"></p>
+<p>这四个区域的名字如下:</p>
+<ul>
+<li><code>Workspace</code>：工作区</li>
+</ul>
+<p>程序员进行开发改动的地方，是你当前看到的，也是最新的。平常我们开发就是拷贝远程仓库中的一个分支，基于该分支进行开发。在开发过程中就是对工作区的操作。</p>
+<ul>
+<li><code>Index</code> / <code>Stage</code>：暂存区</li>
+</ul>
+<p><code>.git</code>目录下的<code>index</code>文件, 暂存区会记录<code>git add</code>添加文件的相关信息(文件名、大小、<code>timestamp</code>…)，不保存文件实体, 通过id指向每个文件实体。</p>
+<p>可以使用<code>git status</code>查看暂存区的状态。暂存区标记了你当前工作区中，哪些内容是被git管理的。<br>
+当你完成某个需求或功能后需要提交到远程仓库，那么第一步就是通过<code>git add</code>先提交到暂存区，被git管理。</p>
+<ul>
+<li><code>Repository</code>：仓库区（或本地仓库）</li>
+</ul>
+<p><code>git commit</code>后同步<code>index</code>的目录树到本地仓库，方便从下一步通过<code>git push</code>同步本地仓库与远程仓库的同步。</p>
+<ul>
+<li><code>Remote</code>：远程仓库</li>
+</ul>
+<p>远程仓库的内容可能被分布在多个地点的处于协作关系的本地仓库修改，因此它可能与本地仓库同步，也可能不同步，但是它的内容是最旧的。</p>
+<p>总结一下：</p>
+<ul>
+<li>任何对象都是在工作区中诞生和被修改；</li>
+<li>任何修改都是从进入<code>index</code>区才开始被版本控制；</li>
+<li>只有把修改提交到本地仓库，该修改才能在仓库中留下痕迹；</li>
+<li>与协作者分享本地的修改，可以把它们<code>push</code>到远程仓库来共享。</li>
+</ul>
+<p>下面这幅图更加直接阐述了四个区域之间的关系，可能有些命令不太清楚，没关系，下部分会详细介绍。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-2.png" alt="image"></p>
+<h2>二、常用git命令</h2>
+<p><img src="http://bloghello.oursnail.cn/zaji17-3.png" alt="image"></p>
+<p>我们从关键字入手git常用命令。</p>
+<h5>2.1 HEAD</h5>
+<p><code>HEAD</code>，它始终指向当前所处分支的最新的提交(commit)点。你所处的分支变化了，或者产生了新的提交点，<code>HEAD</code>就会跟着改变。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-4.png" alt="image"></p>
+<h5>2.2 add和commit</h5>
+<p><img src="http://bloghello.oursnail.cn/zaji17-5.png" alt="image"></p>
+<p><code>add</code>相关命令很简单，主要实现将工作区修改的内容提交到暂存区，交由git管理。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-6.png" alt="image"></p>
+<p><code>commit</code>相关命令也很简单，主要实现将暂存区的内容提交到本地仓库，并使得当前分支的<code>HEAD</code>向后移动一个提交点。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-7.png" alt="image"></p>
+<h5>2.3 branch</h5>
+<p><img src="http://bloghello.oursnail.cn/zaji17-8.png" alt="image"></p>
+<p>涉及到协作，自然会涉及到分支，关于分支，大概有展示分支，切换分支，创建分支，删除分支这四种操作。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-9.png" alt="image"></p>
+<h5>2.4 merge</h5>
+<p><img src="http://bloghello.oursnail.cn/zaji17-10.png" alt="image"></p>
+<p><code>merge</code>命令把不同的分支合并起来。如上图，在实际开放中，我们可能从<code>master</code>分支中切出一个分支，然后进行开发完成需求，中间经过R3,R4,R5的<code>commit</code>记录，最后开发完成需要合入<code>master</code>中，这便用到了<code>merge</code>。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-11.png" alt="image"></p>
+<p>一般在<code>merge</code>之后，会出现<code>conflict</code>，需要针对冲突情况，手动解除冲突。主要是因为两个用户修改了同一文件的同一块区域。</p>
+<p>就是说同一个代码两个人都进行了修改，那么必然需要通过人工的沟通协调最终选择一个统一的版本。</p>
+<h5>2.5 reset</h5>
+<p><img src="http://bloghello.oursnail.cn/zaji17-12.png" alt="image"></p>
+<p>reset命令把当前分支指向另一个位置，并且相应的变动工作区和暂存区。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-13.png" alt="image"></p>
+<p>还有一个叫做<code>git revert</code>,与<code>git reset</code>的区别是：</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-14.png" alt="image"></p>
+<p><code>git reset</code> 是把<code>HEAD</code>向后移动了一下，而<code>git revert</code>是<code>HEAD</code>继续前进，只是新的<code>commit</code>的内容和要<code>revert</code>的内容正好相反，能够抵消要被<code>revert</code>的内容。</p>
+<h5>2.6 push</h5>
+<p>上传本地仓库分支到远程仓库分支，实现同步。</p>
+<p><img src="http://bloghello.oursnail.cn/zaji17-15.png" alt="image"></p>
+<h5>2.7 其他命令</h5>
+<p><img src="http://bloghello.oursnail.cn/zaji17-16.png" alt="image"></p>
+<p>整理自：<a href="https://mp.weixin.qq.com/s?__biz=MzUwOTQ1NTAzNA==&amp;mid=2247483714&amp;idx=2&amp;sn=a7893d7306025dc35ca0fb2678003795&amp;chksm=f910be97ce673781f259bb353b3802818eb64e2cb9b06390290374c3d95d139f32d8acb710e8&amp;mpshare=1&amp;scene=1&amp;srcid=1220thpAb37YI9AJFiDH0rMA#rd" target="_blank" rel="noopener">一篇文章让你读懂Git</a></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/12/design-pattern/单例模式(下)/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Mar 12 2019 17:18:22 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
