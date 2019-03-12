@@ -47,7 +47,28 @@
 <h2>2.2 add和commit</h2>
 <p><img src="http://bloghello.oursnail.cn/zaji17-5.png" alt="image"></p>
 <p><code>add</code>相关命令很简单，主要实现将工作区修改的内容提交到暂存区，交由git管理。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-6.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git add .</td>
+<td>添加当前目录的所有文件到暂存区</td>
+</tr>
+<tr>
+<td>git add [dir]</td>
+<td>添加指定目录到暂存区，包括子目录</td>
+</tr>
+<tr>
+<td>git add [file]</td>
+<td>添加指定文件到暂存区</td>
+</tr>
+</tbody>
+</table>
 <p><code>commit</code>相关命令也很简单，主要实现将暂存区的内容提交到本地仓库，并使得当前分支的<code>HEAD</code>向后移动一个提交点。</p>
 <p><img src="http://bloghello.oursnail.cn/zaji17-7.png" alt="image"></p>
 <h2>2.3 branch</h2>
