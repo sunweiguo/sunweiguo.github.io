@@ -6,22 +6,30 @@
 <ul>
 <li>Workspace：工作区</li>
 </ul>
+<blockquote>
 <p>程序员进行开发改动的地方，是你当前看到的，也是最新的。平常我们开发就是拷贝远程仓库中的一个分支，基于该分支进行开发。在开发过程中就是对工作区的操作。</p>
+</blockquote>
 <ul>
 <li>Index / Stage：暂存区</li>
 </ul>
+<blockquote>
 <p><code>.git</code>目录下的<code>index</code>文件, 暂存区会记录<code>git add</code>添加文件的相关信息(文件名、大小、<code>timestamp</code>…)，不保存文件实体, 通过id指向每个文件实体。</p>
 <p>可以使用<code>git status</code>查看暂存区的状态。暂存区标记了你当前工作区中，哪些内容是被git管理的。<br>
 当你完成某个需求或功能后需要提交到远程仓库，那么第一步就是通过<code>git add</code>先提交到暂存区，被git管理。</p>
+</blockquote>
 <ul>
 <li>Repository：仓库区（或本地仓库）</li>
 </ul>
+<blockquote>
 <p><code>git commit</code>后同步<code>index</code>的目录树到本地仓库，方便从下一步通过<code>git push</code>同步本地仓库与远程仓库的同步。</p>
+</blockquote>
 <ul>
 <li>Remote：远程仓库</li>
 </ul>
+<blockquote>
 <p>远程仓库的内容可能被分布在多个地点的处于协作关系的本地仓库修改，因此它可能与本地仓库同步，也可能不同步，但是它的内容是最旧的。</p>
-<p>总结一下：</p>
+</blockquote>
+<p><strong>总结一下：</strong></p>
 <ul>
 <li>任何对象都是在工作区中诞生和被修改；</li>
 <li>任何修改都是从进入<code>index</code>区才开始被版本控制；</li>
@@ -65,7 +73,7 @@
 <h2>2.7 其他命令</h2>
 <p><img src="http://bloghello.oursnail.cn/zaji17-16.png" alt="image"></p>
 <p>整理自：<a href="https://mp.weixin.qq.com/s?__biz=MzUwOTQ1NTAzNA==&amp;mid=2247483714&amp;idx=2&amp;sn=a7893d7306025dc35ca0fb2678003795&amp;chksm=f910be97ce673781f259bb353b3802818eb64e2cb9b06390290374c3d95d139f32d8acb710e8&amp;mpshare=1&amp;scene=1&amp;srcid=1220thpAb37YI9AJFiDH0rMA#rd" target="_blank" rel="noopener">一篇文章让你读懂Git</a></p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/03/12/design-pattern/单例模式(下)/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/12/design-pattern/单例模式(下)/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Tue Mar 12 2019 17:18:22 GMT+0800',
     owner: 'sunweiguo',
