@@ -70,29 +70,187 @@
 </tbody>
 </table>
 <p><code>commit</code>相关命令也很简单，主要实现将暂存区的内容提交到本地仓库，并使得当前分支的<code>HEAD</code>向后移动一个提交点。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-7.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git commit -m [message]</td>
+<td>提交暂存区到本地仓库，message代表说明信息</td>
+</tr>
+<tr>
+<td>git commit [file] -m [message]</td>
+<td>提交暂存区的指定文件到本地仓库</td>
+</tr>
+<tr>
+<td>git commit --amend -m [message]</td>
+<td>使用一次新的commit，替代上一次提交</td>
+</tr>
+</tbody>
+</table>
 <h2>2.3 branch</h2>
 <p><img src="http://bloghello.oursnail.cn/zaji17-8.png" alt="image"></p>
 <p>涉及到协作，自然会涉及到分支，关于分支，大概有展示分支，切换分支，创建分支，删除分支这四种操作。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-9.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git branch</td>
+<td>列出所有本地分支</td>
+</tr>
+<tr>
+<td>git branch -r</td>
+<td>列出所有远程分支</td>
+</tr>
+<tr>
+<td>git branch -a</td>
+<td>列出所有本地分支和远程分支</td>
+</tr>
+<tr>
+<td>git branch [branch-name]</td>
+<td>新建一个分支，但依然停留在当前分支</td>
+</tr>
+<tr>
+<td>git branch -b [branch-name]</td>
+<td>新建一个分支，并切换到该分支</td>
+</tr>
+<tr>
+<td>git branch --track [branch] remote-branch[]</td>
+<td>新建一个分支，与指定的远程分支建立追踪关系</td>
+</tr>
+<tr>
+<td>git checkout [branch-name]</td>
+<td>切换到指定分支，并更新工作区</td>
+</tr>
+<tr>
+<td>git branch -d [branch-name]</td>
+<td>删除分支</td>
+</tr>
+<tr>
+<td>git push origin --delete [branch-name]</td>
+<td>删除远程分支</td>
+</tr>
+</tbody>
+</table>
 <h2>2.4 merge</h2>
 <p><img src="http://bloghello.oursnail.cn/zaji17-10.png" alt="image"></p>
 <p><code>merge</code>命令把不同的分支合并起来。如上图，在实际开放中，我们可能从<code>master</code>分支中切出一个分支，然后进行开发完成需求，中间经过R3,R4,R5的<code>commit</code>记录，最后开发完成需要合入<code>master</code>中，这便用到了<code>merge</code>。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-11.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git fetch [remote]</td>
+<td>merge之前先拉一下远程仓库最新代码</td>
+</tr>
+<tr>
+<td>git merge [branch]</td>
+<td>合并指定分支到当前分支</td>
+</tr>
+</tbody>
+</table>
 <p>一般在<code>merge</code>之后，会出现<code>conflict</code>，需要针对冲突情况，手动解除冲突。主要是因为两个用户修改了同一文件的同一块区域。</p>
 <p>就是说同一个代码两个人都进行了修改，那么必然需要通过人工的沟通协调最终选择一个统一的版本。</p>
 <h2>2.5 reset</h2>
 <p><img src="http://bloghello.oursnail.cn/zaji17-12.png" alt="image"></p>
 <p>reset命令把当前分支指向另一个位置，并且相应的变动工作区和暂存区。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-13.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git reset --soft [commit]</td>
+<td>只改变提交点，暂存区和工作区的内容都不改变</td>
+</tr>
+<tr>
+<td>git reset --mixed [commit]</td>
+<td>改变提交点，同时改变暂存区的内容</td>
+</tr>
+<tr>
+<td>git reset --hard [commit]</td>
+<td>暂存区和工作区的内容都会被修改到与提交点完全一致的状态</td>
+</tr>
+<tr>
+<td>git reset --hard HEAD</td>
+<td>让工作区回到上次提交的状态</td>
+</tr>
+</tbody>
+</table>
 <p>还有一个叫做<code>git revert</code>,与<code>git reset</code>的区别是：</p>
 <p><img src="http://bloghello.oursnail.cn/zaji17-14.png" alt="image"></p>
 <p><code>git reset</code> 是把<code>HEAD</code>向后移动了一下，而<code>git revert</code>是<code>HEAD</code>继续前进，只是新的<code>commit</code>的内容和要<code>revert</code>的内容正好相反，能够抵消要被<code>revert</code>的内容。</p>
 <h5>2.6 push</h5>
 <p>上传本地仓库分支到远程仓库分支，实现同步。</p>
-<p><img src="http://bloghello.oursnail.cn/zaji17-15.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git push [remote] [branch]</td>
+<td>上传本地指定分支到远程仓库</td>
+</tr>
+<tr>
+<td>git push [remote] --force</td>
+<td>强行推送当前分支到远程仓库，即使有冲突</td>
+</tr>
+<tr>
+<td>git push [remote] --all</td>
+<td>推送所有分支到远程仓库</td>
+</tr>
+</tbody>
+</table>
 <h2>2.7 其他命令</h2>
-<p><img src="http://bloghello.oursnail.cn/zaji17-16.png" alt="image"></p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>git status</td>
+<td>显示有变更的文件</td>
+</tr>
+<tr>
+<td>git log</td>
+<td>显示当前分支的版本历史</td>
+</tr>
+<tr>
+<td>git diff</td>
+<td>显示暂存区和工作区的差异</td>
+</tr>
+<tr>
+<td>git diff HEAD</td>
+<td>显示工作区与当前分支最新commit之间的差异</td>
+</tr>
+<tr>
+<td>git cherry-pick [commit]</td>
+<td>选择一个commit合并进当前分支</td>
+</tr>
+</tbody>
+</table>
 <p>整理自：<a href="https://mp.weixin.qq.com/s?__biz=MzUwOTQ1NTAzNA==&amp;mid=2247483714&amp;idx=2&amp;sn=a7893d7306025dc35ca0fb2678003795&amp;chksm=f910be97ce673781f259bb353b3802818eb64e2cb9b06390290374c3d95d139f32d8acb710e8&amp;mpshare=1&amp;scene=1&amp;srcid=1220thpAb37YI9AJFiDH0rMA#rd" target="_blank" rel="noopener">一篇文章让你读懂Git</a></p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/03/12/design-pattern/单例模式(下)/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
