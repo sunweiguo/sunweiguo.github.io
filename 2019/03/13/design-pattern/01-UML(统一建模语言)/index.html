@@ -1,0 +1,56 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 01-UML(统一建模语言) · fossi</title><meta name="description" content="01-UML(统一建模语言) - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">01-UML(统一建模语言)</h1><div class="post-meta"><span class="post-time">Mar 13, 2019</span></div><div class="post-content"><h2>一、什么是UML类图</h2>
+<p>用于表示类、接口、实例等之间相互的静态关系</p>
+<h2>二、箭头方向的含义</h2>
+<p>一般情况下是从子指向父。</p>
+<h2>三、继承和实现</h2>
+<p>典型的特征是<strong>空心三角箭头</strong>。其中，实线代表继承父类，虚线代表实现接口。关于继承和实现，我们都太熟悉了，就不再赘述了。</p>
+<p><img src="http://bloghello.oursnail.cn/pattern1-1.png" alt="image"></p>
+<h2>四、聚合和组合</h2>
+<p>典型特征是<strong>菱形箭头</strong>。聚合关系用一条带空心菱形箭头的直线表示，如下图表示A聚合到B上。</p>
+<p><img src="http://bloghello.oursnail.cn/pattern1-2.png" alt="image"></p>
+<p>组合关系用一条带实心菱形箭头直线表示，如下图表示A组成B，或者B由A组成。</p>
+<p><img src="http://bloghello.oursnail.cn/pattern1-3.png" alt="image"></p>
+<p>我们一定要注意区分它们两者，首先说明一下，组合的依赖关系强于聚合。我们可以将聚合关系理解为：整体和部分不是强依赖的，即使整体不存在了，部分仍然存在；例如， 部门撤销了，人员不会消失，他们依然存在；</p>
+<p>我们可以将组合关系理解为：组合关系是一种强依赖的特殊聚合关系，如果整体不存在了，则部分也不存在了；例如， 公司不存在了，部门也将不存在了；</p>
+<p>聚合可以这样说：大雁聚合成大雁群；组合可以这样说：鸟儿与翅膀，两者生死与共。</p>
+<p>之间依赖关系强则用实心菱形。</p>
+<p>关于组合关系中常见的数字表达含义，假设有A类和B类，数字标记在A类侧,表明系统在某一时刻，B的实例可以与A的xx个实例相关：</p>
+<ul>
+<li><code>0..1</code>    0或1个实例</li>
+<li><code>0..*</code>    0或多个实例</li>
+<li><code>1..1</code>    1个实例</li>
+<li><code>1</code>       只能由一个实例</li>
+<li><code>1..*</code>    至少有一个实例</li>
+</ul>
+<h2>五、关联和依赖</h2>
+<p>是一个<strong>普通箭头</strong>。关联关系是用一条实线表示的；它描述不同类的对象之间的结构关系；它是一种静态关系， 通常与运行状态无关，一般由常识等因素决定的；它一般用来定义对象之间静态的、天然的结构； 所以，关联关系是一种“强关联”的关系；</p>
+<p>比如，乘车人和车票之间就是一种关联关系；学生和学校就是一种关联关系；注意，强调的是一种天然的静态关系，是不可改变的固有关系，所以是实线。</p>
+<p>关联关系默认不强调方向，表示对象间相互知道；如果特别强调方向，如下图，表示A知道B，但 B不知道A；</p>
+<p>在代码中，关联对象通常是以成员变量的形式实现的；</p>
+<p><img src="http://bloghello.oursnail.cn/pattern1-4.png" alt="image"></p>
+<p>依赖关系是用一套带箭头的虚线表示的；如下图表示A依赖于B；他描述一个对象在运行期间会用到另一个对象的关系；</p>
+<p><img src="http://bloghello.oursnail.cn/pattern1-5.png" alt="image"></p>
+<p>与关联关系不同的是，它是一种临时性的关系，通常在运行期间产生，并且随着运行时的变化； 依赖关系也可能发生变化；</p>
+<p>显然，依赖也有方向，双向依赖是一种非常糟糕的结构，我们总是应该保持单向依赖，杜绝双向依赖的产生；</p>
+<p>在代码中，依赖关系体现为类构造方法及类方法的传入参数，箭头的指向为调用关系；依赖关系除了临时知道对方外，还可以“使用”对方的方法和属性；</p>
+<h2>六、一个类如何表示？</h2>
+<p><img src="http://bloghello.oursnail.cn/uml1-2.png" alt="image"></p>
+<h2>七、从整体来看一张UML类图</h2>
+<p><img src="http://bloghello.oursnail.cn/uml1-3.png" alt="image"></p>
+<p>我们看到，氧气和水都是以参数的形式传递进来，所以是变化的，因此是依赖关系，因此是带箭头的虚线。</p>
+<p>鸟和翅膀不可分割，因此是组合关系，因此是实心菱形。</p>
+<p>大雁聚合成大雁群，就像盘子盛放东西一样，是一种聚合关系，因此是空心菱形。</p>
+<p>企鹅需要严寒的气候，这是天然的关系，企鹅不会突然说我想去非洲，因为它适应不了，所以这种天然的关系是关联关系，因此是带箭头的实线。</p>
+<p>鸟是动物的子类，因此是空心三角实线。</p>
+<p>大雁会飞，所以可以实线飞翔的接口，因此是空心三角虚线。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/13/剑指offer/【面试题50-数组中的重复数字】/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Wed Mar 13 2019 13:36:51 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
