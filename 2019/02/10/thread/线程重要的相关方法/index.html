@@ -1,0 +1,103 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 线程重要的相关方法 · fossi</title><meta name="description" content="线程重要的相关方法 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">线程重要的相关方法</h1><div class="post-meta"><span class="post-time">Feb 10, 2019</span></div><div class="post-content"><p>本文是关于JAVA多线程和并发的第四篇，本篇文章主要来看看线程相关的几个重要方法。</p>
+<a id="more"></a>
+<h2>wait和sleep</h2>
+<p>他们最基本的差异是：</p>
+<ul>
+<li><code>wait</code>是<code>Object</code>的一个方法，<code>sleep</code>是<code>Thread</code>类的方法</li>
+<li><code>sleep</code>可以在任何地方使用，但是<code>wait</code>方法只能在<code>synchronied</code>方法或<code>synchronied</code>块中使用</li>
+</ul>
+<p>本质的区别是：</p>
+<ul>
+<li><code>Thread.sleep</code>只会让出CPu，不会导致锁行为的改变</li>
+<li><code>Object.wait</code>不仅让出CPU，还会释放已经占用的同步资源锁</li>
+</ul>
+<p>这个区别也就解释了为什么<code>wait</code>方法只能在<code>synchronied</code>方法或<code>synchronied</code>块中使用，因为没有获取过锁哪里来的释放锁呢？所以释放锁的前提是要获取锁。</p>
+<p>下面来验证一下，眼见为实！</p>
+<p><img src="http://bloghello.oursnail.cn/thread4-1.jpg" alt="image"></p>
+<p>对于<code>sleep</code>来说是没有锁的要求的，既不用获取锁也不用释放锁，关于这一点就不再验证了。</p>
+<h2>notify和notifyAll</h2>
+<p>先来了解一下锁池和等待池的概念。</p>
+<ul>
+<li>锁池EntryLisy</li>
+</ul>
+<blockquote>
+<p>假设线程A已经拥有了某个对象(不是类)的锁，而其他线程B、C想要调用这个对象的某个synchronized方法或块，由于B、C线程在进入对象的synchronized方法或块之前必须先获得该对象锁得拥有权，而恰巧该对象的锁正被线程A所占用，此时B、C线程就会被阻塞，进入一个地方去等待所得释放，这个地方就是该对象得锁池。</p>
+</blockquote>
+<ul>
+<li>等待池WaitSet</li>
+</ul>
+<blockquote>
+<p>假设线程A调用了某个对象的wait方法后，线程A就会释放该对象得锁，同时线程A句进入到该对象得等待池中，进入到等待池中得线程不会去竞争该对象的锁。</p>
+</blockquote>
+<p><code>notify</code>的作用就是<strong>随机</strong>唤醒<strong>一个</strong>线程进入等待池的线程，而<code>notifyAll</code>是唤醒所有处于等待池中线程，唤醒之后就可以再去竞争获得锁的机会了。</p>
+<p>刚才的例子稍微改造一下，来了解一下<code>notify</code>的作用。还拿刚才那个例子：</p>
+<p><img src="http://bloghello.oursnail.cn/thread4-2.jpg" alt="image"></p>
+<p><img src="http://bloghello.oursnail.cn/thread4-3.jpg" alt="image"></p>
+<h2>yield</h2>
+<p><img src="http://bloghello.oursnail.cn/thread4-4.jpg" alt="image"></p>
+<p>当调用<code>Thread.yield()</code>函数时，会给线程调度器一个当前线程愿意让出CPU使用的暗示，但是线程调度器可能会忽略这个暗示。并且它也不会释放当前线程占用的锁。</p>
+<p><code>yield()</code>与无参的<code>wait()</code>的区别：</p>
+<ul>
+<li>执行<code>yield()</code>后，当前线程由运行状态变为就绪状态。执行<code>wait</code>后，当前线程会失去对象的锁，状态变为<code>WAITING</code>状态。</li>
+<li>执行<code>yield()</code>后，当前线程不会释放锁。执行<code>wait</code>后，当前线程会释放锁。</li>
+</ul>
+<p>比较简单，就不举例了。</p>
+<h2>interrupt</h2>
+<p>它只是通知线程应该中断了。</p>
+<ul>
+<li>如果线程处于被阻塞状态，那么线程将立即退出被阻塞状态，并抛出一个<code>interruptedException</code>异常</li>
+<li>如果线程处于正常活动状态，那么会将该线程的中断标志设置为true。被设置中断标志的线程将继续正常运行，不受影响。</li>
+</ul>
+<p>也就是说，中断一个线程是由被调用的线程状态和自己程序判断决定的。</p>
+<ul>
+<li>阻塞状态下，线程会立即退出，并抛出异常</li>
+<li>正常状态下，需要被调用的线程检查中断标志位，然后再根据中断标志位自行地停止线程</li>
+</ul>
+<p>下面写一个demo来验证一下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InterruptDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Runnable interruptTask = <span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">//在正常运行任务时，经常检查本线程的中断标志位，如果被设置了中断标志就自行停止线程</span></span><br><span class="line">                    <span class="keyword">while</span> (!Thread.currentThread().isInterrupted()) &#123;</span><br><span class="line">                        Thread.sleep(<span class="number">100</span>); <span class="comment">// 休眠100ms</span></span><br><span class="line">                        i++;</span><br><span class="line">                        System.out.println(Thread.currentThread().getName() + <span class="string">" ("</span> + Thread.currentThread().getState() + <span class="string">") loop "</span> + i);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    <span class="comment">//在调用阻塞方法时正确处理InterruptedException异常。（例如，catch异常后就结束线程。）</span></span><br><span class="line">                    System.out.println(Thread.currentThread().getName() + <span class="string">" ("</span> + Thread.currentThread().getState() + <span class="string">") catch InterruptedException."</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        </span><br><span class="line">        Thread t1 = <span class="keyword">new</span> Thread(interruptTask, <span class="string">"t1"</span>);</span><br><span class="line">        System.out.println(t1.getName() +<span class="string">" ("</span>+t1.getState()+<span class="string">") is new."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1.启动“线程t1”</span></span><br><span class="line">        t1.start();                      </span><br><span class="line">        System.out.println(t1.getName() +<span class="string">" ("</span>+t1.getState()+<span class="string">") is started."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.主线程休眠300ms，然后主线程给t1发“中断”指令。</span></span><br><span class="line">        Thread.sleep(<span class="number">400</span>);</span><br><span class="line">        t1.interrupt();</span><br><span class="line">        System.out.println(t1.getName() +<span class="string">" ("</span>+t1.getState()+<span class="string">") is interrupted."</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.主线程休眠300ms，然后查看t1的状态。</span></span><br><span class="line">        Thread.sleep(<span class="number">300</span>);</span><br><span class="line">        System.out.println(t1.getName() +<span class="string">" ("</span>+t1.getState()+<span class="string">") is interrupted now."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>打印结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">t1 (NEW) is new.</span><br><span class="line">t1 (RUNNABLE) is started.</span><br><span class="line">t1 (RUNNABLE) loop 1</span><br><span class="line">t1 (RUNNABLE) loop 2</span><br><span class="line">t1 (RUNNABLE) loop 3</span><br><span class="line">t1 (TIMED_WAITING) is interrupted.</span><br><span class="line">t1 (RUNNABLE) catch InterruptedException.</span><br><span class="line">t1 (TERMINATED) is interrupted now.</span><br></pre></td></tr></table></figure>
+<p>首先，是就绪状态，为<code>new</code>；接下来启动这个线程，状态变为<code>started</code>，由于此时一切安好，没有“打扰”这个线程的执行，所以每隔100毫秒打印一句<code>(RUNNABLE) loop i</code>出来；在400毫秒的安好之后，给他一个<code>t1.interrupt();</code>，此时线程可能恰好在执行<code>sleep</code>睡觉呢，这个<code>interrupt</code>一看你在阻塞(睡觉)，那还得了，立马停止这个线程并且抛出异常。</p>
+<p>但是话说回头，本程序还用了if判断，只要标志位为<code>false</code>就不停循环，一旦标志位变为<code>true</code>则立马退出循环。所以即使你不睡觉，但是我还是能通过这个If来终止你的循环。</p>
+<h2>join</h2>
+<p><code>join</code>是加入的意思，非常形象生动。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Waits for this thread to die.</span></span><br><span class="line"><span class="comment"> * 调用方线程（调用join方法的线程）执行等待操作，</span></span><br><span class="line"><span class="comment"> * 直到被调用的线程（join方法所属的线程）结束，再被唤醒</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">join</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    join(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体的实现如下：</p>
+<p><img src="http://bloghello.oursnail.cn/thread4-5.jpg" alt="image"></p>
+<p>我们知道<code>wait</code>是需要释放当前线程所占的对象锁的，而<code>join</code>基于<code>wait</code>实现，显然是可以的。</p>
+<p>这里判断如果线程还在运行中的话，则继续等待，如果指定时间到了，或者线程运行完成了，则代码继续向下执行，调用线程就可以执行后面的逻辑了。</p>
+<p>但是在这里没有看到哪里调用<code>notify</code>或者<code>notifyAll</code>方法，如果没有调用的话，那调用方线程会一直等待下去，那是哪里调用了唤醒它的方法呢？通过查证得知，原来在线程结束时，java虚拟机会执行该线程的本地<code>exit</code>方法，这个<code>exit</code>方法里面会调用<code>notifyAll</code>方法，唤醒所有等待的线程。</p>
+<p>下面来两个例子来彻底理解它的用法。</p>
+<p>例子一：有耐心的男孩：</p>
+<p><img src="http://bloghello.oursnail.cn/thread4-6.jpg" alt="image"></p>
+<blockquote>
+<p>男孩和女孩准备出去逛街</p>
+<p>女孩开始化妆,男孩在等待。。。</p>
+<p>女孩化妆完成！，耗时5000</p>
+<p>男孩和女孩开始去逛街了</p>
+</blockquote>
+<p>就是男孩和女孩准备去逛街，女孩要化妆先，等女孩化妆完成了，再一起去逛街。</p>
+<p>例子二：没有耐心的男孩：</p>
+<p><img src="http://bloghello.oursnail.cn/thread4-7.jpg" alt="image"></p>
+<blockquote>
+<p>男孩和女孩准备出去逛街</p>
+<p>女孩开始化妆,男孩在等待。。。</p>
+<p>男孩等了2000, 不想再等了，去逛街了</p>
+<p>女孩化妆完成！，耗时5000</p>
+</blockquote>
+<p>男孩等了<code>join(time)</code>中的<code>time</code>时间，如果这个<code>time</code>时间到达之后，女孩所在的线程还没执行完，则不等待了，继续执行后面的逻辑，就是不等女孩了，自己去逛街。</p>
+<h2>总结</h2>
+<p>了解了这些核心方法之后，就可以对下面这幅图简单说一说啦：</p>
+<p><img src="http://bloghello.oursnail.cn/thread2-9.jpg" alt="image"></p>
+<p>首先是<code>new Thread()</code>只是新建状态，只有<code>start</code>之后才会进入<code>runnable</code>状态，注意这个状态里面可能有两种状态，一种是正在运行，即<code>running</code>，还有一种是就绪状态即<code>ready</code>，这两个状态归属于一类的原因是他们之间是在不断切换的，即CPU的时间片内临幸到这个进程，这个进程中有若干个线程的话，就会高速地切换各个线程逐个执行，达到宏观上是并行执行的效果。我们知道<code>yield</code>是给线程调度器一个暗示让出当前执行的线程的时间片，至于这个线程调度器听不听那就不知道了，所以存在一定的随机性。如果正常执行结束就进入最后的终止状态。往右边看，如果发生带时间的超时等待，如<code>sleep(100)</code>，本线程会阻塞，让出CPU执行权并且不改变锁状态，与之区别的是<code>wait(100)</code>这个方法不仅让出CPU执行权，还会释放锁，所以要调用<code>wait</code>方法必然要先获取锁，所以一般都是在<code>synchronized</code>中调用它。至于<code>join(100)</code>是指阻塞当前线程，让其他的线程先执行，底层是<code>wait</code>所以也会释放锁。超时等待只要等它时间过了就可以跳出阻塞状态了，或者用<code>notify</code>或者<code>interrupt</code>之类的来唤醒或者打断它。往左下角看，是锁获取的时候可能发生阻塞，这个时候只能等其他线程释放锁才行了。往左边看，是无限期等待的代表，唤醒手段与有限期等待是一样的。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/10/thread/从卖票程序初步看synchronized的特性/" class="prev">PRVE</a><a href="/2019/02/10/thread/线程的状态/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sun Feb 10 2019 17:41:16 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

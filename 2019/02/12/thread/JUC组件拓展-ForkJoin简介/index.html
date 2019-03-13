@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> JUC组件拓展-ForkJoin简介 · fossi</title><meta name="description" content="JUC组件拓展-ForkJoin简介 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">JUC组件拓展-ForkJoin简介</h1><div class="post-meta"><span class="post-time">Feb 12, 2019</span></div><div class="post-content"><p>JUC组件拓展-ForkJoin简介，本文只是初步认识认识一下ForkJoin是什么，不深究里面的原理。</p>
+<a id="more"></a>
+<h2>ForkJoin</h2>
+<h4>什么是Fork/Join框架</h4>
+<p><code>Fork/Join</code>框架是Java7提供了的一个用于并行执行任务的框架， 是一个把大任务分割成若干个小任务，最终汇总每个小任务结果后得到大任务结果的框架。</p>
+<p>我们再通过<code>Fork</code>和<code>Join</code>这两个单词来理解下<code>Fork/Join</code>框架，<code>Fork</code>就是把一个大任务切分为若干子任务并行的执行，<code>Join</code>就是合并这些子任务的执行结果，最后得到这个大任务的结果。比如计算1+2+。。＋10000，可以分割成10个子任务，每个子任务分别对1000个数进行求和，最终汇总这10个子任务的结果。</p>
+<p><img src="http://bloghello.oursnail.cn/ForkJoin%E6%A8%A1%E5%BC%8F%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg" alt="image"></p>
+<h4>工作窃取算法</h4>
+<p>工作窃取（<code>work-stealing</code>）算法是指某个线程从其他队列里窃取任务来执行。工作窃取的运行流程图如下：</p>
+<p><img src="http://bloghello.oursnail.cn/%E5%B7%A5%E4%BD%9C%E7%AA%83%E5%8F%96.png" alt="image"></p>
+<ul>
+<li>那么为什么需要使用工作窃取算法呢？</li>
+</ul>
+<blockquote>
+<p>假如我们需要做一个比较大的任务，我们可以把这个任务分割为若干互不依赖的子任务，为了减少线程间的竞争，于是把这些子任务分别放到不同的队列里，并为每个队列创建一个单独的线程来执行队列里的任务，线程和队列一一对应，比如A线程负责处理A队列里的任务。但是有的线程会先把自己队列里的任务干完，而其他线程对应的队列里还有任务等待处理。干完活的线程与其等着，不如去帮其他线程干活，于是它就去其他线程的队列里窃取一个任务来执行。</p>
+</blockquote>
+<ul>
+<li><code>Fork/Join</code>框架如何实现工作窃取的？</li>
+</ul>
+<blockquote>
+<p>这时它们会访问同一个队列，所以为了减少窃取任务线程和被窃取任务线程之间的竞争，通常会使用双端队列，被窃取任务线程永远从双端队列的头部拿任务执行，而窃取任务的线程永远从双端队列的尾部拿任务执行。</p>
+</blockquote>
+<ul>
+<li><code>Fork/Join</code>框架有没有什么缺点？</li>
+</ul>
+<blockquote>
+<p>工作窃取算法的优点是充分利用线程进行并行计算，并减少了线程间的竞争，其缺点是在某些情况下还是存在竞争，比如双端队列里只有一个任务时。并且消耗了更多的系统资源，比如创建多个线程和多个双端队列。</p>
+</blockquote>
+<ul>
+<li>该如何设计一个<code>Fork/Join</code>框架?</li>
+</ul>
+<blockquote>
+<p>第一步分割任务。首先我们需要有一个<code>fork</code>类来把大任务分割成子任务，有可能子任务还是很大，所以还需要不停的分割，直到分割出的子任务足够小。</p>
+<p>第二步执行任务并合并结果。分割的子任务分别放在双端队列里，然后几个启动线程分别从双端队列里获取任务执行。子任务执行完的结果都统一放在一个队列里，启动一个线程从队列里拿数据，然后合并这些数据。</p>
+</blockquote>
+<p>这里就先简单介绍一下，如果有必要，以后再细谈。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/12/thread/JUC组件拓展-BlockingQueue/" class="prev">PRVE</a><a href="/2019/02/12/thread/AQS实现的一些并发工具类/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 12 2019 17:03:06 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

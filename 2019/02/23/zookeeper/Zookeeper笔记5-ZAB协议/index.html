@@ -1,0 +1,171 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Zookeeper笔记5-ZAB协议 · fossi</title><meta name="description" content="Zookeeper笔记5-ZAB协议 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Zookeeper笔记5-ZAB协议</h1><div class="post-meta"><span class="post-time">Feb 23, 2019</span></div><div class="post-content"><p>在zookeeper中其实使用的ZAB协议来实现数据的一致性，并且主要依靠的是leader和follower这两种角色控制数据的一致性，而leader是里面最重要的一个角色，它是主要负责写操作的节点，然后与其他的follower进行数据同步，所以我们也要保证leader宕机的时候要快速选举出新的leader并且进行数据恢复。</p>
+<a id="more"></a>
+<h2>一、前言</h2>
+<p>ZooKeeper是一个分布式协调服务，可用于服务发现、分布式锁、分布式领导选举、配置管理等。</p>
+<p><strong>这一切的基础，都是ZooKeeper提供了一个类似于Linux文件系统的树形结构（可认为是轻量级的内存文件系统，但只适合存少量信息，完全不适合存储大量文件或者大文件），同时提供了对于每个节点的监控与通知机制。</strong></p>
+<p>既然是一个文件系统，就不得不提ZooKeeper是如何保证数据的一致性的。本节将将介绍ZooKeeper如何保证数据一致性，如何进行领导选举，以及数据监控/通知机制的语义保证。</p>
+<h2>二、ZAB-原子广播（重点）</h2>
+<p><code>ZooKeeper</code>集群是一个基于主从复制的高可用集群，每个服务器承担如下三种角色中的一种：</p>
+<ul>
+<li><code>Leader</code>： 一个<code>ZooKeeper</code>集群同一时间只会有一个实际工作的<code>Leader</code>，它会发起并维护与各<code>Follwer</code>及<code>Observer</code>间的心跳。所有的写操作必须要通过<code>Leader</code>完成再由<code>Leader</code>将写操作广播给其它服务器。</li>
+<li><code>Follower</code>： 一个<code>ZooKeeper</code>集群可能同时存在多个<code>Follower</code>，它会响应<code>Leader</code>的心跳。<code>Follower</code>可直接处理并返回客户端的读请求，同时会将写请求转发给<code>Leader</code>处理，并且负责在<code>Leader</code>处理写请求时对请求进行投票。</li>
+<li><code>Observer</code>： 角色与<code>Follower</code>类似，但是无投票权。</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/8438336.jpg" alt="image"></p>
+<p><font color="red">为了保证写操作的一致性与可用性，ZooKeeper专门设计了一种名为原子广播（ZAB）的支持崩溃恢复的一致性协议。基于该协议，ZooKeeper实现了一种主从模式的系统架构来保持集群中各个副本之间的数据一致性。</font></p>
+<p>根据ZAB协议，所有的写操作都必须通过<code>Leader</code>完成，<code>Leader</code>写入本地日志后再复制到所有的<code>Follower</code>节点。</p>
+<p>一旦<code>Leader</code>节点无法工作，ZAB协议能够自动从<code>Follower</code>节点中重新选出一个合适的替代者，即新的<code>Leader</code>，该过程即为领导选举。该领导选举过程，是ZAB协议中最为重要和复杂的过程。</p>
+<h3>1、写Leader</h3>
+<p>通过Leader进行写操作流程如下图所示：</p>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/18727361.jpg" alt="image"></p>
+<p>由上图可见，通过<code>Leader</code>进行写操作，主要分为五步：</p>
+<ul>
+<li>客户端向<code>Leader</code>发起写请求</li>
+<li><code>Leader</code>将写请求以<code>Proposal</code>的形式发给所有<code>Follower</code>并等待<code>ACK</code></li>
+<li><code>Follower</code>收到<code>Leader</code>的<code>Proposal</code>后返回<code>ACK</code></li>
+<li><code>Leader</code>得到过半数的<code>ACK</code>（<code>Leader</code>对自己默认有一个<code>ACK</code>）后向所有的<code>Follower</code>和<code>Observer</code>发送<code>Commmit</code></li>
+<li><code>Leader</code>将处理结果返回给客户端</li>
+</ul>
+<p><font color="red">这里要注意：</font></p>
+<ul>
+<li><code>Leader</code>并不需要得到<code>Observer</code>的<code>ACK</code>，即<code>Observer</code>无投票权</li>
+<li><code>Leader</code>不需要得到所有<code>Follower</code>的<code>ACK</code>，只要收到过半的<code>ACK</code>即可，同时<code>Leader</code>本身对自己有一个<code>ACK</code>。上图中有4个<code>Follower</code>，只需其中两个返回<code>ACK</code>即可，因为(2+1) / (4+1) &gt; 1/2</li>
+<li><code>Observer</code>虽然无投票权，但仍须同步<code>Leader</code>的数据从而在处理读请求时可以返回尽可能新的数据</li>
+</ul>
+<h3>2、写Follower/Observer</h3>
+<p>通过<code>Follower</code>/<code>Observer</code>进行写操作流程如下图所示：</p>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/92869076.jpg" alt="image"></p>
+<p>从上图可见：</p>
+<ul>
+<li><code>Follower</code>/<code>Observer</code>均可接受写请求，但不能直接处理，而需要将写请求转发给<code>Leader</code>处理</li>
+<li>除了多了一步请求转发，其它流程与直接写<code>Leader</code>无任何区别</li>
+</ul>
+<h2>3、读操作</h2>
+<p><code>Leader</code>/<code>Follower</code>/<code>Observer</code>都可直接处理读请求，从本地内存中读取数据并返回给客户端即可。</p>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/63826294.jpg" alt="image"></p>
+<p>由于处理读请求不需要服务器之间的交互，<code>Follower</code>/<code>Observer</code>越多，整体可处理的读请求量越大，也即读性能越好。</p>
+<p><font color="red">在整个消息广播过程中，Leader服务器会为每个事务请求生成对应的Proposal来进行广播，并且在广播事务Proposal之前，Leader服务器会首先为这个事务Proposal分配一个全局单调递增的唯一ID，我们称之为事务ID(即ZXID)。由于ZAB协议需要保证每一个消息严格的因果关系，因此必须将每一个事务Proposal按照其ZXID的先后顺序进行排序和处理。</font></p>
+<p>具体的，在消息广播过程中，<code>Leader</code>服务器会为每个<code>Follower</code>服务器都<font color="red">各自分配一个单独的队列</font>，然后将需要广播的事务<code>Proposal</code>依次放入这些队列中取，并且根据FIFO策略进行消息发送。每一个<code>Follower</code>服务器在接收到这个事务<code>Proposal</code>之后，都会首先将其以事务日志的形式写入本地磁盘中，并且成功写入后反馈给<code>Leader</code>服务器一个Ack相应。当<code>Leader</code>服务器接收到过半数<code>Follower</code>的Ack响应后，就会广播一个<code>Commit</code>消息给所有的<code>Follower</code>服务器以通知其进行事务提交，同时<code>Leader</code>自身也会完成对事务的提交，而每个<code>Follower</code>服务器在接收到<code>Commit</code>消息后，也会完成对事务的提交。</p>
+<p><font color="red">然而，在这种简化的二阶段提交模型下，无法处理Leader服务器崩溃退出而带来的数据不一致问题，因此ZAB协议添加了崩溃恢复模式来解决这个问题</font>。另外，整个消息广播协议是基于有FIFO特性的TCP协议来进行网络通信的，因此很容易地保证消息广播过程中消息接收和发送的顺序性。</p>
+<p>在ZAB协议中，为了保证程序的正确运行，整个恢复过程结束后需要选举出一个新的<code>Leader</code>服务器。因此，ZAB协议需要一个高效且可靠的<code>Leader</code>选举算法，从而确保能够快速选举出新的<code>Leader</code>。同时，<code>Leader</code>选举算法不仅仅需要让<code>Leader</code>自己知道其自身已经被选举为<code>Leader</code>，同时还需要让集群中的所有其他服务器也快速地感知到选举产生的新的<code>Leader</code>服务器。<font color="red">崩溃恢复主要包括Leader选举和数据恢复两部分</font>，下面将详细讲解<code>Leader</code>选举和数据恢复流程。</p>
+<h2>三、支持的领导选举算法</h2>
+<p>在3.4.10版本中，默认值为3，也即基于TCP的<code>FastLeaderElection</code>。另外三种算法已经被弃用，并且有计划在之后的版本中将它们彻底删除而不再支持。</p>
+<p>何时触发选举？</p>
+<p>选举<code>Leader</code>不是随时选举的，毕竟选举有产生大量的通信，造成网络IO的消耗。因此下面情况才会出现选举：</p>
+<ul>
+<li>集群启动</li>
+<li>服务器处于寻找<code>Leader</code>状态</li>
+<li>当服务器处于<code>LOOKING</code>状态时，表示当前没有<code>Leader</code>，需要进入选举流程</li>
+<li>崩溃恢复</li>
+<li><code>Leader</code>宕机</li>
+<li>网络原因导致过半节点与<code>Leader</code>心跳中断</li>
+</ul>
+<p>下面学习一下<code>FastLeaderElection</code>的原理。</p>
+<h2>四、名词解释</h2>
+<h3>1、myid</h3>
+<p>每个<code>ZooKeeper</code>服务器，都需要在数据文件夹下创建一个名为<code>myid</code>的文件，该文件包含整个<code>ZooKeeper</code>集群唯一的ID（整数）。例如，某<code>ZooKeeper</code>集群包含三台服务器，<code>hostname</code>分别为<code>zoo1</code>、<code>zoo2</code>和<code>zoo3</code>，其<code>myid</code>分别为1、2和3，则在配置文件中其ID与<code>hostname</code>必须一一对应，如下所示。在该配置文件中，server.后面的数据即为<code>myid</code>:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server.1=zoo1:2888:3888</span><br><span class="line">server.2=zoo2:2888:3888</span><br><span class="line">server.3=zoo3:2888:3888</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第1个端口是通信和数据同步端口，默认是2888</li>
+<li>第2个端口是投票端口，默认是3888</li>
+</ul>
+<p>数小的向数大的发起TCP连接。比如有3个节点，myid文件内容分别为1,2,3。zk集群的tcp连接顺序是1向2发起TCP连接，2向3发起TCP连接。如果有n个节点，那么tcp连接顺序也以此类推。这样整个zk集群就会连接起来</p>
+<h3>2、zxid</h3>
+<p>类似于<code>RDBMS</code>中的事务ID，用于标识一次更新操作的<code>Proposal ID</code>。为了保证顺序性，该<code>zxid</code>必须<strong>单调递增</strong>。因此<code>ZooKeeper</code>使用一个64位的数来表示，<strong>高32位是Leader的epoch，从1开始，每次选出新的Leader，epoch加一。低32位为该epoch内的序号，每次epoch变化，<strong>都将低32位的序号重置</strong></strong>。这样保证了<code>zxid</code>的全局递增性。</p>
+<h3>3、服务器状态</h3>
+<ul>
+<li><code>LOOKING</code> 不确定<code>Leader</code>状态。该状态下的服务器认为当前集群中没有<code>Leader</code>，会发起<code>Leader</code>选举。</li>
+<li><code>FOLLOWING</code> 跟随者状态。表明当前服务器角色是<code>Follower</code>，并且它知道<code>Leader</code>是谁。</li>
+<li><code>LEADING</code> 领导者状态。表明当前服务器角色是<code>Leader</code>，它会维护与<code>Follower</code>间的心跳。</li>
+<li><code>OBSERVING</code> 观察者状态。表明当前服务器角色是<code>Observer</code>，与<code>Folower</code>唯一的不同在于不参与选举，也不参与集群写操作时的投票。</li>
+</ul>
+<h3>4、选票数据结构</h3>
+<p>每个服务器在进行领导选举时，会发送如下关键信息：</p>
+<ul>
+<li><code>logicClock</code> 每个服务器会维护一个自增的整数，名为<code>logicClock</code>，它表示这是该服务器发起的第多少轮投票</li>
+<li><code>state</code> 当前服务器的状态</li>
+<li><code>self_id</code> 当前服务器的myid</li>
+<li><code>self_zxid</code> 当前服务器上所保存的数据的最大zxid</li>
+<li><code>vote_id</code> 被推举的服务器的myid</li>
+<li><code>vote_zxid</code> 被推举的服务器上所保存的数据的最大zxid</li>
+</ul>
+<h2>五、leader的判定标准</h2>
+<ul>
+<li>数据新旧程度，只有拥有最新数据的节点才能有机会成为<code>Leader</code>，通过<code>zxid</code>的大小来表示数据的新，<code>zxid</code>越大代表数据越新</li>
+<li><code>myid</code>:集群启动时，会在<code>data</code>目录下配置<code>myid</code>文件，里面的数字代表当前zk服务器节点的编号.当zk服务器节点数据一样新时， <code>myid</code>中数字越大的就会被选举成<code>Leader</code></li>
+<li>当集群中已经有<code>Leader</code>时，新加入的节点不会影响原来的集群</li>
+<li>投票数量，只有得到集群中多半的投票，才能成为<code>Leader</code>，多半即：n/2+1,其中n为集群中的节点数量</li>
+</ul>
+<h2>六、Leader选举流程</h2>
+<h3>1、自增选举轮次</h3>
+<p><code>ZooKeeper</code>规定所有有效的投票都必须在同一轮次中。每个服务器在开始新一轮投票时，会先对自己维护的<code>logicClock</code>进行自增操作。</p>
+<h3>2、发送初始化选票</h3>
+<p>每个服务器最开始都是通过广播把票投给自己。</p>
+<h3>4、更新选票</h3>
+<p>根据选票<code>logicClock</code> -&gt; <code>vote_zxid</code> -&gt; <code>vote_id</code>依次判断</p>
+<h5>4.1 判断选举轮次收到外部投票后，首先会根据投票信息中所包含的logicClock来进行不同处理：</h5>
+<p><strong>外部投票的logicClock &gt; 自己的logicClock：</strong><br>
+说明该服务器的选举轮次落后于其它服务器的选举轮次，立即清空自己的投票箱并将自己的<code>logicClock</code>更新为收到的<code>logicClock</code>，然后再对比自己之前的投票与收到的投票以确定是否需要变更自己的投票，最终再次将自己的投票广播出去;</p>
+<p><strong>外部投票的logicClock &lt; 自己的logicClock：</strong><br>
+当前服务器直接忽略该投票，继续处理下一个投票;</p>
+<p><strong>外部投票的logickClock = 自己的：</strong> 进行下一步的进行选票PK。</p>
+<h5>4.2 选票PK是基于(self_id, self_zxid)与(vote_id, vote_zxid)的对比：</h5>
+<p>若<code>logicClock</code>一致，则对比二者的<code>vote_zxid</code>。</p>
+<p>若外部投票的<code>vote_zxid</code>比较大，则将自己的票中的<code>vote_zxid</code>与<code>vote_myid</code>更新为收到的票中的<code>vote_zxid</code>与<code>vote_myid</code>并广播出去，另外将收到的票及自己更新后的票放入自己的票箱。如果票箱内已存在(<code>self_myid</code>, <code>self_zxid</code>)相同的选票，则直接覆盖</p>
+<p>若二者<code>vote_zxid</code>一致，则比较二者的<code>vote_myid</code>。</p>
+<p>若外部投票的<code>vote_myid</code>比较大，则将自己的票中的<code>vote_myid</code>更新为收到的票中的<code>vote_myid</code>并广播出去，另外将收到的票及自己更新后的票放入自己的票箱</p>
+<h3>5、统计选票</h3>
+<p>如果已经确定有过半服务器认可了自己的投票（可能是更新后的投票），则终止投票。否则继续接收其它服务器的投票。</p>
+<h3>6、更新服务器状态</h3>
+<p>投票终止后，服务器开始更新自身状态。若过半的票投给了自己，则将自己的服务器状态更新为<code>LEADING</code>，否则将自己的状态更新为<code>FOLLOWING</code>。</p>
+<h2>七、图示Leader选举流程</h2>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/35769576.jpg" alt="image"></p>
+<p>说明：</p>
+<p>图中箭头上的(1,1,0) 三个数依次代表</p>
+<ul>
+<li>该选票的服务器的<code>LogicClock</code>（即投票轮数）;</li>
+<li>被推荐的服务器的<code>myid</code> (即<code>vote_myid</code>);</li>
+<li>被推荐的服务器的最大事务ID(即<code>vote_zxid</code>)；</li>
+</ul>
+<p>(1, 1)表示：</p>
+<ul>
+<li>投票服务器<code>myid</code>(即<code>self_myid</code>)</li>
+<li>被推荐的服务器的<code>myid</code> (即<code>vote_myid</code>)</li>
+</ul>
+<p>所以(1,1,0)在这里的意思是：第一轮投票中，投给server 1，并且自己的最大事务ID都是0(这里可能会比较乱，ZXID可用这样理解：前32位是年号，比如万历年间；后32位是多少年，比如万历15年)，我们这里先不考虑年号的更迭，就假设这个投票发生在万历15年这一年，并且只考虑第一轮投票。即(1,vote_id,0)，所以暂时只考虑中间个数字。后面接受外部选票的时候，我们只要关注中间个数字即可，比如(1,2,0)说明是投给server 2的。</p>
+<p>这里的示例只考虑第一轮，并且ZXID就是0.</p>
+<h3>第一步：自增选票轮次&amp;初始化选票&amp;发送初始化选票</h3>
+<p>首先，三台服务器自增选举轮次将<code>LogicClock=1</code>；然后初始化选票，清空票箱；最后发起初始化投票给自己将各自的票通过广播的形式投个自己并保存在自己的票箱里。</p>
+<p>所以都是自己投给自己一票(1,1,0),(1,2,0),(1,3,0)</p>
+<p>投完票之后的状态时(1,1),(2,2),(3,3)</p>
+<h3>第二步：接受外部投票&amp;更新选票</h3>
+<p>以<code>Server 1</code> 为例，分别经历 <code>Server 1 PK Server 2</code> 和 <code>Server 1 PK Server 3</code> 过程</p>
+<h5>Server 1 PK Server 2</h5>
+<p><code>Server 1</code> 接收到<code>Server 2</code>的选票(1,2,0) 表示投给<code>server 2</code>.</p>
+<p>这时<code>Server 1</code>将自身的选票轮次和<code>Server 2</code> 的选票轮次比较，发现<code>LogicClock=1</code>相等，接着<code>Server 2</code>比较比较最大事务ID，发现也<code>zxid=0</code>也相等，最后比较各自的<code>myid</code>，发现<code>Server 2</code>的<code>myid=2</code> 大于自己的<code>myid=1</code>；</p>
+<p>根据选票PK规则，<code>Server 1</code>将自己的选票由 (1, 1) 更正为 (1, 2)，表示选举<code>Server 2</code>为<code>Leader</code>，然后将自己的新选票 (1, 2)广播给 <code>Server 2</code> 和 <code>Server 3</code>，同时更新票箱子中自己的选票并保存<code>Server 2</code>的选票，至此<code>Server 1</code>票箱中的选票为(1, 2) 和 (2, 2)；</p>
+<p><code>Server 2</code>收到<code>Server 1</code>的选票同样经过轮次比较和选票PK后确认自己的选票保持不变，并更新票箱中<code>Server 1</code>的选票由(1, 1)更新为(1, 2)，注意此次<code>Server 2</code>自己的选票并没有改变所有不用对外广播自己的选票。</p>
+<p>此时便认为已经选出了<code>Leader</code>。但是这里可能会等一会看看有没有最优的情况，可能就会来到下面一步。</p>
+<h5>Server 1 PK Server 3</h5>
+<p><code>Server 1</code> 接收到<code>Server 3</code>的选票(1,3,0) 表示投给<code>server 3</code>.</p>
+<p>根据<code>Server 1 PK Server 2</code>的流程类推，<code>Server 1</code>自己的选票由(1, 2)更新为(1, 3), 同样更新自己的票箱并广播给<code>Server 2</code> 和 <code>Server 3</code>；</p>
+<p><code>Server 2</code>再次接收到<code>Server 1</code>的选票(1, 3)时经过比较后根据规则也要将自己的选票从(1, 2)更新为(1, 3), 并更新票箱里自己的选票和<code>Server 1</code>的选票，同时向<code>Server 1</code>和 <code>Server 3</code>广播；</p>
+<p>同理 <code>Server 2</code> 和 <code>Server 3</code>也会经历上述投票过程，依次类推，<code>Server 1</code> 、<code>Server 2</code> 和<code>Server 3</code> 在俩俩之间在经历多次选举轮次比较和选票PK后最终确定各自的选票。</p>
+<p>最后更新服务器状态：</p>
+<p><img src="http://bloghello.oursnail.cn/18-12-4/82571929.jpg" alt="image"></p>
+<p>选票确定后服务器根据自己票箱中的选票确定各自的角色和状态，票箱中超过半数的选票投给自己的则为<code>Leader</code>，更新自己的状态为<code>LEADING</code>，否则为<code>Follower</code>角色，状态为<code>FOLLOWING</code>，成为<code>Leader</code>的服务器要主动向<code>Follower</code>发送心跳包，<code>Follower</code>做出<code>ACK</code>回应，以维持他们之间的长连接。</p>
+<ul>
+<li><a href="https://dbaplus.cn/news-141-1875-1.html" target="_blank" rel="noopener">https://dbaplus.cn/news-141-1875-1.html</a></li>
+<li><a href="https://www.jianshu.com/p/3fec1f8bfc5f" target="_blank" rel="noopener">https://www.jianshu.com/p/3fec1f8bfc5f</a></li>
+</ul>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/23/zookeeper/Zookeeper笔记6-zk安装和集群搭建/" class="prev">PRVE</a><a href="/2019/02/23/zookeeper/Zookeeper笔记4-Zookeeper介绍/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 23 2019 15:09:59 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

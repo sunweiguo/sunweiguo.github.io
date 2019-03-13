@@ -1,0 +1,167 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 内存分配和回收策略 · fossi</title><meta name="description" content="内存分配和回收策略 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">内存分配和回收策略</h1><div class="post-meta"><span class="post-time">Feb 9, 2019</span></div><div class="post-content"><p>本篇为学习JAVA虚拟机的第十篇文章，本章对内存分配和垃圾回收的细节再次详细说明一下，并且说明一下逃逸分析/栈上分配以及TLAB两种方式的概念和原理。</p>
+<a id="more"></a>
+<h2>1. 对象优先在Eden分配</h2>
+<p><strong>前面文章曾介绍HotSpot虚拟机新生代内存布局及算法:</strong></p>
+<blockquote>
+<p>（1）、将新生代内存分为一块较大的<code>Eden</code>空间和两块较小的<code>Survivor</code>空间；</p>
+<p>（2）、每次使用<code>Eden</code>和其中一块<code>Survivor</code>；</p>
+<p>（3）、当回收时，将<code>Eden</code>和使用中的<code>Survivor</code>中还存活的对象一次性复制到另外一块<code>Survivor</code>；</p>
+<p>（4）、而后清理掉<code>Eden</code>和使用过的<code>Survivor</code>空间；</p>
+<p>（5）、后面就使用<code>Eden</code>和复制到的那一块<code>Survivor</code>空间，重复步骤3；</p>
+</blockquote>
+<p>默认<code>Eden：Survivor=8:1</code>，即每次可以使用90%的空间，只有一块<code>Survivor</code>的空间被浪费；</p>
+<p>大多数情况下，对象在新生代<code>Eden</code>区中分配；</p>
+<p>当<code>Eden</code>区没有足够空间进行分配时，JVM将发起一次<code>Minor GC</code>（新生代GC）；</p>
+<p><code>Minor GC</code>时，如果发现存活的对象无法全部放入<code>Survivor</code>空间，只好通过分配担保机制提前转移到老年代。</p>
+<h2>2. 大对象直接进入老年代</h2>
+<p>大对象指需要大量连续内存空间的Java对象，如，很长的字符串、数组；</p>
+<p>经常出现大对象容易导致内存还有不少空间就提前触发GC,以获取足够的连续空间来存放它们，所以应该尽量避免使用创建大对象；</p>
+<p><code>-XX:PretenureSizeThreshold</code>：</p>
+<p><strong>可以设置这个阈值，大于这个参数值的对象直接在老年代分配；</strong></p>
+<p>默认为0（无效），且只对<code>Serail</code>和<code>ParNew</code>两款收集器有效；</p>
+<p>如果需要使用该参数，可考虑<code>ParNew+CMS</code>组合。</p>
+<h2>3. 长期存活的对象将进入老年代</h2>
+<p>JVM给每个对象定义一个对象年龄计数器，其计算流程如下：</p>
+<blockquote>
+<p>在<code>Eden</code>中分配的对象，经<code>Minor GC</code>后还存活，就复制移动到<code>Survivor</code>区，年龄为1；</p>
+<p>而后每经一次<code>Minor GC</code>后还存活，在<code>Survivor</code>区复制移动一次，年龄就增加1岁；</p>
+<p>如果年龄达到一定程度，就晋升到老年代中；</p>
+</blockquote>
+<p><code>-XX:MaxTenuringThreshold</code>：</p>
+<p><strong>设置新生代对象晋升老年代的年龄阈值，默认为15；</strong></p>
+<h2>4. 动态对象年龄判定</h2>
+<p>JVM为更好适应不同程序，不是永远要求等到<code>MaxTenuringThreshold</code>中设置的年龄；</p>
+<p>如果在<code>Survivor</code>空间中相同年龄的所有对象大小总和大于<code>Survivor</code>空间的一半，大于或等于该年龄的对象就可以直接进入老年代</p>
+<h2>5. 空间分配担保</h2>
+<p>在前面曾简单介绍过分配担保：</p>
+<p>当<code>Survivor</code>空间不够用时，需要依赖其他内存（老年代）进行分配担保（<code>Handle Promotion</code>）；</p>
+<p><strong>分配担保的流程如下：</strong></p>
+<blockquote>
+<p>在发生<code>Minor GC</code>前，JVM先检查老年代最大可用的连续空间是否大于新生所有对象空间；</p>
+</blockquote>
+<blockquote>
+<p>如果大于，那可以确保<code>Minor GC</code>是安全的；</p>
+</blockquote>
+<blockquote>
+<p>如果不大于，则<code>JVM</code>查看<code>HandlePromotionFailure</code>值是否允许担保失败；</p>
+</blockquote>
+<blockquote>
+<p>如果允许，就继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小；</p>
+</blockquote>
+<blockquote>
+<p>如果大于，将尝试进行一次<code>Minor GC</code>，但这是有风险的；</p>
+</blockquote>
+<blockquote>
+<p>如果小于或<code>HandlePromotionFailure</code>值不允许冒险，那这些也要改为进行一次<code>Full GC</code>；</p>
+</blockquote>
+<p><strong>尝试<code>Minor GC</code>的风险–担保失败：</strong></p>
+<blockquote>
+<p>因为尝试<code>Minor GC</code>前面，无法知道存活的对象大小，所以使用历次晋升到老年代对象的平均大小作为经验值；</p>
+<p>假如尝试的<code>Minor GC</code>最终存活的对象远远高于经验值的话，会导致担保失败（<code>Handle Promotion Failure</code>）；</p>
+<p>失败后只有重新发起一次<code>Full GC</code>，这绕了一个大圈，代价较高；</p>
+</blockquote>
+<p><strong>但一般还是要开启<code>HandlePromotionFailure</code>，避免<code>Full GC</code>过于频繁，而且担保失败概率还是比较低的；</strong></p>
+<p><strong>JDK6-u24后，JVM代码中已经不再使用<code>HandlePromotionFailure</code>参数了；</strong></p>
+<p>规则变为：</p>
+<p>⭐⭐⭐<strong>只要老年代最大可用的连续空间大于新生所有对象空间或历次晋升到老年代对象的平均大小，就会进行<code>Minor GC</code>；否则进行<code>Full GC</code>；</strong></p>
+<p>⭐⭐⭐即老年代最大可用的连续空间小于新生所有对象空间时，不再检查<code>HandelPromotionFailure</code>，而直接检查历次晋升到老年代对象的平均大小；</p>
+<h2>6. 逃逸分析</h2>
+<p>般认为new出来的对象都是被分配在堆上，但是这个结论不是那么的绝对，通过对Java对象分配的过程分析，可以知道有两个地方会导致Java中new出来的对象并不一定分配在所认为的堆上。这两个点分别是Java中的逃逸分析和<code>TLAB</code>（<code>Thread Local Allocation Buffer</code>）。</p>
+<h5>6.1 什么是栈上分配？</h5>
+<p>栈上分配主要是指在Java程序的执行过程中，<strong>在方法体中声明的变量以及创建的对象，将直接从该线程所使用的栈中分配空间</strong>。</p>
+<p>一般而言，创建对象都是从堆中来分配的，这里是指在栈上来分配空间给新创建的对象。</p>
+<h5>6.2 什么是逃逸？</h5>
+<p>逃逸是指在某个方法之内创建的对象，除了在方法体之内被引用之外，还在方法体之外被其它变量引用到；</p>
+<p>这样带来的后果是在该方法执行完毕之后，该方法中创建的对象将无法被GC回收，由于其被其它变量引用。</p>
+<p>正常的方法调用中，方法体中创建的对象将在执行完毕之后，将回收其中创建的对象；而此时由于无法回收，即成为逃逸。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> V global_v;  </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">a_method</span><span class="params">()</span></span>&#123;  </span><br><span class="line"> V v=b_method();  </span><br><span class="line"> c_method();  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">b_method</span><span class="params">()</span></span>&#123;  </span><br><span class="line"> V v=<span class="keyword">new</span> V();  </span><br><span class="line"> <span class="keyword">return</span> v;  </span><br><span class="line">&#125;  </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">c_method</span><span class="params">()</span></span>&#123;  </span><br><span class="line"> global_v=<span class="keyword">new</span> V();  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中<code>b_method</code>方法内部生成的V对象的引用被返回给<code>a_method</code>方法内的变量v，<code>c_method</code>方法内生成的V对象被赋给了全局变量<code>global_v</code>。这两种场景都发生了（引用）逃逸。</p>
+<h5>6.3 逃逸分析</h5>
+<p>在JDK 6之后支持对象的栈上分析和逃逸分析，在JDK7中完全支持栈上分配对象。其是否打开逃逸分析依赖于以下JVM的设置：</p>
+<blockquote>
+<p><code>-XX:+DoEscapeAnalysis</code></p>
+</blockquote>
+<h5>6.4 栈上分配与逃逸分析的关系</h5>
+<p>进行逃逸分析之后，产生的后果是所有的对象都将由栈上分配，而非从JVM内存模型中的堆来分配。</p>
+<h5>6.5 逃逸分析／栈上分配的优劣分析</h5>
+<p>JVM在<code>Server</code>模式下的逃逸分析可以分析出某个对象是否永远只在某个方法、线程的范围内，并没有“逃逸”出这个范围，逃逸分析的一个结果就是对于某些未逃逸对象可以直接在栈上分配，由于该对象一定是局部的，所以栈上分配不会有问题。</p>
+<blockquote>
+<p>消除同步。</p>
+</blockquote>
+<p>线程同步的代价是相当高的，同步的后果是降低并发性和性能。逃逸分析可以判断出某个对象是否始终只被一个线程访问，如果只被一个线程访问，那么对该对象的同步操作就可以转化成没有同步保护的操作，这样就能大大提高并发程度和性能。</p>
+<blockquote>
+<p>矢量替代。</p>
+</blockquote>
+<p>逃逸分析方法如果发现对象的内存存储结构不需要连续进行的话，就可以将对象的部分甚至全部都保存在CPU寄存器内，这样能大大提高访问速度。</p>
+<blockquote>
+<p>劣势：</p>
+</blockquote>
+<p>栈上分配受限于栈的空间大小，一般自我迭代类的需求以及大的对象空间需求操作，将导致栈的内存溢出；故只适用于一定范围之内的内存范围请求。</p>
+<h5>6.6 测试</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EscapeAnalysis</span> </span>&#123;  </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Foo</span> </span>&#123;  </span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">int</span> x;  </span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> counter;  </span><br><span class="line">  </span><br><span class="line">        <span class="comment">//会发生逃逸</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">            x = (++counter);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line">        <span class="comment">//开始时间</span></span><br><span class="line">        <span class="keyword">long</span> start = System.nanoTime();  </span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000</span> * <span class="number">1000</span> * <span class="number">10</span>; ++i) &#123;  </span><br><span class="line">            Foo foo = <span class="keyword">new</span> Foo();  </span><br><span class="line">        &#125;  </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//结束时间</span></span><br><span class="line">        <span class="keyword">long</span> end = System.nanoTime();  </span><br><span class="line">        System.out.println(<span class="string">"Time cost is "</span> + (end - start));  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>未开启逃逸分析设置为：</p>
+<blockquote>
+<p>-server -verbose:gc</p>
+</blockquote>
+<p>在未开启逃逸分析的状况下运行情况如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[GC 5376K-&gt;427K(63872K), 0.0006051 secs]  </span><br><span class="line">[GC 5803K-&gt;427K(63872K), 0.0003928 secs]  </span><br><span class="line">[GC 5803K-&gt;427K(63872K), 0.0003639 secs]  </span><br><span class="line">[GC 5803K-&gt;427K(69248K), 0.0003770 secs]  </span><br><span class="line">[GC 11179K-&gt;427K(69248K), 0.0003987 secs]  </span><br><span class="line">[GC 11179K-&gt;427K(79552K), 0.0003817 secs]  </span><br><span class="line">[GC 21931K-&gt;399K(79552K), 0.0004342 secs]  </span><br><span class="line">[GC 21903K-&gt;399K(101120K), 0.0002175 secs]  </span><br><span class="line">[GC 43343K-&gt;399K(101184K), 0.0001421 secs]  </span><br><span class="line">Time cost is 58514571</span><br></pre></td></tr></table></figure>
+<p>开启逃逸分析设置为：</p>
+<blockquote>
+<p>-server -verbose:gc -XX:+DoEscapeAnalysis</p>
+</blockquote>
+<p>开启逃逸分析的状况下，运行情况如下：</p>
+<blockquote>
+<p>Time cost is 10031306</p>
+</blockquote>
+<p>未开启逃逸分析时，运行上述代码，JVM执行了GC操作，而在开启逃逸分析情况下，JVM并没有执行GC操作。同时，操作时间上，开启逃逸分析的程序运行时间是未开启逃逸分析时间的1/5。</p>
+<h2>7. 再来聊聊TLAB</h2>
+<p>JVM在内存新生代<code>Eden Space</code>中开辟了一小块线程私有的区域，称作<code>TLAB</code>（<code>Thread-local allocation buffer</code>）。默认设定为占用<code>Eden Space</code>的1%。在Java程序中很多对象都是小对象且用过即丢，它们不存在线程共享也适合被快速GC，所以对于小对象通常JVM会优先分配在TLAB上，并且<code>TLAB</code>上的分配由于是线程私有所以没有锁开销。因此在实践中分配多个小对象的效率通常比分配一个大对象的效率要高。<br>
+也就是说，Java中每个线程都会有自己的缓冲区称作<code>TLAB</code>（<code>Thread-local allocation buffer</code>），每个<code>TLAB</code>都只有一个线程可以操作，TLAB结合<code>bump-the-pointer</code>技术可以实现快速的对象分配，而不需要任何的锁进行同步，也就是说，在对象分配的时候不用锁住整个堆，而只需要在自己的缓冲区分配即可。</p>
+<h2>8. 对象内存分配过程再升级</h2>
+<blockquote>
+<ol>
+<li>编译器通过逃逸分析，确定对象是在栈上分配还是在堆上分配。如果是在堆上分配，则进入选项2.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>如果<code>tlab_top + size &lt;= tlab_end</code>，则在在TLAB上直接分配对象并增加<code>tlab_top</code><br>
+的值，如果现有的TLAB不足以存放当前对象则3.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>重新申请一个<code>TLAB</code>，并再次尝试存放当前对象。如果放不下，则4.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li>在<code>Eden</code>区加锁（这个区是多线程共享的），如果<code>eden_top + size &lt;= eden_end</code>则将对象存放在<code>Eden</code>区，增加<code>eden_top</code> 的值，如果<code>Eden</code>区不足以存放，则5.</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="5">
+<li>执行一次<code>Young GC</code>（<code>minor collection</code>）。</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="6">
+<li>经过<code>Young GC</code>之后，如果<code>Eden</code>区任然不足以存放当前对象，则直接分配到老年代。</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="7">
+<li>老年代还是不足，则触发Full GC，再不足就OOM错误</li>
+</ol>
+</blockquote>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/09/JVM/补充阅读-Class类文件结构/" class="prev">PRVE</a><a href="/2019/02/09/JVM/垃圾收集器介绍/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 09 2019 19:16:03 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

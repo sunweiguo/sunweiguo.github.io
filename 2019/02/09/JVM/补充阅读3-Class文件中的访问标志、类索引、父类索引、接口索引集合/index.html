@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 补充阅读3-Class文件中的访问标志、类索引、父类索引、接口索引集合 · fossi</title><meta name="description" content="补充阅读3-Class文件中的访问标志、类索引、父类索引、接口索引集合 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">补充阅读3-Class文件中的访问标志、类索引、父类索引、接口索引集合</h1><div class="post-meta"><span class="post-time">Feb 9, 2019</span></div><div class="post-content"><p>讲完了class文件中的常量池，我们就相当于克服了class文件中最麻烦的模块了。现在，我们来看一下class文件中紧接着常量池后面的几个东西：访问标志、类索引、父类索引、接口索引集合。</p>
+<a id="more"></a>
+<h2>1. 访问标志、类索引、父类索引、接口索引集合 在class文件中的位置</h2>
+<p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97%E3%80%81%E7%B1%BB%E7%B4%A2%E5%BC%95%E3%80%81%E7%88%B6%E7%B1%BB%E7%B4%A2%E5%BC%95%E3%80%81%E6%8E%A5%E5%8F%A3%E7%B4%A2%E5%BC%95%E9%9B%86%E5%90%88%20%E5%9C%A8class%E6%96%87%E4%BB%B6%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE" alt="image"></p>
+<h2>2. 访问标志(access_flags)能够表示什么？</h2>
+<p>访问标志（access_flags）紧接着常量池后，占有两个字节，总共16位，如下图所示：</p>
+<p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97%28access_flags%29%E8%83%BD%E5%A4%9F%E8%A1%A8%E7%A4%BA%E4%BB%80%E4%B9%88%EF%BC%9F" alt="image"></p>
+<p>当JVM在编译某个类或者接口的源代码时，JVM会解析出这个类或者接口的访问标志信息，然后，将这些标志设置到访问标志（access_flags）这16个位上。JVM会考虑如下设置如下访问表示信息：</p>
+<h4>a. 类或接口</h4>
+<p>我们知道，每个定义的类或者接口都会生成class文件（这里也包括内部类，在某个类中定义的静态内部类也会单独生成一个class文件）。</p>
+<blockquote>
+<p>对于定义的类，JVM在将其编译成class文件时，会将class文件的访问标志的第11位设置为1 。第11位叫做ACC_SUPER标志位；</p>
+</blockquote>
+<blockquote>
+<p>对于定义的接口，JVM在将其编译成class文件时，会将class文件的访问标志的第8位 设置为 1 。第8位叫做ACC_INTERFACE标志位；</p>
+</blockquote>
+<h4>b. 访问权限：public类型和包package类型。</h4>
+<p>如果类或者接口被声明为public类型的，那么，JVM将其编译成class文件时，会将class文件的访问标志的第16位设置为1 。第16位叫做ACC_PUBLIC标志符；</p>
+<h4>c. 类是否为抽象类型的，即我们定义的类有没有被abstract关键字修饰，即我们定义的类是否为抽象类。</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>  <span class="keyword">abstract</span>  <span class="class"><span class="keyword">class</span> <span class="title">MyClass</span></span>&#123;......&#125;</span><br></pre></td></tr></table></figure>
+<p>定义某个类时，JVM将它编译成class文件的时候，会将class文件的访问标志的第7位设置为1 。第7位叫做ACC_ABSTRACT标志位。</p>
+<p>另外值得注意的是，对于定义的接口，JVM在编译接口的时候也会对class文件的访问标志上的ACC_ABSTRACT标志位设置为 1；</p>
+<h4>d. 该类是否被声明了final类型,即表示该类不能被继承。</h4>
+<p>此时JVM会在编译class文件的过程中，会将class文件的访问标志的第12位设置为 1 。第12位叫做ACC_FINAL标志位；</p>
+<h4>e.是否是JVM通过java源代码文件编译而成的</h4>
+<p>如果我们这个class文件不是JVM通过java源代码文件编译而成的，而是用户自己通过class文件的组织规则生成的，那么，一般会对class文件的访问标志第4位设置为 1 。通过JVM编译源代码产生的class文件此标志位为 0，第4位叫做ACC_SYNTHETIC标志位；</p>
+<h4>f. 枚举类</h4>
+<p>对于定义的枚举类如：public enum EnumTest{…}，JVM也会对此枚举类编译成class文件，这时，对于这样的class文件，JVM会对访问标志第2位设置为 1 ，以表示它是枚举类。第2位叫做ACC_ENUM标志位；</p>
+<h4>g. 注解类</h4>
+<p>对于定义的注解类如：public @interface{…},JVM会对此注解类编译成class文件，对于这样的class文件，JVM会将访问标志第3位设置为1，以表示这是个注解类，第3位叫做ACC_ANNOTATION标志位。</p>
+<p>当JVM确定了上述标志位的值后，就可以确定访问标志（access_flags）的值了。实际上JVM上述标志会根据上述确定的标志位的值，对这些标志位的值取或，便得到了访问标志（access_flags）。如下图所示:</p>
+<p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%97" alt="image"></p>
+<h4>举例</h4>
+<p>定义一个最简单的类Simple.java，使用编译器编译成class文件，然后观察class文件中的访问标志的值，以及使用javap -v Simple 查看访问标志。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Simple</span> </span>&#123;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用UltraEdit查看编译成的class文件，如下图所示：</p>
+<p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%972" alt="image"></p>
+<p>上述的图中黄色部分表示的是常量池部分,常量池后面紧跟着就是访问标志，它的十六进制值为0x0021,二进制的值为：00000000 00100001，由二进制的1的位数可以得出第11、16位为1，分别对应ACC_SUPER标志位和ACC_PUBLIC标志位。验证一下:</p>
+<p><img src="http://javajvm.oursnail.cn/%E8%AE%BF%E9%97%AE%E6%A0%87%E5%BF%973" alt="image"></p>
+<h2>3. 类索引(this_class)是什么？</h2>
+<p>我们知道一般情况下一个Java类源文件经过JVM编译会生成一个class文件，也有可能一个Java类源文件中定义了其他类或者内部类，这样编译出来的class文件就不止一个，但每一个class文件表示某一个类，至于这个class表示哪一个类，便可以通过 类索引 这个数据项来确定。JVM通过类的完全限定名确定是某一个类。</p>
+<p><strong>类索引的作用，就是为了指出class文件所描述的这个类叫什么名字。</strong></p>
+<p>类索引紧接着访问标志的后面，占有两个字节，在这两个字节中存储的值是一个指向常量池的一个索引，该索引指向的是CONSTANT_Class_info常量池项.</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%B1%BB%E7%B4%A2%E5%BC%951" alt="image"></p>
+<p>以上面定义的Simple.class 为例，如下图所示，查看他的类索引在什么位置和取什么值。</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%B1%BB%E7%B4%A2%E5%BC%952" alt="image"></p>
+<p>由上可知，它的类索引值为0x0001,那么，它指向了常量池中的第一个常量池项，那我们再看一下常量池中的信息。使用javap -v Simple,常量池中有以下信息：</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%B1%BB%E7%B4%A2%E5%BC%953" alt="image"></p>
+<p>可以看到常量池中的第一项是CONSTANT_Class_info项，它表示一个&quot;com/louis/jvm/Simple&quot;的类名。即类索引是告诉我们这个class文件所表示的是哪一个类。</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%B1%BB%E7%B4%A2%E5%BC%954" alt="image"></p>
+<h2>4. 父类索引(super_class)是什么？</h2>
+<p>Java支持单继承模式，除了java.lang.Object 类除外，每一个类都会有且只有一个父类。class文件中紧接着类索引(this_class)之后的两个字节区域表示父类索引，跟类索引一样，父类索引这两个字节中的值指向了常量池中的某个常量池项CONSTANT_Class_info，表示该class表示的类是继承自哪一个类。</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%88%B6%E7%B1%BB%E7%B4%A2%E5%BC%95" alt="image"></p>
+<h2>5. 接口索引集合(interfaces)是什么？</h2>
+<p>一个类可以不实现任何接口，也可以实现很多个接口，为了表示当前类实现的接口信息，class文件使用了如下结构体描述某个类的接口实现信息:</p>
+<p><img src="http://javajvm.oursnail.cn/%E7%88%B6%E7%B1%BB%E7%B4%A2%E5%BC%95" alt="image"></p>
+<p>由于类实现的接口数目不确定，所以接口索引集合的描述的前部分叫做接口计数器（interfaces_count），接口计数器占用两个字节，其中的值表示着这个类实现了多少个接口，紧跟着接口计数器的部分就是接口索引部分了，每一个接口索引占有两个字节，接口计数器的值代表着后面跟着的接口索引的个数。接口索引和类索引和父类索引一样，其内的值存储的是指向了常量池中的常量池项的索引，表示着这个接口的完全限定名。</p>
+<p><strong>举例：</strong></p>
+<p>定义一个Worker接口，然后类Programmer实现这个Worker接口，然后我们观察Programmer的接口索引集合是怎样表示的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Worker</span></span>&#123;  </span><br><span class="line">      </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span></span>;  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Programmer</span> <span class="keyword">implements</span> <span class="title">Worker</span> </span>&#123;  </span><br><span class="line">  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">work</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">        System.out.println(<span class="string">"I'm Programmer,Just coding...."</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="http://javajvm.oursnail.cn/%E7%B1%BB%E7%B4%A2%E5%BC%954" alt="image"></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/09/JVM/补充阅读4-Class文件中的字段表集合--field字段在class文件中是怎样组织的/" class="prev">PRVE</a><a href="/2019/02/09/JVM/补充阅读2-Class文件中的常量池/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 09 2019 19:37:12 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

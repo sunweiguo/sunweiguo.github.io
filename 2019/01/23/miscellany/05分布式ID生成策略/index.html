@@ -1,0 +1,42 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 分布式ID生成策略 · fossi</title><meta name="description" content="分布式ID生成策略 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">分布式ID生成策略</h1><div class="post-meta"><span class="post-time">Jan 23, 2019</span></div><div class="post-content"><p>分布式环境下如何保证ID的不重复呢？一般我们可能会想到用UUID来实现嘛。但是UUID一般可以获取当前时间的毫秒数再加点随机数，但是在高并发下仍然可能重复。最重要的是，如果我要用这种UUID来生成分表的唯一ID的话，重复不谈，这种随机的字符串对于我们的innodb存储引擎的插入效率是很低的。所以我们生成的ID如果作为主键，最好有两种特性：分布式唯一和有序。</p>
+<a id="more"></a>
+<p>唯一性就不用说了，有序保证了对索引字段的插入的高效性。我们来具体看看<code>ShardingJDBC</code>的分布式ID生成策略是如何保证。</p>
+<h3>snowflake算法</h3>
+<p><img src="http://bloghello.oursnail.cn/mama5-10.png" alt="image"></p>
+<p><code>sharding-jdbc</code>的分布式ID采用<code>twitter</code>开源的<code>snowflake</code>算法，不需要依赖任何第三方组件，这样其扩展性和维护性得到最大的简化；但是<code>snowflake</code>算法的缺陷（<strong>强依赖时间，如果时钟回拨，就会生成重复的ID</strong>）。</p>
+<p>雪花算法是由<code>Twitter</code>公布的分布式主键生成算法，<strong>它能够保证不同进程主键的不重复性，以及相同进程主键的有序性</strong>。</p>
+<p><strong>在同一个进程中</strong>，它首先是通过时间位保证不重复，如果时间相同则是通过序列位保证。 同时由于时间位是单调递增的，且各个服务器如果大体做了时间同步，那么生成的主键在分布式环境可以认为是总体有序的，这就保证了对索引字段的插入的高效性。例如MySQL的Innodb存储引擎的主键。</p>
+<p>使用雪花算法生成的主键，二进制表示形式包含4部分，从高位到低位分表为：1bit符号位、41bit时间戳位、10bit工作进程位以及12bit序列号位。</p>
+<p>雪花算法主键的详细结构见下图。</p>
+<p><img src="http://bloghello.oursnail.cn/mama5-1.png" alt="image"></p>
+<ul>
+<li>符号位(1bit)</li>
+</ul>
+<p>预留的符号位，恒为零。</p>
+<ul>
+<li>时间戳位(41bit)</li>
+</ul>
+<p>41位的时间戳可以容纳的毫秒数是2的41次幂，一年所使用的毫秒数是：365 * 24 * 60 * 60 * 1000。通过计算可知：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 41) / (365 * 24 * 60 * 60 * 1000L);</span><br></pre></td></tr></table></figure>
+<p>结果约等于69.73年。<code>ShardingSphere</code>的雪花算法的时间纪元从2016年11月1日零点开始，可以使用到2086年，相信能满足绝大部分系统的要求。</p>
+<ul>
+<li>工作进程位(10bit)</li>
+</ul>
+<p>该标志在Java进程内是唯一的，如果是分布式应用部署应保证每个工作进程的id是不同的。该值默认为0，可通过调用静态方法<code>DefaultKeyGenerator.setWorkerId()</code>设置。</p>
+<ul>
+<li>序列号位(12bit)</li>
+</ul>
+<p>该序列是用来在同一个毫秒内生成不同的ID。如果在这个毫秒内生成的数量超过4096(2的12次幂)，那么生成器会等待到下个毫秒继续生成。</p>
+<h2>时钟回拨</h2>
+<p>服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为0，可通过调用静态方法<code>DefaultKeyGenerator.setMaxTolerateTimeDifferenceMilliseconds()</code>设置。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/23/miscellany/06Spring Session/" class="prev">PRVE</a><a href="/2019/01/22/miscellany/04springMVC全局异常+spring包扫描包隔离+spring事务传播/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Wed Jan 23 2019 14:33:29 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

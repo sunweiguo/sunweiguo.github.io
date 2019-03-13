@@ -1,0 +1,161 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Linux重要的一些命令 · fossi</title><meta name="description" content="Linux重要的一些命令 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Linux重要的一些命令</h1><div class="post-meta"><span class="post-time">Jan 21, 2019</span></div><div class="post-content"><p>很多命令之所以重要，是因为用它们会大幅提高工作效率。所以，熟悉它们是我们必须要做的一件事情。下面着重提取了find、grep、管道、wc、awk以及sed等几个命令来看看如何使用。</p>
+<a id="more"></a>
+<h2>一、Linux体系结构</h2>
+<div align="center">
+    <img src="http://bloghello.oursnail.cn/linux1-1.png" style="width:300px;">
+</div>
+<p>对这幅图进行详细说明一下。</p>
+<ul>
+<li>体系结构主要分为<strong>用户态</strong>(用户上层活动)和<strong>内核态</strong></li>
+<li><strong>内核：本质是一段管理计算机硬件设备的程序</strong>，这个程序直接管理硬件：包括CPU、内存空间、硬盘接口、网络接口等。所有的计算机操作都要通过内核来操作。</li>
+<li>系统调用：内核的访问接口，<strong>是一种不能再简化的操作</strong>(可以认为系统调用已经是最小的原子操作，上层完成一个功能要依托于若干系统调用才能完成)</li>
+<li>由于系统调用比较基础，要完成一个功能需要很多系统调用组合才能实现，对于程序员来说比较复杂。这个时候怎么办呢？<strong>我们可以调用公共函数库：系统调用的组合拳。简化程序员操作</strong>。</li>
+<li><code>Shell</code>也是一种特殊的应用程序，是一个命令解释器，可以编程。</li>
+<li><code>Shell</code>下通系统调用，上通各种应用，是上层和下层之间粘合的胶水，让不同程序可以偕同工作。</li>
+<li>在没有图形界面之前，用户通过<code>shell</code>命令行或者可编程的<code>shell</code>脚本可以完成很多事情。</li>
+</ul>
+<h2>二、如何根据文件名检索文件</h2>
+<ul>
+<li>find</li>
+<li>在指定目录下查找文件</li>
+</ul>
+<blockquote>
+<p>语法 find path [options] params</p>
+</blockquote>
+<h3>2.1 精确查找文件</h3>
+<p>比如我在当前目录(可能在子目录下)下找一个文件叫做<code>test.java</code>：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name "test.java"</span><br></pre></td></tr></table></figure>
+<p>这个指令就可以在本目录以及子目录下递归查找这个文件了。</p>
+<p>实例：精确查询名字叫<code>snailmall-api-gateway-8080.jar</code>这个文件：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-4.png" alt="image"></p>
+<h3>2.2 全局搜索</h3>
+<p>如果是全局查找，也很简单，无非是从根目录开始递归查找。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name "test.java"</span><br></pre></td></tr></table></figure>
+<p>实例：我对这台服务器全局查找文件名以<code>snailmall</code>开头的所有文件：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-3.png" alt="image"></p>
+<h3>2.3 模糊查询</h3>
+<p>如果找以test打头的文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -name "test*"</span><br></pre></td></tr></table></figure>
+<p>即用 <code>*</code> 通配符就可以模糊查询到以 <code>test</code> 打头的文件。</p>
+<p>实例，我的这台服务器上部署了几个关于商城的服务，这个目录下我放了jar包和相应的启动信息文件。我对其进行模糊查询：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-2.png" alt="image"></p>
+<h3>2.4 忽略大小写</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find -iname "test*"</span><br></pre></td></tr></table></figure>
+<h2>三、如何根据文件内的内容进行检索</h2>
+<h3>3.1 grep命令</h3>
+<ul>
+<li>grep</li>
+<li>查找文件里符合条件的字符串</li>
+</ul>
+<blockquote>
+<p>语法：grep [options] pattern file</p>
+</blockquote>
+<p>比如 <code>test.java</code> 中有一句话是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">"i love java"</span>);</span><br></pre></td></tr></table></figure>
+<p>那么如何查找 <code>test.java</code> 中的 <code>java</code> 呢？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep "java" test*</span><br></pre></td></tr></table></figure>
+<p>这句话意思就是查找以 <code>test</code> 打头的文件中的包含 <code>java</code> 字符串所在的行。</p>
+<p>直接输入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep "hello"</span><br></pre></td></tr></table></figure>
+<p>会等待用户输入文本。然后再对输入的内容进行检索。</p>
+<h3>3.2 管道操作符 |</h3>
+<blockquote>
+<p>可将指令连接起来，前一个指令的输出作为后一个指令的输入。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / | grep "test"</span><br></pre></td></tr></table></figure>
+<p>作用同：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">find / -name "test"</span><br></pre></td></tr></table></figure>
+<div class="tip">
+<p>注意：</p>
+<p>只有前一个指令正确才会再处理。</p>
+<p>管道右边命令必须能接收标准输入流，否则传递过程中数据会被抛弃</p>
+</div>
+<h3>3.3 grep结合管道</h3>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep 'xxx' hello.info</span><br></pre></td></tr></table></figure>
+<p>可以将 <code>xxx</code> 所在的行全部筛选出来，但是还是特别多，我比如关心这每一行中某个字段的信息，比如是 <code>param[xx12]</code>这种信息。如何实现筛选呢？</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep 'xxx' hello.info | grep -o 'param\[[0-9a-z]*\]'</span><br></pre></td></tr></table></figure>
+<p>这样就只把类似于 <code>param[xx12]</code> 这样的信息清晰地展现出来。</p>
+<p>如何过滤掉不要的信息呢？可以用：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -v</span><br></pre></td></tr></table></figure>
+<p>比如我们查询 <code>tomcat</code> 进程信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat</span><br></pre></td></tr></table></figure>
+<p>我们会发现，不仅 <code>tomcat</code> 的信息展现出来了，执行 <code>grep</code> 命令本身的进程信息也展示出来了。我们要将这个 <code>grep</code> 命令过滤掉，只展现 <code>tomcat</code> 进程信息，可以：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -ef | grep tomcat | grep -v "grep"</span><br></pre></td></tr></table></figure>
+<p>这样就把 <code>grep</code> 进程信息过滤掉了。</p>
+<h2>四、如何对文件内容做统计</h2>
+<ul>
+<li>awk</li>
+<li>一次读取一行文本，按输入分隔符进行切片，切成多个组成部分</li>
+<li>将切片直接保存再内建的变量中，$1$2…($0表示行的全部)</li>
+<li>支持对单个切片的判断，支持循环判断，<strong>默认分隔符为空格</strong></li>
+</ul>
+<blockquote>
+<p>语法：awk [options] ‘cmd’ file</p>
+</blockquote>
+<p>有这样一个文件text1.txt：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">proto   Recv-Q   Send-Q    Local Address     Foreign Address      state</span><br><span class="line">tcp     0        48        111.34.134.2:ssh  124.213.2.12:12565   ESTABLISHED</span><br><span class="line">tcp     0        48        localhost:mysql   124.213.2.12:12565   ESTABLISHED</span><br><span class="line">udp     0        48        111.34.13.2:s0    124.213.2.12:12565   ESTABLISHED</span><br><span class="line">tcp     0        48        localhost:mysql   124.213.2.12:12565   ESTABLISHED</span><br><span class="line">udp     1        48        localhots:webcac  124.213.2.12:12565   ESTABLISHED</span><br><span class="line">tcp     1        48        111.34.134.2:s1   124.213.2.12:12565   ESTABLISHED</span><br><span class="line">udp     1        48        111.34.134.2:s2   124.213.2.12:12565   ESTABLISHED</span><br><span class="line">udp     0        48        111.34.134.2:s3   124.213.2.12:12565   ESTABLISHED</span><br></pre></td></tr></table></figure>
+<p>列出切分出来的第一列和第二列：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk '&#123;print $1,$2&#125;' test1.txt</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-7.png" alt="image"></p>
+<p>筛选出第一列为<code>tcp</code>和第二列为<code>1</code>的所在行，将这些行数据全部打印出来：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk '$1="tcp" &amp;&amp; $2==1&#123;print $0&#125;' test1.txt</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-8.png" alt="image"></p>
+<p>打印带有表头的数据：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk '($1="tcp" &amp;&amp; $2==1) || NR==1 &#123;print $0&#125;' test1.txt</span><br></pre></td></tr></table></figure>
+<p><img src="http://bloghello.oursnail.cn/linux1-9.png" alt="image"></p>
+<p>默认是以空格分隔，那么以逗号或者其他符号可以吗？答案当然是可以。对于这样的文件text2.txt：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">adas,123</span><br><span class="line">wqe,544</span><br><span class="line">12321,dddf</span><br><span class="line">sdaasd,1235</span><br><span class="line">465547,fjigj</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awk -F "," '&#123;print $2&#125;' text2.txt</span><br></pre></td></tr></table></figure>
+<h2>五、WC统计</h2>
+<p>有一个文件test2.txt，里面的内容是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">swg123eh shwf</span><br><span class="line">shsfswg7 121 32n dswg17328 123swg1 2h1jhw</span><br><span class="line">jqbsjwqbsh ddddh wg ehdedhd  dhsjh</span><br></pre></td></tr></table></figure>
+<p><img src="http://bloghello.oursnail.cn/linux1-10.png" alt="image"></p>
+<h2>六、sed命令</h2>
+<p>sed是一个很好的文件处理工具，本身是一个管道命令，主要是以行为单位进行处理，可以将数据行进行替换、删除、新增、选取等特定工作</p>
+<blockquote>
+<p>sed [-n/e/f/r/i] ‘command’ 输入文本</p>
+</blockquote>
+<p>常用选项：</p>
+<ul>
+<li>-n∶使用安静(silent)模式。在一般 sed 的用法中，所有来自 STDIN的资料一般都会被列出到萤幕上。但如果加上 -n 参数后，则只有经过sed 特殊处理的那一行(或者动作)才会被列出来。</li>
+<li>-e∶直接在指令列模式上进行 sed 的动作编辑；</li>
+<li>-f∶直接将 sed 的动作写在一个档案内， -f filename 则可以执行 filename 内的sed 动作；</li>
+<li>-r∶sed 的动作支援的是延伸型正规表示法的语法。(预设是基础正规表示法语法)</li>
+<li>-i∶<strong>直接修改读取的档案内容，而不是由萤幕输出</strong>。</li>
+</ul>
+<p>常用命令：</p>
+<ul>
+<li>a   ∶新增， a 的后面可以接字串，而这些字串会在新的一行出现(目前的下一行)～</li>
+<li>c   ∶取代， c 的后面可以接字串，这些字串可以取代 n1,n2 之间的行！</li>
+<li>d   ∶删除，因为是删除啊，所以 d 后面通常不接任何咚咚；</li>
+<li>i   ∶插入， i 的后面可以接字串，而这些字串会在新的一行出现(目前的上一行)；</li>
+<li>p  ∶列印，亦即将某个选择的资料印出。通常 p 会与参数 sed -n 一起运作～</li>
+<li>s  ∶<strong>取代</strong>，可以直接进行取代的工作哩！通常这个 s 的动作可以搭配正规表示法！例如 1,20s/old/new/g 就是啦！</li>
+</ul>
+<p>这里我就主要看一下批量替换这个功能。</p>
+<p>如果只是给一个文件中的若干字符串批量替换，只需要：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i "s/oldstring/newstring/g" filename</span><br></pre></td></tr></table></figure>
+<p><img src="http://bloghello.oursnail.cn/linux1-12.png" alt="image"></p>
+<p>如果是对某一路径下很多的文件批量替换：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i &quot;s/oldstring/newstring/g&quot; `grep oldstring -rl path`</span><br></pre></td></tr></table></figure>
+<p>其中，<code>oldstring</code>是待被替换的字符串，<code>newstring</code>是待替换<code>oldstring</code>的新字符串，<code>grep</code>操作主要是按照所给的路径查找<code>oldstring</code>，<code>path</code>是所替换文件的路径；</p>
+<ul>
+<li><strong>-i选项是直接在文件中替换，不在终端输出</strong>；</li>
+<li><strong>-r选项是所给的path中的目录递归查找</strong>；</li>
+<li><strong>-l选项是输出所有匹配到oldstring的文件</strong>；</li>
+</ul>
+<p>这里只是模拟一下，将目录下的所有文件进行批量修改：</p>
+<p><img src="http://bloghello.oursnail.cn/linux1-13.png" alt="image"></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/21/java-collection/11.HashMap死循环问题/" class="prev">PRVE</a><a href="/2019/01/21/站点文章汇总/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Jan 21 2019 20:16:48 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

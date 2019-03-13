@@ -1,0 +1,209 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 几种主流缓存框架介绍 · fossi</title><meta name="description" content="几种主流缓存框架介绍 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">几种主流缓存框架介绍</h1><div class="post-meta"><span class="post-time">Feb 2, 2019</span></div><div class="post-content"><p>本文为redis学习笔记的第十二篇文章。本文对Guava Cache,Memcache以及redis进行简单介绍和对比。</p>
+<a id="more"></a>
+<h2>缓存特征</h2>
+<p>缓存都会涉及：命中率、最大元素、清空策略(<code>FIFO</code>,<code>LFU</code>,<code>LRU</code>,过期时间，随机)</p>
+<h2>影响缓存命中率因素</h2>
+<ul>
+<li>业务场景和业务需求：适合读多写少的场景</li>
+<li>缓存的设计(粒度和策略)：缓存粒度越小，命中率越高</li>
+<li>缓存容量(经常用LRU)和基础设施(是否可扩展，避免缓存失效-一致性hash算法和几点冗余)</li>
+</ul>
+<h2>缓存分类</h2>
+<ul>
+<li>本地缓存：编程实现（成员变量、局部变量、静态变量）、Guava Cache</li>
+<li>分布式缓存：Memcache，Redis</li>
+</ul>
+<p>本地缓存：各应用之间无法很好地共享，与应用本身耦合过紧；而分布式缓存，本身就是独立的应用，各独立应用之间共享缓存。</p>
+<h2>Guava Cache</h2>
+<p><img src="http://bloghello.oursnail.cn/GuavaCache.png" alt="image"></p>
+<p>设计思想类似于jdk1.7中的<code>ConcurrentHashMap</code>，也是用多个<code>segments</code>的细粒度锁，在保证线程安全的同时，支持高并发场景的需求。</p>
+<p>下面数据存储就是以键值对的形式存储，另外，需要处理缓存过期、动态加载等算法逻辑，所以需要一些额外的信息来实现这些操作。</p>
+<p>主要实现的功能有：自动将节点加入到缓存结构中，当缓存的数据超过设置的最大值时，用LRU算法来移除。他具备根据节点上次被访问或者写入的时间来计算他的过期机制。</p>
+<h2>memcache</h2>
+<h5>memcache简单认识</h5>
+<p><code>memcache</code>是一个高性能的分布式的内存对象缓存系统，它在内存里维护一个统一的巨大的<code>hash</code>表。能用来缓存各种格式的数据，包括图像、视频、文件以及数据库检索等结果.</p>
+<p><code>memcache</code>是以守护程序方式运行于一个或多个服务器中，随时会接收客户的连接和操作。</p>
+<p>存在<code>memcache</code>中的对象实际放置在内存中，这也是<code>memcache</code>如此高效的原因。</p>
+<p>本身是不提供分布式的解决方案的。分布式是在客户端实现的，通过客户端的路由来处理达到分布式的目的。</p>
+<p>应用服务器每次在存储某个<code>key</code>和<code>value</code>的时候，通过某种算法把<code>key</code>映射到某台服务器上。</p>
+<h5>一致性hash算法</h5>
+<p>客户端实现分布式：一致性<code>hash</code>算法，<a href="http://fourcolor.oursnail.cn/2019/02/01/miscellany/15%E7%AE%80%E6%98%8E%E7%90%86%E8%A7%A3%E4%B8%80%E8%87%B4%E6%80%A7hash%E7%AE%97%E6%B3%95/" target="_blank" rel="noopener">这个算法已经详细介绍过了</a>。</p>
+<p><img src="http://bloghello.oursnail.cn/memcache%E5%8E%9F%E7%90%86%E5%9B%BE.png" alt="image"></p>
+<h5>memcache一些特性</h5>
+<blockquote>
+<p><code>Memcached</code>单进程在32位系统中最大使用内存为2G，若在64位系统则没有限制,这是由于32位系统限制单进程最多可使用2G内存,要使用更多内存，可以分多个端口开启多个<code>Memcached</code>进程。</p>
+</blockquote>
+<p>32 位寻址空间只有 4GB 大小，于是 32 位应用程序进程最大只能用到 4GB 的内存。然而，除了应用程序本身要用内存，操作系统内核也需要使用。应用程序使用的内存空间分为用户空间和内核空间，每个 32 位程序的用户空间可独享前 2GB 空间（指针值为正数），而内核空间为所有进程共享 2GB 空间（指针值为负数）。所以，32 位应用程序实际能够访问的内存地址空间最多只有 2GB。</p>
+<blockquote>
+<p>最大30天的数据过期时间，设置为永久也会在这个时间过期。最长键长为250字节，大于该长度无法存储。最大同时连接数是200;</p>
+</blockquote>
+<blockquote>
+<p><code>memcache</code>是一种无阻塞的<code>socket</code>通信方式服务，基于<code>libevent</code>库，犹豫无阻塞通信，对内存读写速度非常快。</p>
+</blockquote>
+<h5>不适用memcached的业务场景？</h5>
+<blockquote>
+<p>缓存对象的大小大于1MB</p>
+</blockquote>
+<blockquote>
+<p>虚拟主机不让运行<code>memcached</code>服务</p>
+</blockquote>
+<blockquote>
+<p>key的长度大于250字符</p>
+</blockquote>
+<blockquote>
+<p>需要持久化</p>
+</blockquote>
+<h5>不能够遍历memcached中所有的item？</h5>
+<p>这个操作的速度相对缓慢且阻塞其他的操作</p>
+<h5>memcache如何分配内存？</h5>
+<p>这张图片里面涉及了<code>slab_class</code>、<code>slab</code>、<code>page</code>、<code>chunk</code>四个概念，它们之间的关系是：</p>
+<ul>
+<li><code>MemCache</code>将内存空间分为一组<code>slab</code></li>
+<li>每个<code>slab</code>下又有若干个<code>page</code>，每个<code>page</code>默认是1M，如果一个<code>slab</code>占用100M内存的话，那么这个slab下应该有100个page</li>
+<li>每个page里面包含一组<code>chunk</code>，<code>chunk</code>是真正存放数据的地方，同一个<code>slab</code>里面的<code>chunk</code>的大小是固定的</li>
+<li>有相同大小<code>chunk</code>的<code>slab</code>被组织在一起，称为<code>slab_class</code></li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/memcache%E5%8E%9F%E7%90%86.png" alt="image"></p>
+<p><strong>那么是具体如何分配的呢？</strong></p>
+<blockquote>
+<p><code>MemCache</code>中的<code>value</code>过来存放的地方是由<code>value</code>的大小决定的，<code>value</code>总是会被存放到与<code>chunk</code>大小最接近的一个<code>slab</code>中，比如<code>slab[1]</code>的<code>chunk</code>大小为80字节、<code>slab[2]</code>的<code>chunk</code>大小为100字节、<code>slab[3]</code>的<code>chunk</code>大小为128字节（相邻<code>slab</code>内的<code>chunk</code>基本以1.25为比例进行增长，<code>MemCache</code>启动时可以用-f指定这个比例），那么过来一个88字节的<code>value</code>，这个<code>value</code>将被放到2号<code>slab</code>中。</p>
+</blockquote>
+<blockquote>
+<p>放<code>slab</code>的时候，首先<code>slab</code>要申请内存，申请内存是以<code>page</code>为单位的，所以在放入第一个数据的时候，无论大小为多少，都会有1M大小的<code>page</code>被分配给该<code>slab</code>。申请到<code>page</code>后，<code>slab</code>会将这个<code>page</code>的内存按<code>chunk</code>的大小进行切分，这样就变成了一个<code>chunk</code>数组，最后从这个<code>chunk</code>数组中选择一个用于存储数据。</p>
+</blockquote>
+<blockquote>
+<p>如果这个slab中没有<code>chunk</code>可以分配了怎么办，如果<code>MemCache</code>启动没有追加-M（禁止LRU，这种情况下内存不够会报<code>Out Of Memory</code>错误），那么<code>MemCache</code>会把这个<code>slab</code>中最近最少使用的<code>chunk</code>中的数据清理掉，然后放上最新的数据。</p>
+</blockquote>
+<blockquote>
+<ol>
+<li><code>MemCache</code>的内存分配<code>chunk</code>里面会有内存浪费，88字节的<code>value</code>分配在128字节（紧接着大的用）的<code>chunk</code>中，就损失了30字节，但是这也避免了管理内存碎片的问题</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li><code>MemCache</code>的<code>LRU</code>算法不是针对全局的，是针对<code>slab</code>的</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>该可以理解为什么<code>MemCache</code>存放的<code>value</code>大小是限制的，因为一个新数据过来，<code>slab</code>会先以<code>page</code>为单位申请一块内存，申请的内存最多就只有1M，所以<code>value</code>大小自然不能大于1M了</li>
+</ol>
+</blockquote>
+<h5>最后再总结一下memcache</h5>
+<ul>
+<li><code>MemCache</code>中可以保存的<code>item</code>数据量是没有限制的，只要内存足够</li>
+<li><code>MemCache</code>单进程在32位机中最大使用内存为2G，64位机则没有限制</li>
+<li><code>Key</code>最大为250个字节，超过该长度无法存储</li>
+<li>单个<code>item</code>最大数据是1MB，超过1MB的数据不予存储</li>
+<li><code>MemCache</code>服务端是不安全的，比如已知某个<code>MemCache</code>节点，可以直接<code>telnet</code>过去，并通过<code>flush_all</code>让已经存在的键值对立即失效</li>
+<li>不能够遍历<code>MemCache</code>中所有的<code>item</code>，因为这个操作的速度相对缓慢且会阻塞其他的操作</li>
+<li><code>MemCache</code>的高性能源自于两阶段哈希结构：第一阶段在客户端，通过<code>Hash</code>算法根据<code>Key</code>值算出一个节点；第二阶段在服务端，通过一个内部的<code>Hash</code>算法，查找真正的<code>item</code>并返回给客户端。从实现的角度看，<code>MemCache</code>是一个非阻塞的、基于事件的服务器程序</li>
+<li><code>MemCache</code>设置添加某一个<code>Key</code>值的时候，传入<code>expire</code>为0表示这个<code>Key</code>值永久有效，这个<code>Key</code>值也会在30天之后失效</li>
+</ul>
+<h2>redis</h2>
+<h5>redis特点</h5>
+<ul>
+<li>支持数据持久化，可以将内存中的数据保存到磁盘。</li>
+<li>支持更多的数据结构</li>
+<li>支持数据备份</li>
+<li>性能极高，读可以达到11万次每秒；写达到8万1千次每秒</li>
+<li>redis所有操作都是原子性，并且支持几个操作一起的原子性</li>
+<li>支持发布-订阅功能</li>
+</ul>
+<h5>redis适用场景</h5>
+<ul>
+<li>取最新n个数据、排行榜</li>
+<li>精准过期时间</li>
+<li>计数器</li>
+<li>唯一性检查</li>
+<li>实时系统、垃圾系统、缓存等</li>
+</ul>
+<h2>redis VS memcache</h2>
+<p>当提到<code>redis</code>就问<code>memcache</code>，当提到<code>memcache</code>就提到<code>redis</code>，说明这两者用的都十分广泛，<code>redis</code>号称“强化版<code>memcached</code>”，他们之间的区别到底是啥呢？</p>
+<ul>
+<li>基本命令</li>
+</ul>
+<blockquote>
+<p><code>memcache</code>支持的命令很少，因为他只支持<code>String</code>的操作，通讯协议包括文本格式和二进制格式，用于满足简单网络客户端工具（如<code>telnet</code>）和对性能要求更高的客户端的不同需求；<code>redis</code>操作类似，只是数据结构更复杂以支持更多的特性，如发布订阅、消息队列等。<code>redis</code>的客户端-服务器通讯协议完全采用文本格式(Redis Cluster服务端节点之间通讯采用二进制格式)。</p>
+</blockquote>
+<ul>
+<li>事务</li>
+</ul>
+<blockquote>
+<p><code>redis</code>通过<code>multi</code> / <code>watch</code> / <code>exec</code>等命令可以支持事务的概念，原子性的执行一批命令;</p>
+<p><code>memcache</code>:即使在多线程模式，所有的命令都是原子的；命令序列不是原子的。在并发的情况下，您也可能覆写了一个被其他进程set的item。<code>memcached 1.2.5</code>以及更高版本，提供了<code>gets</code>和<code>cas</code>命令，它们可以解决上面的问题。如果您使用<code>gets</code>命令查询某个<code>key</code>的<code>item</code>，<code>memcached</code>会给您返回该<code>item</code>当前值的唯一标识。如果您覆写了这个<code>item</code>并想把它写回到<code>memcached</code>中，您可以通过<code>cas</code>命令把那个唯一标识一起发送给 <code>memcached</code>。如果该<code>item</code>存放在<code>memcached</code>中的唯一标识与您提供的一致，您的写操作将会成功。如果另一个进程在这期间也修改了这个 <code>item</code>，那么该<code>item</code>存放在<code>memcached</code>中的唯一标识将会改变，您的写操作就会失败。</p>
+</blockquote>
+<ul>
+<li>数据备份，有效性，持久化等</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>不保证存储的数据的有效性，<code>slab</code>内部基于<code>LRU</code>也会自动淘汰旧数据;<code>memcached</code>也不做数据的持久化工作;</p>
+<p><code>redis</code>可以以<code>master-slave</code>的方式配置服务器，<code>slave</code>节点对数据进行<code>replica</code>备份，<code>slave</code>节点也可以充当<code>read only</code>的节点分担数据读取的工作;<code>redis</code>内建支持两种持久化方案，<code>snapshot</code>快照和<code>AOF</code>增量<code>Log</code>方式。</p>
+</blockquote>
+<ul>
+<li>性能</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>自身并不主动定期检查和标记哪些数据需要被淘汰，只有当再次读取相关数据时才检查时间戳，或者当内存不够使用需要主动淘汰数据时进一步检查<code>LRU</code>数据。</p>
+<p><code>redis</code>为了减少大量小数据CMD操作的网络通讯时间开销 <code>RTT (Round Trip Time)</code>，支持<code>pipeline</code>和<code>script</code>技术。</p>
+</blockquote>
+<ul>
+<li>集群</li>
+</ul>
+<blockquote>
+<p><code>memcached</code>的服务器端互相完全独立，客户端通常通过对键值应用<code>hash</code>算法决定数据的分区，为了减少服务器的增减对<code>hash</code>结果的影响，导致大面积的缓存失效，多数客户端实现了一致性<code>hash</code>算法。</p>
+<p><code>redis3.0</code>已经支持服务端集群了。</p>
+</blockquote>
+<ul>
+<li>性能对比</li>
+</ul>
+<blockquote>
+<p>由于<code>redis</code>只使用单核，而<code>memcached</code>可以使用多核，所以平均每一个核上<code>redis</code>在存储小数据时比<code>memcached</code>性能更高。而在100k以上的数据中，<code>memcached</code>性能要高于<code>redis</code>，虽然<code>redis</code>最近也在存储大数据的性能上进行优化，但是比起<code>memcached</code>，还是稍有逊色</p>
+</blockquote>
+<ul>
+<li>内存使用效率</li>
+</ul>
+<blockquote>
+<p>使用简单的<code>key-value</code>存储的话，<code>memcached</code>的内存利用率更高，而如果<code>redis</code>采用<code>hash</code>结构来做<code>key-value</code>存储，由于其组合式的压缩，其内存利用率会高于<code>memcached</code>。另外，<code>memcached</code>使用预分配的内存池的方式，带来一定程度的空间浪费 并且在内存仍然有很大空间时，新的数据也可能会被剔除，而<code>redis</code>使用现场申请内存的方式来存储数据，不会剔除任何非临时数据 redis更适合作为存储而不是<code>cache</code>。</p>
+</blockquote>
+<ul>
+<li><code>redis</code>支持服务器端的数据操作</li>
+</ul>
+<blockquote>
+<p><code>redis</code>相比<code>memcached</code>来说，拥有更多的数据结构和并支持更丰富的数据操作，通常在<code>memcached</code>里，你需要将数据拿到客户端来进行类似的修改再<code>set</code>回去。这大大增加了网络IO的次数和数据体积。在<code>redis</code>中，这些复杂的操作通常和一般的<code>GET/SET</code>一样高效。所以，如果需要缓存能够支持更复杂的结构和操作，那么<code>redis</code>会是不错的选择</p>
+</blockquote>
+<hr>
+<p>何时应该使用<code>memcache</code>:</p>
+<blockquote>
+<p>首先就是对小型静态数据进行缓存处理，最具代表性的例子就是HTML代码片段。这是因为<code>memcached</code>在处理元数据时所消耗的内存资源相对更少.</p>
+<p>在以前，<code>redis3.0</code>版本之前，<code>memcached</code>在横向扩展方面也比<code>redis</code>更具优势。由于其在设计上的思路倾向以及相对更为简单的功能设置，<code>memcached</code>在实现扩展时的难度比redis低得多。</p>
+</blockquote>
+<p>何时应该使用<code>redis</code>：</p>
+<blockquote>
+<p>其他场景都可以用<code>redis</code>来替换。</p>
+<p>相比于武断的<code>LRU</code>(即最低近期使用量)算法，<code>redis</code>允许用户更为精准地进行细化控制，利用六种不同回收策略确切提高缓存资源的实际利用率。<code>redis</code>还采用更为复杂的内存管理与回收对象备选方案。</p>
+<p><code>memcached</code>将键名限制在250字节，值也被限制在不超过1MB，且只适用于普通字符串。<code>redis</code>则将键名与值的最大上限各自设定为512MB，且支持二进制格式。</p>
+<p>它所保存的数据具备透明化特性，也就是说服务器能够直接对这些数据进行操作.</p>
+<p><code>redis</code>还提供可选而且能够具体调整的数据持久性方案</p>
+<p><code>redis</code>能够提供复制功能。复制功能旨在帮助缓存体系实现高可用性配置方案，从而在遭遇故障的情况下继续为应用程序提供不间断的缓存服务。</p>
+</blockquote>
+<p>使用<code>redis</code>的正确姿势：</p>
+<blockquote>
+<p>要进行<code>master-slave</code>配置，出现服务故障时可以支持切换。</p>
+<p>在<code>master</code>侧禁用数据持久化，只需在<code>slave</code>上配置数据持久化。</p>
+<p>物理内存+虚拟内存不足，这个时候<code>dump</code>一直死着，时间久了机器挂掉。这个情况就是灾难。</p>
+<p>当<code>redis</code>物理内存使用超过内存总容量的3/5时就会开始比较危险了，就开始做<code>swap</code>,内存碎片大。</p>
+<p>当达到最大内存时，会清空带有过期时间的<code>key</code>，即使<code>key</code>未到过期时间。</p>
+<p><code>redis</code>与<code>DB</code>同步写的问题，先写<code>DB</code>，后写<code>redis</code>，因为写内存基本上没有问题。</p>
+</blockquote>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/02/redis/关于Redis一些重要的面试点/" class="prev">PRVE</a><a href="/2019/02/02/redis/Redis事务/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 02 2019 17:23:55 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

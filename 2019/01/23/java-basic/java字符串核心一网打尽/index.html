@@ -1,0 +1,87 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> java字符串核心一网打尽 · fossi</title><meta name="description" content="java字符串核心一网打尽 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">java字符串核心一网打尽</h1><div class="post-meta"><span class="post-time">Jan 23, 2019</span></div><div class="post-content"><p>对字符串中最核心的点：对象创建和动态加入常量池这些点进行深入分析。</p>
+<a id="more"></a>
+<p>比如有两个面试题：</p>
+<p>Q1：<code>String s = new String(&quot;abc&quot;);</code> 定义了几个对象。</p>
+<p>Q2：如何理解<code>String</code>的<code>intern</code>方法？</p>
+<p>A1：对于通过 <code>new</code> 产生的对象，会先去常量池检查有没有 “abc”，如果没有，先在常量池创建一个 “abc” 对象，然后在堆中创建一个常量池中此 “abc” 对象的拷贝对象。所以答案是：一个或两个。如果常量池中原来没有 ”abc”, 就是两个。如果原来的常量池中存在“abc”时，就是一个。</p>
+<p>A2：当一个<code>String</code>实例调用<code>intern()</code>方法时，JVM会查找常量池中是否有相同Unicode的字符串常量，如果有，则返回其的引用，如果没有，则在常量池中增加一个Unicode等于str的字符串并返回它的引用；</p>
+<h2>字面量和运行时常量池</h2>
+<p>JVM为了提高性能和减少内存开销，在实例化字符串常量的时候进行了一些优化。为了减少在JVM中创建的字符串的数量，字符串类维护了一个字符串常量池。</p>
+<p>在JVM运行时区域的方法区中，有一块区域是运行时常量池，主要用来存储编译期生成的各种字面量和符号引用。</p>
+<p>了解过JVM就会知道，在java代码被javac编译之后，文件结构中是包含一部分<code>Constant pool</code>的。比如以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    String s = <span class="string">"abc"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过编译后，常量池内容如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Constant pool:</span><br><span class="line">  #1 = Methodref          #4.#20         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #2 = String             #21            // abc</span><br><span class="line">  #3 = Class              #22            // StringDemo</span><br><span class="line">  #4 = Class              #23            // java/lang/Object</span><br><span class="line">  ...</span><br><span class="line">  #16 = Utf8               s</span><br><span class="line">  ..</span><br><span class="line">  #21 = Utf8               abc</span><br><span class="line">  #22 = Utf8               StringDemo</span><br><span class="line">  #23 = Utf8               java/lang/Object</span><br></pre></td></tr></table></figure>
+<p>上面的Class文件中的常量池中，比较重要的几个内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">#16 = Utf8               s</span><br><span class="line">#21 = Utf8               abc</span><br><span class="line">#22 = Utf8               StringDemo</span><br></pre></td></tr></table></figure>
+<p>上面几个常量中，<code>s</code>就是前面提到的符号引用，而<code>abc</code>就是前面提到的字面量。而Class文件中的常量池部分的内容，会在运行期被运行时常量池加载进去。</p>
+<h2>new String创建了几个对象</h2>
+<p>下面，我们可以来分析下<code>String s = new String(&quot;abc&quot;);</code>创建对象情况了。</p>
+<p>这段代码中，我们可以知道的是，在编译期，符号引用<code>s</code>和字面量<code>abc</code>会被加入到Class文件的常量池中。由于是<code>new</code>的方式，在类加载期间，先去常量池检查有没有 “abc”，如果没有，先在常量池创建一个 “abc” 对象。</p>
+<p>在运行期间，在堆中创建一个常量池中此 “abc” 对象的拷贝对象。</p>
+<h2>运行时常量池的动态扩展</h2>
+<p>编译期生成的各种字面量和符号引用是运行时常量池中比较重要的一部分来源，但是并不是全部。那么还有一种情况，可以在运行期像运行时常量池中增加常量。那就是String的<code>intern</code>方法。</p>
+<p>当一个String实例调用<code>intern()</code>方法时，JVM会查找常量池中是否有相同<code>Unicode</code>的字符串常量，如果有，则返回其的引用，如果没有，则在常量池中增加一个<code>Unicode</code>等于str的字符串并返回它的引用；</p>
+<p><code>intern()</code>有两个作用，第一个是将字符串字面量放入常量池（如果池没有的话），第二个是返回这个常量的引用。</p>
+<p>一个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">"hello world"</span>;</span><br><span class="line"></span><br><span class="line">String s2 = <span class="keyword">new</span> String(<span class="string">"hello world"</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"s==s1:"</span>+(s==s1));</span><br><span class="line"></span><br><span class="line">String s3 = <span class="keyword">new</span> String(<span class="string">"hello world"</span>).intern();</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">"s==s2:"</span>+(s==s2));</span><br></pre></td></tr></table></figure>
+<p>运行结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">s1==s2:false</span><br><span class="line">s2==s3:true</span><br></pre></td></tr></table></figure>
+<p>你可以简单的理解为<code>String s1 = &quot;hello world&quot;;</code>和<code>String s3 = new String(&quot;hello world&quot;).intern();</code>做的事情是一样的（但实际有些区别，这里暂不展开）。都是定义一个字符串对象，然后将其字符串字面量保存在常量池中，并把这个字面量的引用返回给定义好的对象引用。</p>
+<p>对于<code>String s3 = new String(&quot;hello world&quot;).intern();</code>，在不调<code>intern</code>情况，<code>s3</code>指向的是JVM在堆中创建的那个对象的引用的（如<code>s2</code>）。但是当执行了<code>intern</code>方法时，<code>s3</code>将指向字符串常量池中的那个字符串常量。</p>
+<p>由于<code>s1</code>和<code>s3</code>都是字符串常量池中的字面量的引用，所以<code>s1</code>==<code>s3</code>。但是，<code>s2</code>的引用是堆中的对象，所以<code>s2!=s1</code>。</p>
+<h2>intern的正确用法</h2>
+<p>不知道，你有没有发现，在<code>String s3 = new String(&quot;abc&quot;).intern();</code>中，其实<code>intern</code>是多余的？</p>
+<p>因为就算不用<code>intern</code>，“abc&quot;作为一个字面量也会被加载到Class文件的常量池”&quot;，进而加入到运行时常量池中，为啥还要多此一举呢？到底什么场景下才会用到<code>intern</code>呢?<br>
+在解释这个之前，我们先来看下以下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">"hello"</span>;</span><br><span class="line">String s2 = <span class="string">"world"</span>;</span><br><span class="line">String s3 = s1 + s2;</span><br><span class="line">String s4 = <span class="string">"hello"</span> + <span class="string">"world"</span>;</span><br></pre></td></tr></table></figure>
+<p>在经过反编译后，得到代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="string">"hello"</span>;</span><br><span class="line">String s2 = <span class="string">"world"</span>;</span><br><span class="line">String s3 = (<span class="keyword">new</span> StringBuilder()).append(s1).append(s2).toString();</span><br><span class="line">String s4 = <span class="string">"helloworld"</span>;</span><br></pre></td></tr></table></figure>
+<p>这就是阿里巴巴文档里为什么规定循环拼接字符串不准使用&quot;+&quot;而必须使用<code>StringBuilder</code>，因为反编译出的字节码文件显示每次循环都会 <code>new</code> 出一个 <code>StringBuilder</code> 对象，然后进行<code>append</code> 操作，最后通过 <code>toString</code> 方法返回 <code>String</code> 对象，造成内存资源浪费。</p>
+<p>不恰当的方式形如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">"start"</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">    str = str + <span class="string">"hello"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>好了，言归正传，可以发现，同样是字符串拼接，<code>s3</code>和<code>s4</code>在经过编译器编译后的实现方式并不一样。<code>s3</code>被转化成<code>StringBuilder</code>及<code>append</code>，而<code>s4</code>被直接拼接成新的字符串。</p>
+<p>如果你感兴趣，你还能发现，<code>String s4 = s1 + s2;</code> 经过编译之后，常量池中是有两个字符串常量的分别是 <code>hello</code>、<code>world</code>（其实<code>hello</code>和<code>world</code>是<code>String s1 = &quot;hello&quot;;</code>和<code>String s2 = &quot;world&quot;;</code>定义出来的），拼接结果<code>helloworld</code>并不在常量池中。</p>
+<p>如果代码只有<code>String s4 = &quot;hello&quot; + &quot;world&quot;;</code>，那么常量池中将只有<code>helloworld</code>而没有<code>hello</code>和 <code>world</code>。</p>
+<p><strong>究其原因，是因为常量池要保存的是已确定的字面量值</strong>。也就是说，对于字符串的拼接，纯字面量和字面量的拼接，会把拼接结果作为常量保存到字符串。</p>
+<p>如果在字符串拼接中，有一个参数是非字面量，而是一个变量的话，整个拼接操作会被编译成<code>StringBuilder.append</code>，这种情况编译器是无法知道其确定值的。只有在运行期才能确定。</p>
+<p>那么，有了这个特性了，<code>intern</code>就有用武之地了。<strong>那就是很多时候，我们在程序中用到的字符串是只有在运行期才能确定的，在编译期是无法确定的，那么也就没办法在编译期被加入到常量池中</strong>。</p>
+<p>这时候，对于那种可能经常使用的字符串，使用<code>intern</code>进行定义，每次JVM运行到这段代码的时候，就会直接把常量池中该字面值的引用返回，这样就可以减少大量字符串对象的创建了。</p>
+<h2>总结</h2>
+<h6>第一种情况：</h6>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String str1 = <span class="string">"abc"</span>; </span><br><span class="line">System.out.println(str1 == <span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>栈中开辟一块空间存放引用str1；</li>
+<li>String池中开辟一块空间，存放String常量&quot;abc&quot;；</li>
+<li>引用str1指向池中String常量&quot;abc&quot;；</li>
+<li>str1所指代的地址即常量&quot;abc&quot;所在地址，输出为true</li>
+</ul>
+<h6>第二种情况：</h6>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String str2 = <span class="keyword">new</span> String(<span class="string">"abc"</span>); </span><br><span class="line">System.out.println(str2 == <span class="string">"abc"</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>栈中开辟一块空间存放引用str2；</li>
+<li>堆中开辟一块空间存放一个新建的String对象&quot;abc&quot;；</li>
+<li>引用str2指向堆中的新建的String对象&quot;abc&quot;；</li>
+<li>str2所指代的对象地址为堆中地址，而常量&quot;abc&quot;地址在池中，输出为false；</li>
+</ul>
+<h6>第三、四种情况</h6>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//（3）</span></span><br><span class="line">String str1 = <span class="string">"a"</span>；</span><br><span class="line">String str2 = <span class="string">"b"</span>；</span><br><span class="line">String str3 = str1 + <span class="string">"b"</span>；</span><br><span class="line"><span class="comment">//str1 和 str2 是字符串常量，所以在编译期就确定了。</span></span><br><span class="line"><span class="comment">//str3 中有个 str1 是引用，所以不会在编译期确定。</span></span><br><span class="line"><span class="comment">//又因为String是 final 类型的，所以在 str1 + "b" 的时候实际上是创建了一个新的对象，在把新对象的引用传给str3。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//（4）</span></span><br><span class="line"><span class="keyword">final</span> String str1 = <span class="string">"a"</span>；</span><br><span class="line">String str2 = <span class="string">"b"</span>；</span><br><span class="line">String str3 = str1 + <span class="string">"b"</span>；</span><br><span class="line"><span class="comment">//这里和(3)的不同就是给 str1 加上了一个final，这样str1就变成了一个常量。</span></span><br><span class="line"><span class="comment">//这样 str3 就可以在编译期中就确定了</span></span><br></pre></td></tr></table></figure>
+<p>这里的细节在上面已经详细说明了。</p>
+<h6>第五种情况</h6>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str1 = <span class="string">"ab"</span>；</span><br><span class="line">String str2 = <span class="keyword">new</span> String(<span class="string">"ab"</span>);</span><br><span class="line">System.out.println(str1== str2);<span class="comment">//false</span></span><br><span class="line">System.out.println(str2.intern() == str1);<span class="comment">//true</span></span><br></pre></td></tr></table></figure>
+<p>整理自：</p>
+<ul>
+<li><a href="https://mp.weixin.qq.com/s?__biz=MzI4OTA3NDQ0Nw==&amp;mid=2455545837&amp;idx=1&amp;sn=5dde0e68c22e1827cc7422d1af39a2de&amp;chksm=fb9cbb8dcceb329b88dc91fe4c6a9d6535752cdd1191092d93da665b051f16c06bc9e0e2e508&amp;mpshare=1&amp;scene=24&amp;srcid=0121duABpN7IHaUl1JxPtp66&amp;ascene=14&amp;devicetype=android-26&amp;version=2700003b&amp;nettype=WIFI&amp;abtest_cookie=BgABAAgACgALABIAEwAUAAcAnoYeACaXHgBXmR4Am5keAJ2ZHgC3mR4A0pkeAAAA&amp;lang=zh_CN&amp;pass_ticket=UZ59UG%2Bqu2i5egH9vmxuu5prus%2FoCSM%2B4QOgzET8cSVcTyIG%2BDpQQbT5Prwgm96v&amp;wx_header=1" target="_blank" rel="noopener">我终于搞清楚了和String有关的那点事儿</a></li>
+<li><a href="https://www.jianshu.com/p/2624036c9daa" target="_blank" rel="noopener">https://www.jianshu.com/p/2624036c9daa</a></li>
+</ul>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/24/java-basic/JAVA基础核心-理解类、对象、面向对象编程、面向接口编程/" class="prev">PRVE</a><a href="/2019/01/23/java-basic/java字符串/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Wed Jan 23 2019 20:21:15 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> JAVA内存模型-线程私有 · fossi</title><meta name="description" content="JAVA内存模型-线程私有 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">JAVA内存模型-线程私有</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>本篇为学习JAVA虚拟机的第五篇文章，JVM的内存模型一般是面试必问的点，因为对JVM内存模型有所了解，才会有可能知道调优手段。本篇文章首先介绍线程私有的一些区域。</p>
+<a id="more"></a>
+<h2>一、从整体看JVM运行时内存模型</h2>
+<p><img src="http://bloghello.oursnail.cn/jvm5-1.png" alt="image"></p>
+<p>下面详细说说各个部分的作用。</p>
+<h2>二、内存模型–程序计数器</h2>
+<ul>
+<li>
+<p><strong>占用内存小</strong>：是一块较小的内存空间，当前线程所执行的字节码的行号指示器。</p>
+</li>
+<li>
+<p><strong>PC作用</strong>：字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</p>
+</li>
+<li>
+<p><strong>线程独立</strong>：为了线程切换后能恢复到正确的执行位置，每条线程都需要有一个独立的程序计数器，各条线程之间计数器互不影响，独立存储，我们成这类内存区域为“线程私有”的内存。</p>
+</li>
+<li>
+<p><strong>native方法</strong>：如果线程正在执行的是一个java方法，这个计数器记录的是正在执行的虚拟机字节码指令的地址；如果正在执行的是Native方法，这个计数器值则为空(undefined).</p>
+</li>
+<li>
+<p><strong>无内存溢出异常</strong>：此内存区域是唯一一个在java虚拟机规范中没有规定任何<code>OutOfMemoryError</code>情况的区域。</p>
+</li>
+</ul>
+<h2>三、内存模型–JAVA虚拟机栈</h2>
+<p><img src="http://bloghello.oursnail.cn/jvm5-2.png" alt="image"></p>
+<ul>
+<li>
+<p>线程私有，生命周期与线程相同。</p>
+</li>
+<li>
+<p>虚拟机栈描述的是Java方法的内存模型：每个方法在执行的同时都会创建一个栈帧用于存储局部变量表、操作数栈、动态链接、方法出口等信息。每个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机中入栈到出栈的过程。</p>
+</li>
+</ul>
+<h2>四、栈帧</h2>
+<p><img src="http://bloghello.oursnail.cn/jvm5-3.png" alt="image"></p>
+<ul>
+<li>
+<p>我们口中常常提到的栈与堆，其中栈就是现在讲的虚拟机栈，或者说是虚拟机栈中局部变量表部分。</p>
+</li>
+<li>
+<p>局部变量表存放了编译期可知的各种基本数据类型(<code>boolean</code>,<code>byte</code>,<code>char</code>,<code>short</code>,<code>int</code>,<code>float</code>,<code>long</code>,<code>double</code>),对象引用(它不等同于对象本身，可能是一个指向对象地址的引用指针，也可能是指向一个代表对象的句柄或其他与此对象相关的位置)、<code>returnAddress</code>类型(指向了一条字节码指令的地址)</p>
+</li>
+<li>
+<p>其中64位长度的<code>long</code>和<code>double</code>类型的数据会占用2个局部变量空间，其余的数据类型只占用1个。</p>
+</li>
+<li>
+<p>局部变量表所需的内存空间在编译期完成分配，当进入一个方法时，这个方法需要在帧中分配多大的局部变量空间是完全确定的，在方法运行期间不会改变局部变量表的大小。</p>
+</li>
+<li>
+<p>如果线程请求的栈深度大于虚拟机所允许的深度，比如递归层数过多，将抛出<code>StackOverflowError</code>异常；如果虚拟机可以动态扩展，即虚拟机栈申请过多，扩展时却无法申请到足够的内存，就会抛出<code>OutOfMemoryError</code>异常。</p>
+</li>
+</ul>
+<h2>五、内存模型–本地方法栈</h2>
+<ul>
+<li>
+<p>本地方法栈与虚拟机栈所发挥的作用是非常相似的，他们之间的区别不过是虚拟机栈尾虚拟机执行java方法(也就是字节码)服务，而本地方法栈则为虚拟机用到的Native方法服务。</p>
+</li>
+<li>
+<p><code>Sun HotSpot</code>虚拟机直接将本地方法栈和虚拟机栈合二为一。</p>
+</li>
+<li>
+<p>与虚拟机栈一样会抛出<code>StackOverflowError</code>异常或者<code>OutOfMemoryError</code>异常。</p>
+</li>
+</ul>
+<p><strong>什么是native方法？</strong></p>
+<p>简单地讲，一个<code>Native Method</code>就是一个java调用非java代码的接口。一个<code>Native Method</code>是这样一个java的方法：该方法的实现由非java语言实现，比如C。这个特征并非java所特有，很多其它的编程语言都有这一机制，比如在<code>C＋＋</code>中，你可以用<code>extern “C”</code>告知<code>C＋＋</code>编译器去调用一个C的函数。</p>
+<p>下一篇来看看线程共享的区域。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/JAVA内存模型-线程共享/" class="prev">PRVE</a><a href="/2019/02/05/JVM/细谈loadClass/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 05 2019 21:28:38 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

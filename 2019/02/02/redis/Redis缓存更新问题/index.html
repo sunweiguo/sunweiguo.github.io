@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> Redis缓存更新 · fossi</title><meta name="description" content="Redis缓存更新 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">Redis缓存更新</h1><div class="post-meta"><span class="post-time">Feb 2, 2019</span></div><div class="post-content"><p>本文为redis学习笔记的第十篇文章。redis缓存更新策略学习。</p>
+<a id="more"></a>
+<p>更新缓存的的<code>Design Pattern</code>有四种：<code>Cache aside</code>, <code>Read through</code>, <code>Write through</code>, <code>Write behind caching</code>，我们下面一一来看一下这四种<code>Pattern</code>。这里，我们先不讨论更新缓存和更新数据这两个事是一个事务的事，或是会有失败的可能，<strong>我们先假设更新数据库和更新缓存都可以成功的情况（我们先把成功的代码逻辑先写对）</strong>。</p>
+<p>先来看看缓存可能存在的一些问题，目的是突出缓存使用策略选择的重要性。</p>
+<h2>1.缓存穿透</h2>
+<p>缓存穿透是说访问一个缓存中没有的数据，但是这个数据数据库中也不存在。</p>
+<p>解决方案是：</p>
+<ul>
+<li>缓存空对象。如果缓存未命中，而数据库中也没有这个对象，则可以缓存一个空对象到缓存。如果使用<code>Redis</code>，这种<code>key</code>需设置一个较短的时间，以防内存浪费。</li>
+<li>缓存预测。预测<code>key</code>是否存在。如果缓存的量不大可以使用<code>hash</code>来判断，如果量大可以使用布隆过滤器来做判断。采用布隆，将所有可能存在的数据哈希到一个足够大的<code>BitSet</code>中，不存在的数据将会被拦截掉，从而避免了对存储系统的查询压力。</li>
+</ul>
+<h2>2.缓存并发</h2>
+<p>多个客户端同时访问一个没有在<code>cache</code>中的数据，这时每个客户端都会执行从<code>DB</code>加载数据<code>set</code>到缓存，就会造成缓存并发。</p>
+<ul>
+<li>缓存预热。提前把所有预期的热数据加到缓存。定位热数据还是比较复杂的事情，需要根据自己的服务访问情况去评估。这个方案只能减轻缓存并发的发生次数不能全部抵制。</li>
+<li>缓存加锁。 如果多个客户端访问不存在的缓存时，在执行加载数据并<code>set</code>缓存这个逻辑之前先加锁，只能让一个客户端执行这段逻辑。</li>
+</ul>
+<h2>3.缓存雪崩</h2>
+<p>缓存雪崩是缓存服务暂时不能提供服务，导致所有的请求都直接访问DB。</p>
+<p>解决方案：</p>
+<ul>
+<li>构建高可用的缓存系统。目前常用的缓存系统<code>Redis</code>和<code>Memcache</code>都支持高可用的部署方式，所以部署的时候不防先考虑是否要以高可用的集群方式部署。</li>
+<li>限流。<code>Netflix</code>的<code>Hystrix</code>是非常不错的工具，在用缓存时不妨搭配它来使用。</li>
+</ul>
+<h2>4.Cache Aside Pattern</h2>
+<p><strong>一种错误的做法是</strong>：先删除缓存，然后再更新数据库，而后续的操作会把数据再装载的缓存中。试想，两个并发操作，一个是更新操作，另一个是查询操作，更新操作删除缓存后，查询操作没有命中缓存，先把老数据读出来后放到缓存中，然后更新操作更新了数据库。于是，在缓存中的数据还是老的数据，导致缓存中的数据是脏的，直到这个缓存失效为止。</p>
+<p><code>Cache Aside Pattern</code>是最常用最常用的<code>pattern</code>了。其具体逻辑如下：</p>
+<ul>
+<li>失效：应用程序先从<code>cache</code>取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。</li>
+<li>命中：应用程序从<code>cache</code>中取数据，取到后返回。</li>
+<li>更新：先把数据存到数据库中，成功后，再让缓存失效。</li>
+</ul>
+<p><strong>注意，我们的更新是先更新数据库，成功后，让缓存失效</strong>。那么，这种方式是否可以没有文章前面提到过的那个问题呢？</p>
+<p>一个是查询操作，一个是更新操作的并发，首先，没有了删除<code>cache</code>数据的操作了，而是先更新了数据库中的数据，此时，缓存依然有效，所以，并发的查询操作拿的是没有更新的数据，但是，更新操作马上让缓存的失效了，后续的查询操作再把数据从数据库中拉出来。<strong>而不会像文章开头的那个逻辑产生的问题，后续的查询操作一直都在取老的数据</strong>。</p>
+<p><strong>但还是存在问题的</strong>。比如，一个是读操作，但是没有命中缓存，然后就到数据库中取数据，此时来了一个写操作，写完数据库后，让缓存失效，然后，之前的那个读操作再把老的数据放进去，所以，会造成脏数据。不过，实际上出现的概率可能非常低.</p>
+<p>所以，这也就是<code>Quora</code>上的那个答案里说的，要么通过<code>2PC</code>或是<code>Paxos</code>协议保证一致性，要么就是拼命的降低并发时脏数据的概率，而<code>Facebook</code>使用了这个降低概率的玩法，因为<code>2PC</code>太慢，而<code>Paxos</code>太复杂。当然，最好还是为缓存设置上过期时间。</p>
+<h2>5.Read/Write Through Pattern</h2>
+<ul>
+<li><code>Read Through</code>：读取数据的时候如果当前缓存中没有数据，惯常的操作都是应用程序去<code>DB</code>加载数据，然后加入到缓存中。<code>Read Through</code>与之不同的是我们不需要在应用程序自己加载数据了，缓存层会帮忙做件事。</li>
+<li><code>Write Through</code>：更新数据的时候，如果命中缓存，则先更新缓存然后缓存在负责把数据更新到数据库；如果没有命中缓存则直接更新数据库。</li>
+</ul>
+<p>这种方式缓存层直接屏蔽了DB，应用程序只需要更缓存打交道。优点是应用逻辑简单了，而且更高效了；缺点是缓存层的实现相对复杂一些。</p>
+<h2>6.Write Back Pattern</h2>
+<p><code>Write Back</code>套路，一句说就是，在更新数据的时候，只更新缓存，不更新数据库，而我们的缓存会异步地批量更新数据库。这个设计的好处就是让数据的<code>I/O</code>操作飞快无比（因为直接操作内存嘛 ），因为异步，<code>write backg</code>还可以合并对同一个数据的多次操作，所以性能的提高是相当可观的。</p>
+<p>但是，其带来的问题是，数据不是强一致性的，而且可能会丢失（我们知道<code>Unix/Linux</code>非正常关机会导致数据丢失，就是因为这个事）。在软件设计上，我们基本上不可能做出一个没有缺陷的设计，就像算法设计中的时间换空间，空间换时间一个道理，有时候，强一致性和高性能，高可用和高性性是有冲突的。</p>
+<p>另外，<code>Write Back</code>实现逻辑比较复杂，因为他需要<code>track</code>有哪数据是被更新了的，需要刷到持久层上。操作系统的<code>write back</code>会在仅当这个<code>cache</code>需要失效的时候，才会被真正持久起来，比如，内存不够了，或是进程退出了等情况，这又叫<code>lazy write</code>。</p>
+<h2>7.实际使用的一些策略</h2>
+<h4>业务方（调用者）更新</h4>
+<p>传统上，更新缓存都是由业务方来做，也就是由调用者负责更新DB和缓存。</p>
+<h4>DB中间件监听DB变化，更新缓存</h4>
+<p>现在有种新的办法就是利用<code>DB</code>中间件监听<code>DB</code>变化（比如阿里的<code>Canal</code>中间件，点评的<code>Puma</code>），从而对缓存进行更新。<br>
+这种办法的一个好处就是：把缓存的更新逻辑，和业务逻辑解藕。业务只更新DB，缓存的更新被放在另外一个专门的系统里面。</p>
+<h2>8.总结</h2>
+<p>一句话，无论谁先谁后，只要更新缓存和更新DB不是原子的，就可能导致不一致。</p>
+<p>总之，只是从实际业务来讲，一般缓存也都是保持“最终一致性“，而不是和<code>DB</code>的强一致性。</p>
+<p><strong>并且一般建议先更新DB，再更新缓存，优先保证DB数据正确。</strong></p>
+<h2>9.一致性问题</h2>
+<p>上面，我们没有考虑缓存（<code>Cache</code>）和持久层（<code>Repository</code>）的整体事务的问题。比如，更新<code>Cache</code>成功，更新数据库失败了怎么吗？或是反过来。关于这个事，如果你需要强一致性，你需要使用“两阶段提交协议”——<code>prepare</code>, <code>commit/rollback</code>.后续再探讨。</p>
+<ul>
+<li>参考1：<a href="https://coolshell.cn/articles/17416.html" target="_blank" rel="noopener">https://coolshell.cn/articles/17416.html</a></li>
+<li>参考2：<a href="https://www.jianshu.com/p/3c111e4719b8" target="_blank" rel="noopener">https://www.jianshu.com/p/3c111e4719b8</a></li>
+<li>参考3：<a href="https://blog.csdn.net/chunlongyu/article/details/53384933" target="_blank" rel="noopener">缓存更新策略/缓存穿透/缓存雪崩</a></li>
+</ul>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/02/redis/Redis事务/" class="prev">PRVE</a><a href="/2019/02/01/redis/缓存设计与优化/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 02 2019 16:20:25 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 基础算法14-二叉搜索树 · fossi</title><meta name="description" content="基础算法14-二叉搜索树 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">基础算法14-二叉搜索树</h1><div class="post-meta"><span class="post-time">Mar 4, 2019</span></div><div class="post-content"><p>本文比较轻松简单，就是动态生成一个二叉搜索而已。</p>
+<a id="more"></a>
+<h2>动态构建二叉搜索树</h2>
+<p>首先明确二叉搜索树基本性质，就是根节点的值一定比左孩子的值要大，一定比右孩子的值要小。(为了简单起见，假定元素都是不重复的)</p>
+<p>如何动态生成一颗二叉搜索树呢？思路其实是很简单的，就是判断与根节点的左孩子和右孩子分别比较大小，一直到末梢就可以插入元素了。</p>
+<p>先准备一个<code>TreeNode</code>：</p>
+<p><img src="http://bloghello.oursnail.cn/suanfa14-1.png" alt="image"></p>
+<p>下面就是对节点进行操作了：</p>
+<p><img src="http://bloghello.oursnail.cn/suanfa14-2.png" alt="image"></p>
+<p>我们来进行前序遍历和中序遍历以及后序遍历看看生成的二叉搜索树是否正确：</p>
+<p><img src="http://bloghello.oursnail.cn/suanfa14-3.png" alt="image"></p>
+<p>运行结果为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">前序遍历为：  6 3 2 1 5 8 7 </span><br><span class="line">中序遍历为：  1 2 3 5 6 7 8 </span><br><span class="line">后序遍历为：  1 2 5 3 7 8 6</span><br></pre></td></tr></table></figure>
+<p>经过验证发现完全是正确的。并且我们发现，中序遍历后是一个有序的序列，说明二叉搜索树中序遍历之后有序。</p>
+<p>二叉树天生递归，关于它的很多题目用递归就可以解决，后序会有一个单独的文章专门来刷关于二叉树的题目。这里先不赘述了。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/05/剑指offer/【面试题1-二维数组中的查找】/" class="prev">PRVE</a><a href="/2019/03/04/algorithms-basic/基础算法13-动态规划入门/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Mon Mar 04 2019 21:55:21 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

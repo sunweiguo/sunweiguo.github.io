@@ -1,0 +1,87 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 双亲委派模型 · fossi</title><meta name="description" content="双亲委派模型 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/archives" target="_self" class="nav-list-link">归档</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">双亲委派模型</h1><div class="post-meta"><span class="post-time">Feb 5, 2019</span></div><div class="post-content"><p>本篇为学习JAVA虚拟机的第三篇文章，谈到JVM类加载机制，双亲委派模型是绕不开的话题，名字看好像是个高大上、深不可测的玩意，其实逐步揭开面纱之后很简单。下面我们就来揭揭看。</p>
+<a id="more"></a>
+<h2>回顾类加载器</h2>
+<p>上一节简单说明了类加载器的作用，只说到一个核心功能是加载class文件。但是，绝对没有这么简单，神书《深入理解Java虚拟机》第二版对类加载器的说明：</p>
+<blockquote>
+<p>代码编译的结果从本地机器码转变成字节码，是存储格式的一小步，却是编程语言发展的一大步。</p>
+<p>Java虚拟机把描述类的数据从Class文件加载进内存，并对数据进行校验，转换解析和初始化，最终形成可以被虚拟机直接使用的Java类型，这就是虚拟机的类加载机制。</p>
+<p>虚拟机设计团队把类加载阶段中的“通过一个类的全限定名来获取描述此类的二进制字节流”这个动作放到Java虚拟机外部去实现，以便让应用程序自己决定如何去获取所需要的类。实现这动作的代码模块成为“类加载器”。</p>
+<p>类加载器虽然只用于实现类的加载动作，但它在Java程序中起到的作用却远远不限于类加载阶段。对于任意一个类，都需要由加载他的类加载器和这个类本身一同确立其在Java虚拟机中的唯一性，每一个类加载器，都拥有一个独立的类命名空间。这句话可以表达的更通俗一些：比较两个类是否“相等”，只有在这两个类是由同一个类加载器加载的前提下才有意义，否则，即使这两个类来自同一个Class文件，被同一个虚拟机加载，只要加载他们的类加载器不同，那这个两个类就必定不相等。</p>
+</blockquote>
+<p>对于上面进行一些说明：</p>
+<p>注意，加载之后要将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构（方法区就是用来存放已被加载的类信息，常量，静态变量，编译后的代码的运行时内存区域）</p>
+<p>在内存中生成一个代表这个类的<code>java.lang.Class</code>对象，作为方法区这个类的各种数据的访问入口。这个<code>Class</code>对象并没有规定是在<code>Java</code>堆内存中，它比较特殊，虽为对象，但存放在方法区中。</p>
+<p>这样，就可以使用这个类了。</p>
+<p>还有，关于相等，只有在满足如下三个类“相等”判定条件，才能判定两个类相等。</p>
+<ul>
+<li>两个类来自同一个Class文件</li>
+<li>两个类是由同一个虚拟机加载</li>
+<li>两个类是由同一个类加载器加载</li>
+</ul>
+<h2>什么是双亲委派模型</h2>
+<p>我们上一节已经知道了有四种类加载器，它们的实际关系为：</p>
+<p><img src="http://bloghello.oursnail.cn/jvm3-1.png" alt="image"></p>
+<p>从这个图来看，是一个继承的关系，是这样吗？我们用代码来看看是不是真的是这样。</p>
+<p>代码还是用上一篇文章自定义类加载器来测试：</p>
+<p><img src="http://bloghello.oursnail.cn/jvm3-3.png" alt="image"></p>
+<p>结果是：</p>
+<p><img src="http://bloghello.oursnail.cn/jvm3-4.png" alt="image"></p>
+<p>从这个结果就很容易看出，层级关系是与上图所述的一样。那么，这个层级关系其实就是我们下面要说的双亲委派模型的结构。</p>
+<p>这里还想补充一点：就是为什么最后一个是null，即<code>bootstrap</code>为什么显示null，其实是因为它是用C++实现的，不是java语言实现的，所以与其他几个都有区别，这里根据就调用不到，所以显示null。如果非要看<code>bootstrap</code>里面大概如何实现的，需要去看看<code>opjdk</code>的代码。</p>
+<p>结合代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">protected</span> Class&lt;?&gt; loadClass(String name, <span class="keyword">boolean</span> resolve)</span><br><span class="line">    <span class="keyword">throws</span> ClassNotFoundException</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//1.加锁</span></span><br><span class="line">    <span class="keyword">synchronized</span> (getClassLoadingLock(name)) &#123;</span><br><span class="line">        <span class="comment">//2.首先看看当前类加载器是否已经加载过，没有则委派给父亲查询</span></span><br><span class="line">        Class&lt;?&gt; c = findLoadedClass(name);</span><br><span class="line">        <span class="comment">//3.如果当前类加载器没有加载过，进来</span></span><br><span class="line">        <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">long</span> t0 = System.nanoTime();</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">//4.看是否有父类加载器，有则进来</span></span><br><span class="line">                <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//5.父类加载器看看是否已经加载过</span></span><br><span class="line">                    <span class="comment">//注意，这里是各递归函数，如果由下至上查询都没有加载过，则从上至下尝试去加载</span></span><br><span class="line">                    c = parent.loadClass(name, <span class="keyword">false</span>);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">//进到这个，是来看看bootstrap类加载器是否加载过，没有加载过则加载</span></span><br><span class="line">                    c = findBootstrapClassOrNull(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (ClassNotFoundException e) &#123;</span><br><span class="line">                <span class="comment">// ClassNotFoundException thrown if class not found</span></span><br><span class="line">                <span class="comment">// from the non-null parent class loader</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//6.如果所有类加载器都没有加载过，则开始尝试从上而下逐级去加载</span></span><br><span class="line">            <span class="keyword">if</span> (c == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="comment">// If still not found, then invoke findClass in order</span></span><br><span class="line">                <span class="comment">// to find the class.</span></span><br><span class="line">                <span class="keyword">long</span> t1 = System.nanoTime();</span><br><span class="line">                <span class="comment">//去加载</span></span><br><span class="line">                c = findClass(name);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// this is the defining class loader; record the stats</span></span><br><span class="line">                sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);</span><br><span class="line">                sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);</span><br><span class="line">                sun.misc.PerfCounter.getFindClasses().increment();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//一开始是false</span></span><br><span class="line">        <span class="keyword">if</span> (resolve) &#123;</span><br><span class="line">            resolveClass(c);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实很简单，就是先一级一级往上查询是否已经加载过，加载过直接返回即可；一直查询到<code>bootstrap</code>类加载器，都没有加载过，那么就从<code>bootstrap</code>类加载器开始一级一级向下到他们的扫描范围内尝试加载这个class文件，知道自定义类加载(如果有的话)，没有则返回找不到。</p>
+<p>说一下代码的实现思路。代码使用递归实现的，先一级一级找父亲，即一级一级向上入栈，某一个查到了就返回，每一层递归停留在<code>c = parent.loadClass(name, false);</code>；都查不到，再一级一级出栈去执行，那么就从<code>c = findBootstrapClassOrNull(name);</code>后面的代码继续执行，那么显然就是执行<code>if (c == null) {...}</code>尝试去加载。</p>
+<h2>为什么要用双亲委派模型</h2>
+<p>为什么需要双亲委派模型呢？假设没有双亲委派模型，试想一个场景：</p>
+<blockquote>
+<p>黑客自定义一个java.lang.String类，该String类具有系统的String类一样的功能，只<br>
+是在某个函数稍作修改。比如equals函数，这个函数经常使用，如果在这这个函数中，<br>
+黑客加入一些“病毒代码”。并且通过自定义类加载器加入到JVM中。此时，如果没有双亲<br>
+委派模型，那么JVM就可能误以为黑客自定义的java.lang.String类是系统的String类，<br>
+导致“病毒代码”被执行。</p>
+</blockquote>
+<p>而有了双亲委派模型，黑客自定义的<code>java.lang.String</code>类永远都不会被加载进内存。因为首先是最顶端的类加载器加载系统的<code>java.lang.String</code>类，最终自定义的类加载器无法加载<code>java.lang.String</code>类。</p>
+<p>或许你会想，我在自定义的类加载器里面强制加载自定义的<code>java.lang.String</code>类，不去通过调用父加载器不就好了吗?确实，这样是可行。但是，在JVM中，判断一个对象是否是某个类型时，如果该对象的实际类型与待比较的类型的类加载器不同，那么会返回<code>false</code>。</p>
+<p>举个简单例子：</p>
+<blockquote>
+<p>ClassLoader1、ClassLoader2都加载java.lang.String类，对应Class1、Class2对象。<br>
+那么Class1对象不属于ClassLoad2对象加载的java.lang.String类型。</p>
+</blockquote>
+<p>委托机制的意义：防止内存中出现多份同样的字节码</p>
+<p>比如两个类A和类B都要加载<code>System</code>类：</p>
+<p>如果不用委托而是自己加载自己的，那么类A就会加载一份<code>System</code>字节码，然后类B又会加载一份<code>System</code>字节码，这样内存中就出现了两份<code>System</code>字节码。</p>
+<p>如果使用委托机制，会递归的向父类查找，也就是首选用<code>Bootstrap</code>尝试加载，如果找不到再向下。这里的<code>System</code>就能在<code>Bootstrap</code>中找到然后加载，如果此时类B也要加载<code>System</code>，也从<code>Bootstrap</code>开始，此时<code>Bootstrap</code>发现已经加载过了<code>System</code>那么直接返回内存中的<code>System</code>即可而不需要重新加载，这样内存中就只有一份<code>System</code>的字节码了。</p>
+<h2>一个面试题</h2>
+<p>能不能自己写个类叫<code>java.lang.System</code>？</p>
+<p>显然是不可以的，可能方案是自己搞一个这个类放在特殊目录，用自定义类加载器去加载，然而系统自身的类加载器会先去加载使用，下次再用的时候，是先逐级向上查询是否已经加载过，根本没有机会让自定义类加载器去加载。</p>
+<p>所以，如果非要用，那么必定是要破坏双亲委派模型了，那么又回到为什么要用双亲委派模型的问题上了，所以，为了自己写一个<code>java.lang.System</code>而破坏双亲委派模型，我只能说，脑子秀逗了。所以不要搞这些东西，包名或类名写的不一样即可。</p>
+<h2>一个问题</h2>
+<p>那么为什么不能用一个加载器去一个目录加载所有呢？还要分这么多的类加载器，不是麻烦么？</p>
+<p>其实，这个问题也是比较可笑的，毕竟每个层级的功能是不一样的，比如<code>bootstrap</code>是加载最核心的文件，没有它，都玩不起来。而自定义的呢？是比较特殊的需求，需要的时候才用到。对于这种有个性化的要求，一套代码来实现，显然是不合理的。</p>
+<p>比如这个回答是根据加载的方式来思考的：</p>
+<blockquote>
+<p>每一个类加载器都是为了去在不同的情景下去加载类。比如，你可以从联网服务器上加载一个class文件，也可以从远程web服务器下载二进制类。这么设计是因为我们需要类加载器提供一致的接口，这样客户端就可以加载类但是却不用管类加载器到底是怎么实现的。启动类加载器能够加载JVM_HOME/lib 下的类，但如果我们需要在其他的情况下加载类呢？简单来说，加载类的方法有无数种，我们需要一个灵活的加载器系统去在特定的情况下按照我们的想法来加载类。</p>
+</blockquote>
+<p>还有一个回答是说更方便地对特定类进行优化：</p>
+<blockquote>
+<p>虽然 对java 虚拟机没有研究过，java 为什么不能 一个加载器 加载全部的类<br>
+很明显， 实现起来也可以<br>
+但是需要 的 代码 更多，也更难 为各种类进行 优化，为了更简单的抽象<br>
+我在明确知道 该类是启动类的情况下，我就会 为该类 进行优化。<br>
+如果是自定义类，可能就 不会进行 此类优化。<br>
+在明确 目的的情况下， 专用代码 比 通用代码 更简单，也更有效。</p>
+</blockquote>
+<p>总之，就是为了清晰和方便，这也是我们在进行软件设计的时候最基本的要求，即不能写死代码，影响扩展性；层次结构也不能写的太乱，影响后续的优化。</p>
+<p>至此，双亲委派模型就讲完了。我们也清晰地知道了其设计思想和好处。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/05/JVM/细谈loadClass/" class="prev">PRVE</a><a href="/2019/02/05/JVM/浅谈ClassLoader/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 05 2019 16:18:14 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
