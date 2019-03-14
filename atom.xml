@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-14T09:15:57.788Z</updated>
+  <updated>2019-03-14T10:00:14.407Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题54-字符流中第一个不重复的字符】</title>
+    <link href="http://yoursite.com/2019/03/14/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9854-%E5%AD%97%E7%AC%A6%E6%B5%81%E4%B8%AD%E7%AC%AC%E4%B8%80%E4%B8%AA%E4%B8%8D%E9%87%8D%E5%A4%8D%E7%9A%84%E5%AD%97%E7%AC%A6%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/14/剑指offer/【面试题54-字符流中第一个不重复的字符】/</id>
+    <published>2019-03-14T09:59:51.334Z</published>
+    <updated>2019-03-14T10:00:14.407Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第五十四题。</p><a id="more"></a><h2>题目描述</h2><p>请实现一个函数用来找出字符流中第一个只出现一次的字符。例如，当从字符流中只读出前两个字符&quot;go&quot;时，第一个只出现一次的字符是&quot;g&quot;。当从该字符流中读出前六个字符“google&quot;时，第一个只出现一次的字符是&quot;l&quot;。</p><h2>解题思路</h2><p>常规的解法是用一个map来存储，这样空间复杂度为O(n)，然后每次都遍历map获取第一个不重复的字符，时间复杂度也为O(n)。下面显示i代码：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedHashMap;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">//用有序的Map：LinkedHashMap来存放char，并且记录其出现次数</span></span><br><span class="line">    Map&lt;Character,Integer&gt; map = <span class="keyword">new</span> LinkedHashMap&lt;Character,Integer&gt;();</span><br><span class="line">    <span class="comment">//Insert one char from stringstream</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Insert</span><span class="params">(<span class="keyword">char</span> ch)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(!map.containsKey(ch))&#123;</span><br><span class="line">            map.put(ch,<span class="number">1</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            map.put(ch,map.get(ch)+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">//return the first appearence once char in current stringstream</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">char</span> <span class="title">FirstAppearingOnce</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">char</span> ch:map.keySet())&#123;</span><br><span class="line">            <span class="keyword">int</span> count = map.get(ch);</span><br><span class="line">            <span class="comment">//目前第一个只出现一次的字符，返回</span></span><br><span class="line">            <span class="keyword">if</span>(count == <span class="number">1</span>)</span><br><span class="line">                <span class="keyword">return</span> ch;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'#'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这种很容易想到，但是能不能再优化一点呢？我们知道，ASCII码一共只有128个字符，那么我可以直接定义一个长度为128的数组，空间复杂度为O(n)，时间复杂度控制在常数级别，虽然我获取第一个只出现一次的元素需要一个while循环，但是这个循环不可能超过128，一般很快就可以拿到。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="comment">//英文字符不会逃出128个ascii码的范围，所以定义这个长度的数组</span></span><br><span class="line">    <span class="comment">//第一个ASCII码是一个空字符，所以我都是相对于` `进行一一排列</span></span><br><span class="line">    <span class="comment">//比如数字'0'是30，那'0'-''等于30，就存在tmp[30]这个地方即可</span></span><br><span class="line">    <span class="comment">//注意，tmp存的是出现的子树，即'0'出现了两次，那么tmp[30]就是2</span></span><br><span class="line">    <span class="keyword">int</span>[] tmp = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">128</span>];</span><br><span class="line">    <span class="comment">//维护一个队列，只保存一次进来的元素，重复的丢掉</span></span><br><span class="line">    LinkedList&lt;Character&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="comment">//Insert one char from stringstream</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Insert</span><span class="params">(<span class="keyword">char</span> ch)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//第一次进来的元素放进队列尾部</span></span><br><span class="line">        <span class="keyword">if</span>(tmp[ch-<span class="string">' '</span>] == <span class="number">0</span>)&#123;</span><br><span class="line">            queue.add(ch);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//进来一次，就对相应坐标加一，统计出出现次数</span></span><br><span class="line">        tmp[ch-<span class="string">' '</span>]++;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="comment">//return the first appearence once char in current stringstream</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">char</span> <span class="title">FirstAppearingOnce</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//取得时候是从队列得头部取，因为头部是比较早的数据</span></span><br><span class="line">        <span class="comment">//出现次数大于等于2的话就不断丢弃，知道找到第一个出现次数为1的字符跳出循环</span></span><br><span class="line">        <span class="keyword">while</span>(!queue.isEmpty() &amp;&amp; tmp[queue.getFirst()-<span class="string">' '</span>]&gt;=<span class="number">2</span>)&#123;</span><br><span class="line">            queue.removeFirst();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//拿到这个第一个只出现一次的字符</span></span><br><span class="line">        <span class="keyword">if</span>(!queue.isEmpty())&#123;</span><br><span class="line">            <span class="keyword">return</span> queue.getFirst();</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//拿不到了，说明没有只出现一次的字符，那么就返回#</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">'#'</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第五十四题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题53-表示数值的字符串】</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;本文来研究一下第三个重点：定位。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="前端基础" scheme="http://yoursite.com/tags/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CSS之浮动</title>
-    <link href="http://yoursite.com/2019/03/11/front/CSS%E4%B9%8B%E6%B5%AE%E5%8A%A8/"/>
-    <id>http://yoursite.com/2019/03/11/front/CSS之浮动/</id>
-    <published>2019-03-11T13:11:04.888Z</published>
-    <updated>2019-03-11T13:11:40.613Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文来研究一下第二个重点：浮动。</p><a id="more"></a><h2>浮动</h2><p><img src="http://bloghello.oursnail.cn/html7-1.png" alt="image"></p><p>那么我们如何让他变成一行呢？之前已经说过了，可以用<code>inline-block</code>来实现：</p><p><img src="http://bloghello.oursnail.cn/html7-2.png" alt="image"></p><p>但是我们发现，有该死的间隙存在。此时就需要用到我的浮动了。什么是浮动，顾名思义，就是浮在上面，下面来直观感受一下：</p><p><img src="http://bloghello.oursnail.cn/html7-3.png" alt="image"></p><p>我们会发现，一个加了浮动，一个没有加的话，那么这两个在排版的时候是互相不冲突的，也就是说，浮动的元素根本就不占用标准元素的空间，所以这两者重叠在了一起。浮动就像是飞机，而不是浮动的就是汽车，汽车与汽车之间是互斥的，但是汽车与飞机之间不互斥，下面我们再来解决上面存在间隙的问题，我们只需要将这两个元素全部置为向左浮动即可。</p><p><img src="http://bloghello.oursnail.cn/html7-4.png" alt="image"></p><p>那么既然已经是浮动的元素了，这个元素是属于谁的呢？也就是说，是属于整个body还是属于父元素的呢？如果是属于父元素的话，那么就非常好了，我可以调整好父元素的位置之后，里面的子元素采用浮动来置为一行。我们来测试一下。</p><p><img src="http://bloghello.oursnail.cn/html7-5.png" alt="image"></p><p>这说明确实是属于父元素的。</p><h2>一些问题</h2><p><img src="http://bloghello.oursnail.cn/html7-6.png" alt="image"></p><p>此时下面的<code>div</code>直接就将第一个<code>outer</code>给顶掉了，这不是我们想要的结果。结果方案有三种。</p><p><img src="http://bloghello.oursnail.cn/html7-7.png" alt="image"></p><p>可能有的时候需要用第三种，因为第一种方法有的时候父元素会隐藏掉多出来的子元素。有的时候我们不想隐藏，就需要用到这个方法。</p><p><img src="http://bloghello.oursnail.cn/html7-8.png" alt="image"></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文来研究一下第二个重点：浮动。&lt;/p&gt;
     
     </summary>
     
