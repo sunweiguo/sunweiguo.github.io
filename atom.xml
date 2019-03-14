@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-14T03:03:01.603Z</updated>
+  <updated>2019-03-14T04:31:24.989Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题52-正则表达式匹配】</title>
+    <link href="http://yoursite.com/2019/03/14/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9852-%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%8C%B9%E9%85%8D%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/14/剑指offer/【面试题52-正则表达式匹配】/</id>
+    <published>2019-03-14T04:30:45.546Z</published>
+    <updated>2019-03-14T04:31:24.989Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第五十二题。</p><a id="more"></a><h2>题目描述</h2><p>请实现一个函数用来匹配包括<code>.</code>和<code>*</code>的正则表达式。模式中的字符<code>.</code>表示任意一个字符，而<code>*</code>表示它前面的字符可以出现任意次（包含0次）。 在本题中，匹配是指字符串的所有字符匹配整个模式。例如，字符串<code>aaa</code>与模式<code>a.a</code>和<code>ab*ac*a</code>匹配，但是与<code>aa.a</code>和<code>ab*a</code>均不匹配</p><h2>解题思路</h2><p>这道题目实现起来很麻烦</p><p><strong>当模式中的第二个字符不是<code>*</code>时：</strong></p><p>这种情况比较简单：</p><p>①、<u>如果字符串第一个字符和模式中的第一个字符相匹配</u>，那么字符串和模式都后移一个字符，然后匹配剩余的。</p><p>②、<u>如果字符串第一个字符和模式中的第一个字符相不匹配</u>，直接返回<code>false</code>。</p><p><strong>而当模式中的第二个字符是<code>*</code>时：</strong></p><p>这种情况就比较复杂了：</p><p><u>如果字符串第一个字符跟模式第一个字符不匹配</u>，则模式后移2个字符，继续匹配，因为*是可以表示0个的。</p><p><u>如果字符串第一个字符跟模式第一个字符匹配</u>，因为*是比较特殊的，他可以表示0个，也可以表示1个，也可以表示多个，我们需要考虑所有的情况，就有3种匹配方式：</p><p>①、模式后移2字符，相当于x*被忽略，字符不后移；</p><p>②、字符串后移1字符，模式后移2字符；</p><p>③、字符串后移1字符，模式不变，即继续匹配字符下一位，因为*可以匹配多位；</p><p>对于.来说，表示任意一个字符，所以在进行上面的判断的时候，要额外判断一下是否有.这个情况，他可以与任意字符匹配的。</p><p>理顺了这个思路之后，下面就可以用代码来实线一波了。</p><h2>我的答案</h2><p>这一题给我的压力挺大的，虽然说思路可以理解，但是真正要写完整还是不容易的，我感觉这个程序<strong>可能</strong>还是存在一些问题的，但是牛客的案例比较少，所以可以通过。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">match</span><span class="params">(<span class="keyword">char</span>[] str, <span class="keyword">char</span>[] pattern)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (str == <span class="keyword">null</span> || pattern == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> strIndex = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">int</span> patternIndex = <span class="number">0</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> match(str,strIndex,pattern,patternIndex);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">match</span><span class="params">(<span class="keyword">char</span>[] str,<span class="keyword">int</span> strIndex,<span class="keyword">char</span>[] pattern,<span class="keyword">int</span> patternIndex)</span></span>&#123;</span><br><span class="line">        <span class="comment">//两者都走到最后了，说明匹配成功了</span></span><br><span class="line">        <span class="keyword">if</span>(strIndex == str.length &amp;&amp; patternIndex == pattern.length)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//模式走到最后但是字符串还没有，说明匹配失败了</span></span><br><span class="line">        <span class="keyword">if</span>(strIndex != str.length &amp;&amp; patternIndex == pattern.length)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//如果第二个字符是*</span></span><br><span class="line">        <span class="keyword">if</span>(patternIndex &lt; pattern.length-<span class="number">1</span> &amp;&amp; pattern[patternIndex+<span class="number">1</span>] == <span class="string">'*'</span>)&#123;</span><br><span class="line">            <span class="comment">//如果匹配，匹配分为直接字符匹配和.匹配两种</span></span><br><span class="line">            <span class="keyword">if</span>((strIndex != str.length &amp;&amp; str[strIndex] == pattern[patternIndex]) </span><br><span class="line">              || (strIndex != str.length &amp;&amp; pattern[patternIndex] == <span class="string">'.'</span>))&#123;</span><br><span class="line">                <span class="comment">//匹配了之后有三种选择的路，递归下去一直匹配到最后</span></span><br><span class="line">                <span class="keyword">return</span> match(str,strIndex,pattern,patternIndex+<span class="number">2</span>) ||</span><br><span class="line">                        match(str,strIndex+<span class="number">1</span>,pattern,patternIndex+<span class="number">2</span>) || </span><br><span class="line">                            match(str,strIndex+<span class="number">1</span>,pattern,patternIndex);</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//一开始跟*之前的字符就不匹配的话，就忽略这个*和*之前的字符，直接尝试匹配下个字符</span></span><br><span class="line">                <span class="keyword">return</span> match(str,strIndex,pattern,patternIndex+<span class="number">2</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//如果第二个字符不是*，并且匹配的话就都往后移动一格</span></span><br><span class="line">        <span class="keyword">if</span>((strIndex != str.length &amp;&amp; str[strIndex] == pattern[patternIndex]) </span><br><span class="line">              || (strIndex != str.length &amp;&amp; pattern[patternIndex] == <span class="string">'.'</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> match(str,strIndex+<span class="number">1</span>,pattern,patternIndex+<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第五十二题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题51-构建乘积数组】</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;盒子模型是比较基础但是比较重要的一点，本文来简单了解一下。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="前端基础" scheme="http://yoursite.com/tags/%E5%89%8D%E7%AB%AF%E5%9F%BA%E7%A1%80/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>CSS之图片</title>
-    <link href="http://yoursite.com/2019/03/11/front/CSS%E4%B9%8B%E5%9B%BE%E7%89%87/"/>
-    <id>http://yoursite.com/2019/03/11/front/CSS之图片/</id>
-    <published>2019-03-11T08:00:21.455Z</published>
-    <updated>2019-03-11T08:02:15.252Z</updated>
-    
-    <content type="html"><![CDATA[<p>本文来说一说图片相关的一些处理以及精灵图。</p><a id="more"></a><h2>图片</h2><p><img src="http://bloghello.oursnail.cn/html5-1.png" alt="image"></p><p>这就是简单放一张图片，但是我们发现，当图片比我们设定的div要小的时候，它会自动复制取铺满整个div。如果我们仅仅显示原来的图片，不要它铺开呢？</p><p><img src="http://bloghello.oursnail.cn/html5-2.png" alt="image"></p><p>这样就不会重复显示了，那我们能不能移动移动这个图片呢？</p><p><img src="http://bloghello.oursnail.cn/html5-3.png" alt="image"></p><p>注意，正数是让它往左往右移动。这个有什么用呢？这就要说一说精灵图了。</p><p>还可以用<code>background-repeat: repeat-x;</code>表示横向自动填充。</p><h2>精灵图</h2><p>什么是精灵图呢？</p><p>我们去腾讯游戏的官网看一下：</p><p><img src="http://bloghello.oursnail.cn/html5-4.png" alt="image"></p><p>我们注意到有很多的小图标，这些小图片特点是数量多，并且很小。为了减轻与服务器交互带来的不必要的开销，可以将这些小图标全部放在一张大图上，要用哪个图标通过上面说过的<code>background-position</code>来指定即可。</p><p><img src="http://bloghello.oursnail.cn/html5-5.png" alt="image"></p><p>比如我想只显示那个奖杯。</p><p><img src="http://bloghello.oursnail.cn/html5-6.png" alt="image"></p><p>慢慢移动到这个位置就可以了。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文来说一说图片相关的一些处理以及精灵图。&lt;/p&gt;
     
     </summary>
     
