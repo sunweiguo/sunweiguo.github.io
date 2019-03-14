@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-14T12:10:26.775Z</updated>
+  <updated>2019-03-14T12:44:37.359Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题56-删除链表中重复的结点】</title>
+    <link href="http://yoursite.com/2019/03/14/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9856-%E5%88%A0%E9%99%A4%E9%93%BE%E8%A1%A8%E4%B8%AD%E9%87%8D%E5%A4%8D%E7%9A%84%E7%BB%93%E7%82%B9%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/14/剑指offer/【面试题56-删除链表中重复的结点】/</id>
+    <published>2019-03-14T12:44:16.412Z</published>
+    <updated>2019-03-14T12:44:37.359Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第五十六题。</p><a id="more"></a><h2>题目描述</h2><p>在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针。 例如，链表1-&gt;2-&gt;3-&gt;3-&gt;4-&gt;4-&gt;5 处理后为 1-&gt;2-&gt;5</p><h2>解题思路</h2><p>我的解题思路就是新建一个头节点，因为最极端的情况是，全部都相等，不搞一个新结点处理起来会比较麻烦。当遇到当前结点<code>curr</code>等于下一个节点<code>curr.next</code>的时候，则保存<code>curr.val</code>为<code>val</code>，拿这个值不停地与<code>curr.next</code>的值比较，找出一串等于<code>curr.val</code>的结点（因为是排序的，所以相等的肯定聚集在一起），直到<code>curr.next.val != val</code>的值，此时<code>curr = curr.next</code>,<code>dummy.next = curr</code>即可，这一串等于<code>val</code>的值就全部删除掉了。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">deleteDuplication</span><span class="params">(ListNode pHead)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//新建一个结点,next指向pHead</span></span><br><span class="line">        ListNode dummy = <span class="keyword">new</span> ListNode(<span class="number">0</span>);</span><br><span class="line">        dummy.next = pHead;</span><br><span class="line">        <span class="comment">//新建一个指向pHead的指针</span></span><br><span class="line">        ListNode curr = pHead;</span><br><span class="line">        <span class="comment">//临时指针，保存dummy初始状态</span></span><br><span class="line">        ListNode newHead = dummy;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(pHead == <span class="keyword">null</span> || pHead.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> pHead;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span>(curr!=<span class="keyword">null</span> &amp;&amp; curr.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="comment">//当前结点的指不等于下一个结点的之，curr和dummy都往后移动一格</span></span><br><span class="line">            <span class="keyword">if</span>(curr.val != curr.next.val)&#123;</span><br><span class="line">                curr = curr.next;</span><br><span class="line">                dummy = dummy.next;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                <span class="comment">//等于记录当前值，不停地找下一个，直至不相等为止，这一段就可以直接去除掉了</span></span><br><span class="line">                <span class="keyword">int</span> val = curr.val;</span><br><span class="line">                <span class="keyword">while</span>(curr.next != <span class="keyword">null</span> &amp;&amp; val == curr.next.val)&#123;</span><br><span class="line">                    curr = curr.next;</span><br><span class="line">                &#125;</span><br><span class="line">                curr = curr.next;</span><br><span class="line">                dummy.next = curr;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> newHead.next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第五十六题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>03-软件设计七大原则-依赖倒置原则</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第四十三题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题42-和为S的两个数字】</title>
-    <link href="http://yoursite.com/2019/03/12/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9842-%E5%92%8C%E4%B8%BAS%E7%9A%84%E4%B8%A4%E4%B8%AA%E6%95%B0%E5%AD%97%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/12/剑指offer/【面试题42-和为S的两个数字】/</id>
-    <published>2019-03-12T04:15:59.338Z</published>
-    <updated>2019-03-12T04:16:21.820Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第四十二题。</p><a id="more"></a><h2>题目描述</h2><p>输入一个递增排序的数组和一个数字S，在数组中查找两个数，使得他们的和正好是S，如果有多对数字的和等于S，输出两个数的乘积最小的。</p><p>输出描述:</p><blockquote><p>对应每个测试案例，输出两个数，小的先输出。</p></blockquote><h2>解题思路</h2><p>满足递增，设两个头尾两个指针i和j，</p><p>若ai + aj == sum，就是答案（相差越远乘积越小）</p><p>若ai + aj &gt; sum，aj肯定不是答案之一（前面已得出 i 前面的数已是不可能），j -= 1</p><p>若ai + aj &lt; sum，ai肯定不是答案之一（前面已得出 j 后面的数已是不可能），i += 1</p><p>第一组符合条件的也是乘积最小的，数学可以证明，所以我们找到第一个即可。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ArrayList&lt;Integer&gt; <span class="title">FindNumbersWithSum</span><span class="params">(<span class="keyword">int</span> [] array,<span class="keyword">int</span> sum)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;Integer&gt; res = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">int</span> low = <span class="number">0</span>,high = array.length-<span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">while</span>(low &lt; high)&#123;</span><br><span class="line">            <span class="keyword">if</span>(array[low] + array[high] == sum)&#123;</span><br><span class="line">                res.add(array[low]);</span><br><span class="line">                res.add(array[high]);</span><br><span class="line">                <span class="keyword">return</span> res;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(array[low] + array[high] &gt; sum)&#123;</span><br><span class="line">                high--;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                low++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第四十二题。&lt;/p&gt;
     
     </summary>
     
