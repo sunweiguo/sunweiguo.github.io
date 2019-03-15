@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-15T07:26:21.175Z</updated>
+  <updated>2019-03-15T09:28:00.203Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>01-初识Hadoop</title>
+    <link href="http://yoursite.com/2019/03/15/hadoop/1.%E5%88%9D%E8%AF%86Hadoop/"/>
+    <id>http://yoursite.com/2019/03/15/hadoop/1.初识Hadoop/</id>
+    <published>2019-03-15T09:24:24.454Z</published>
+    <updated>2019-03-15T09:28:00.203Z</updated>
+    
+    <content type="html"><![CDATA[<p>关于大数据的学习终于开始了，对java后台开发比较熟悉的同学会发现，部分的组件比如zookeeper就是从Hadoop生态圈中诞生的，但是纵观hadoop的生态圈，大多数还是比较陌生，本节来说一说比较核心的组件，找到学习的入口。</p><a id="more"></a><h2>一、概述</h2><p>我们来到它的官网来看看Hadoop到底是什么。</p><p><img src="http://bloghello.oursnail.cn/hadoop1-1.png" alt="image"></p><p>大概就是说：Haadoop项目旨在发展可靠的、可扩展的、分布式计算的开源软件。允许用简单的变成跨越集群来分布式处理大数据集。可以从单体服务扩展到上千台机器，每个机器都可以提供本地计算和存储。相比于依赖硬件来保证高可用，Hadoop是在应用层监测和处理错误从而保证可靠性，允许单个机器出现故障。</p><p>可以看到，Hadoop旨在提供高可用、可扩展、分布式计算一种能力，是应对海量数据的存储以及处理的一个方案。</p><p>这个<code>Hadoop project</code>包含了几个核心的子模块：</p><ul><li>Hadoop Common: 为其他的模块提供基础支持。</li><li>Hadoop Distributed File System (HDFS™): 一个高吞吐量的分布式文件系统</li><li>Hadoop YARN: 一个作业调度和集群资源管理的框架</li><li>Hadoop MapReduce: 基于YARN实线的用于并行处理大数据集的系统</li></ul><h2>二、核心组件之HDFS</h2><ul><li>源自于谷歌的GFS论文，论文发表于2003年10月</li><li>HDFS是GFS的克隆版</li><li>HDFS特点：扩展性&amp;容错性&amp;海量数据存储</li></ul><p>HDFS是一种分布式文件系统，文件系统是什么，我们需要知道他的基本功能是：管理和调度文件的存储空间，提供文件的逻辑结构、物理结构和存储方法;实现文件从标识到实际地址的映射。也就是对文件进行管理和调度的。</p><p>海量的数据，我们需要良好的扩展性来存放，也需要容错性来防止数据丢失，因此HDFS是在文件系统基本要求的基础上，实现更可靠的存储。</p><p>这里简单说一下的它的容错性是如何做到的：将文件切分为指定带线啊哦的数据块并以多副本的方式存储在多个机器上，而数据切分、多副本、容错等操作对用户是透明的。</p><h2>三、核心组件之资源调度系统YARN</h2><ul><li>负责整个集群资源的管理和调度：比如有一个作业要提交上来执行，需要占用多少CPU，多少内存都是YARN来计算完成的。</li><li>具有扩展性&amp;容错性&amp;多框架资源统一调度</li></ul><p>这里注意，YARN可以为上层应用提供统一的资源管理和调度，是什么意思呢？</p><p><img src="http://bloghello.oursnail.cn/hadoop1-2.png" alt="image"></p><p>这张图从下面开始，<code>HDFS2</code>其实就是表示<code>hadoop2.x</code>，他是做存储的，往上看有一个<code>YARN</code>，他就是做集群的资源管理的（<code>cluster resource management</code>），再往上看，对于批处理我们可以用<code>mapreduce</code>这种执行引擎，对于交互式的我们可以使用<code>tez</code>，在线的我们可以使用<code>hbase</code>，流处理可以采用<code>storm</code>，图计算用<code>giraph</code>，内存式的计算我们可以使用<code>spark</code>。。。。。</p><p>有了<code>YARN</code>之后就可以执行不同类型的计算框架，我们可以把<code>YARN</code>理解为操作系统级别的资源调度框架，可以让更多的计算框架<code>mapreduce</code>，<code>spark</code>，<code>storm</code>等等都运行在同一个集群里面，而且不同的计算框架可以共享同一个<code>hdfs</code>上的数据，享受整体的资源调度。</p><h2>四、核心组件之分布式计算框架MapReduce</h2><p>也是根据谷歌的论文实线的。不再赘述。下面我们来看看它是如何简单地统计单词出现频率的：</p><p><img src="http://bloghello.oursnail.cn/hadoop1-3.png" alt="image"></p><p>这是比较经典的一个案例。</p><p>大概是分成下面几个环节：</p><ul><li>Map阶段<ul><li>主要完成<code>key-value</code>对生成，这里是每看到一个单词，就输出(单词，1)的kv对</li></ul></li><li>排序阶段<ul><li>对刚才的kv对进行排序，这样相同单词就在一块儿了</li></ul></li><li>Reduce阶段<ul><li>对同一个单词的次数进行汇总，得到(词，频次)对</li></ul></li></ul><p><img src="http://bloghello.oursnail.cn/hadoop1-4.png" alt="image"></p><h2>五、Hadoop优势</h2><ul><li>高可用性：<ul><li>数据存储：数据块多副本</li><li>数据计算：发生异常的时候会重新调度作业计算</li></ul></li><li>高扩展性<ul><li>可以横向增加机器</li></ul></li><li>其他<ul><li>可以存储在廉价机器上，降低成本</li><li>成熟的生态圈</li></ul></li></ul><h2>六、狭义Hadoop和广义Hadoop</h2><p>狭义上的Hadoop：是一个适合大数据分布式存储(HDFS)、分布式计算(MapReduce)和资源调度(YARN)的平台。</p><p>广义上的Hadoop：指的是Hadoop生态系统。我们要知道，完成一些任务仅靠上面几个是不够的，比如<code>MapReduce</code>只能做离线批处理，要想做实时计算时无法完成的，所以需要其他的软件来完成。Hadoop生态系统是一个很庞大的概念，Hadoop是其中最重要最基础的一个部分；生态系统中的每一个子系统只解决某一个特定的问题域，不搞统一型的一个全能系统，而实小而精的多个小系统。</p><h2>七、Hadoop生态圈介绍</h2><p><img src="http://bloghello.oursnail.cn/hadoop1-5.png" alt="image"></p><p>我们从图中可以大概知道每个组件的用途。下面我们来简单说一说。</p><p><code>HDFS</code>是<code>GFS</code>的一种实现，他的完整名字是分布式文件系统，类似于<code>FAT32</code>，<code>NTFS</code>，是一种文件格式，是底层的。</p><p><code>Hive</code>与<code>Hbase</code>的数据一般都存储在<code>HDFS</code>上。<code>hadoop HDFS</code>为他们提供了高可靠性的底层存储支持。</p><p><code>hive</code>不支持更改数据的操作，<code>Hive</code>基于数据仓库，提供静态数据的动态查询。其使用类SQL语言，底层经过编译转为<code>MapReduce</code>程序，在<code>Hadoop</code>上运行，数据存储在<code>HDFS</code>上。</p><p><code>Hbase</code>是<code>Hadoop database</code>，即<code>Hadoop</code>数据库。它是一个适合于非结构化数据存储的数据库，<code>HBase</code>基于列的而不是基于行的模式。</p><p><code>HBase</code>是<code>Google Bigtable</code>的开源实现，类似<code>Google Bigtable</code>利用<code>GFS</code>作为其文件存储系统，<code>HBase</code>利用<code>Hadoop HDFS</code>作为其文件存储系统；<code>Google</code>运行<code>MapReduce</code>来处理<code>Bigtable</code>中的海量数据，<code>HBase</code>同样利用<code>Hadoop MapReduce</code>来处理<code>HBase</code>中的海量数据。</p><p><code>Pig</code>的语言层包括一个叫做<code>PigLatin</code>的文本语言,<code>Pig Latin</code>是面向数据流的编程方式。<code>Pig</code>和<code>Hive</code>类似更侧重于数据的查询和分析，底层都是转化成<code>MapReduce</code>程序运行。</p><p><code>Pig</code>和<code>Hive</code>的区别是<code>Hive</code>是类SQL的查询语言，要求数据存储于表中，而Pig是面向数据流的一个程序语言。</p><p>总结：</p><p><code>Hadoop HDFS</code>为<code>HBase</code>提供了高可靠性的底层存储支持，<code>Hadoop MapReduce</code>为<code>HBase</code>提供了高性能的计算能力，<code>Zookeeper</code>为<code>HBase</code>提供了稳定服务和<code>failover</code>机制(<code>zookeeper</code> = 通知机制 + 文件系统)。<code>Pig</code>和<code>Hive</code>还为<code>HBase</code>提供了高层语言支持，使得在<code>HBase</code>上进行数据统计处理变的非常简单。</p><h2>八、选型</h2><ul><li>Apache Hadoop</li><li>CDH:Cloudera Distributed Hadoop</li><li>HDP:Hortonworks Data Platform</li></ul><p>优先选择CDH，比较全，解决了版本冲突问题。</p><h2>九、总结</h2><p>我们可以看到，Hadoop的生态圈是极其庞大的，每个组件都是小而精，是为了解决特定问题而产生的，因此需要具体情况具体分析选用什么组件，也需要对核心的组件原理和使用了如指掌，下面我们先逐个来学习一下狭义Hadoop核心组件，从HDFS开始。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;关于大数据的学习终于开始了，对java后台开发比较熟悉的同学会发现，部分的组件比如zookeeper就是从Hadoop生态圈中诞生的，但是纵观hadoop的生态圈，大多数还是比较陌生，本节来说一说比较核心的组件，找到学习的入口。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Hadoop" scheme="http://yoursite.com/tags/Hadoop/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题61-序列化二叉树】</title>
@@ -393,26 +413,6 @@
     
     
       <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Git基本原理</title>
-    <link href="http://yoursite.com/2019/03/12/miscellany/16git%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86/"/>
-    <id>http://yoursite.com/2019/03/12/miscellany/16git基本原理/</id>
-    <published>2019-03-12T09:18:22.158Z</published>
-    <updated>2019-03-12T11:25:52.657Z</updated>
-    
-    <content type="html"><![CDATA[<p>小伙伴们对git并不陌生，全球最大的同性交友网站github是程序猿们的最爱，这里只有你想不到的，没有你找不到的，各种资源应有尽有，免去了从浏览器中找到若干垃圾的麻烦。因此熟悉git也成为程序猿标配，本文来简单说说git的基本操作和基本原理。</p><a id="more"></a><h2>一、Git工作流程</h2><p><img src="http://bloghello.oursnail.cn/zaji17-1.png" alt="image"></p><p>这四个区域的名字如下:</p><ul><li>Workspace：工作区</li></ul><blockquote><p>程序员进行开发改动的地方，是你当前看到的，也是最新的。平常我们开发就是拷贝远程仓库中的一个分支，基于该分支进行开发。在开发过程中就是对工作区的操作。</p></blockquote><ul><li>Index / Stage：暂存区</li></ul><blockquote><p><code>.git</code>目录下的<code>index</code>文件, 暂存区会记录<code>git add</code>添加文件的相关信息(文件名、大小、<code>timestamp</code>…)，不保存文件实体, 通过id指向每个文件实体。</p><p>可以使用<code>git status</code>查看暂存区的状态。暂存区标记了你当前工作区中，哪些内容是被git管理的。<br>当你完成某个需求或功能后需要提交到远程仓库，那么第一步就是通过<code>git add</code>先提交到暂存区，被git管理。</p></blockquote><ul><li>Repository：仓库区（或本地仓库）</li></ul><blockquote><p><code>git commit</code>后同步<code>index</code>的目录树到本地仓库，方便从下一步通过<code>git push</code>同步本地仓库与远程仓库的同步。</p></blockquote><ul><li>Remote：远程仓库</li></ul><blockquote><p>远程仓库的内容可能被分布在多个地点的处于协作关系的本地仓库修改，因此它可能与本地仓库同步，也可能不同步，但是它的内容是最旧的。</p></blockquote><p><strong>总结一下：</strong></p><ul><li>任何对象都是在工作区中诞生和被修改；</li><li>任何修改都是从进入<code>index</code>区才开始被版本控制；</li><li>只有把修改提交到本地仓库，该修改才能在仓库中留下痕迹；</li><li>与协作者分享本地的修改，可以把它们<code>push</code>到远程仓库来共享。</li></ul><p>下面这幅图更加直接阐述了四个区域之间的关系，可能有些命令不太清楚，没关系，下部分会详细介绍。</p><p><img src="http://bloghello.oursnail.cn/zaji17-2.png" alt="image"></p><h2>二、常用git命令</h2><p><img src="http://bloghello.oursnail.cn/zaji17-3.png" alt="image"></p><p>看不清可以拖动图片到新的页面打开。我们从关键字入手git常用命令。</p><h2>2.1 HEAD</h2><p><code>HEAD</code>，它始终指向当前所处分支的最新的提交(commit)点。你所处的分支变化了，或者产生了新的提交点，<code>HEAD</code>就会跟着改变。</p><p><img src="http://bloghello.oursnail.cn/zaji17-4.png" alt="image"></p><h2>2.2 add和commit</h2><p><img src="http://bloghello.oursnail.cn/zaji17-5.png" alt="image"></p><p><code>add</code>相关命令很简单，主要实现将工作区修改的内容提交到暂存区，交由git管理。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git add .</td><td>添加当前目录的所有文件到暂存区</td></tr><tr><td>git add [dir]</td><td>添加指定目录到暂存区，包括子目录</td></tr><tr><td>git add [file]</td><td>添加指定文件到暂存区</td></tr></tbody></table><p><code>commit</code>相关命令也很简单，主要实现将暂存区的内容提交到本地仓库，并使得当前分支的<code>HEAD</code>向后移动一个提交点。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git commit -m [message]</td><td>提交暂存区到本地仓库，message代表说明信息</td></tr><tr><td>git commit [file] -m [message]</td><td>提交暂存区的指定文件到本地仓库</td></tr><tr><td>git commit --amend -m [message]</td><td>使用一次新的commit，替代上一次提交</td></tr></tbody></table><h2>2.3 branch</h2><p><img src="http://bloghello.oursnail.cn/zaji17-8.png" alt="image"></p><p>涉及到协作，自然会涉及到分支，关于分支，大概有展示分支，切换分支，创建分支，删除分支这四种操作。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git branch</td><td>列出所有本地分支</td></tr><tr><td>git branch -r</td><td>列出所有远程分支</td></tr><tr><td>git branch -a</td><td>列出所有本地分支和远程分支</td></tr><tr><td>git branch [branch-name]</td><td>新建一个分支，但依然停留在当前分支</td></tr><tr><td>git branch -b [branch-name]</td><td>新建一个分支，并切换到该分支</td></tr><tr><td>git branch --track [branch] remote-branch[]</td><td>新建一个分支，与指定的远程分支建立追踪关系</td></tr><tr><td>git checkout [branch-name]</td><td>切换到指定分支，并更新工作区</td></tr><tr><td>git branch -d [branch-name]</td><td>删除分支</td></tr><tr><td>git push origin --delete [branch-name]</td><td>删除远程分支</td></tr></tbody></table><h2>2.4 merge</h2><p><img src="http://bloghello.oursnail.cn/zaji17-10.png" alt="image"></p><p><code>merge</code>命令把不同的分支合并起来。如上图，在实际开放中，我们可能从<code>master</code>分支中切出一个分支，然后进行开发完成需求，中间经过R3,R4,R5的<code>commit</code>记录，最后开发完成需要合入<code>master</code>中，这便用到了<code>merge</code>。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git fetch [remote]</td><td>merge之前先拉一下远程仓库最新代码</td></tr><tr><td>git merge [branch]</td><td>合并指定分支到当前分支</td></tr></tbody></table><p>一般在<code>merge</code>之后，会出现<code>conflict</code>，需要针对冲突情况，手动解除冲突。主要是因为两个用户修改了同一文件的同一块区域。</p><p>就是说同一个代码两个人都进行了修改，那么必然需要通过人工的沟通协调最终选择一个统一的版本。</p><h2>2.5 reset</h2><p><img src="http://bloghello.oursnail.cn/zaji17-12.png" alt="image"></p><p>reset命令把当前分支指向另一个位置，并且相应的变动工作区和暂存区。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git reset --soft [commit]</td><td>只改变提交点，暂存区和工作区的内容都不改变</td></tr><tr><td>git reset --mixed [commit]</td><td>改变提交点，同时改变暂存区的内容</td></tr><tr><td>git reset --hard [commit]</td><td>暂存区和工作区的内容都会被修改到与提交点完全一致的状态</td></tr><tr><td>git reset --hard HEAD</td><td>让工作区回到上次提交的状态</td></tr></tbody></table><p>还有一个叫做<code>git revert</code>,与<code>git reset</code>的区别是：</p><p><img src="http://bloghello.oursnail.cn/zaji17-14.png" alt="image"></p><p><code>git reset</code> 是把<code>HEAD</code>向后移动了一下，而<code>git revert</code>是<code>HEAD</code>继续前进，只是新的<code>commit</code>的内容和要<code>revert</code>的内容正好相反，能够抵消要被<code>revert</code>的内容。</p><h5>2.6 push</h5><p>上传本地仓库分支到远程仓库分支，实现同步。</p><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git push [remote] [branch]</td><td>上传本地指定分支到远程仓库</td></tr><tr><td>git push [remote] --force</td><td>强行推送当前分支到远程仓库，即使有冲突</td></tr><tr><td>git push [remote] --all</td><td>推送所有分支到远程仓库</td></tr></tbody></table><h2>2.7 其他命令</h2><table><thead><tr><th>命令</th><th>含义</th></tr></thead><tbody><tr><td>git status</td><td>显示有变更的文件</td></tr><tr><td>git log</td><td>显示当前分支的版本历史</td></tr><tr><td>git diff</td><td>显示暂存区和工作区的差异</td></tr><tr><td>git diff HEAD</td><td>显示工作区与当前分支最新commit之间的差异</td></tr><tr><td>git cherry-pick [commit]</td><td>选择一个commit合并进当前分支</td></tr></tbody></table><p>整理自：<a href="https://mp.weixin.qq.com/s?__biz=MzUwOTQ1NTAzNA==&amp;mid=2247483714&amp;idx=2&amp;sn=a7893d7306025dc35ca0fb2678003795&amp;chksm=f910be97ce673781f259bb353b3802818eb64e2cb9b06390290374c3d95d139f32d8acb710e8&amp;mpshare=1&amp;scene=1&amp;srcid=1220thpAb37YI9AJFiDH0rMA#rd" target="_blank" rel="noopener">一篇文章让你读懂Git</a></p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;小伙伴们对git并不陌生，全球最大的同性交友网站github是程序猿们的最爱，这里只有你想不到的，没有你找不到的，各种资源应有尽有，免去了从浏览器中找到若干垃圾的麻烦。因此熟悉git也成为程序猿标配，本文来简单说说git的基本操作和基本原理。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="miscellany" scheme="http://yoursite.com/tags/miscellany/"/>
     
   </entry>
   
