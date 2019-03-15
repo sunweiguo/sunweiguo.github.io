@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-14T12:44:37.359Z</updated>
+  <updated>2019-03-15T02:33:03.847Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题57-二叉树的下一个结点】</title>
+    <link href="http://yoursite.com/2019/03/15/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9857-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E4%B8%8B%E4%B8%80%E4%B8%AA%E7%BB%93%E7%82%B9%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/15/剑指offer/【面试题57-二叉树的下一个结点】/</id>
+    <published>2019-03-15T02:31:46.627Z</published>
+    <updated>2019-03-15T02:33:03.847Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第五十七题。</p><a id="more"></a><h2>题目描述</h2><p>给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。</p><h2>解题思路</h2><p>我们对于中序排序的规则已经很熟悉，下面图示:</p><p><img src="http://bloghello.oursnail.cn/suanfa6-8.png" alt="image"></p><p>我们从这个图上可以看到，找下一个节点是可以分为几种情况的。</p><p>第一种情况，就是一个节点有右子树。比如要求节点B的下一个节点，其实是找到它的右子树的最左孩子，就是G节点。</p><p>第二种情况，就是一个节点没有右子树，此时又可以分为两种情况。</p><p>对于G这个节点来说，没有右子节点了，它的父亲节点是E，G是E的左子节点，即E的左子节点是G，那么G的下一个节点就是E。</p><p>对于E这个节点来说，也没有右子节点，它的父亲节点是B，此时E是B的右子节点，根据实际情况来说，E的下一个节点绝对不是B，因为E是B的右子节点，根据中序遍历的规则，此时肯定是先遍历B再遍历E，所以B肯定在E的前面，而不是后面，所以我们还需要再往上找父亲节点，此时B的父亲节点为A，B为A的左子节点，此时根据实际情况，A就是我们要找的E的下一个节点。</p><p>所以，对于一个没有右子节点的节点来说，只需要判断它有没有父节点并且是不是父节点的左子节点，是的话，就找到了，不是则要不断地向上找。</p><p>如果一直找到根还是找不到，像节点F，那就返回null，因为实际上F节点就是中序遍历的最后一个节点，没有所谓的下一个节点了。</p><p>将上面所述转换为图示为：</p><p><img src="http://bloghello.oursnail.cn/suanfa6-9.png" alt="image"></p><p>总之，我们不关心当前节点的左子节点，因为它不在我们的考虑范围内，它必定出现在当前节点的前面。</p><p>我们主要就是考虑有没有右子节点，或者没有右子节点的话就考虑父亲节点。有右子节点比较简单，一直找最左边的子节点即可。但是没有右子节点的时候，就需要去查询父亲节点了。理解了这些，程序也就呼之欲出了。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> TreeLinkNode <span class="title">GetNext</span><span class="params">(TreeLinkNode pNode)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(pNode == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125; </span><br><span class="line">        </span><br><span class="line">        <span class="comment">//1.判断当前节点是否有右子节点，有则去里面找</span></span><br><span class="line">        <span class="keyword">if</span>(pNode.right != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> firstInRightTree(pNode);</span><br><span class="line">        <span class="comment">//2.没有右子节点，就需要去父节点找</span></span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            <span class="comment">//3.直到找到符合条件的父节点为止，跳出循环时pNode的父节点符合条件，这个父节点就是我们要的东西</span></span><br><span class="line">            <span class="keyword">while</span>(pNode.next != <span class="keyword">null</span> &amp;&amp; pNode.next.left != pNode)&#123;</span><br><span class="line">                pNode = pNode.next;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> pNode.next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//到右子树中找符合条件的，显然就是找最最最左边的子节点即可</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> TreeLinkNode <span class="title">firstInRightTree</span><span class="params">(TreeLinkNode pNode)</span></span>&#123;</span><br><span class="line">        TreeLinkNode curr = pNode.right;</span><br><span class="line">        <span class="keyword">while</span>(curr.left != <span class="keyword">null</span>)&#123;</span><br><span class="line">            curr = curr.left;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> curr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第五十七题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题56-删除链表中重复的结点】</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第四十四题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题43-左旋转字符串】</title>
-    <link href="http://yoursite.com/2019/03/12/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9843-%E5%B7%A6%E6%97%8B%E8%BD%AC%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/12/剑指offer/【面试题43-左旋转字符串】/</id>
-    <published>2019-03-12T04:16:33.394Z</published>
-    <updated>2019-03-12T04:16:52.779Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第四十三题。</p><a id="more"></a><h2>题目描述</h2><p>汇编语言中有一种移位指令叫做循环左移（ROL），现在有个简单的任务，就是用字符串模拟这个指令的运算结果。对于一个给定的字符序列S，请你把其循环左移K位后的序列输出。例如，字符序列S=”abcXYZdef”,要求输出循环左移3位后的结果，即“XYZdefabc”。是不是很简单？OK，搞定它！</p><h2>解题思路</h2><p>我们可以用一个比较巧妙的方法实现这种循环左移，比如将&quot;abc&quot;拼接成&quot;abcabc&quot;，此时如果要循环左移一位，应该变成&quot;bca&quot;，那么我通过截取&quot;abcabc&quot;来获得，怎么截取呢？很简单，就是截取n-n+length这个长度即可。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">LeftRotateString</span><span class="params">(String str,<span class="keyword">int</span> n)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(str == <span class="keyword">null</span> || str.length() &lt;= <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//复制字符串，比如"abc"复制为`abcabc`</span></span><br><span class="line">        String s = str + str;</span><br><span class="line">        <span class="keyword">int</span> len = str.length();</span><br><span class="line">        <span class="comment">//算出偏移量</span></span><br><span class="line">        n = n%len;</span><br><span class="line">        <span class="comment">//开始从n截取，截取到len+n</span></span><br><span class="line">        <span class="keyword">return</span> s.substring(n,len+n);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第四十三题。&lt;/p&gt;
     
     </summary>
     
