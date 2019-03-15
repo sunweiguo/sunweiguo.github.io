@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-15T03:02:43.264Z</updated>
+  <updated>2019-03-15T03:14:05.098Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,11 +17,11 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>【面试题58-堆成的二叉树】</title>
-    <link href="http://yoursite.com/2019/03/15/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9858-%E5%A0%86%E6%88%90%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/15/剑指offer/【面试题58-堆成的二叉树】/</id>
+    <title>【面试题58-对称的二叉树】</title>
+    <link href="http://yoursite.com/2019/03/15/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9858-%E5%AF%B9%E7%A7%B0%E7%9A%84%E4%BA%8C%E5%8F%89%E6%A0%91%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/15/剑指offer/【面试题58-对称的二叉树】/</id>
     <published>2019-03-15T03:02:08.386Z</published>
-    <updated>2019-03-15T03:02:43.264Z</updated>
+    <updated>2019-03-15T03:14:05.098Z</updated>
     
     <content type="html"><![CDATA[<p>剑指offer第五十八题。</p><a id="more"></a><h2>题目描述</h2><p>请实现一个函数，用来判断一颗二叉树是不是对称的。注意，如果一个二叉树同此二叉树的镜像是同样的，定义其为对称的。</p><h2>解题思路</h2><p>递归下去，不赘述了。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">isSymmetrical</span><span class="params">(TreeNode pRoot)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(pRoot == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> judge(pRoot.left,pRoot.right);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">judge</span><span class="params">(TreeNode left,TreeNode right)</span></span>&#123;</span><br><span class="line">        <span class="comment">//左子树为空的话，右子树必须为空才符合条件</span></span><br><span class="line">        <span class="keyword">if</span>(left == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> (right == <span class="keyword">null</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//左子树不为空，右子树为空了，false</span></span><br><span class="line">        <span class="keyword">if</span>(right == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//左右结点的值不相等则false</span></span><br><span class="line">        <span class="keyword">if</span>(left.val != right.val)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//递归下去</span></span><br><span class="line">        <span class="keyword">return</span> judge(left.right,right.left) &amp;&amp; judge(left.left,right.right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
