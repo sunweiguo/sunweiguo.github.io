@@ -7,7 +7,7 @@
 <li>当线程释放锁时，JAVA内存模型会把该线程对应额本地内存中的共享变量刷新到主内存中</li>
 <li>当线程获取锁时，JAVA内存模型会把该线程对应的本地内存置为无效，从而使得被监视器保护的临界区代码必须从主内存中读取共享变量。</li>
 </ul>
-<p>在<a href="http://fourcolor.oursnail.cn/2019/02/05/JVM/JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B-%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB/" target="_blank" rel="noopener">JAVA内存模型-线程共享</a>这篇文章中介绍了对象头里面的基本构成。</p>
+<p>在<a href="http://fossi.oursnail.cn/2019/02/05/JVM/JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B-%E7%BA%BF%E7%A8%8B%E5%85%B1%E4%BA%AB/" target="_blank" rel="noopener">JAVA内存模型-线程共享</a>这篇文章中介绍了对象头里面的基本构成。</p>
 <p><img src="http://bloghello.oursnail.cn/thread6-1.jpg" alt="image"></p>
 <p>我们着重看一下对象头，下面两个这里不需要关心。我们可以看到一个关键字：锁状态标志。因此<code>Mark Word</code>是实现锁的关键了。</p>
 <p>我们也知道，<code>Mark Word</code>是一个可变的结构，可变的部分主要有如下：</p>
@@ -131,7 +131,7 @@
 </tr>
 </tbody>
 </table>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/从ReentrantLock引出AQS的原理/" class="prev">上一篇</a><a href="/2019/02/10/thread/从卖票程序初步看synchronized的特性/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/从ReentrantLock引出AQS的原理/" class="prev">PRVE</a><a href="/2019/02/10/thread/从卖票程序初步看synchronized的特性/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Mon Feb 11 2019 14:21:16 GMT+0800',
     owner: 'sunweiguo',

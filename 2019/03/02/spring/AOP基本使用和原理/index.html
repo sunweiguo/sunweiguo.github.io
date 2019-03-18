@@ -38,7 +38,7 @@
 <p>Spring AOP使用动态代理技术在运行期织入增强的代码，Spring AOP使用了两种代理机制：<strong>一种是基于JDK的动态代理；另一种是基于CGLib的动态代理</strong>。这两种机制就是AOP最根本的实现原理，面试中把这两者说清楚即可。</p>
 <h5>3.1 JDK动态代理</h5>
 <p>Java1.3后，Java提供了动态代理技术，运行开发者在运行期间创建接口的代理实例。JDK动态代理主要涉及<code>java.lang.reflect</code>包中的两个类：<code>Proxy</code>和<code>InvocationHandler</code>。<code>InvocationHandler</code>是一个接口，可以通过实现该接口定义横切逻辑，并通过反射机制调用目标类的代码，动态地将横切逻辑和业务逻辑编织在一起。</p>
-<p>具体请看笔记<a href="http://fourcolor.oursnail.cn/2019/02/17/java-basic/java%E5%9F%BA%E7%A1%80%E4%B9%8BJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" target="_blank" rel="noopener">java基础之JDK动态代理</a></p>
+<p>具体请看笔记<a href="http://fossi.oursnail.cn/2019/02/17/java-basic/java%E5%9F%BA%E7%A1%80%E4%B9%8BJDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" target="_blank" rel="noopener">java基础之JDK动态代理</a></p>
 <h5>3.2 CGLib动态代理</h5>
 <p>CGLib采用底层的字节码技术，可以为一个类创建子类，在子类中采用方法拦截的技术拦截所有父类方法的调用并顺势织入横切逻辑。</p>
 <p>需要注意的是，由于CGLib采用动态创建子类的方式生成代理对象，所以不能对目标类中的final或private方法进行代理。</p>
@@ -47,7 +47,7 @@
 <li>JDK创建代理有一个限制，即它只能为接口创建代理实例，虽然面向接口编程是好的编程习惯，但有时候并不是必须的，这是JDK动态代理的局限性。</li>
 <li>就性能来说，CGLib所创建的动态代理对象的性能比JDK所创建的动态代理对象的性能高差不多10倍，CGLib在创建代理对象时所话费的时间却比JDK动态代理大概多8倍，但是对于singleton的代理对象或者具有实例池的代理，因为无需频繁创建代理对象，所以比较合适采用CGLib动态代理技术，反之则适合采用JDK动态代理技术。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/03/02/spring/Spring Bean/" class="prev">上一篇</a><a href="/2019/03/02/spring/IOC的用法/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/02/spring/Spring Bean/" class="prev">PRVE</a><a href="/2019/03/02/spring/IOC的用法/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Mar 02 2019 19:06:02 GMT+0800',
     owner: 'sunweiguo',
