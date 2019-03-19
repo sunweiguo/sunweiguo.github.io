@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-19T03:28:15.510Z</updated>
+  <updated>2019-03-19T03:55:43.609Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【面试题66-机器人的运动范围】</title>
+    <link href="http://yoursite.com/2019/03/19/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9866-%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BF%90%E5%8A%A8%E8%8C%83%E5%9B%B4%E3%80%91/"/>
+    <id>http://yoursite.com/2019/03/19/剑指offer/【面试题66-机器人的运动范围】/</id>
+    <published>2019-03-19T03:55:00.344Z</published>
+    <updated>2019-03-19T03:55:43.609Z</updated>
+    
+    <content type="html"><![CDATA[<p>剑指offer第六十六题。</p><a id="more"></a><h2>题目描述</h2><p>地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？</p><h2>解题思路</h2><p>基本的思路是同上一题的，就不再赘述思路了。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">movingCount</span><span class="params">(<span class="keyword">int</span> threshold, <span class="keyword">int</span> rows, <span class="keyword">int</span> cols)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//根据m行n列的方格，构造一个数组来标识是否已经判断过，已经判断过的话置为true，否则置为false</span></span><br><span class="line">        <span class="comment">//这里初始化默认是false</span></span><br><span class="line">        <span class="keyword">boolean</span>[][] flag = <span class="keyword">new</span> <span class="keyword">boolean</span>[rows][cols];</span><br><span class="line">        <span class="comment">//下面开始走，边走边判断周围是否符合</span></span><br><span class="line">        <span class="comment">//judge(初始横坐标i，初始横坐标j，行数，列数，k值，标识是否走过)</span></span><br><span class="line">        <span class="keyword">return</span> judge(<span class="number">0</span>,<span class="number">0</span>,rows,cols,threshold,flag);</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">judge</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> j,<span class="keyword">int</span> rows,<span class="keyword">int</span> cols,<span class="keyword">int</span> threshold,<span class="keyword">boolean</span>[][] flag)</span></span>&#123;</span><br><span class="line">        <span class="comment">//越界、flsg=true说明已经走过，就不要再走了、行坐标和列坐标的数位之和大于k也跳过</span></span><br><span class="line">        <span class="keyword">if</span>(i&lt;<span class="number">0</span> || j&lt;<span class="number">0</span> || i&gt;=rows || j&gt;=cols || flag[i][j]==<span class="keyword">true</span> || getK(i)+getK(j)&gt;threshold)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//机器人从[0,0]出发，必定是满足的，先置为true,所以要先加个1</span></span><br><span class="line">        flag[i][j] = <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">//基于回溯的思想，就是到达一个格子后，不断地判断他的周围四个格子是否满足要求，递归判断下去，必定走遍所有格子</span></span><br><span class="line">        <span class="keyword">return</span> judge(i-<span class="number">1</span>,j,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i,j-<span class="number">1</span>,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i+<span class="number">1</span>,j,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i,j+<span class="number">1</span>,rows,cols,threshold,flag)+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">//计算数字每一位之和</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getK</span><span class="params">(<span class="keyword">int</span> num)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            sum += num%<span class="number">10</span>;</span><br><span class="line">        &#125;<span class="keyword">while</span>((num=num/<span class="number">10</span>) &gt; <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;剑指offer第六十六题。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
+    
+  </entry>
   
   <entry>
     <title>【面试题65-矩阵中的路径】</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;极速入门了UML类图之后，我们不着急开启设计模式之旅，我们先来探讨一下软件设计的七大原则，为什么要探讨这个，其实无论哪种设计模式，都是在这七大原则中进行了相应的取舍才逐渐形成的，因此七大原则是指导我们怎么用设计模式以及编写代码的基本原则。本文先来了解一下开闭原则。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>01-UML(统一建模语言)</title>
-    <link href="http://yoursite.com/2019/03/13/design-pattern/01-UML(%E7%BB%9F%E4%B8%80%E5%BB%BA%E6%A8%A1%E8%AF%AD%E8%A8%80)/"/>
-    <id>http://yoursite.com/2019/03/13/design-pattern/01-UML(统一建模语言)/</id>
-    <published>2019-03-13T05:36:51.688Z</published>
-    <updated>2019-03-13T05:43:42.627Z</updated>
-    
-    <content type="html"><![CDATA[<p>在开始系统学习设计模式之前，先学习一下UML类图的表示方法，在阅读各种源码的时候，要想快速摸清框架结构的话，一个好的方式就是查看它的类图，了解里面的骨架，找到核心开始攻克。本文来极速入门UML类图。</p><a id="more"></a><h2>一、什么是UML类图</h2><p>用于表示类、接口、实例等之间相互的静态关系</p><h2>二、箭头方向的含义</h2><p>一般情况下是从子指向父。</p><h2>三、继承和实现</h2><p>典型的特征是<strong>空心三角箭头</strong>。其中，实线代表继承父类，虚线代表实现接口。关于继承和实现，我们都太熟悉了，就不再赘述了。</p><p><img src="http://bloghello.oursnail.cn/pattern1-1.png" alt="image"></p><h2>四、聚合和组合</h2><p>典型特征是<strong>菱形箭头</strong>。聚合关系用一条带空心菱形箭头的直线表示，如下图表示A聚合到B上。</p><p><img src="http://bloghello.oursnail.cn/pattern1-2.png" alt="image"></p><p>组合关系用一条带实心菱形箭头直线表示，如下图表示A组成B，或者B由A组成。</p><p><img src="http://bloghello.oursnail.cn/pattern1-3.png" alt="image"></p><p>我们一定要注意区分它们两者，首先说明一下，组合的依赖关系强于聚合。我们可以将聚合关系理解为：整体和部分不是强依赖的，即使整体不存在了，部分仍然存在；例如， 部门撤销了，人员不会消失，他们依然存在；</p><p>我们可以将组合关系理解为：组合关系是一种强依赖的特殊聚合关系，如果整体不存在了，则部分也不存在了；例如， 公司不存在了，部门也将不存在了；</p><p>聚合可以这样说：大雁聚合成大雁群；组合可以这样说：鸟儿与翅膀，两者生死与共。</p><p>之间依赖关系强则用实心菱形。</p><p>关于组合关系中常见的数字表达含义，假设有A类和B类，数字标记在A类侧,表明系统在某一时刻，B的实例可以与A的xx个实例相关：</p><ul><li><code>0..1</code>    0或1个实例</li><li><code>0..*</code>    0或多个实例</li><li><code>1..1</code>    1个实例</li><li><code>1</code>       只能由一个实例</li><li><code>1..*</code>    至少有一个实例</li></ul><h2>五、关联和依赖</h2><p>是一个<strong>普通箭头</strong>。关联关系是用一条实线表示的；它描述不同类的对象之间的结构关系；它是一种静态关系， 通常与运行状态无关，一般由常识等因素决定的；它一般用来定义对象之间静态的、天然的结构； 所以，关联关系是一种“强关联”的关系；</p><p>比如，乘车人和车票之间就是一种关联关系；学生和学校就是一种关联关系；注意，强调的是一种天然的静态关系，是不可改变的固有关系，所以是实线。</p><p>关联关系默认不强调方向，表示对象间相互知道；如果特别强调方向，如下图，表示A知道B，但 B不知道A；</p><p>在代码中，关联对象通常是以成员变量的形式实现的；</p><p><img src="http://bloghello.oursnail.cn/pattern1-4.png" alt="image"></p><p>依赖关系是用一套带箭头的虚线表示的；如下图表示A依赖于B；他描述一个对象在运行期间会用到另一个对象的关系；</p><p><img src="http://bloghello.oursnail.cn/pattern1-5.png" alt="image"></p><p>与关联关系不同的是，它是一种临时性的关系，通常在运行期间产生，并且随着运行时的变化； 依赖关系也可能发生变化；</p><p>显然，依赖也有方向，双向依赖是一种非常糟糕的结构，我们总是应该保持单向依赖，杜绝双向依赖的产生；</p><p>在代码中，依赖关系体现为类构造方法及类方法的传入参数，箭头的指向为调用关系；依赖关系除了临时知道对方外，还可以“使用”对方的方法和属性；</p><h2>六、一个类如何表示？</h2><p><img src="http://bloghello.oursnail.cn/uml1-2.png" alt="image"></p><h2>七、从整体来看一张UML类图</h2><p><img src="http://bloghello.oursnail.cn/uml1-3.png" alt="image"></p><p>我们看到，氧气和水都是以参数的形式传递进来，所以是变化的，因此是依赖关系，因此是带箭头的虚线。</p><p>鸟和翅膀不可分割，因此是组合关系，因此是实心菱形。</p><p>大雁聚合成大雁群，就像盘子盛放东西一样，是一种聚合关系，因此是空心菱形。</p><p>企鹅需要严寒的气候，这是天然的关系，企鹅不会突然说我想去非洲，因为它适应不了，所以这种天然的关系是关联关系，因此是带箭头的实线。</p><p>鸟是动物的子类，因此是空心三角实线。</p><p>大雁会飞，所以可以实线飞翔的接口，因此是空心三角虚线。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;在开始系统学习设计模式之前，先学习一下UML类图的表示方法，在阅读各种源码的时候，要想快速摸清框架结构的话，一个好的方式就是查看它的类图，了解里面的骨架，找到核心开始攻克。本文来极速入门UML类图。&lt;/p&gt;
     
     </summary>
     
