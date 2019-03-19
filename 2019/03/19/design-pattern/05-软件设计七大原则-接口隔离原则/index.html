@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 05-软件设计七大原则-接口隔离原则 · fossi</title><meta name="description" content="05-软件设计七大原则-接口隔离原则 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">05-软件设计七大原则-接口隔离原则</h1><div class="post-meta"><span class="post-time">Mar 19, 2019</span></div><div class="post-content"><p>本文来了解一下什么是接口隔离原则。</p>
+<a id="more"></a>
+<h2>定义</h2>
+<ul>
+<li>用多个专门的接口，而不适用单一的总接口，客户端不应该依赖它不需要的接口</li>
+<li>一个类对一个类的依赖应该建立在最小的接口上</li>
+<li>建立单一接口，不要建立庞大臃肿的接口</li>
+<li>尽量细化接口，接口中的方法尽量少</li>
+</ul>
+<p>也就是说，我们提供接口的时候，只暴露需要的方法，而将不需要的方法隐藏起来。</p>
+<h2>例子</h2>
+<p>定义一个接口叫做动物行为接口，但是呢，由于没有细化，比如狗子，一旦实现这个接口，那就要实现所有的方法，包括它不会的飞翔。</p>
+<p><img src="http://bloghello.oursnail.cn/uml5-1.png" alt="image"></p>
+<p>将接口进行细化（这里要注意是要适当）。哪个要实现什么，就去实现，不需要的方法就可以不用去实现。</p>
+<p>注意，接口隔离原则好像与上一章的单一职责原则有点像，这里说明一下区别：单一职责原则强调职责，一个class或者接口只负责一个职责，可以有很多的方法。但是接口隔离原则强调的是适当地设计接口，尽量地给不同的调用者适当的接口，不要设计的太臃肿，注重的是接口依赖的隔离。</p>
+<p>这里强调适当，接口也不能太多，效果反而会适得其反。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/19/design-pattern/04-软件设计七大原则-单一职责原则/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Mar 19 2019 19:06:56 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>

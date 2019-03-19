@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[05-软件设计七大原则-接口隔离原则]]></title>
+    <url>%2F2019%2F03%2F19%2Fdesign-pattern%2F05-%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99-%E6%8E%A5%E5%8F%A3%E9%9A%94%E7%A6%BB%E5%8E%9F%E5%88%99%2F</url>
+    <content type="text"><![CDATA[本文来了解一下什么是接口隔离原则。 定义 用多个专门的接口，而不适用单一的总接口，客户端不应该依赖它不需要的接口 一个类对一个类的依赖应该建立在最小的接口上 建立单一接口，不要建立庞大臃肿的接口 尽量细化接口，接口中的方法尽量少 也就是说，我们提供接口的时候，只暴露需要的方法，而将不需要的方法隐藏起来。 例子 定义一个接口叫做动物行为接口，但是呢，由于没有细化，比如狗子，一旦实现这个接口，那就要实现所有的方法，包括它不会的飞翔。 将接口进行细化（这里要注意是要适当）。哪个要实现什么，就去实现，不需要的方法就可以不用去实现。 注意，接口隔离原则好像与上一章的单一职责原则有点像，这里说明一下区别：单一职责原则强调职责，一个class或者接口只负责一个职责，可以有很多的方法。但是接口隔离原则强调的是适当地设计接口，尽量地给不同的调用者适当的接口，不要设计的太臃肿，注重的是接口依赖的隔离。 这里强调适当，接口也不能太多，效果反而会适得其反。]]></content>
+      <tags>
+        <tag>设计模式</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[04-软件设计七大原则-单一职责原则]]></title>
     <url>%2F2019%2F03%2F19%2Fdesign-pattern%2F04-%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99-%E5%8D%95%E4%B8%80%E8%81%8C%E8%B4%A3%E5%8E%9F%E5%88%99%2F</url>
     <content type="text"><![CDATA[本文来了解一下什么是单一职责原则。 定义 假设一个类(class)中有两个职责，一个是指责A，一个是指责B，当我们修改A时，可能会导致B出现问题。就是说，职责A和职责B发生改变时都会影响这个class，从而使这个class可能发生变更。 解决方案：对于这两个指责分别建立class1和class2，使他们互相不影响。这个原则就是单一职责原则。 即一个类/接口/方法只负责一项职责。 好处：降低类的复杂度，提高类的可读性，提高系统的可维护性，降低变更引起的风险。 例子 单一职责原则是很好理解的，下面配以代码举一个小例子。 比如有一个类，描述的是鸟移动的模式，正常情况下鸟是飞的，但是如果传进来一只不会飞的鸟咋办呢，比如鸵鸟，这就需要判断一下了： 123456789public class BirdMoveMode &#123; public void move(String birdName)&#123; if(birdName.equals("鸵鸟"))&#123; System.out.println(birdName+"是跑的..."); &#125;else &#123; System.out.println(birdName+"是飞的..."); &#125; &#125;&#125; 这个时候，最好是将这个类分离成两类，一个是会飞的，一个是走的： 1234567891011public class FlyBird &#123; public void move(String birdName)&#123; System.out.println(birdName+"是飞的..."); &#125;&#125;public class WalkBird &#123; public void move(String birdName)&#123; System.out.println(birdName+"是跑的..."); &#125;&#125; 对于接口和方法也一样，接口里面的方法声明分开；方法重载来分开。]]></content>

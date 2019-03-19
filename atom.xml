@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-19T04:09:28.971Z</updated>
+  <updated>2019-03-19T11:07:23.947Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>05-软件设计七大原则-接口隔离原则</title>
+    <link href="http://yoursite.com/2019/03/19/design-pattern/05-%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99-%E6%8E%A5%E5%8F%A3%E9%9A%94%E7%A6%BB%E5%8E%9F%E5%88%99/"/>
+    <id>http://yoursite.com/2019/03/19/design-pattern/05-软件设计七大原则-接口隔离原则/</id>
+    <published>2019-03-19T11:06:56.699Z</published>
+    <updated>2019-03-19T11:07:23.947Z</updated>
+    
+    <content type="html"><![CDATA[<p>本文来了解一下什么是接口隔离原则。</p><a id="more"></a><h2>定义</h2><ul><li>用多个专门的接口，而不适用单一的总接口，客户端不应该依赖它不需要的接口</li><li>一个类对一个类的依赖应该建立在最小的接口上</li><li>建立单一接口，不要建立庞大臃肿的接口</li><li>尽量细化接口，接口中的方法尽量少</li></ul><p>也就是说，我们提供接口的时候，只暴露需要的方法，而将不需要的方法隐藏起来。</p><h2>例子</h2><p>定义一个接口叫做动物行为接口，但是呢，由于没有细化，比如狗子，一旦实现这个接口，那就要实现所有的方法，包括它不会的飞翔。</p><p><img src="http://bloghello.oursnail.cn/uml5-1.png" alt="image"></p><p>将接口进行细化（这里要注意是要适当）。哪个要实现什么，就去实现，不需要的方法就可以不用去实现。</p><p>注意，接口隔离原则好像与上一章的单一职责原则有点像，这里说明一下区别：单一职责原则强调职责，一个class或者接口只负责一个职责，可以有很多的方法。但是接口隔离原则强调的是适当地设计接口，尽量地给不同的调用者适当的接口，不要设计的太臃肿，注重的是接口依赖的隔离。</p><p>这里强调适当，接口也不能太多，效果反而会适得其反。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文来了解一下什么是接口隔离原则。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+    
+  </entry>
   
   <entry>
     <title>04-软件设计七大原则-单一职责原则</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第五十二题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题51-构建乘积数组】</title>
-    <link href="http://yoursite.com/2019/03/14/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9851-%E6%9E%84%E5%BB%BA%E4%B9%98%E7%A7%AF%E6%95%B0%E7%BB%84%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/14/剑指offer/【面试题51-构建乘积数组】/</id>
-    <published>2019-03-14T03:02:31.781Z</published>
-    <updated>2019-03-14T03:03:01.603Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第五十一题。</p><a id="more"></a><h2>题目描述</h2><p>给定一个数组A[0,1,…,n-1],请构建一个数组B[0,1,…,n-1],其中B中的元素B[i]=A[0]<em>A[1]</em>…*A[i-1]<em>A[i+1]</em>…*A[n-1]。不能使用除法。</p><h2>解题思路</h2><p><img src="http://bloghello.oursnail.cn/offer51-1.png" alt="image"></p><p>我们注意到，要计算B2，那么分为两个部分，左边是(A0 * A1)，右边是(An-1 * … * A3).所以对于每一个B，我们都分为两个部分进行计算即可。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] multiply(<span class="keyword">int</span>[] A) &#123;</span><br><span class="line">        <span class="comment">//构建与A一样长的数组B</span></span><br><span class="line">        <span class="keyword">int</span> len  = A.length;</span><br><span class="line">        <span class="keyword">int</span>[] B = <span class="keyword">new</span> <span class="keyword">int</span>[len];</span><br><span class="line">        <span class="keyword">if</span>(len != <span class="number">0</span>)&#123;</span><br><span class="line">            B[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">            <span class="comment">//先计算左边</span></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">1</span>;i&lt;len;i++)&#123;</span><br><span class="line">                B[i] = B[i-<span class="number">1</span>] * A[i-<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//再计算右边</span></span><br><span class="line">            <span class="keyword">int</span> tmp = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i=len-<span class="number">2</span>;i&gt;=<span class="number">0</span>;i--)&#123;</span><br><span class="line">                tmp *= A[i+<span class="number">1</span>];</span><br><span class="line">                B[i] *= tmp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> B;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第五十一题。&lt;/p&gt;
     
     </summary>
     
