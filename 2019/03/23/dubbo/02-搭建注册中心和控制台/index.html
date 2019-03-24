@@ -1,6 +1,6 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 02-搭建注册中心和控制台 · fossi</title><meta name="description" content="02-搭建注册中心和控制台 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">02-搭建注册中心和控制台</h1><div class="post-meta"><span class="post-time">Mar 23, 2019</span></div><div class="post-content"><p>介绍了dubbo基本的架构之后，我们先学会使用它，会使用了才有可能理解它的原理。本节先来搭建注册中心和dubbo的可视化控制台界面，为后续的dubbo应用的搭建做好准备。</p>
 <a id="more"></a>
-<h2>注册中心</h2>
+<h2>一、注册中心</h2>
 <p>打开官方文档，我们会看到dubbo支持很多种注册中心，但是它写了：**推荐使用 Zookeeper 注册中心。**关于zookeeper我已经做了系统学习。</p>
 <p><a href="https://dubbo.incubator.apache.org/zh-cn/docs/user/references/registry/zookeeper.html" target="_blank" rel="noopener">zookeeper 注册中心</a>详细说明了zk的作用以及代码中客户端的使用。</p>
 <p><img src="http://bloghello.oursnail.cn/dubbo2-1.jpg" alt="image"></p>
@@ -22,10 +22,11 @@
 <li>支持 * 号通配符 &lt;dubbo:reference group=&quot; * &quot; version=&quot; * &quot; /&gt;，可订阅服务的所有分组和所有版本的提供者</li>
 </ul>
 <p><code>Dubbo</code> 支持 <code>zkclient</code> 和 <code>curator</code> 两种 <code>Zookeeper</code> 客户端实现。</p>
-<h2>zookeeper 安装</h2>
+<h2>二、zookeeper 安装</h2>
 <p>就在windows下先安装练习吧！其他系统的也差不多。</p>
 <p>注意一下直接启动不行的，要将<code>conf</code>下的<code>zoo_sample.cfg</code>改为<code>zoo.cfg</code>才行，默认的端口是2181，注意修改一下临时数据存放的路径。这些修改完成之后，windows下就可以直接在命令行中用<code>zkServer.cmd</code>启动了。</p>
-<h2>new dubbo admin</h2>
+<h2>三、new dubbo admin</h2>
+<p>什么是<code>dubbo admin</code>？是图形化服务管理页面，安装时需要指定注册中心地址，即可从注册中心中获取到所有的提供者/消费者进行配置管理。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/apache/incubator-dubbo-ops.git</span><br><span class="line">cd incubator-dubbo-ops</span><br><span class="line">mvn clean package</span><br><span class="line">cd dubbo-admin-distribution/target</span><br><span class="line">java -jar dubbo-admin-0.1.jar</span><br></pre></td></tr></table></figure>
 <p>访问http://localhost:8080即可。</p>
 <p><img src="http://bloghello.oursnail.cn/dubbo2-2.jpg" alt="image"></p>
@@ -33,12 +34,21 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">admin.config-center=zookeeper://127.0.0.1:2181</span><br><span class="line">admin.registry.address=zookeeper://127.0.0.1:2181</span><br><span class="line">admin.metadata-report.address=zookeeper://127.0.0.1:2181</span><br></pre></td></tr></table></figure>
 <p>三个配置项分别指定了配置中心，注册中心和元数据中心的地址。这个以后再去了解。OK，下一节来看看dubbo的<code>provider</code>和<code>consumer</code>是如何暴露服务以及消费服务的。</p>
 <p>以上为新版的管理控制台，但是我看还是develop分支，说明还不是很稳定，文档啥的也不是很全，就暂时不入坑了。我们还是回到2.6版本。上一版本，admin管理台和monitor监控是分开的。这里说一下老版本的admin。</p>
-<h2>old dubbo admin</h2>
+<h2>四、old dubbo admin</h2>
 <p>下载地址：<a href="http://bloghello.oursnail.cn/incubator-dubbo-ops-master.zip" target="_blank" rel="noopener">	<br>
 incubator-dubbo-ops-master.zip</a></p>
 <p>主要是先关注里面的<code>dubbo-admin</code>，他就是老版本服务治理的管理页面。注意源码里面里面的<code>application.properties</code>中连接zk的信息，匹配即可。先启动zk，然后对这个文件夹打包运行。默认是用<code>localhost:7001</code>打开。需要额外输入用户名和密码，默认都是<code>root</code>。</p>
 <p><img src="http://bloghello.oursnail.cn/dubbo2-3.jpg" alt="image"></p>
-<p>下面我就还是用这个版本进行监控吧！</p>
+<p>下面我就还是用这个版本对服务进行管理吧！</p>
+<h2>五、dubbo-monitor-simple</h2>
+<p>这是一个简单的监控中心。</p>
+<p>在<code>incubator-dubbo-ops-master</code>文件夹下有一个文件叫做<code>dubbo-monitor-simple</code>，进行<code>mvn package</code>之后为：</p>
+<p><img src="http://bloghello.oursnail.cn/dubbo2-4.jpg" alt="image"></p>
+<p>将其拷贝到另外一个地方解压。里面有三个文件夹，有一个是<code>conf</code>文件夹，我们编辑<code>dubbo.properties</code>这个文件：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">dubbo.container=log4j,spring,registry,jetty-monitor</span><br><span class="line">dubbo.application.name=simple-monitor</span><br><span class="line">dubbo.application.owner=dubbo</span><br><span class="line">#dubbo.registry.address=multicast://224.5.6.7:1234</span><br><span class="line">//ZK的地址</span><br><span class="line">dubbo.registry.address=zookeeper://127.0.0.1:2181</span><br><span class="line">#dubbo.registry.address=redis://127.0.0.1:6379</span><br><span class="line">#dubbo.registry.address=dubbo://127.0.0.1:9090</span><br><span class="line">//与本控制台通信的端口</span><br><span class="line">dubbo.protocol.port=7070</span><br><span class="line">//可视化界面的访问端口</span><br><span class="line">dubbo.jetty.port=8080</span><br><span class="line">dubbo.jetty.directory=$&#123;user.home&#125;/monitor</span><br><span class="line">dubbo.charts.directory=$&#123;user.home&#125;/monitor/charts</span><br><span class="line">dubbo.statistics.directory=$&#123;user.home&#125;/monitor/statistics</span><br><span class="line">dubbo.log4j.file=logs/dubbo-monitor-simple.log</span><br><span class="line">dubbo.log4j.level=WARN</span><br></pre></td></tr></table></figure>
+<p>一切没有问题，来到<code>assembly.bin</code>下去启动吧！启动成功的话为：</p>
+<p><img src="http://bloghello.oursnail.cn/dubbo2-5.jpg" alt="image"></p>
+<p>下面进行实操并且结合这边搭建的监控台一起观察观察。</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/03/23/leetcode-classic/005-insertion-sort-list/" class="prev">PRVE</a><a href="/2019/03/23/dubbo/01-分布式基础知识/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Mar 23 2019 17:40:08 GMT+0800',
