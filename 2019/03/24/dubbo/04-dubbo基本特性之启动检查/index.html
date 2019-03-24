@@ -17,7 +17,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">java -Ddubbo.reference.com.foo.BarService.check=false</span><br><span class="line">java -Ddubbo.reference.check=false</span><br><span class="line">java -Ddubbo.consumer.check=false </span><br><span class="line">java -Ddubbo.registry.check=false</span><br></pre></td></tr></table></figure>
 <p>其中：<code>dubbo.registry.check=false</code>，前面两个都是指订阅成功，但提供者列表是否为空是否报错，如果注册订阅失败时，也允许启动，需使用此选项，将在后台定时重试。</p>
 <p>还是建议开着，因为在上线的时候不会因为一个服务未启动而导致出现线上BUG.</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/03/24/dubbo/03-dubbo实战/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/24/dubbo/05-dubbo基本配置之超时、重试、多版本/" class="prev">PRVE</a><a href="/2019/03/24/dubbo/03-dubbo实战/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Mar 24 2019 19:13:26 GMT+0800',
     owner: 'sunweiguo',
