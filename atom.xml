@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-24T11:33:15.363Z</updated>
+  <updated>2019-03-25T02:04:57.203Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>008-Reorder-List</title>
+    <link href="http://yoursite.com/2019/03/25/leetcode-classic/008-Reorder%20List/"/>
+    <id>http://yoursite.com/2019/03/25/leetcode-classic/008-Reorder List/</id>
+    <published>2019-03-25T02:03:34.299Z</published>
+    <updated>2019-03-25T02:04:57.203Z</updated>
+    
+    <content type="html"><![CDATA[<p>leetcode经典例题第八题，将链表以规定形式重新排列。</p><a id="more"></a><h2>题目描述</h2><p>Given a singly linked list L: L0→L1→…→Ln-1→Ln,</p><p>reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…</p><p>You may not modify the values in the list’s nodes, only nodes itself may be changed.</p><p>Example 1:</p><blockquote><p>Given 1-&gt;2-&gt;3-&gt;4, reorder it to 1-&gt;4-&gt;2-&gt;3.</p></blockquote><p>Example 2:</p><blockquote><p>Given 1-&gt;2-&gt;3-&gt;4-&gt;5, reorder it to 1-&gt;5-&gt;2-&gt;4-&gt;3.</p></blockquote><h2>解题思路</h2><p>将链表后半部进行反转，同时夹逼遍历即可。</p><h2>代码提交</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">reorderList</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//1.快慢指针，快指针到链表尾的时候慢指针恰好到链表的中间</span></span><br><span class="line">        ListNode slow = head;</span><br><span class="line">        ListNode fast = head;</span><br><span class="line">        <span class="keyword">while</span>(fast.next != <span class="keyword">null</span> &amp;&amp; fast.next.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next.next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.利用中间指针将链表切分为两个链表</span></span><br><span class="line">        ListNode after = slow.next;</span><br><span class="line">        slow.next = <span class="keyword">null</span>;</span><br><span class="line">        ListNode pre = <span class="keyword">null</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//3.将后半部链表反转</span></span><br><span class="line">        <span class="keyword">while</span>(after != <span class="keyword">null</span>)&#123;</span><br><span class="line">            ListNode afterNext = after.next;</span><br><span class="line">            after.next = pre;</span><br><span class="line">            pre = after;</span><br><span class="line">            after = afterNext;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//4.分别遍历两个链表即可</span></span><br><span class="line">        ListNode n1 = head;</span><br><span class="line">        ListNode n2 = pre;</span><br><span class="line">        <span class="keyword">while</span>(n1 != <span class="keyword">null</span> &amp;&amp; n2 != <span class="keyword">null</span>)&#123;</span><br><span class="line">            ListNode n1Next = n1.next;</span><br><span class="line">            ListNode n2Next = n2.next;</span><br><span class="line">            n1.next = n2;</span><br><span class="line">            n1 = n1Next;</span><br><span class="line">            n2.next = n1;</span><br><span class="line">            n2 = n2Next;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;leetcode经典例题第八题，将链表以规定形式重新排列。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode经典" scheme="http://yoursite.com/tags/leetcode%E7%BB%8F%E5%85%B8/"/>
+    
+  </entry>
   
   <entry>
     <title>007-binary-tree-preorder-traversal</title>
@@ -393,26 +413,6 @@
     
     
       <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>02-分布式文件系统HDFS(一)</title>
-    <link href="http://yoursite.com/2019/03/18/hadoop/02-%E5%88%86%E5%B8%83%E5%BC%8F%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9FHDFS(%E4%B8%80)/"/>
-    <id>http://yoursite.com/2019/03/18/hadoop/02-分布式文件系统HDFS(一)/</id>
-    <published>2019-03-18T09:40:05.844Z</published>
-    <updated>2019-03-18T09:45:18.254Z</updated>
-    
-    <content type="html"><![CDATA[<p>从本文开始了解HDFS的基本原理，为后续的实际操作打下理论基础。</p><a id="more"></a><h2>HDFS概述及设计目标</h2><p>如果让我们自己设计一个分布式文件系统，如何来设计呢？可能会简单地这样想：为了保障数据稳定性，那么就可以多存几份，放在不同的节点上，这样，即使某个节点挂了，相应的数据还可以从其他地方读到，如下图所示：</p><p><img src="http://bloghello.oursnail.cn/hadoop2-1.png" alt="image"></p><p>我们看到，这样设计的好处是即使第一个存放数据的节点挂了，也不会有什么影响，后面其他的节点上还是有它的副本的。但是这样设计的缺点也很明显：</p><ul><li>不管文件多大，都存储在一个节点上，在进行数据处理的时候很难进行并行处理，节点可能就成为网络瓶颈，很难进行大数据的处理</li><li>存储负载很难均衡，每个节点的利用率很低</li></ul><p>HDFS是如何设计的呢？这里简单先说一下，它是先将每个文件进行拆分，默认是128兆，这些拆分出来的block也是多副本进行存储。这样，数据分布会比较均匀，并且可以并行处理，提高并行计算能力。</p><h2>HDFS设计目标</h2><ul><li>能构建非常巨大的分布式文件系统</li><li>运行在普通廉价的硬件上</li><li>易扩展、为用户提供性能不错的文件存储服务</li></ul><h2>HDFS架构</h2><p>我们来官网看看HDFS的架构以及说明，其中有一段描述是：</p><blockquote><p>HDFS has a master/slave architecture. An HDFS cluster consists of a single NameNode, a master server that manages the file system namespace and regulates access to files by clients. In addition, there are a number of DataNodes, usually one per node in the cluster, which manage storage attached to the nodes that they run on. HDFS exposes a file system namespace and allows user data to be stored in files. Internally, a file is split into one or more blocks and these blocks are stored in a set of DataNodes. The NameNode executes file system namespace operations like opening, closing, and renaming files and directories. It also determines the mapping of blocks to DataNodes. The DataNodes are responsible for serving read and write requests from the file system’s clients. The DataNodes also perform block creation, deletion, and replication upon instruction from the NameNode.</p></blockquote><p>首先，<font color="red">HDFS是一个主从的架构</font>，包含一个<code>NameNode</code>，它主要负责的是管理<code>namespace</code>以及用户访问的文件；此外，还包含一些<code>DataNodes</code>，主要是负责数据管理。</p><p><font color="red">命名空间的作用：</font>HDFS暴露一个文件系统命名空间允许用户数据保存在这里。<code>NameNode</code>执行系统命名空间操作比如打开、关闭、重命名文件以及目录。这个命名空间还确定了<code>block</code>到<code>DataNode</code>的映射。</p><p><font color="red"><code>DataNode</code>和<code>block</code>：</font>在内部，一个文件是被切割为多个<code>block</code>的，这些<code>block</code>是存储在一系列的<code>DataNode</code>上的。这些<code>DataNode</code>负责提供读写请求，还可以根据<code>NameNode</code>的指令进行<code>block</code>的创建、删除以及复制。</p><p>下面总结一下两者的功能：</p><ul><li><code>NameNode</code>（Master/NN）:<ul><li>负责客户端请求的响应</li><li>负责元数据（文件的名称、副本系数、block存放的DN）的管理</li></ul></li><li><code>DataNode</code>（Slaves/DN）:<ul><li>存储用户的文件对应的数据块（block）</li><li>要定期向NN发送心跳信息，汇报本身及其所有的block信息，健康状况</li></ul></li></ul><p>官网贴了一张架构图：</p><p><img src="http://bloghello.oursnail.cn/hadoop2-2.png" alt="image"></p><p>这里感觉有很多东西要额外注意，暂时先学习到这里。</p><h2>HDFS副本机制</h2><blockquote><p>HDFS supports a traditional hierarchical file organization. A user or an application can create directories and store files inside these directories. The file system namespace hierarchy is similar to most other existing file systems; one can create and remove files, move a file from one directory to another, or rename a file.</p></blockquote><p>HDFS支持传统的分层文件组织。 用户或应用程序可以在这些目录中创建目录并存储文件。 文件系统命名空间层次结构与大多数其他现有文件系统类似; 可以创建和删除文件，将文件从一个目录移动到另一个目录，或重命名文件。</p><blockquote><p>The NameNode maintains the file system namespace. Any change to the file system namespace or its properties is recorded by the NameNode. An application can specify the number of replicas of a file that should be maintained by HDFS. The number of copies of a file is called the replication factor of that file. This information is stored by the NameNode.</p></blockquote><p><code>NameNode</code>维护文件系统名称空间。 <code>NameNode</code>记录对文件系统命名空间或其属性的任何更改。 应用程序可以指定应由HDFS维护的文件的副本数。 文件的副本数称为该文件的复制因子。 该信息由<code>NameNode</code>存储。</p><blockquote><p>HDFS is designed to reliably store very large files across machines in a large cluster. It stores each file as a sequence of blocks. The blocks of a file are replicated for fault tolerance. The block size and replication factor are configurable per file.</p></blockquote><p>HDFS旨在可靠地在集群上存储非常大的文件。 它将每个文件切割为为一系列的块进行存储。这些块被复制成多个副本以达到一定的容错性。 块大小和复制因子可根据文件进行配置。</p><blockquote><p>An application can specify the number of replicas of a file. The replication factor can be specified at file creation time and can be changed later. Files in HDFS are write-once (except for appends and truncates) and have strictly one writer at any time.</p></blockquote><p>应用程序可以指定文件的副本数。 复制因子可以在文件创建时指定，并可以在以后更改。 HDFS中的文件是一次写入的（除了追加和删除），并且在任何时候都有一个在写入，也就是说不支持并发写。</p><blockquote><p>The NameNode makes all decisions regarding replication of blocks. It periodically receives a Heartbeat and a Blockreport from each of the DataNodes in the cluster. Receipt of a Heartbeat implies that the DataNode is functioning properly. A Blockreport contains a list of all blocks on a DataNode.</p></blockquote><p>它定期从群集中的每个<code>DataNode</code>接收<code>Heartbeat</code>和<code>Blockreport</code>。 收到心跳意味着<code>DataNode</code>正常运行。 <code>Blockreport</code>包含<code>DataNode</code>上所有块的列表。</p><p><img src="http://bloghello.oursnail.cn/hadoop2-3.png" alt="image"></p><h2>HDFS副本存放策略</h2><p>为了提高可用性，大型Hadoop集群以机架的形式来组织的，同一个机架上不同节点间的网络状况比不同机架之间更为理想。</p><p>那么副本是如何存储呢？</p><p><img src="http://bloghello.oursnail.cn/hadoop2-4.png" alt="image"></p><p>如图所示，这里以默认的三个副本为例子说明，一般策略是这样的：同一个机架的同一台机器上先放一个副本，然后不同机架随机选择两个机器放副本。这样，一旦其中一个机架挂了，另一个机架还可以继续工作。</p><p>至此，关于HDFS基础的理论都已经说明完毕了，下面就要来实际操作一把了。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;从本文开始了解HDFS的基本原理，为后续的实际操作打下理论基础。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="Hadoop" scheme="http://yoursite.com/tags/Hadoop/"/>
     
   </entry>
   
