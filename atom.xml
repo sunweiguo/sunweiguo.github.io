@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-25T02:04:57.203Z</updated>
+  <updated>2019-03-26T06:20:22.724Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>009-linked-list-cycle</title>
+    <link href="http://yoursite.com/2019/03/26/leetcode-classic/009-linked-list-cycle/"/>
+    <id>http://yoursite.com/2019/03/26/leetcode-classic/009-linked-list-cycle/</id>
+    <published>2019-03-26T06:19:52.584Z</published>
+    <updated>2019-03-26T06:20:22.724Z</updated>
+    
+    <content type="html"><![CDATA[<p>leetcode经典例题第九题，求证一个链表是否有环。</p><a id="more"></a><h2>题目描述</h2><p>Given a linked list, determine if it has a cycle in it.</p><p>Follow up:</p><p>Can you solve it without using extra space?</p><h2>解题思路</h2><p>环的长度就是快指针比慢指针多走的长度，因此快慢指针如果能相遇，那么表明有环，否则就表示没有环。</p><h2>代码提交</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasCycle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        ListNode slow = head;</span><br><span class="line">        ListNode fast = head;</span><br><span class="line">        <span class="keyword">while</span>(fast != <span class="keyword">null</span> &amp;&amp; fast.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next.next;</span><br><span class="line">            <span class="keyword">if</span>(slow == fast)&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;leetcode经典例题第九题，求证一个链表是否有环。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode经典" scheme="http://yoursite.com/tags/leetcode%E7%BB%8F%E5%85%B8/"/>
+    
+  </entry>
   
   <entry>
     <title>008-Reorder-List</title>
@@ -388,26 +408,6 @@
     <summary type="html">
     
       &lt;p&gt;剑指offer第六十六题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题65-矩阵中的路径】</title>
-    <link href="http://yoursite.com/2019/03/19/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9865-%E7%9F%A9%E9%98%B5%E4%B8%AD%E7%9A%84%E8%B7%AF%E5%BE%84%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/19/剑指offer/【面试题65-矩阵中的路径】/</id>
-    <published>2019-03-19T03:27:52.563Z</published>
-    <updated>2019-03-19T03:28:15.510Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第六十五题。</p><a id="more"></a><h2>题目描述</h2><p>请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。如果一条路径经过了矩阵中的某一个格子，则之后不能再次进入这个格子。 例如 a b c e s f c s a d e e 这样的3 X 4 矩阵中包含一条字符串&quot;bcced&quot;的路径，但是矩阵中不包含&quot;abcb&quot;路径，因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。</p><h2>解题思路</h2><p>回溯</p><p>基本思想：</p><p>0.根据给定数组，初始化一个标志位数组，初始化为false，表示未走过，true表示已经走过，不能走第二次</p><p>1.根据行数和列数，遍历数组，先找到一个与str字符串的第一个元素相匹配的矩阵元素，进入judge</p><p>2.根据i和j先确定一维数组的位置，因为给定的matrix是一个一维数组</p><p>3.确定递归终止条件：越界，当前找到的矩阵值不等于数组对应位置的值，已经走过的，这三类情况，都直接false，说明这条路不通</p><p>4.若k，就是待判定的字符串str的索引已经判断到了最后一位，此时说明是匹配成功的</p><p>5.下面就是本题的精髓，递归不断地寻找周围四个格子是否符合条件，只要有一个格子符合条件，就继续再找这个符合条件的格子的四周是否存在符合条件的格子，直到k到达末尾或者不满足递归条件就停止。</p><p>6.走到这一步，说明本次是不成功的，我们要还原一下标志位数组index处的标志位，进入下一轮的判断。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasPath</span><span class="params">(<span class="keyword">char</span>[] matrix, <span class="keyword">int</span> rows, <span class="keyword">int</span> cols, <span class="keyword">char</span>[] str)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//标志位，初始化为false</span></span><br><span class="line">        <span class="keyword">boolean</span>[] flag = <span class="keyword">new</span> <span class="keyword">boolean</span>[matrix.length];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;rows;i++)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;cols;j++)&#123;</span><br><span class="line">                 <span class="comment">//循环遍历二维数组，找到起点等于str第一个元素的值，再递归判断四周是否有符合条件的----回溯法</span></span><br><span class="line">                 <span class="keyword">if</span>(judge(matrix,i,j,rows,cols,flag,str,<span class="number">0</span>))&#123;</span><br><span class="line">                     <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">                 &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//judge(初始矩阵，索引行坐标i，索引纵坐标j，矩阵行数，矩阵列数，待判断的字符串，字符串索引初始为0即先判断字符串的第一位)</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">judge</span><span class="params">(<span class="keyword">char</span>[] matrix,<span class="keyword">int</span> i,<span class="keyword">int</span> j,<span class="keyword">int</span> rows,<span class="keyword">int</span> cols,<span class="keyword">boolean</span>[] flag,<span class="keyword">char</span>[] str,<span class="keyword">int</span> k)</span></span>&#123;</span><br><span class="line">        <span class="comment">//先根据i和j计算匹配的第一个元素转为一维数组的位置</span></span><br><span class="line">        <span class="keyword">int</span> index = i*cols+j;</span><br><span class="line">        <span class="comment">//递归终止条件</span></span><br><span class="line">        <span class="keyword">if</span>(i&lt;<span class="number">0</span> || j&lt;<span class="number">0</span> || i&gt;=rows || j&gt;=cols || matrix[index] != str[k] || flag[index] == <span class="keyword">true</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">//若k已经到达str末尾了，说明之前的都已经匹配成功了，直接返回true即可</span></span><br><span class="line">        <span class="keyword">if</span>(k == str.length-<span class="number">1</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">//要走的第一个位置置为true，表示已经走过了</span></span><br><span class="line">        flag[index] = <span class="keyword">true</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//回溯，递归寻找，每次找到了就给k加一，找不到，还原</span></span><br><span class="line">        <span class="keyword">if</span>(judge(matrix,i-<span class="number">1</span>,j,rows,cols,flag,str,k+<span class="number">1</span>) ||</span><br><span class="line">           judge(matrix,i+<span class="number">1</span>,j,rows,cols,flag,str,k+<span class="number">1</span>) ||</span><br><span class="line">           judge(matrix,i,j-<span class="number">1</span>,rows,cols,flag,str,k+<span class="number">1</span>) ||</span><br><span class="line">           judge(matrix,i,j+<span class="number">1</span>,rows,cols,flag,str,k+<span class="number">1</span>)  )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//走到这，说明这一条路不通，还原，再试其他的路径</span></span><br><span class="line">        flag[index] = <span class="keyword">false</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第六十五题。&lt;/p&gt;
     
     </summary>
     
