@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-26T06:20:22.724Z</updated>
+  <updated>2019-03-26T06:59:46.995Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>010-linked-list-cycle-ii</title>
+    <link href="http://yoursite.com/2019/03/26/leetcode-classic/010-linked-list-cycle-ii/"/>
+    <id>http://yoursite.com/2019/03/26/leetcode-classic/010-linked-list-cycle-ii/</id>
+    <published>2019-03-26T06:57:10.687Z</published>
+    <updated>2019-03-26T06:59:46.995Z</updated>
+    
+    <content type="html"><![CDATA[<p>leetcode经典例题第十题，在第九题的基础上判断环的入口位置。</p><a id="more"></a><h2>题目描述</h2><p>Given a linked list, return the node where the cycle begins. If there is no cycle, returnnull.</p><p><img src="http://bloghello.oursnail.cn/leetcode10-1.jpg" alt="image"></p><p>Follow up:</p><p>Can you solve it without using extra space?</p><h2>解题思路</h2><ul><li>同linked-list-cycle一题，使用快慢指针方法，判定是否存在环，并记录两指针相遇位置(Z)；</li><li>将两指针分别放在链表头(X)和相遇位置(Z)，并改为相同速度推进，则两指针在环开始位置相遇(Y)</li></ul><p><img src="http://bloghello.oursnail.cn/leetcode10-2.jpg" alt="image"></p><p>X,Y,Z分别为链表起始位置，环开始位置和两指针相遇位置。</p><p>由于快指针速度为慢指针速度的两倍，那么这个慢指针最多走圆的一圈（这里想象极端情况，就是整个链表就是一个环，那么两个指针从圆的同一个地方出发，那么此时何时相遇呢？必然是慢指针正好才走一圈的时候，快指针走两圈追上来了）。</p><p>所以这里假设就是在Z相遇的，那么慢指针走的距离是a+b，很好计算。而快指针走的距离是2(a+b)，此时我们想象，假设慢指针走到了X和Z的中间的时候，快指针已经到Z了，那么下面再走的话，就是快指针从Z点出发围着圆绕几圈之后恰好在Z点和X相遇，因此快指针走过的距离是：</p><blockquote><p>2(a+b) = a+b+n*圆的周长 = a+b+n(b+c)</p></blockquote><p>此时a为:</p><blockquote><p>a = (n - 1) * b + n * c = (n - 1)(b + c) +c</p></blockquote><p>从公式上看，当一个指针从X出出发，走完a的距离之后，那么另一个指针从相遇点Z出发就会走(n-1)圈的环再加一个C的距离，此时正好在Y点相遇。</p><p>因此，一个指针从头出发，一个指针从相遇点出发，速度相同，相遇点就是环的入口节点。</p><h2>代码提交</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">detectCycle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//一快一慢两指针先找到相遇点</span></span><br><span class="line">        ListNode slow = head;</span><br><span class="line">        ListNode fast = head;</span><br><span class="line">        <span class="keyword">while</span>(fast != <span class="keyword">null</span> &amp;&amp; fast.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next.next;</span><br><span class="line">            <span class="keyword">if</span>(slow == fast)&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//万一没有环的话直接直接返回Null了</span></span><br><span class="line">        <span class="keyword">if</span>(fast == <span class="keyword">null</span> || fast.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//一个从head开始一步一步走，一个从相遇点开始一步一步走，再相遇就是环的入口位置</span></span><br><span class="line">        slow = head;</span><br><span class="line">        <span class="keyword">while</span>(slow != fast)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> slow;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;leetcode经典例题第十题，在第九题的基础上判断环的入口位置。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode经典" scheme="http://yoursite.com/tags/leetcode%E7%BB%8F%E5%85%B8/"/>
+    
+  </entry>
   
   <entry>
     <title>009-linked-list-cycle</title>
@@ -393,26 +413,6 @@
     
     
       <category term="设计模式" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>【面试题66-机器人的运动范围】</title>
-    <link href="http://yoursite.com/2019/03/19/%E5%89%91%E6%8C%87offer/%E3%80%90%E9%9D%A2%E8%AF%95%E9%A2%9866-%E6%9C%BA%E5%99%A8%E4%BA%BA%E7%9A%84%E8%BF%90%E5%8A%A8%E8%8C%83%E5%9B%B4%E3%80%91/"/>
-    <id>http://yoursite.com/2019/03/19/剑指offer/【面试题66-机器人的运动范围】/</id>
-    <published>2019-03-19T03:55:00.344Z</published>
-    <updated>2019-03-19T03:59:09.212Z</updated>
-    
-    <content type="html"><![CDATA[<p>剑指offer第六十六题。</p><a id="more"></a><h2>题目描述</h2><p>地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。 例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？</p><h2>解题思路</h2><p>基本的思路是同上一题的，就不再赘述思路了。至此，《剑指offer》66题全部刷完，这是我第三遍刷了，很多答案进行了优化，总体上是把比较好的方案总结在这上面，而不是只贪图简单而采取暴力解法，那样达不到真正的目的。下面的刷题主要是围绕牛客网的《leetcode在线编程训练》进行练习，后面的刷题进度可能总体较慢。</p><h2>我的答案</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">movingCount</span><span class="params">(<span class="keyword">int</span> threshold, <span class="keyword">int</span> rows, <span class="keyword">int</span> cols)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//根据m行n列的方格，构造一个数组来标识是否已经判断过，已经判断过的话置为true，否则置为false</span></span><br><span class="line">        <span class="comment">//这里初始化默认是false</span></span><br><span class="line">        <span class="keyword">boolean</span>[][] flag = <span class="keyword">new</span> <span class="keyword">boolean</span>[rows][cols];</span><br><span class="line">        <span class="comment">//下面开始走，边走边判断周围是否符合</span></span><br><span class="line">        <span class="comment">//judge(初始横坐标i，初始横坐标j，行数，列数，k值，标识是否走过)</span></span><br><span class="line">        <span class="keyword">return</span> judge(<span class="number">0</span>,<span class="number">0</span>,rows,cols,threshold,flag);</span><br><span class="line">    &#125;</span><br><span class="line">     </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">judge</span><span class="params">(<span class="keyword">int</span> i,<span class="keyword">int</span> j,<span class="keyword">int</span> rows,<span class="keyword">int</span> cols,<span class="keyword">int</span> threshold,<span class="keyword">boolean</span>[][] flag)</span></span>&#123;</span><br><span class="line">        <span class="comment">//越界、flsg=true说明已经走过，就不要再走了、行坐标和列坐标的数位之和大于k也跳过</span></span><br><span class="line">        <span class="keyword">if</span>(i&lt;<span class="number">0</span> || j&lt;<span class="number">0</span> || i&gt;=rows || j&gt;=cols || flag[i][j]==<span class="keyword">true</span> || getK(i)+getK(j)&gt;threshold)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//机器人从[0,0]出发，必定是满足的，先置为true,所以要先加个1</span></span><br><span class="line">        flag[i][j] = <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">//基于回溯的思想，就是到达一个格子后，不断地判断他的周围四个格子是否满足要求，递归判断下去，必定走遍所有格子</span></span><br><span class="line">        <span class="keyword">return</span> judge(i-<span class="number">1</span>,j,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i,j-<span class="number">1</span>,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i+<span class="number">1</span>,j,rows,cols,threshold,flag)+</span><br><span class="line">                judge(i,j+<span class="number">1</span>,rows,cols,threshold,flag)+<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">   <span class="comment">//计算数字每一位之和</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">getK</span><span class="params">(<span class="keyword">int</span> num)</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">do</span>&#123;</span><br><span class="line">            sum += num%<span class="number">10</span>;</span><br><span class="line">        &#125;<span class="keyword">while</span>((num=num/<span class="number">10</span>) &gt; <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;剑指offer第六十六题。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="剑指offer题解" scheme="http://yoursite.com/tags/%E5%89%91%E6%8C%87offer%E9%A2%98%E8%A7%A3/"/>
     
   </entry>
   

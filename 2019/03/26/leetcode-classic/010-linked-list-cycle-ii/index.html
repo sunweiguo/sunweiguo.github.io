@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 010-linked-list-cycle-ii · fossi</title><meta name="description" content="010-linked-list-cycle-ii - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">博客</a></li><li class="nav-list-item"><a href="/tags" target="_self" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">010-linked-list-cycle-ii</h1><div class="post-meta"><span class="post-time">Mar 26, 2019</span></div><div class="post-content"><p>leetcode经典例题第十题，在第九题的基础上判断环的入口位置。</p>
+<a id="more"></a>
+<h2>题目描述</h2>
+<p>Given a linked list, return the node where the cycle begins. If there is no cycle, returnnull.</p>
+<p><img src="http://bloghello.oursnail.cn/leetcode10-1.jpg" alt="image"></p>
+<p>Follow up:</p>
+<p>Can you solve it without using extra space?</p>
+<h2>解题思路</h2>
+<ul>
+<li>同linked-list-cycle一题，使用快慢指针方法，判定是否存在环，并记录两指针相遇位置(Z)；</li>
+<li>将两指针分别放在链表头(X)和相遇位置(Z)，并改为相同速度推进，则两指针在环开始位置相遇(Y)</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/leetcode10-2.jpg" alt="image"></p>
+<p>X,Y,Z分别为链表起始位置，环开始位置和两指针相遇位置。</p>
+<p>由于快指针速度为慢指针速度的两倍，那么这个慢指针最多走圆的一圈（这里想象极端情况，就是整个链表就是一个环，那么两个指针从圆的同一个地方出发，那么此时何时相遇呢？必然是慢指针正好才走一圈的时候，快指针走两圈追上来了）。</p>
+<p>所以这里假设就是在Z相遇的，那么慢指针走的距离是a+b，很好计算。而快指针走的距离是2(a+b)，此时我们想象，假设慢指针走到了X和Z的中间的时候，快指针已经到Z了，那么下面再走的话，就是快指针从Z点出发围着圆绕几圈之后恰好在Z点和X相遇，因此快指针走过的距离是：</p>
+<blockquote>
+<p>2(a+b) = a+b+n*圆的周长 = a+b+n(b+c)</p>
+</blockquote>
+<p>此时a为:</p>
+<blockquote>
+<p>a = (n - 1) * b + n * c = (n - 1)(b + c) +c</p>
+</blockquote>
+<p>从公式上看，当一个指针从X出出发，走完a的距离之后，那么另一个指针从相遇点Z出发就会走(n-1)圈的环再加一个C的距离，此时正好在Y点相遇。</p>
+<p>因此，一个指针从头出发，一个指针从相遇点出发，速度相同，相遇点就是环的入口节点。</p>
+<h2>代码提交</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ListNode <span class="title">detectCycle</span><span class="params">(ListNode head)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(head == <span class="keyword">null</span> || head.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//一快一慢两指针先找到相遇点</span></span><br><span class="line">        ListNode slow = head;</span><br><span class="line">        ListNode fast = head;</span><br><span class="line">        <span class="keyword">while</span>(fast != <span class="keyword">null</span> &amp;&amp; fast.next != <span class="keyword">null</span>)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next.next;</span><br><span class="line">            <span class="keyword">if</span>(slow == fast)&#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//万一没有环的话直接直接返回Null了</span></span><br><span class="line">        <span class="keyword">if</span>(fast == <span class="keyword">null</span> || fast.next == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//一个从head开始一步一步走，一个从相遇点开始一步一步走，再相遇就是环的入口位置</span></span><br><span class="line">        slow = head;</span><br><span class="line">        <span class="keyword">while</span>(slow != fast)&#123;</span><br><span class="line">            slow = slow.next;</span><br><span class="line">            fast = fast.next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> slow;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/26/leetcode-classic/009-linked-list-cycle/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Mar 26 2019 14:57:10 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>, <a href="https://github.com/sunweiguo">contact with me!</a>.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
