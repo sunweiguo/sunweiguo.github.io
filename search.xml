@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[2019年，答辩顺利结束！]]></title>
+    <url>%2F2019%2F04%2F04%2Fsuibi%2F2019%E5%B9%B4%EF%BC%8C%E7%AD%94%E8%BE%A9%E9%A1%BA%E5%88%A9%E7%BB%93%E6%9D%9F%EF%BC%81%2F</url>
+    <content type="text"><![CDATA[2019.4.3答辩顺利结束，过程比我想象中更加顺利，内心十分开心。 本科四年+硕士两年半，终于要毕业了，2019.4.3号通过了最终的答辩，答辩结束现场的留念： 感谢导师，感谢同门，感谢室友，感谢家人。（疑惑为什么大家都一致地丧脸，笑哭脸） 下面就是再整理整理材料，准备谢师宴以及最后的毕业典礼。]]></content>
+      <tags>
+        <tag>随笔</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[06-软件设计七大原则-迪米特原则]]></title>
     <url>%2F2019%2F04%2F04%2Fdesign-pattern%2F06-%E8%BD%AF%E4%BB%B6%E8%AE%BE%E8%AE%A1%E4%B8%83%E5%A4%A7%E5%8E%9F%E5%88%99-%E8%BF%AA%E7%B1%B3%E7%89%B9%E5%8E%9F%E5%88%99%2F</url>
     <content type="text"><![CDATA[本文来了解一下什么是迪米特原则。 定义 一个对象应该对其他对象保持最少的了解，又叫最少知道原则。 尽量降低类与类之间的耦合 优点：降低类之间的耦合 强调：只和朋友交流，不和陌生人交流（朋友类：出现在这个类的成员变量上，方法输入，方法的返回类型；而出现在方法体内部的类不属于朋友类） 可能对于最后的强调有点疑惑，下面举例说明。 例子 假设一个场景，是一个boss要技术主管查询一下线上上线的课程有哪些。 定义一个课程类，里面啥都不写： 1public class Course &#123;&#125; 定义一个boss类，让技术主管告诉他上线的课程的数量： 123456789public class Boss &#123; public void check(TeamLeader teamLeader)&#123; List&lt;Course&gt; courses = new ArrayList&lt;&gt;(); for(int i=0;i&lt;20;i++)&#123; courses.add(new Course()); &#125; teamLeader.getCourseNumber(courses); &#125;&#125; 定义一个TeamLeader类，用于查询数量: 12345public class TeamLeader &#123; public void getCourseNumber(List&lt;Course&gt; courses) &#123; System.out.println(courses.size()); &#125;&#125; 测试类里面打印即可。乍看没什么问题，但是我们分析一下：boss其实根本不需要管course类，我只要问技术主管即可，而技术主管通过一些手段去查询。但是我们现在的这个程序的问题是：boss类里面的方法体里面有了他根本就不需要关心的course类。关系是： 我们再来分析一下boss的朋友，根据上面强调的规则，teamleader为方法的入参，是boss的朋友，返回值为void的，不谈。没有成员变量。方法体里面的是course，不是boss的朋友，所以这个course我们是不是可以放在teamleader这个类里面呢？ 将boss类改为： 12345public class Boss &#123; public void check(TeamLeader teamLeader)&#123; teamLeader.getCourseNumber(); &#125;&#125; 将统计的具体细节移动到teamleader里面： 123456789public class TeamLeader &#123; public void getCourseNumber() &#123; List&lt;Course&gt; courses = new ArrayList&lt;&gt;(); for(int i=0;i&lt;20;i++)&#123; courses.add(new Course()); &#125; System.out.println(courses.size()); &#125;&#125; 关系变为：]]></content>
