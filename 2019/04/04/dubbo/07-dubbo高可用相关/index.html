@@ -111,7 +111,7 @@
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dubbo:reference</span> <span class="attr">cluster</span>=<span class="string">"failsafe"</span> /&gt;</span></span><br></pre></td></tr></table></figure>
 <h2>五、Hystrix</h2>
 <p>由于dubbo对于服务降级和容错等做的比较简单，因此在实际开发中，是用<code>Hystrix</code>来实现服务容错的。也是<code>spring cloud</code>中默认的服务容错组件。在<a href="http://fossi.oursnail.cn/2019/02/21/weather-for-spring-cloud/11.%E5%A4%A9%E6%B0%94%E9%A2%84%E6%8A%A5%E7%B3%BB%E7%BB%9F-%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">11.天气预报系统-熔断机制</a>中对其进行了介绍和简单实用。核心就是<code>@HystrixCommand</code>这个注解，添加这个注解之后这个方法就被<code>hystrix</code>代理了，从而实现对这个方法的一个监控。基本的使用就不再赘述了，比较简单，就是添加依赖-开启<code>hystrix</code>-<code>HystrixCommand</code>这个即可。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/03/26/leetcode-classic/010-linked-list-cycle-ii/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/04/04/design-pattern/06-软件设计七大原则-迪米特原则/" class="prev">PRVE</a><a href="/2019/03/26/leetcode-classic/010-linked-list-cycle-ii/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Thu Apr 04 2019 21:02:32 GMT+0800',
     owner: 'sunweiguo',
