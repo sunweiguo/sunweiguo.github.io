@@ -119,11 +119,11 @@
 <li>某个类加载器在加载相应的类时，会相应地在JVM内存堆（<code>Heap</code>）中创建一个对应的<code>Class&lt;T&gt;</code>，用来表示访问该类信息的入口</li>
 </ul>
 <h2>五、使用Main类的main方法作为程序入口运行程序</h2>
-<p>就是去执行指令，过程与<a href="http://fossi.oursnail.cn/2019/02/03/JVM/Java%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F/" target="_blank" rel="noopener">Java如何执行一个最简单的程序</a>类似。</p>
+<p>就是去执行指令，过程与<a href="https://sunweiguo.github.io/2019/02/03/JVM/Java%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E4%B8%80%E4%B8%AA%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E7%A8%8B%E5%BA%8F/" target="_blank" rel="noopener">Java如何执行一个最简单的程序</a>类似。</p>
 <h2>六、方法执行完毕，JVM销毁，释放内存</h2>
 <p>对于本程序，主程序执行完毕，释放主函数所在的栈帧，释放堆中的内存。</p>
 <h2>七、再来回顾回顾java类加载器相关的概念吧</h2>
-<p>本处的内容为再次简单说明，具体见<a href="http://fossi.oursnail.cn/2019/02/05/JVM/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">双亲委派模型</a>。类加载器(<code>Class Loader</code>)：顾名思义，指的是可以加载类的工具。JVM自身定义了三个类加载器：引导类加载器(<code>Bootstrap Class</code> Loader)、拓展类加载器(<code>Extension Class Loader</code> )、应用加载器(<code>Application Class Loader</code>)。当然，我们有时候也会自己定义一些类加载器来满足自身的需要。</p>
+<p>本处的内容为再次简单说明，具体见<a href="https://sunweiguo.github.io/2019/02/05/JVM/%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B/" target="_blank" rel="noopener">双亲委派模型</a>。类加载器(<code>Class Loader</code>)：顾名思义，指的是可以加载类的工具。JVM自身定义了三个类加载器：引导类加载器(<code>Bootstrap Class</code> Loader)、拓展类加载器(<code>Extension Class Loader</code> )、应用加载器(<code>Application Class Loader</code>)。当然，我们有时候也会自己定义一些类加载器来满足自身的需要。</p>
 <p>引导类加载器(<code>Bootstrap Class Loader</code>): 该类加载器使JVM使用C++/C底层代码实现的加载器，用以加载JVM运行时所需要的系统类，这些系统类在<code>{JRE_HOME}/lib</code>目录下。<strong>由于类加载器是使用平台相关的底层<code>C++/C</code>语言实现的， 所以该加载器不能被Java代码访问到。但是，我们可以查询某个类是否被引导类加载器加载过</strong>。我们经常使用的系统类如：<code>java.lang.String</code>,<code>java.lang.Object</code>,<code>java.lang*</code>… 这些都被放在 <code>{JRE_HOME}/lib/rt.jar</code>包内， 当JVM系统启动的时候，引导类加载器会将其加载到 JVM内存的方法区中。</p>
 <p>拓展类加载器(<code>Extension Class Loader</code>): 该加载器是用于加载 java 的拓展类 ，拓展类一般会放在<code>{JRE_HOME}/lib/ext/</code> 目录下，用来提供除了系统类之外的额外功能。拓展类加载器是是整个JVM加载器的Java代码可以访问到的类加载器的最顶端，即是超级父加载器，拓展类加载器是没有父类加载器的。（注意，其实引导类加载器不能算是扩展类加载器的父类，我们从源码中可以看出来的）</p>
 <p>应用类加载器(<code>Applocatoin Class Loader</code>): 该类加载器是用于加载用户代码，是用户代码的入口。我经常执行指令 <code>java xxx.x.xxx.x.x.XClass</code> , 实际上，JVM就是使用的<code>AppClassLoader</code>加载 <code>xxx.x.xxx.x.x.XClass</code> 类的。</p>
