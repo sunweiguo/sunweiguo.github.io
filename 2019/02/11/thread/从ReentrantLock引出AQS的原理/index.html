@@ -171,7 +171,7 @@
 <li>公平锁每次获取到锁为同步队列中的第一个节点，保证请求资源时间上的绝对顺序，而非公平锁有可能刚释放锁的线程下次继续获取该锁，则有可能导致其他线程永远无法获取到锁，造成“饥饿”现象。</li>
 <li>公平锁为了保证时间上的绝对顺序，需要频繁的上下文切换，而非公平锁会降低一定的上下文切换，降低性能开销。因此，<code>ReentrantLock</code>默认选择的是非公平锁，则是为了减少一部分上下文切换，保证了系统更大的吞吐量。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">上一篇</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/11/thread/读写锁ReentrantReadWriteLock/" class="prev">PRVE</a><a href="/2019/02/11/thread/从底层理解synchronized/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Mon Feb 11 2019 18:45:59 GMT+0800',
     owner: 'sunweiguo',
