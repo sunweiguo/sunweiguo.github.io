@@ -1,0 +1,92 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> kafka入门 · fossi</title><meta name="description" content="kafka入门 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">kafka入门</h1><div class="post-meta"><span class="post-time">Jun 8, 2019</span></div><div class="post-content"><h2>一、kafka介绍</h2>
+<p>或多或少都听说过<code>kafka</code>，为了深入学习一下<code>kafka</code>，本文作为学习的第一篇文章，主要目标是搞清楚<code>kafka</code>的基本概念，因为<code>kafka</code>涉及一些专用名词，只有先了解这些名词，才有可能理解<code>kafka</code>的设计思想。下面先简单说一下<code>kafka</code>是用来干嘛的！</p>
+<p>引用<a href="https://sookocheff.com/post/kafka/kafka-in-a-nutshell" target="_blank" rel="noopener">Kafka in a Nutshell</a>中的说法是：</p>
+<blockquote>
+<p>Kafka is a distributed messaging system providing fast, highly scalable and redundant messaging through a pub-sub model. Kafka’s distributed design gives it several advantages. First, Kafka allows a large number of permanent or ad-hoc consumers. Second, Kafka is highly available and resilient to node failures and supports automatic recovery. In real world data systems, these characteristics make Kafka an ideal fit for communication and integration between components of large scale data systems.</p>
+</blockquote>
+<p>翻译下来就是：</p>
+<blockquote>
+<p>Kafka是一个分布式消息传递系统，通过pub-sub模型提供快速，高度可扩展和冗余的消息传递。 Kafka的分布式设计赋予它几个优点。 首先，Kafka允许大量永久或临时消费者。 其次，Kafka具有高可用性和对节点故障的弹性，并支持自动恢复。 在现实世界的数据系统中，这些特性使Kafka成为大规模数据系统组件之间通信和集成的理想选择。</p>
+</blockquote>
+<p>其中提到两个重要的东西：一个是<code>pub-sub</code>模型，其实就是我们常说的发布订阅模型，并且可以持节化，以及高可用、可容错、可扩展，这些都是其优良特性。它涉及几个基本术语：<code>Topic</code>、<code>Producer</code>、<code>Consumer</code>、<code>Partition</code>以及<code>Broker</code>。下面会逐渐涉及到。</p>
+<h2>二、Topic</h2>
+<p>一个 <code>Topic</code>（主题）对应一个消息队列。Kafka 支持多生产者，多消费者，对应下图：</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-1.jpg" alt=""></p>
+<p>多个生产者将数据发送到 Kafka 中，Kafka 将它们顺序存储，但是这里是不是存在一个问题呢？我们知道 <code>Kafka</code> 的目标是大数据，如果将消息存在一个“中心”队列中，势必缺少可伸缩性。无论是生产者/消费者数目的增加，还是消息数量的增加，都可能耗尽机器的性能或存储。</p>
+<p>因此，<code>Kafka</code> 在概念上将一个 <code>Topic</code> 分成了多个 <code>Partition</code>（分区），写入 <code>topic</code> 的消息会被（平均）分配到其中一个 <code>Partition</code>。<code>Partition</code> 中会为消息保存一个 <code>Partition</code> 内<b>唯一</b>的 ID ，一般称为<b>偏移量</b>(<code>offset</code>)。这样当性能/存储不足时 <code>Kafka</code> 就可以通过增加 <code>Partition</code> 实现横向扩展。（同时，<code>Topic</code>可能有许多分区，因此它可以处理任意数量的数据，因此具备了并行性）</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-2.jpg" alt=""></p>
+<p><code>kafka</code>将<code>topic</code>中的消息存在不同的<code>partition</code>中。如果存在键值（<code>key</code>），消息按照键值（<code>key</code>）做分类存在不同的<code>partition</code>中，如果不存在键值（<code>key</code>），消息按照轮询（<code>Round Robin</code>）机制存在不同的<code>partition</code>中。默认情况下，键值（<code>key</code>）决定了一条消息会被存在哪个<code>partition</code>中。</p>
+<p>现在我们有了一个队列的消息，那么如何发送给消费者呢？</p>
+<h2>三、消费模型</h2>
+<p>一般有两种消费模型，不同模型下消费者的行为是不同的：</p>
+<ul>
+<li>队列模式（也叫点对点模式）。多个消费者共同消费一个队列，每条消息只发送给一个消费者。</li>
+<li>发布/订阅模式。多个消费者订阅主题，每个消息会发布给所有的消费者。</li>
+</ul>
+<p><img src="http://bloghello.oursnail.cn/kafka1-3.jpg" alt=""></p>
+<p>显然要构建一个大数据下的消息队列，两种模式都是必须的。因此 <code>Kafka</code> 引入了 <code>Consumer Group</code>（消费组）的概念，<code>Consumer Group</code> 是以发布/订阅模式工作的；一个 <code>Consumer Group</code> 中可以有多个 <code>Consumer</code>（消费者），<code>Group</code> 内的消费者以队列模式工作，如下图：</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-4.jpg" alt=""></p>
+<p>上面提到，<code>Kafka</code> 中的消息是以 <code>Partition</code> 存储的，那么它是如何与 <code>Consumer</code> 对接的呢？</p>
+<h2>四、Partition 与消费模型</h2>
+<p>上面提到，<code>Kafka</code> 中一个 <code>topic</code> 中的消息是被打散分配在多个 <code>Partition</code>(分区) 中存储的， <code>Consumer Group</code> 在消费时需要从不同的 <code>Partition</code> 获取消息，那最终如何重建出 <code>Topic</code> 中消息的顺序呢？</p>
+<p>答案是：没有办法。<code>Kafka</code> 只会保证在 <code>Partition</code> 内消息是有序的，而不管全局的情况。</p>
+<p>下一个问题是：<code>Partition</code> 中的消息可以被不同的 <code>Consumer Group</code>多次消费，那 <code>Partition</code>中被消费的消息是何时删除的？ <code>Partition</code> 又是如何知道一个 <code>Consumer Group</code> 当前消费的位置呢？</p>
+<ol>
+<li>
+<p>无论消息是否被消费，除非消息到期 ，<code>Partition</code> 从不删除消息。例如设置保留时间为 2 天，则消息发布 2 天内任何 <code>Group</code> 都可以消费，2 天后，消息自动被删除。</p>
+</li>
+<li>
+<p><code>Partition</code> 会为每个 <code>Consumer Group</code> 保存一个偏移量，记录 <code>Group</code> 消费到的位置。如下图：</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-5.jpg" alt=""></p>
+</li>
+</ol>
+<p>上面我们提到的都是 <code>Partition</code> 与 <code>Consumer Group</code> 之间的关系，那 <code>Group</code> 中的 <code>Consumer</code> 又是如何与 <code>Partition</code> 对应的呢？</p>
+<ul>
+<li>
+<p>同一个 Consumer Group 内，一个 Partition 只能被一个 Consumer 消费。</p>
+</li>
+<li>
+<p>推论1：如果 Consumer 的数量大于 Partition 数量，则会有 Consumer 是空闲的。</p>
+</li>
+<li>
+<p>推论2：如果 Consumer 的数量小于 Partition 数量，则一个 Consumer 可能消费多个 Partition。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-6.jpg" alt=""></p>
+</li>
+</ul>
+<p>左边的 <code>Consumer Group</code> 中的 C4 是空闲的，而右边 <code>Group</code> 中的 C1 则需要消费两个 <code>Partition</code> 。由于右边的 C1 中消息可能来源于两个 <code>Partition</code>，此时如果需要确保消息的顺序，必须先判断消息的 <code>Partition ID</code>。</p>
+<h2>五、物理存储</h2>
+<p>上面提到的 <code>Topic</code>, <code>Partition</code> 都是抽象的概念。每个 <code>Partition</code> 最终都需要存储在物理机器上，在 <code>Kafka</code> 中一般把这样的物理机器称为 <code>Broker</code>，可以是一台物理机，也可以是一个集群。</p>
+<p>在讲概念的时候我们没有考虑到物理机可能会损坏的问题，这会导致某个 <code>Partition</code> 失效，上面存储的消息丢失，那还说什么高可用？所以一般需要对数据做冗余 (replication)。换言之，需要存储多份 <code>Partition</code> 在不同的 <code>Broker</code> 上，并为它们的数据进行同步。那么从物理的视角：</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-7.jpg" alt=""></p>
+<p>上图中，某个 <code>Topic</code> 分成了 3 个 <code>Partition</code>，每个 <code>Partition</code> 保存了两个副本，副本平均分配到 3 个 <code>Broker</code> 上。图中即使有一个 <code>Broker</code> 挂了，剩余的两个 <code>Broker</code> 依旧能正常工作。这也是分布式系统的常用设计。</p>
+<p>同一个 <code>Partition</code> 有多个副本，并分布在不同的 <code>Broker</code> 上，那么 <code>Producer</code> 应该写入到哪一个副本上呢？<code>Consumer</code> 又应该从哪个副本上读取呢？</p>
+<ul>
+<li><code>Kafka</code> 的各个 <code>Broker</code> 需要与 <code>Zookeeper</code> 进行通信，每个 <code>Partition</code> 的多个副本之间通过 <code>Zookeeper</code> 的 <code>Leader</code> 选举机制选出主副本。所有该 <code>Partition</code> 上的读写都通过这个主副本进行。（每个分区有一个<code>leader</code>，零或多个<code>follower</code>。<code>Leader</code>处理此分区的所有的读写请求而<code>follower</code>被动的复制数据。如果<code>leader</code>宕机，其它的一个<code>follower</code>会被推举为新的<code>leader</code>。）</li>
+<li>其它的冗余副本会从主副本上同步新的消息。就像其它的 <code>Consumer</code> 一样。</li>
+</ul>
+<h2>六、总结</h2>
+<p>1、<code>Topic</code> 是顶级概念，对应于一个消息队列</p>
+<p>2、<code>Kafka</code> 是以 <code>Partition</code> 为单位存储消息的，<code>Consumer</code> 在消费时也是按 <code>Partition</code> 进行的。即 <code>Kafka</code> 会保证一个 <code>Consumer</code> 收到的消息中，来自同一个 <code>Partition</code> 的所有消息是有序的。而来自不同 <code>Partition</code> 的消息则不保证有序。（所以，如果你想要顺序的处理<code>Topic</code>的所有消息，那就只提供一个分区。）</p>
+<p>3、<code>Partition</code> 会为其中的消息分配 <code>Partition</code> 内唯一的 ID，一般称作偏移量(<code>offset</code>) 。<code>Kafka</code> 会保留所有的消息，直到消息的保留时间（例如设置保留 2 天）结束。这样 <code>Consumer</code> 可以自由决定如何读取消息，例如读取更早的消息，重新消费等。</p>
+<p>4、<code>Kafka</code> 有 <code>Consumer Group</code> 的概念。每个 <code>Group</code> 独立消费某个 Topic 的消息，互相不干扰。事实上，<code>Kafka</code> 会为每个 <code>Group</code> 保存一个偏移量，记录消费的位置。每个 <code>Group</code> 可以包含多个 <code>Consumer</code>，它们共同消费这个 <code>Topic</code>。</p>
+<p>5、对于一个 <code>Consumer Group</code>，一个 <code>Partition</code> 只能由 <code>Group</code> 中的一个 <code>Consumer</code> 消费。具体哪个 <code>Consumer</code> 监听哪个 <code>Partition</code> 是由 <code>Kafka</code> 分配的。算法可以指定为 <code>Range</code> 或 <code>RoundRobin</code>。</p>
+<p>6、物理上，消息是存在 <code>Broker</code> 上的，一般对应为一台物理机或集群。存储时，每个 <code>Partition</code> 都可以有多个副本。它们会被“均匀”地存储在各个 <code>Broker</code> 中。</p>
+<p>7、对于一个 <code>Partition</code>，它的多个复本存储一般存储在不同 <code>Broker</code> 中，在同一时刻会由 <code>Zookeeper</code> 选出一个主副本来负责所有的读写操作。</p>
+<h2>七、其他</h2>
+<p>随着 <code>Kafka</code> 的发展，它的定位已经从“分布式消息队列”变成了“分布式流处理平台”，添加了 <code>Connector</code> 及 <code>Stream Processor</code> 的概念。足见其野心，只是这些并不改变它的基本概念和结构。这里简单说说什么是流处理：</p>
+<p>流处理即流式计算，一般流式计算会与批量计算相比较。在流式计算模型中，输入是持续的，可以认为在时间上是无界的，也就意味着，永远拿不到全量数据去做计算。同时，计算结果是持续输出的，也即计算结果在时间上也是无界的。流式计算一般对实时性要求较高，同时一般是先定义目标计算，然后数据到来之后将计算逻辑应用于数据。同时为了提高计算效率，往往尽可能采用增量计算代替全量计算。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-8.jpg" alt=""></p>
+<p>批量处理模型中，一般先有全量数据集，然后定义计算逻辑，并将计算应用于全量数据。特点是全量计算，并且计算结果一次性全量输出。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-9.jpg" alt=""></p>
+<p>可以看出，流式处理可以实时获取用户状态并且予以及时反馈，在实时营销、实时服务、实时监控中发挥重要作用，因此流式计算才是大数据真正到来的标志吧！</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Jun 08 2019 22:24:50 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>,苏ICP备17064972号.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
