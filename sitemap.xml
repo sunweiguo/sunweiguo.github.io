@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/06/13/kafka/03windows%E4%B8%8Bkafka%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</loc>
+    
+    <lastmod>2019-06-13T13:21:33.361Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/06/09/kafka/02Docker%E5%85%A5%E9%97%A8%E4%B8%8A/</loc>
     
     <lastmod>2019-06-09T14:03:06.605Z</lastmod>
