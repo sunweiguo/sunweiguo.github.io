@@ -4,7 +4,7 @@
 <h2>环境准备</h2>
 <ul>
 <li>JDK8自行下载</li>
-<li><a href="http://kafka.apache.org/downloads.html" target="_blank" rel="noopener">kafka下载</a>【我自己用的是以前下载的版本，为 kafka_2.11-2.1.0.tgz 这个版本，直接下载解压接口】</li>
+<li><a href="http://kafka.apache.org/downloads.html" target="_blank" rel="noopener">kafka下载</a>【我自己用的是以前下载的版本，为 kafka_2.11-2.1.0.tgz 这个版本，直接下载解压即可】</li>
 </ul>
 <h2>KafKA使用</h2>
 <p>由于是windows环境，解压之后我们的注意点是<code>kafka_2.11-2.1.0\bin\windows</code>目录。</p>
@@ -34,13 +34,13 @@
 <li>启动生产者：</li>
 </ul>
 <blockquote>
-<p>kafka-console-producer.bat --broker-list localhost:9092 --topic kafka-test-topic</p>
+<p>kafka-console-producer.bat --broker-list localhost:9092 --topic test</p>
 </blockquote>
 <ul>
 <li>启动消费者：</li>
 </ul>
 <blockquote>
-<p>kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic kafka-test-topic --from-beginning</p>
+<p>kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning</p>
 </blockquote>
 <p>此时可以从控制台输入信息，待消费者即可接收到生产者发布的消息。</p>
 <p><img src="http://bloghello.oursnail.cn/kafka3-5.jpg" alt="image"></p>
