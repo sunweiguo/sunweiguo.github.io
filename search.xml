@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[linux下玩kafka]]></title>
+    <url>%2F2019%2F08%2F05%2Fkafka%2F04linux%E4%B8%8B%E7%8E%A9kafka%2F</url>
+    <content type="text"><![CDATA[为了方便对实习生小课题中kafka方便调试，我决定在自己的腾讯云服务器上部署一个单机kafka，其实跟本地windows没啥区别，不过还是做一下记录吧。服务器环境是centod7.3。 第一步-安装JDK 安装jdk1.8或以上版本。由于现在下载jdk都需要先注册，而注册内容令人不适，所以这里贴出一个我的百度云下载地址，方便大家使用，包含了exe和tar两个版本。 链接：https://pan.baidu.com/s/1Yb7s1hFJ2FvqVs1lH6E7WQ 提取码：3chj 具体安装可以参考我之前写过的笔记： 基于virtualbox+centos6.9的服务器搭建 阿里云centos7.3部署本项目 第二步-安装kafka 1.解压：tar -zxvf kafka_2.12-2.2.0.tgz 2.修改 kafka-server 的配置文件： -----2.1 vim /usr/local/kafka/config/server.properties -----2.2 broker.id=1 -----2.3 log.dir=/data/kafka/logs-1 3.来到bin目录下，后台启动ZK：./zookeeper-server-start.sh -daemon …/config/zookeeper.properties 4.后台启动KAFKA：./kafka-server-start.sh -daemon …/config/server.properties 5.创建topic：./kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test 6.查看topic列表：./kafka-topics.sh --list --zookeeper localhost:2181 7.启动生产者：./kafka-console-producer.sh --broker-list localhost:9092 --topic test 8.启动消费者：./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning 在服务器上搞一切OK，我们开放安全组对9092的端口，在本地试一把呢？结果报错了： 1java.lang.IllegalStateException: No entry found for connection 1 解决方法是主机的kafka配置文件($KAFKA_HOME/config/server.properties)中:添加: 1advertised.listeners=PLAINTEXT://$IP_A:9092(默认这个key所在行是注释掉的) 其中$IP_A可以是主机的IP或者hostname. 关于如何在windows下搞，请参考我的博客：windows下kafka的基本使用 以上参考了博文：Kafka 安装及快速入门，不过我发现他有一点点错误，并且他遇到的问题我没遇到。我遇到的问题他可能也没尝试到^^。]]></content>
+      <tags>
+        <tag>kafka</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[windows下kafka的基本使用]]></title>
     <url>%2F2019%2F06%2F13%2Fkafka%2F03windows%E4%B8%8Bkafka%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8%2F</url>
     <content type="text"><![CDATA[最近公司用kafka，本地需要测试测试，本地为windows环境，因此学习一下windows下对kafka的基本操作，便于代码的调试，也是作为知识的记录。 环境准备 JDK8自行下载 kafka下载【我自己用的是以前下载的版本，为 kafka_2.11-2.1.0.tgz 这个版本，直接下载解压即可】 KafKA使用 由于是windows环境，解压之后我们的注意点是kafka_2.11-2.1.0\bin\windows目录。 启动ZK 在此目录下打开cmd，执行命令zookeeper-server-start.bat ..\..\config\zookeeper.properties，如下图表示启动成功： 启动KAFKA 依旧在目录下打开cmd，执行命令kafka-server-start.bat ..\..\config\server.properties，如下图表示启动成功： 测试Kafka命令 创建一个主题 kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic TOPIC的名称 查看创建的主题列表 kafka-topics.bat --list --zookeeper localhost:2181 我这里新建一个叫做test的topic作为实验。 启动生产者： kafka-console-producer.bat --broker-list localhost:9092 --topic test 启动消费者： kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning 此时可以从控制台输入信息，待消费者即可接收到生产者发布的消息。 至此，最基本的操作介绍完毕！]]></content>
