@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-08-05T14:17:28.644Z</updated>
+  <updated>2019-08-10T04:35:03.049Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>SpringTask的基本使用</title>
+    <link href="http://yoursite.com/2019/08/10/miscellany/19SpringTask%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"/>
+    <id>http://yoursite.com/2019/08/10/miscellany/19SpringTask的基本使用/</id>
+    <published>2019-08-10T04:34:16.666Z</published>
+    <updated>2019-08-10T04:35:03.049Z</updated>
+    
+    <content type="html"><![CDATA[<p>工作中经常会用到定时任务，有的用<code>linux</code>的<code>crontab</code>来实现系统级别的定时调用，当然这种只能调用脚本，不能在我们的程序中实现高度灵活的配置。定时任务的实现有很多，我之前也做过一些笔记，因为在分布式应用中，定时需要小心处理，否则会很容易地出现数据错乱，因此出现了很多适用于分布式场景定时器。当然分布式不在本文讨论范围，这里只想聊聊简单的单机应用，而且是最简单的<code>Spring Task</code>。</p><img src="http://bloghello.oursnail.cn/suibi4-1.png" width="300"><a id="more"></a><h2>一、基本使用</h2><p>使用起来十分简单，在ssm的工程中不需要额外引入其他的依赖即可使用。因为已经在<code>Spring-Context</code>中集成。</p><p><img src="http://bloghello.oursnail.cn/suibi4-2.png" alt="image"></p><p>第一步是配置文件中开启定时任务的注解：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--引入spring task定时任务--&gt;</span><br><span class="line">&lt;task:annotation-driven/&gt;</span><br></pre></td></tr></table></figure><p>在头部引入相应的DTD约束文件：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">xmlns:task=&quot;http://www.springframework.org/schema/task&quot;</span><br><span class="line"></span><br><span class="line">http://www.springframework.org/schema/task</span><br><span class="line">http://www.springframework.org/schema/task/spring-task-3.0.xsd</span><br></pre></td></tr></table></figure><p>配置方面就结束了。</p><p>下面写一个定时任务吧：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Task</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 每隔一分钟从数据库读取一下</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Scheduled</span>(cron = <span class="string">"0 0/1 * * * ? "</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getIntervalFromDatabase</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"一分钟执行一次~"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>对于这里的<code>cron</code>表达式，相信大家都知道了，按照一定的匹配规则即可实现比较复杂的定时场景。当然，可以使用可视化的页面来配置：<a href="http://cron.qqe2.com/" target="_blank" rel="noopener">http://cron.qqe2.com/</a></p><h2>二、另一种实现：Timer</h2><p>在这个最简单的应用中，就是实现每隔几分钟来做一些事情的简单场景，还可以使用JDK自带的<code>Timer</code>来实现。下面给出一个最简单的使用：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Timer timer = <span class="keyword">new</span> Timer();</span><br><span class="line">TimerTask timerTask = <span class="keyword">new</span> TimerTask() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// scheduledExecutionTime() 返回此任务最近开始执行的时间</span></span><br><span class="line">        Date date = <span class="keyword">new</span> Date(<span class="keyword">this</span>.scheduledExecutionTime());</span><br><span class="line">        System.out.println(<span class="string">"timeTask run "</span> + date);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 从现在开始每间隔 1000 ms 计划执行一个任务</span></span><br><span class="line">timer.schedule(timerTask, <span class="number">0</span>, <span class="number">1000</span>);</span><br></pre></td></tr></table></figure><p><code>Timer</code> 可以按计划执行重复的任务或者定时执行指定任务，这是因为 <code>Timer</code> 内部利用了一个后台线程 <code>TimerThread</code> 有计划地执行指定任务。</p><ul><li><code>Timer</code>：是一个实用工具类，该类用来调度一个线程(<code>schedule a thread</code>)，使它可以在将来某一时刻执行。 <code>Java</code> 的 <code>Timer</code> 类可以调度一个任务运行一次或定期循环运行。 <code>Timer tasks should complete quickly.</code> 即定时器中的操作要尽可能花费短的时间。</li><li><code>TimerTask</code>：一个抽象类，它实现了 <code>Runnable</code> 接口。我们需要扩展该类以便创建自己的 <code>TimerTask</code> ，这个 <code>TimerTask</code> 可以被 <code>Timer</code> 调度。</li></ul><p>内部的实现原理还是有点意思的，后面有时间来扒一扒它的实现原理。既然Timer这么简单为什么我不用呢？当然了，在这里我觉得<code>Spring Task</code>更简单。</p><h2>三、Timer存在的问题</h2><p>有一个显著问题是：<code>Timer</code>在执行定时任务时只会创建一个线程，所以如果存在多个任务（task1和task2），且任务时间过长，超过了两个任务的间隔时间，那么就不再那么准时了。因为只有一个线程，线程需要排队，前面一个线程未及时执行完毕，势必会影响后续的任务执行。</p><p>第二个问题是：如果<code>TimerTask</code>抛出<code>RuntimeException</code>，<code>Timer</code>会停止所有任务的运行。</p><p>如果不引入Spring如何解决上述问题呢？这个时候<code>ScheduledExecutorService</code>闪亮登场，利用线程池来调度任务，不会出现一个任务延迟导致第二个任务无法准时执行的问题，并且在<code>ScheduledExecutorService</code>调度两个任务的时候，其中一个任务抛出异常不影响第二个任务的正常执行。</p><p>具体的对比可以参见文章<a href="https://blog.csdn.net/lmj623565791/article/details/27109467" target="_blank" rel="noopener">Java 并发专题 ： Timer的缺陷 用ScheduledExecutorService替代</a></p><p>因此，尽量避免使用<code>Timer</code>要成为我们的共识啦。优秀的那么多，何必用这个呢？</p><p>当然，还有开源的定时器可以使用，功能更加强大，整合也不难。比如<code>quartz</code>和为分布式而生的<code>Elastic-Job</code>。</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;工作中经常会用到定时任务，有的用&lt;code&gt;linux&lt;/code&gt;的&lt;code&gt;crontab&lt;/code&gt;来实现系统级别的定时调用，当然这种只能调用脚本，不能在我们的程序中实现高度灵活的配置。定时任务的实现有很多，我之前也做过一些笔记，因为在分布式应用中，定时需要小心处理，否则会很容易地出现数据错乱，因此出现了很多适用于分布式场景定时器。当然分布式不在本文讨论范围，这里只想聊聊简单的单机应用，而且是最简单的&lt;code&gt;Spring Task&lt;/code&gt;。&lt;/p&gt;
+&lt;img src=&quot;http://bloghello.oursnail.cn/suibi4-1.png&quot; width=&quot;300&quot;&gt;
+    
+    </summary>
+    
+    
+      <category term="miscellany" scheme="http://yoursite.com/tags/miscellany/"/>
+    
+  </entry>
   
   <entry>
     <title>linux下玩kafka</title>
@@ -414,30 +435,6 @@
 &lt;p&gt;因为要完成产品的全文搜索这个功能，所以需要准备一下ES的环境。本节安装ELK。&lt;/p&gt;
 &lt;p&gt;ELK由Elasticsearch、Logstash和Kibana三部分组件组成。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://bloghello.ou
-      
-    
-    </summary>
-    
-    
-      <category term="mama-action" scheme="http://yoursite.com/tags/mama-action/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>05-交易工程(上)</title>
-    <link href="http://yoursite.com/2019/04/17/mama-action/05-%E4%BA%A4%E6%98%93%E5%B7%A5%E7%A8%8B(%E4%B8%8A)/"/>
-    <id>http://yoursite.com/2019/04/17/mama-action/05-交易工程(上)/</id>
-    <published>2019-04-17T02:40:50.201Z</published>
-    <updated>2019-04-17T02:41:15.964Z</updated>
-    
-    <content type="html"><![CDATA[<h2>一、前言</h2><p>回顾一下之前的内容，在单体应用中，我们可以用<code>select .. for update</code>，这样子可以在这个事务内锁定这一行数据，避免了并发问题。还可以用唯一约束来限制。对于分布式应用，必须要由一个全局锁来控制，比如ZK来实现的分布式锁。</p><p>对于分表之后，如何保证ID的不重复呢？一般我们可能会想到用UUID来实现嘛。但是UUID一般可以获取当前时间的毫秒数再加点随机数，但是在高并发下仍然可能重复。最重要的是，如果我要用这种UUID来生成分表的唯一ID的话，重复不谈，这种随机的字符串对于我们的innodb存储引擎的插入效率是很低的。所以我们生成的ID如果作为主键，最好有两种特性：<strong>分布式唯一和有序</strong>。</p><p>唯一性就不用说了，有序保证了对索引字段的插入的高效性。我们来具体看看ShardingJDBC的分布式ID生成策略是如何保证。</p><h2>二、ShardingJDBC的分布式ID生成策略</h2><h3>snowflake算法</h3><p><img src="http://bloghello.oursnail.cn/mama5-10.png" alt="image"></p><p>sharding-jdbc的分布式ID采用twitter开源的snowflake算法，不需要依赖任何第三方组件，这样其扩展性和维护性得到最大的简化；但是snowflake算法的缺陷（<strong>强依赖时间，如果时钟回拨，就会生成重复的ID</strong>）。</p><p>雪花算法是由Twitter公布的分布式主键生成算法，<strong>它能够保证不同进程主键的不重复性，以及相同进程主键的有序性</strong>。</p><p><strong>在同一个进程中</strong>，它首先是通过时间位保证不重复，如果时间相同则是通过序列位保证。 同时由于时间位是单调递增的，且各个服务器如果大体做了时间同步，那么生成的主键在分布式环境可以认为是总体有序的，这就保证了对索引字段的插入的高效性。例如MySQL的Innodb存储引擎的主键。</p><p>使用雪花算法生成的主键，二进制表示形式包含4部分，从高位到低位分表为：1bit符号位、41bit时间戳位、10bit工作进程位以及12bit序列号位。</p><ul><li>符号位(1bit)</li></ul><p>预留的符号位，恒为零。</p><ul><li>时间戳位(41bit)</li></ul><p>41位的时间戳可以容纳的毫秒数是2的41次幂，一年所使用的毫秒数是：365 * 24 * 60 * 60 * 1000。通过计算可知：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Math.pow(2, 41) / (365 * 24 * 60 * 60 * 1000L);</span><br></pre></td></tr></table></figure><p>结果约等于69.73年。<code>ShardingSphere</code>的雪花算法的时间纪元从2016年11月1日零点开始，可以使用到2086年，相信能满足绝大部分系统的要求。</p><ul><li>工作进程位(10bit)</li></ul><p>该标志在Java进程内是唯一的，如果是分布式应用部署应保证每个工作进程的id是不同的。该值默认为0，可通过调用静态方法<code>DefaultKeyGenerator.setWorkerId()</code>设置。</p><ul><li>序列号位(12bit)</li></ul><p>该序列是用来在同一个毫秒内生成不同的ID。如果在这个毫秒内生成的数量超过4096(2的12次幂)，那么生成器会等待到下个毫秒继续生成。</p><h3>时钟回拨</h3><p>服务器时钟回拨会导致产生重复序列，因此默认分布式主键生成器提供了一个最大容忍的时钟回拨毫秒数。 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作。 最大容忍的时钟回拨毫秒数的默认值为0，可通过调用静态方法<code>DefaultKeyGenerator.setMaxTolerateTimeDifferenceMilliseconds()</code>设置。</p><p>雪花算法主键的详细结构见下图。</p><p><img src="http://bloghello.oursnail.cn/mama5-1.png" alt="image"></p><h2>三、ES</h2><p>对于商品搜索这种功能，为什么要用ES呢？</p><p>在数据库中可以用%这种模糊搜索，比如我要搜<code>世界你好</code>,那么我们可能可以这样:<code>like '%世界%'</code>来进行模糊搜索。但是如果我要搜<code>世好</code>咋办呢？另一方面，不能走索引，并且<strong>全表扫描</strong>，数据量大的时候就凉了。</p><p>ES基本原理是实现了一个分词匹配器，比如一句话叫<code>你好世界，我是JAVA</code>,它可能会将其分解为<code>你好</code>,<code>世界</code>,<code>我是</code>,<code>JAVA</code>这几个词，然后根据你输入的关键字来一一匹配，按照匹配度的高低排个序展示出来。</p><p>下面具体的安装下节再说。</p><h2>四、核心-商品表设计</h2><p>我们先来看看华为官网手机详情，比如我们看看<code>HUAWEI Mate 20</code>这一款（<strong>此处非广告…还没用过华为手机</strong>）：</p><p><img src="http://bloghello.oursnail.cn/mama5-2.png" alt="image"></p><p>这是一个真正的页面详情，主要的特点是针对不同的颜色、版本、套餐等条件会动态地改变价格。也就是说一组独立的属性决定了一个库存。这就是SKU（最小库存单位）。其实是非常复杂的，这里的手机算是比较简单的。</p><p>那么如何设计呢？</p><p>从页面上看，这个SKU有个名字：“HUAWEI Mate 20 6GB+64GB 全网通版（亮黑色）”，下面是若干属性。</p><p>首先整体来看一下交易数据库有几张表：</p><p><img src="http://bloghello.oursnail.cn/mama5-3.png" alt="image"></p><p>我们分解来看，从简单到复杂。首先是<code>t_brand</code>,<code>t_category</code>和<code>t_product</code>这三张表，分别是品牌，可能有华为，也可能有小米等等。现在假设就只有华为这一个牌子，下面有几种分类，我们可以看页面：</p><p><img src="http://bloghello.oursnail.cn/mama5-4.png" alt="image"></p><p>我们看到，有手机、笔记本、智能家居等几种分类。每种分类下面有好几种子分类，比如这里的荣耀、P系列、Mate系列等分类。</p><p>对于<code>t_brand</code>，十分简单，表设计如图：</p><p><img src="http://bloghello.oursnail.cn/mama5-5.png" alt="image"></p><p>对于<code>t_category</code>也简单，简单来说就是用一个<code>parent_id</code>来实现递归的自相关：</p><p><img src="http://bloghello.oursnail.cn/mama5-6.png" alt="image"></p><p><code>t_category</code>和<code>t_product</code>的关联就简单啦，就是一对多的关系嘛！</p><p><img src="http://bloghello.oursnail.cn/mama5-7.png" alt="image"></p><p>下面是比较麻烦一点的是属性，<code>t_property</code>是与<code>t_category</code>挂钩的，这样设计的原因是，在后台配置的时候，选完分类，比如这里的荣耀系列之后，我就可以配置对应的属性：颜色、容量、制式、套餐和定制这五种属性了。<code>t_property</code>与<code>t_property_option</code>就是一对多的关系了，比如颜色有沙滩金、极光蓝、幻夜黑以及魅力红。</p><p><img src="http://bloghello.oursnail.cn/mama5-8.png" alt="image"></p><p>ok，下面就是设计SKU了，简单来说，就是每种产品对应的版本，我们再看一眼第一幅图：</p><p><img src="http://bloghello.oursnail.cn/mama5-2.png" alt="image"></p><p>我们可以看到，首先这是一款具体的产品，然后呢，每款产品下有产品的名字、产品对应于各种不同的属性而显示不同的价格。</p><p>我们思考一下，我们已经拥有了<code>t_product</code>,<code>t_property</code>,<code>t_property_option</code>这三张表。其实，我们的页面，就是说SKU，其实就是这三张表的再组合。</p><p>首先一个产品，比如荣耀V10这一款产品，我首先有一个总的SKU来说明这个产品，我只需要一个简单的信息，比如<code>sku_name</code>和<code>sku_price</code>即可，因为我这款手机有很多的配置选项可以选择，那么就需要一张<code>t_sku_option</code>这张表来承载，就是<code>sku_id</code>,<code>property_id</code>和<code>property_option_id</code>这三者的结合，后面我们根据这三者才能真正的到库存系统去削减库存，然后下单。</p><p>比如我买的是荣耀V10 6G+128G 幻夜黑 官方标配 全网通 这一款，那么我对应到<code>t_sku</code>表的是第7条记录，对应到<code>t_sku_option</code>表的是有下面几条记录：</p><ul><li>7 1 3 表示: skuID=7,颜色为幻夜黑</li><li>7 2 7 表示：skuID=7,容量为6G+128G</li><li>7 3 8 表示：skuID=7,全网通标配版</li><li>7 4 11 表示：skuID=7,官方标配</li><li>…</li></ul><p>Ok，这样我就真正选择了一个具体的手机款式，后面就可以根据这些属性去扣减库存，下订单啦！</p><p>注1：下面这张图有个错误，就是下面个绿的箭头指向的应该是<code>t_sku</code>的第一行id=1的记录，懒得改了。</p><p>注2：上面举的例子与下面的数据库中数据是一致的，可以对比看一下。</p><p><img src="http://bloghello.oursnail.cn/mama5-9.png" alt="image"></p><p>这样，就完成了比较简单的产品表的设计了。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;h2&gt;一、前言&lt;/h2&gt;
-&lt;p&gt;回顾一下之前的内容，在单体应用中，我们可以用&lt;code&gt;select .. for update&lt;/code&gt;，这样子可以在这个事务内锁定这一行数据，避免了并发问题。还可以用唯一约束来限制。对于分布式应用，必须要由一个全局锁来控制，比如ZK来实现
       
     
     </summary>
