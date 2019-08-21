@@ -1,86 +1,50 @@
 <!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> kafka入门 · fossi</title><meta name="description" content="kafka入门 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">kafka入门</h1><div class="post-meta"><span class="post-time">Jun 8, 2019</span></div><div class="post-content"><p>或多或少都听说过<code>kafka</code>，为了深入学习一下<code>kafka</code>，本文作为学习的第一篇文章，主要目标是搞清楚<code>kafka</code>的基本概念，因为<code>kafka</code>涉及一些专用名词，只有先了解这些名词，才有可能理解<code>kafka</code>的设计思想。</p>
 <a id="more"></a>
-<h2>一、kafka介绍</h2>
-<p>先简单说一下<code>kafka</code>是用来干嘛的！</p>
-<p>引用<a href="https://sookocheff.com/post/kafka/kafka-in-a-nutshell" target="_blank" rel="noopener">Kafka in a Nutshell</a>中的说法是：</p>
-<blockquote>
-<p>Kafka is a distributed messaging system providing fast, highly scalable and redundant messaging through a pub-sub model. Kafka’s distributed design gives it several advantages. First, Kafka allows a large number of permanent or ad-hoc consumers. Second, Kafka is highly available and resilient to node failures and supports automatic recovery. In real world data systems, these characteristics make Kafka an ideal fit for communication and integration between components of large scale data systems.</p>
-</blockquote>
-<p>翻译下来就是：</p>
-<blockquote>
-<p>Kafka是一个分布式消息传递系统，通过pub-sub模型提供快速，高度可扩展和冗余的消息传递。 Kafka的分布式设计赋予它几个优点。 首先，Kafka允许大量永久或临时消费者。 其次，Kafka具有高可用性和对节点故障的弹性，并支持自动恢复。 在现实世界的数据系统中，这些特性使Kafka成为大规模数据系统组件之间通信和集成的理想选择。</p>
-</blockquote>
-<p>其中提到两个重要的东西：一个是<code>pub-sub</code>模型，其实就是我们常说的发布订阅模型，并且可以持节化，以及高可用、可容错、可扩展，这些都是其优良特性。它涉及几个基本术语：<code>Topic</code>、<code>Producer</code>、<code>Consumer</code>、<code>Partition</code>以及<code>Broker</code>。下面会逐渐涉及到。</p>
-<h2>二、Topic</h2>
-<p>一个 <code>Topic</code>（主题）对应一个消息队列。Kafka 支持多生产者，多消费者，对应下图：</p>
+<h2>一、为什么要学习kafka</h2>
+<p>目前，<code>kafka</code>的定位是一个分布式流处理平台，它以高吞吐、可持久化、可水平扩展、支持流数据处理等多种特性而被广泛使用。截止到写本文的时间：2019年08月21号，已经到了2.3版本，<code>kafka</code>也成为后端程序猿或者大数据程序猿不可不学习的一个重要中间件。它又三大特点：</p>
+<ul>
+<li>消息系统</li>
+</ul>
+<p>市面上有很多的消息中间件，这些消息中间件的主要功能是：系统解耦、冗余存储、流量削峰、缓冲、异步通信、扩展性、可恢复等功能。但是<code>kafka</code>不仅包含这些内容，还提供大多数消息中间件不能实现的：消息顺序性保障和回溯消费等功能。</p>
+<ul>
+<li>存储系统</li>
+</ul>
+<p><code>Kafka</code>支持消息的持久化，相比于其他内存存储系统有较高的保障性，并且提供多副本机制，避免某一台服务器挂掉而导致消息丢失。并且支持长期的数据存储，只需要将数据保存策略设置为永久或者启用主题的日志压缩功能即可。</p>
+<ul>
+<li>流式处理平台</li>
+</ul>
+<p><code>kafka</code>的定位日渐提高，它不是仅仅可以作为消息中间件，它的目标实际是为流式处理框架提供可靠的数据来源。还提供了一个完整的流式处理类库，比如窗口、连接、变换和聚合等各类操作。</p>
+<p>以上就是<code>kafka</code>与其他的消息中间件的区别（优势），下面来一起入门<code>kafka</code>的基本概念吧。</p>
+<h2>二、kafka基本概念</h2>
+<p>入门一个新的知识，首先需要知道它是啥，用来干啥，下面就是要知道它涉及的基本概念，才能为接下来的深入学习和使用打下良好基础，本文先来缕一缕最基本且最重要的概念。</p>
+<p>一个典型的<code>kafka</code>架构包若干<code>Producer</code>、若干<code>Broker</code>、若干<code>Consumer</code>，以及一个<code>Zookeeper</code>集群。</p>
 <p><img src="http://bloghello.oursnail.cn/kafka1-1.jpg" alt=""></p>
-<p>多个生产者将数据发送到 Kafka 中，Kafka 将它们顺序存储，但是这里是不是存在一个问题呢？我们知道 <code>Kafka</code> 的目标是大数据，如果将消息存在一个“中心”队列中，势必缺少可伸缩性。无论是生产者/消费者数目的增加，还是消息数量的增加，都可能耗尽机器的性能或存储。</p>
-<p>因此，<code>Kafka</code> 在概念上将一个 <code>Topic</code> 分成了多个 <code>Partition</code>（分区），写入 <code>topic</code> 的消息会被（平均）分配到其中一个 <code>Partition</code>。<code>Partition</code> 中会为消息保存一个 <code>Partition</code> 内<b>唯一</b>的 ID ，一般称为<b>偏移量</b>(<code>offset</code>)。这样当性能/存储不足时 <code>Kafka</code> 就可以通过增加 <code>Partition</code> 实现横向扩展。（同时，<code>Topic</code>可能有许多分区，因此它可以处理任意数量的数据，因此具备了并行性）</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-2.jpg" alt=""></p>
-<p><code>kafka</code>将<code>topic</code>中的消息存在不同的<code>partition</code>中。如果存在键值（<code>key</code>），消息按照键值（<code>key</code>）做分类存在不同的<code>partition</code>中，如果不存在键值（<code>key</code>），消息按照轮询（<code>Round Robin</code>）机制存在不同的<code>partition</code>中。默认情况下，键值（<code>key</code>）决定了一条消息会被存在哪个<code>partition</code>中。</p>
-<p>现在我们有了一个队列的消息，那么如何发送给消费者呢？</p>
-<h2>三、消费模型</h2>
-<p>一般有两种消费模型，不同模型下消费者的行为是不同的：</p>
-<ul>
-<li>队列模式（也叫点对点模式）。多个消费者共同消费一个队列，每条消息只发送给一个消费者。</li>
-<li>发布/订阅模式。多个消费者订阅主题，每个消息会发布给所有的消费者。</li>
-</ul>
-<p><img src="http://bloghello.oursnail.cn/kafka1-3.jpg" alt=""></p>
-<p>显然要构建一个大数据下的消息队列，两种模式都是必须的。因此 <code>Kafka</code> 引入了 <code>Consumer Group</code>（消费组）的概念，<code>Consumer Group</code> 是以发布/订阅模式工作的；一个 <code>Consumer Group</code> 中可以有多个 <code>Consumer</code>（消费者），<code>Group</code> 内的消费者以队列模式工作，如下图：</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-4.jpg" alt=""></p>
-<p>上面提到，<code>Kafka</code> 中的消息是以 <code>Partition</code> 存储的，那么它是如何与 <code>Consumer</code> 对接的呢？</p>
-<h2>四、Partition 与消费模型</h2>
-<p>上面提到，<code>Kafka</code> 中一个 <code>topic</code> 中的消息是被打散分配在多个 <code>Partition</code>(分区) 中存储的， <code>Consumer Group</code> 在消费时需要从不同的 <code>Partition</code> 获取消息，那最终如何重建出 <code>Topic</code> 中消息的顺序呢？</p>
-<p>答案是：没有办法。<code>Kafka</code> 只会保证在 <code>Partition</code> 内消息是有序的，而不管全局的情况。</p>
-<p>下一个问题是：<code>Partition</code> 中的消息可以被不同的 <code>Consumer Group</code>多次消费，那 <code>Partition</code>中被消费的消息是何时删除的？ <code>Partition</code> 又是如何知道一个 <code>Consumer Group</code> 当前消费的位置呢？</p>
+<p>有的小伙伴会问ZK在里面的角色是啥？为什么在玩<code>kafka</code>的时候需要先启动一个ZK？其实ZK在<code>kafka</code>中主要负责集群元数据的管理、控制器的选举等操作。关于什么是元数据，我这里简单说明一下:</p>
+<p>元数据就是描述数据的数据。初次看到这个表述有点懵，其实简单来说，就像是手机或者电脑的参数，比如像素多少千万、处理器多少HZ等，这些数据都是用来描述手机的，整个参数合起来，我们大概就知道这个手机的配置如何。阮一峰的一篇<a href="http://www.ruanyifeng.com/blog/2007/03/metadata.html" target="_blank" rel="noopener">文章</a>说得可能详细一点，不妨去看看。</p>
+<p>关于控制器的选举，可能难懂一点，会在后续的内容中说明。</p>
+<p>回到上图，我们可以看到<code>kafka</code>的一个工作方式：<code>Producer</code>将消息发送到<code>Broker</code>中并持久化到磁盘，而<code>Consumer</code>负责从<code>Broker</code>订阅并消费消息。</p>
+<p>注意，上面提到了三个专业名词：<code>Producer</code>,<code>Broker</code>以及<code>Consumer</code>。这个是三个最基本的术语，意义也很简单，下面一一阐述。</p>
 <ol>
-<li>
-<p>无论消息是否被消费，除非消息到期 ，<code>Partition</code> 从不删除消息。例如设置保留时间为 2 天，则消息发布 2 天内任何 <code>Group</code> 都可以消费，2 天后，消息自动被删除。</p>
-</li>
-<li>
-<p><code>Partition</code> 会为每个 <code>Consumer Group</code> 保存一个偏移量，记录 <code>Group</code> 消费到的位置。如下图：</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-5.jpg" alt=""></p>
-</li>
+<li><code>Producer</code>即生产者，就是发送消息的一方，负责创建消息，然后投递到<code>kafka</code>。</li>
+<li><code>Consumer</code>即小欸这，就是接收消息的一方，负责连接到<code>kafka</code>上并接收消息。</li>
+<li><code>Broker</code>即服务代理节点，<code>Broker</code>可以简单看作一个独立的<code>kafka</code>服务节点或者<code>kafka</code>服务实例，通常情况下，可以将<code>Broker</code>看作一台<code>Kakfa</code>服务器，前提是这个服务器上只部署了一个<code>kafka</code>，所以简单来说，<code>broker</code>就是一个<code>kafka</code>实例。</li>
 </ol>
-<p>上面我们提到的都是 <code>Partition</code> 与 <code>Consumer Group</code> 之间的关系，那 <code>Group</code> 中的 <code>Consumer</code> 又是如何与 <code>Partition</code> 对应的呢？</p>
-<ul>
-<li>
-<p>同一个 Consumer Group 内，一个 Partition 只能被一个 Consumer 消费。</p>
-</li>
-<li>
-<p>推论1：如果 Consumer 的数量大于 Partition 数量，则会有 Consumer 是空闲的。</p>
-</li>
-<li>
-<p>推论2：如果 Consumer 的数量小于 Partition 数量，则一个 Consumer 可能消费多个 Partition。</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-6.jpg" alt=""></p>
-</li>
-</ul>
-<p>左边的 <code>Consumer Group</code> 中的 C4 是空闲的，而右边 <code>Group</code> 中的 C1 则需要消费两个 <code>Partition</code> 。由于右边的 C1 中消息可能来源于两个 <code>Partition</code>，此时如果需要确保消息的顺序，必须先判断消息的 <code>Partition ID</code>。</p>
-<h2>五、物理存储</h2>
-<p>上面提到的 <code>Topic</code>, <code>Partition</code> 都是抽象的概念。每个 <code>Partition</code> 最终都需要存储在物理机器上，在 <code>Kafka</code> 中一般把这样的物理机器称为 <code>Broker</code>，可以是一台物理机，也可以是一个集群。</p>
-<p>在讲概念的时候我们没有考虑到物理机可能会损坏的问题，这会导致某个 <code>Partition</code> 失效，上面存储的消息丢失，那还说什么高可用？所以一般需要对数据做冗余 (replication)。换言之，需要存储多份 <code>Partition</code> 在不同的 <code>Broker</code> 上，并为它们的数据进行同步。那么从物理的视角：</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-7.jpg" alt=""></p>
-<p>上图中，某个 <code>Topic</code> 分成了 3 个 <code>Partition</code>，每个 <code>Partition</code> 保存了两个副本，副本平均分配到 3 个 <code>Broker</code> 上。图中即使有一个 <code>Broker</code> 挂了，剩余的两个 <code>Broker</code> 依旧能正常工作。这也是分布式系统的常用设计。</p>
-<p>同一个 <code>Partition</code> 有多个副本，并分布在不同的 <code>Broker</code> 上，那么 <code>Producer</code> 应该写入到哪一个副本上呢？<code>Consumer</code> 又应该从哪个副本上读取呢？</p>
-<ul>
-<li><code>Kafka</code> 的各个 <code>Broker</code> 需要与 <code>Zookeeper</code> 进行通信，每个 <code>Partition</code> 的多个副本之间通过 <code>Zookeeper</code> 的 <code>Leader</code> 选举机制选出主副本。所有该 <code>Partition</code> 上的读写都通过这个主副本进行。（每个分区有一个<code>leader</code>，零或多个<code>follower</code>。<code>Leader</code>处理此分区的所有的读写请求而<code>follower</code>被动的复制数据。如果<code>leader</code>宕机，其它的一个<code>follower</code>会被推举为新的<code>leader</code>。）</li>
-<li>其它的冗余副本会从主副本上同步新的消息。就像其它的 <code>Consumer</code> 一样。</li>
-</ul>
-<h2>六、总结</h2>
-<p>1、<code>Topic</code> 是顶级概念，对应于一个消息队列</p>
-<p>2、<code>Kafka</code> 是以 <code>Partition</code> 为单位存储消息的，<code>Consumer</code> 在消费时也是按 <code>Partition</code> 进行的。即 <code>Kafka</code> 会保证一个 <code>Consumer</code> 收到的消息中，来自同一个 <code>Partition</code> 的所有消息是有序的。而来自不同 <code>Partition</code> 的消息则不保证有序。（所以，如果你想要顺序的处理<code>Topic</code>的所有消息，那就只提供一个分区。）</p>
-<p>3、<code>Partition</code> 会为其中的消息分配 <code>Partition</code> 内唯一的 ID，一般称作偏移量(<code>offset</code>) 。<code>Kafka</code> 会保留所有的消息，直到消息的保留时间（例如设置保留 2 天）结束。这样 <code>Consumer</code> 可以自由决定如何读取消息，例如读取更早的消息，重新消费等。</p>
-<p>4、<code>Kafka</code> 有 <code>Consumer Group</code> 的概念。每个 <code>Group</code> 独立消费某个 Topic 的消息，互相不干扰。事实上，<code>Kafka</code> 会为每个 <code>Group</code> 保存一个偏移量，记录消费的位置。每个 <code>Group</code> 可以包含多个 <code>Consumer</code>，它们共同消费这个 <code>Topic</code>。</p>
-<p>5、对于一个 <code>Consumer Group</code>，一个 <code>Partition</code> 只能由 <code>Group</code> 中的一个 <code>Consumer</code> 消费。具体哪个 <code>Consumer</code> 监听哪个 <code>Partition</code> 是由 <code>Kafka</code> 分配的。算法可以指定为 <code>Range</code> 或 <code>RoundRobin</code>。</p>
-<p>6、物理上，消息是存在 <code>Broker</code> 上的，一般对应为一台物理机或集群。存储时，每个 <code>Partition</code> 都可以有多个副本。它们会被“均匀”地存储在各个 <code>Broker</code> 中。</p>
-<p>7、对于一个 <code>Partition</code>，它的多个复本存储一般存储在不同 <code>Broker</code> 中，在同一时刻会由 <code>Zookeeper</code> 选出一个主副本来负责所有的读写操作。</p>
-<h2>七、其他</h2>
-<p>随着 <code>Kafka</code> 的发展，它的定位已经从“分布式消息队列”变成了“分布式流处理平台”，添加了 <code>Connector</code> 及 <code>Stream Processor</code> 的概念。足见其野心，只是这些并不改变它的基本概念和结构。这里简单说说什么是流处理：</p>
-<p>流处理即流式计算，一般流式计算会与批量计算相比较。在流式计算模型中，输入是持续的，可以认为在时间上是无界的，也就意味着，永远拿不到全量数据去做计算。同时，计算结果是持续输出的，也即计算结果在时间上也是无界的。流式计算一般对实时性要求较高，同时一般是先定义目标计算，然后数据到来之后将计算逻辑应用于数据。同时为了提高计算效率，往往尽可能采用增量计算代替全量计算。</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-8.jpg" alt=""></p>
-<p>批量处理模型中，一般先有全量数据集，然后定义计算逻辑，并将计算应用于全量数据。特点是全量计算，并且计算结果一次性全量输出。</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-9.jpg" alt=""></p>
-<p>可以看出，流式处理可以实时获取用户状态并且予以及时反馈，在实时营销、实时服务、实时监控中发挥重要作用，因此流式计算才是大数据真正到来的标志吧！</p>
+<p>在<code>kafka</code>中还有两个重要的概念：主题(<code>Topic</code>)和分区(<code>partition</code>)。</p>
+<p><code>kafka</code>中的消息以主题为单位进行分类，生产者负责将消息发送到特定的主题下，消费者可以订阅相关的主题去消费。</p>
+<p>主题是一个抽象的概念，可以细分为多个分区。他们的关系是：一个主题可以分为多个分区，一个分区只属于一个主题。那么分区是啥呢？</p>
+<p>简单来说，就是这个主题的所有消息在物理上可以分为多块进行存储，这个块就可以理解为分区了。那么不难理解的是：每个分区上的消息不一样，所有分区的消息加起来就是一个主题的所有消息。</p>
+<p>分区在存储层面可以看作是一个可追加的日志文件，消息在被追加到分区日志文件的时候就会分配一个特定的偏移量(<code>offset</code>)，这个玩意很重要，就是标识这个分区下某个消息的顺序，并且是这个消息的唯一标识。注意，<code>offset</code>不能跨越分区，即<code>kafka</code>保证的顺序性是在一个分区内所有消息的顺序性，而不是整个<code>topic</code>下所有消息的顺序性。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-2.jpg" alt=""></p>
+<p>上图所示就是表示一个抽象概念的<code>topic</code>下的所有消息可以分为多个分区进行存储。每个分区的消息按照<code>offset</code>进行顺序追加存储。分区可以在不同的<code>broker</code>上，也就是说，一个<code>topic</code>下的数据可以分布在不同的服务器上，显而易见，这样做的好处是可以提高吞吐量，因为我可以起多个生产者/消费者去不同的分区消费，达到并行处理的效果。</p>
+<p>分区个数可以在创建主题的时候指定，也可以在主题创建之后去修改分区的数量，注意分区的数量只能增加不能减少。这里暂时不讨论为什么不能减少、分区的数量如何指定等问题，本篇文章只作为概念入门。</p>
+<h2>三、副本机制</h2>
+<p>上面介绍了最基本也是最重要的概念，概念相对来说比较清晰，下面来说说副本机制。<code>kafka</code>引入多副本机制，可以提高容灾能力。</p>
+<p>同一分区的不同副本理论上保存是相同的消息（同一时刻，副本之间并非完全一样），副本之间是“一主多从”的关系，其中<code>leader</code>副本负责处理读写请求，而<code>follow</code>副本只负责与<code>leader</code>副本的消息同步。副本处于不同的<code>broker</code>中，而<code>leader</code>副本出现故障时，从<code>follow</code>副本中重新选举新的<code>leader</code>副本对外提供服务。<code>kafka</code>通过多副本机制实现了故障的自动转移，当<code>kafka</code>集群中某个<code>broker</code>失效时仍然能保证服务可用。</p>
+<p>这里举个例子，<code>kafka</code>集群中有4个<code>broker</code>，某个主题有3个分区，假设副本因子时3，则每个分区便有一个<code>leader</code>副本和两个<code>follow</code>副本。<code>follow</code>副本中的消息相对<code>leader</code>副本中的消息有一定的滞后性。</p>
+<p>当然，<code>kafak</code>的消费端也有容灾机制，当某个消费者宕机，只要记录了消费的<code>offset</code>，就可用从指定的<code>offset</code>处重新消费，不会造成消息的丢失。</p>
+<p>分区中所有的副本统称为<code>AR</code>，所有与<code>leader</code>副本保持一定程度同步的副本组成<code>ISR</code>，<code>ISR</code>是<code>AR</code>的子集，消息会先发送到<code>leader</code>副本，然后<code>follow</code>副本才能从<code>leader</code>副本中拉取消息进行同步。与<code>leader</code>副本同步滞后过多的副本组成<code>OSR</code>，由此可见：<code>AR</code>=<code>ISR</code>+<code>OSR</code>。在正常情况下，所有的<code>follow</code>副本都应该与<code>leader</code>副本保持一定程度的同步，即<code>AR</code>=<code>ISR</code>，<code>OSR</code>集合为空。</p>
+<p><code>leader</code>副本负责维护和跟踪<code>ISR</code>集合中所有<code>follow</code>副本的滞后状态，当<code>follow</code>副本落后太多或者失效时，<code>leader</code>副本会把它从<code>ISR</code>集合中剔除。如果<code>OSR</code>集合中有<code>follow</code>副本追上了<code>leader</code>副本，那么<code>leader</code>副本就会把它从<code>OSR</code>集合中转移到<code>ISR</code>集合中。</p>
+<p>默认情况下，当<code>leader</code>副本发生故障时，只有在<code>ISR</code>集合中的副本才有资格被选举为新的<code>leader</code>，而在<code>OSR</code>集合中的副本原则上没有机会（除非修改相应的配置参数）。</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/06/09/kafka/02Docker入门上/" class="prev">PRVE</a><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Jun 08 2019 22:24:50 GMT+0800',
