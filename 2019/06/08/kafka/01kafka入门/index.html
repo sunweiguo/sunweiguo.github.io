@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> kafka入门 · fossi</title><meta name="description" content="kafka入门 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">kafka入门</h1><div class="post-meta"><span class="post-time">Jun 8, 2019</span></div><div class="post-content"><p>或多或少都听说过<code>kafka</code>，为了深入学习一下<code>kafka</code>，本文作为学习的第一篇文章，主要目标是搞清楚<code>kafka</code>的基本概念，因为<code>kafka</code>涉及一些专用名词，只有先了解这些名词，才有可能理解<code>kafka</code>的设计思想。</p>
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 01kafka入门 · fossi</title><meta name="description" content="01kafka入门 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">01kafka入门</h1><div class="post-meta"><span class="post-time">Jun 8, 2019</span></div><div class="post-content"><p>或多或少都听说过<code>kafka</code>，为了深入学习一下<code>kafka</code>，本文作为学习的第一篇文章，主要目标是搞清楚<code>kafka</code>的基本概念，因为<code>kafka</code>涉及一些专用名词，只有先了解这些名词，才有可能理解<code>kafka</code>的设计思想。</p>
 <a id="more"></a>
 <h2>一、为什么要学习kafka</h2>
 <p>目前，<code>kafka</code>的定位是一个分布式流处理平台，它以高吞吐、可持久化、可水平扩展、支持流数据处理等多种特性而被广泛使用。截止到写本文的时间：2019年08月21号，已经到了2.3版本，<code>kafka</code>也成为后端程序猿或者大数据程序猿不可不学习的一个重要中间件。它又三大特点：</p>
@@ -18,7 +18,7 @@
 <h2>二、kafka基本概念</h2>
 <p>入门一个新的知识，首先需要知道它是啥，用来干啥，下面就是要知道它涉及的基本概念，才能为接下来的深入学习和使用打下良好基础，本文先来缕一缕最基本且最重要的概念。</p>
 <p>一个典型的<code>kafka</code>架构包若干<code>Producer</code>、若干<code>Broker</code>、若干<code>Consumer</code>，以及一个<code>Zookeeper</code>集群。</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-1.jpg" alt=""></p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-10.png" alt=""></p>
 <p>有的小伙伴会问ZK在里面的角色是啥？为什么在玩<code>kafka</code>的时候需要先启动一个ZK？其实ZK在<code>kafka</code>中主要负责集群元数据的管理、控制器的选举等操作。关于什么是元数据，我这里简单说明一下:</p>
 <p>元数据就是描述数据的数据。初次看到这个表述有点懵，其实简单来说，就像是手机或者电脑的参数，比如像素多少千万、处理器多少HZ等，这些数据都是用来描述手机的，整个参数合起来，我们大概就知道这个手机的配置如何。阮一峰的一篇<a href="http://www.ruanyifeng.com/blog/2007/03/metadata.html" target="_blank" rel="noopener">文章</a>说得可能详细一点，不妨去看看。</p>
 <p>关于控制器的选举，可能难懂一点，会在后续的内容中说明。</p>
@@ -26,26 +26,36 @@
 <p>注意，上面提到了三个专业名词：<code>Producer</code>,<code>Broker</code>以及<code>Consumer</code>。这个是三个最基本的术语，意义也很简单，下面一一阐述。</p>
 <ol>
 <li><code>Producer</code>即生产者，就是发送消息的一方，负责创建消息，然后投递到<code>kafka</code>。</li>
-<li><code>Consumer</code>即消费者，就是接收消息的一方，负责连接到<code>kafka</code>上并接收消息。</li>
-<li><code>Broker</code>即服务代理节点，<code>Broker</code>可以简单看作一个独立的<code>kafka</code>服务节点或者<code>kafka</code>服务实例，通常情况下，可以将<code>Broker</code>看作一台<code>Kafka</code>服务器，前提是这个服务器上只部署了一个<code>kafka</code>，所以简单来说，<code>broker</code>就是一个<code>kafka</code>实例。</li>
+<li><code>Consumer</code>即小欸这，就是接收消息的一方，负责连接到<code>kafka</code>上并接收消息。</li>
+<li><code>Broker</code>即服务代理节点，<code>Broker</code>可以简单看作一个独立的<code>kafka</code>服务节点或者<code>kafka</code>服务实例，通常情况下，可以将<code>Broker</code>看作一台<code>Kakfa</code>服务器，前提是这个服务器上只部署了一个<code>kafka</code>，所以简单来说，<code>broker</code>就是一个<code>kafka</code>实例。</li>
 </ol>
 <p>在<code>kafka</code>中还有两个重要的概念：主题(<code>Topic</code>)和分区(<code>partition</code>)。</p>
 <p><code>kafka</code>中的消息以主题为单位进行分类，生产者负责将消息发送到特定的主题下，消费者可以订阅相关的主题去消费。</p>
 <p>主题是一个抽象的概念，可以细分为多个分区。他们的关系是：一个主题可以分为多个分区，一个分区只属于一个主题。那么分区是啥呢？</p>
 <p>简单来说，就是这个主题的所有消息在物理上可以分为多块进行存储，这个块就可以理解为分区了。那么不难理解的是：每个分区上的消息不一样，所有分区的消息加起来就是一个主题的所有消息。</p>
 <p>分区在存储层面可以看作是一个可追加的日志文件，消息在被追加到分区日志文件的时候就会分配一个特定的偏移量(<code>offset</code>)，这个玩意很重要，就是标识这个分区下某个消息的顺序，并且是这个消息的唯一标识。注意，<code>offset</code>不能跨越分区，即<code>kafka</code>保证的顺序性是在一个分区内所有消息的顺序性，而不是整个<code>topic</code>下所有消息的顺序性。</p>
-<p><img src="http://bloghello.oursnail.cn/kafka1-2.jpg" alt=""></p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-11.png" alt=""></p>
 <p>上图所示就是表示一个抽象概念的<code>topic</code>下的所有消息可以分为多个分区进行存储。每个分区的消息按照<code>offset</code>进行顺序追加存储。分区可以在不同的<code>broker</code>上，也就是说，一个<code>topic</code>下的数据可以分布在不同的服务器上，显而易见，这样做的好处是可以提高吞吐量，因为我可以起多个生产者/消费者去不同的分区消费，达到并行处理的效果。</p>
 <p>分区个数可以在创建主题的时候指定，也可以在主题创建之后去修改分区的数量，注意分区的数量只能增加不能减少。这里暂时不讨论为什么不能减少、分区的数量如何指定等问题，本篇文章只作为概念入门。</p>
 <h2>三、副本机制</h2>
 <p>上面介绍了最基本也是最重要的概念，概念相对来说比较清晰，下面来说说副本机制。<code>kafka</code>引入多副本机制，可以提高容灾能力。</p>
 <p>同一分区的不同副本理论上保存是相同的消息（同一时刻，副本之间并非完全一样），副本之间是“一主多从”的关系，其中<code>leader</code>副本负责处理读写请求，而<code>follow</code>副本只负责与<code>leader</code>副本的消息同步。副本处于不同的<code>broker</code>中，而<code>leader</code>副本出现故障时，从<code>follow</code>副本中重新选举新的<code>leader</code>副本对外提供服务。<code>kafka</code>通过多副本机制实现了故障的自动转移，当<code>kafka</code>集群中某个<code>broker</code>失效时仍然能保证服务可用。</p>
 <p>这里举个例子，<code>kafka</code>集群中有4个<code>broker</code>，某个主题有3个分区，假设副本因子时3，则每个分区便有一个<code>leader</code>副本和两个<code>follow</code>副本。<code>follow</code>副本中的消息相对<code>leader</code>副本中的消息有一定的滞后性。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-12.png" alt=""></p>
 <p>当然，<code>kafak</code>的消费端也有容灾机制，当某个消费者宕机，只要记录了消费的<code>offset</code>，就可用从指定的<code>offset</code>处重新消费，不会造成消息的丢失。</p>
 <p>分区中所有的副本统称为<code>AR</code>，所有与<code>leader</code>副本保持一定程度同步的副本组成<code>ISR</code>，<code>ISR</code>是<code>AR</code>的子集，消息会先发送到<code>leader</code>副本，然后<code>follow</code>副本才能从<code>leader</code>副本中拉取消息进行同步。与<code>leader</code>副本同步滞后过多的副本组成<code>OSR</code>，由此可见：<code>AR</code>=<code>ISR</code>+<code>OSR</code>。在正常情况下，所有的<code>follow</code>副本都应该与<code>leader</code>副本保持一定程度的同步，即<code>AR</code>=<code>ISR</code>，<code>OSR</code>集合为空。</p>
 <p><code>leader</code>副本负责维护和跟踪<code>ISR</code>集合中所有<code>follow</code>副本的滞后状态，当<code>follow</code>副本落后太多或者失效时，<code>leader</code>副本会把它从<code>ISR</code>集合中剔除。如果<code>OSR</code>集合中有<code>follow</code>副本追上了<code>leader</code>副本，那么<code>leader</code>副本就会把它从<code>OSR</code>集合中转移到<code>ISR</code>集合中。</p>
 <p>默认情况下，当<code>leader</code>副本发生故障时，只有在<code>ISR</code>集合中的副本才有资格被选举为新的<code>leader</code>，而在<code>OSR</code>集合中的副本原则上没有机会（除非修改相应的配置参数）。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/06/09/kafka/02Docker入门上/" class="prev">上一篇</a><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<p>此外，还有两个名词值得关注：</p>
+<ul>
+<li><code>HW</code>（<code>High WaterMark</code>）: 高水位， 用来标记一个特定的消息偏移量，消费者只能拉取到这个<code>offset</code>之前的消息（可见性）</li>
+<li><code>LEO</code>( <code>Log End Offset</code>) : 标志着当前日志文件中下一条待写入消息的<code>offset</code> 。 <strong>分区<code>ISR</code>集合中的每个副本都维护自身的<code>LEO</code>，而<code>ISR</code>集合中的最小<code>LEO</code>为分区的<code>HW</code>，对消费者而言只能消费<code>HW</code>之前的消息</strong>。</li>
+</ul>
+<p>对此记住一点，这两个都是指最后一条的下一条的位置而不是指最后一条的位置。</p>
+<p><img src="http://bloghello.oursnail.cn/kafka1-14.png" alt=""></p>
+<p>当消息写入<code>leader</code>副本之后，<code>follow</code>副本会发送拉取请求来拉取消息以进行消息同步。在同步的过程中，不同的<code>follow</code>副本同步效率不尽相同，此时各个<code>follow</code>的<code>LEO</code>也就不一样，这个时候<code>HW</code>就是最小的<code>LEO</code>，那么消费者能消费到的消息就是这个<code>HW</code>之前的消息。</p>
+<p>说白点就是，这种方式保证消费者消费到的是当前<code>follow</code>副本中同步最慢的那个消息，可以看出，<code>Kafka</code>的赋值机制既不是完全的同步复制，也不是单纯的异步复制，同步复制要求所有能工作的<code>follow</code>副本都要复制完，这条消息才会被确认已成功提交，这种复制方式极大地影响了性能；异步复制方式下，<code>follow</code>副本异步地从<code>leader</code>副本中复制数据，数据只要被<code>leader</code>副本写入就认为已成功提交，这种方式下，如果<code>leader</code>副本突然宕机但是<code>follow</code>副本还没有复制完，则会造成数据丢失。<code>kafka</code>这种<code>ISR</code>的方式有效地权衡了数据可靠性和性能之间的关系。</p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/06/13/kafka/02windows下kafka的基本使用/" class="prev">PRVE</a><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Jun 08 2019 22:24:50 GMT+0800',
     owner: 'sunweiguo',
