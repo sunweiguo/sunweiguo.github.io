@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/06/08/kafka/01kafka%E5%85%A5%E9%97%A8/</loc>
+    
+    <lastmod>2019-08-27T12:38:46.718Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
     
     <lastmod>2019-08-27T12:00:21.460Z</lastmod>
@@ -19,13 +26,6 @@
     <loc>http://yoursite.com/2019/06/13/kafka/02windows%E4%B8%8Bkafka%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/</loc>
     
     <lastmod>2019-08-27T11:57:57.870Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yoursite.com/2019/06/08/kafka/01kafka%E5%85%A5%E9%97%A8/</loc>
-    
-    <lastmod>2019-08-27T11:57:34.421Z</lastmod>
     
   </url>
   
