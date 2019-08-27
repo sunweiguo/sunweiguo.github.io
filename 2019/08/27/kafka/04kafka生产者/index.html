@@ -109,7 +109,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProducerRecord&lt;String, String&gt; record = <span class="keyword">new</span> ProducerRecord&lt;&gt;(topic, <span class="string">"hello, Kafka!"</span>);</span><br></pre></td></tr></table></figure>
 <p>我们只知道主题的名称，对于其他的必要信息一无所知。<code>KafkaProducer</code>要将此消息追加到指定主题的某个分区所对应的<code>leader</code>副本之前，首先需要知道主题的分区数量，然后经过计算得到（或者直接指定）目标分区，之后<code>KafkaProducer</code>需要知道目标分区的<code>leader</code>副本所在的<code>broker</code>节点的地址、端口等信息才能建立连接，最终才能将消息发送到kafka。这一过程需要的信息属于元数据信息。</p>
 <p>元数据是指Kafka集群中的元数据，这些元数据记录了集群中有哪些主题，这些主题有哪些分区，每个分区的<code>leader</code>副本分配在哪个节点上，<code>follwer</code>副本分配在哪些节点上，哪些副本在<code>AR</code>,<code>ISR</code>集合中，集群有哪些节点，控制节点又是哪一个等信息。</p>
-<p>与此同时，我们知道<code>bootstrap.servers</code>参数只需要配置部分kafka节点的地址即可，不需要配置所有<code>broker</code>节点的地址，因为客户端可以自己发现其他<code>broker</code>节点的地址，这一过程属于元数据相关的更新操作；分区数量及<code>leader</code>副本的分布都会动态地变化，客户端需要动态捕捉这些变化。这里想说的是，在客户端的内部会进行元数据的更新操作（计算元数据都没变过，但是超过一段时间也会自动更新），当客户端需要更新元数据时，会挑选 <code>InFlightRequests</code> 中当前负载最小的节点发送更新元数据请求。</p>
+<p>与此同时，我们知道<code>bootstrap.servers</code>参数只需要配置部分kafka节点的地址即可，不需要配置所有<code>broker</code>节点的地址，因为客户端可以自己发现其他<code>broker</code>节点的地址，这一过程属于元数据相关的更新操作；分区数量及<code>leader</code>副本的分布都会动态地变化，客户端需要动态捕捉这些变化。这里想说的是，在客户端的内部会进行元数据的更新操作（就算元数据都没变过，但是超过一段时间也会自动更新），当客户端需要更新元数据时，会挑选 <code>InFlightRequests</code> 中当前负载最小的节点发送更新元数据请求。</p>
 <p>元数据虽然由<code>Sender</code>线程负责更新，但是主线程也需要读取这些信息，因此数据同步问题也要考虑，使用<code>synchronized</code>和<code>final</code>保证。</p>
 <h2>七、重要的生产者参数</h2>
 <ul>
