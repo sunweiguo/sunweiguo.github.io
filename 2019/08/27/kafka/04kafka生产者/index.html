@@ -110,7 +110,7 @@
 <p><code>Sender</code>从<code>RecordAccumulator</code>中获取缓存的消息之后，会进一步将原来<code>&lt;分区，Deque&lt;ProducerBatch&gt;&gt;</code>的保存形式转变成<code>&lt;node，List&lt;ProducerBatch&gt;&gt;</code>的形式，其中<code>node</code>表示kafka集群的<code>broker</code>节点。</p>
 <p>对于网络连接来说，生产者客户端是与具体的<code>broker</code>节点建立的连接，也就是向具体的<code>broker</code>节点发送消息，而并不关心消息属于哪一个分区；而对于<code>KafkaProducer</code>的应用逻辑来说，我们只关注向哪个分区发送哪些消息，所以需要在这里做一个应用逻辑层面到IO层面的转换。</p>
 <p>在转成<code>&lt;node，List&lt;ProducerBatch&gt;&gt;</code>的形式之后，<code>Sender</code>还会进一步封装成<code>&lt;node,Request&gt;</code>的形式，这样就可以将<code>Request</code>请求发往各个<code>node</code>了，这里的<code>Request</code>指kafka的各种协议请求，对于消息发送而言就是指具体的<code>producerRequest</code>，更多与kafka协议相关的内容后面章节再讨论。</p>
-<p>请求从<code>Sender</code>线程发往kafka之前还会保存到<code>InFlightRequests</code>中，<code>InFlightRequests</code>保存对象的具体形式为<code>Map&lt;nodeId,Deque&lt;Request&gt;&gt;</code>，它的主要作用是缓存了已经发出取但还没收到响应的请求。<code>InFlightRequests</code>可以通过配置参数限制每个连接（客户端和kafka之间的连接）最多的缓存的请求数。默认值为5，即每个连接最多缓存5个未响应的请求，超过该数值之后就不能向这个连接发送更多的请求了，除非有缓存的请求收到了响应。通过比较<code>Deque&lt;Request&gt;</code>的<code>size</code>参数大小可以判断对应的<code>node</code>是否已经堆积了很多未响应的消息，如果堆积了很多，说明这个<code>node</code>节点负载比较大或者网络连接有问题，再继续对其发请求会增大超时的可能。</p>
+<p>请求从<code>Sender</code>线程发往kafka之前还会保存到<code>InFlightRequests</code>中，<code>InFlightRequests</code>保存对象的具体形式为<code>Map&lt;nodeId,Deque&lt;Request&gt;&gt;</code>，它的主要作用是缓存了已经发出去但还没收到响应的请求。<code>InFlightRequests</code>可以通过配置参数限制每个连接（客户端和kafka之间的连接）最多的缓存的请求数。默认值为5，即每个连接最多缓存5个未响应的请求，超过该数值之后就不能向这个连接发送更多的请求了，除非有缓存的请求收到了响应。通过比较<code>Deque&lt;Request&gt;</code>的<code>size</code>参数大小可以判断对应的<code>node</code>是否已经堆积了很多未响应的消息，如果堆积了很多，说明这个<code>node</code>节点负载比较大或者网络连接有问题，再继续对其发请求会增大超时的可能。</p>
 <h2>六、元数据的更新</h2>
 <p>我们使用如下的方式创建了一条消息<code>producerRecord</code>：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ProducerRecord&lt;String, String&gt; record = <span class="keyword">new</span> ProducerRecord&lt;&gt;(topic, <span class="string">"hello, Kafka!"</span>);</span><br></pre></td></tr></table></figure>
@@ -144,7 +144,7 @@
 </ul>
 </li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/08/10/miscellany/19SpringTask的基本使用/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/08/10/miscellany/19SpringTask的基本使用/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Tue Aug 27 2019 21:59:22 GMT+0800',
     owner: 'sunweiguo',
