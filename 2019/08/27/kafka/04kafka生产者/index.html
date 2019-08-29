@@ -18,8 +18,8 @@
 <ul>
 <li><code>topic</code>：消息要发往的主题，不赘述</li>
 <li><code>partition</code>：消息要发往的分区号，不赘述</li>
-<li><code>headers</code>：值消息的头部，<code>Kafka 0.11.x</code>版本才引入此属性，它大多来设定一些与应用相关的信息，基本不用管他。</li>
-<li><code>key</code>：值消息的键，它可以用来计算分区号进而可以让消息发往特定的分区，消息可以以主题进行分类，也可以用<code>key</code>进行二次归类，同一个<code>key</code>的消息会被划分到同一个分区。，有<code>key</code>的消息可以支持日志压缩功能。</li>
+<li><code>headers</code>：指消息的头部，<code>Kafka 0.11.x</code>版本才引入此属性，它大多来设定一些与应用相关的信息，基本不用管他。</li>
+<li><code>key</code>：指消息的键，它可以用来计算分区号进而可以让消息发往特定的分区，消息可以以主题进行分类，也可以用<code>key</code>进行二次归类，同一个<code>key</code>的消息会被划分到同一个分区。，有<code>key</code>的消息可以支持日志压缩功能。</li>
 <li><code>value</code>：指消息体，一般不为空，如果为空则表示特定的消息-墓碑消息，后续介绍。</li>
 </ul>
 <h2>二、发送消息的三种模式</h2>
