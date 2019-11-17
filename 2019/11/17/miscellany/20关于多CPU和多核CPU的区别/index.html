@@ -1,0 +1,47 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> 关于多CPU和多核CPU的区别 · fossi</title><meta name="description" content="关于多CPU和多核CPU的区别 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">关于多CPU和多核CPU的区别</h1><div class="post-meta"><span class="post-time">Nov 17, 2019</span></div><div class="post-content"><p>编写多线程程序的时候，可能没怎么注意一些硬件架构上的区别，从而无法达到机器的最大性能，造成资源的浪费。这里我们一起来探讨下多CPU和多核CPU的区别，帮助我们更好地理解计算机如何工作的。</p>
+<a id="more"></a>
+<h2>一、cpu架构和工作原理</h2>
+<p>冯偌伊曼将计算机构成分为：运算器，控制器，存储器，输入设备和输出设备。现在计算机都是基于冯偌伊曼结构进行升级改造而已。运算器和控制器封装到一起，加上寄存器组和cpu内部总线构成中央处理器（CPU）。cpu的根本任务，就是执行指令，对计算机来说，都是0，1组成的序列，cpu从逻辑上可以划分为3个模块：控制单元、运算单元和存储单元。这三个部分由cpu总线连接起来。</p>
+<p><img src="http://bloghello.oursnail.cn/tcp1-1.png" alt="image"></p>
+<p>CPU的运行原理就是：控制单元在时序脉冲的作用下，将指令计数器里所指向的指令地址(这个地址是在内存里的)送到地址总线上去，然后CPU将这个地址里的指令读到指令寄存器进行译码。对于执行指令过程中所需要用到的数据，会将数据地址也送到地址总线，然后CPU把数据读到CPU的内部存储单元(就是内部寄存器)暂存起来，最后命令运算单元对数据进行处理加工。周而复始，一直这样执行下去。</p>
+<h2>二、多核cpu和多cpu</h2>
+<p>多个物理CPU，CPU通过总线进行通信，效率比较低：</p>
+<p><img src="http://bloghello.oursnail.cn/tcp1-2.png" alt="image"></p>
+<p>多核CPU，不同的核通过<code>L2 cache</code>进行通信，存储和外设通过总线与CPU通信：</p>
+<p><img src="http://bloghello.oursnail.cn/tcp1-3.png" alt="image"></p>
+<p>上面提到的<code>L2 cache</code>是啥呢？这就扯到了CPU缓存了。CPU缓存是位于CPU与内存之间的临时数据交换器，它的容量比内存小的多但是交换速度却比内存要快得多。CPU缓存一般直接跟CPU芯片集成或位于主板总线互连的独立芯片上。</p>
+<p><img src="http://bloghello.oursnail.cn/tcp1-4.png" alt="image"></p>
+<p>随着多核CPU的发展，CPU缓存通常分成了三个级别：<code>L1</code>，<code>L2</code>，<code>L3</code>。级别越小越接近CPU，所以速度也更快，同时也代表着容量越小。<code>L1</code> 是最接近CPU的, 它容量最小（例如：32K），速度最快，每个核上都有一个 <code>L1</code> 缓存，<code>L1</code> 缓存每个核上其实有两个 <code>L1</code> 缓存, 一个用于存数据的 <code>L1d Cache</code>（<code>Data Cache</code>），一个用于存指令的 <code>L1i Cache</code>（<code>Instruction Cache</code>）。<code>L2</code> 缓存 更大一些（例如：256K），速度要慢一些, 一般情况下每个核上都有一个独立的<code>L2</code> 缓存; <code>L3</code> 缓存是三级缓存中最大的一级（例如3MB），同时也是最慢的一级, 在同一个CPU插槽之间的核共享一个 <code>L3</code> 缓存。</p>
+<p>读取数据过程。就像数据库缓存一样，首先在最快的缓存中找数据，如果缓存没有命中(<code>Cache miss</code>) 则往下一级找, 直到三级缓存都找不到时，向内存要数据。一次次地未命中，代表取数据消耗的时间越长。</p>
+<p>计算过程。程序以及数据被加载到主内存；指令和数据被加载到CPU的高速缓；CPU执行指令，把结果写到高速缓存；高速缓存中的数据写回主内存。</p>
+<h2>三、进程和线程</h2>
+<p>关于进程和线程说的比较多，下面简略列举：</p>
+<ol>
+<li>进程是资源分配的最小单位，一个程序有至少一个进程。线程是程序执行的最小单位。一个进程有至少一个线程。</li>
+<li>进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段、堆栈段和数据段，这种操作非常昂贵。而线程是共享进程中的数据的，使用相同的地址空间，因此CPU切换一个线程的花费远比进程要小很多，同时创建一个线程的开销也比进程要小很多。</li>
+<li>线程之间的通信更方便，同一进程下的线程共享全局变量、静态变量等数据，而进程之间的通信需要以通信的方式（IPC)进行。不过如何处理好同步与互斥是编写多线程程序的难点。</li>
+<li>多进程程序更健壮，多线程程序只要有一个线程死掉，整个进程也死掉了，而一个进程死掉并不会对另外一个进程造成影响，因为进程有自己独立的地址空间。</li>
+</ol>
+<h2>四、进程和线程在多核cpu，多cpu中的运行关系</h2>
+<p><strong>多cpu的运行，对应进程的运行状态；多核cpu的运行，对应线程的运行状态。</strong></p>
+<p>操作系统会拆分CPU为一段段时间的运行片，轮流分配给不同的程序。对于多cpu，多个进程可以并行在多个cpu中计算，当然也会存在进程切换；对于单cpu，多个进程在这个单cpu中是并发运行，根据时间片读取上下文+执行程序+保存上下文。同一个进程同一时间段只能在一个cpu中运行，如果进程数小于cpu数，那么未使用的cpu将会空闲。</p>
+<p>进程有自己的独立地址空间，每启动一个进程，系统就会为它分配地址空间，建立数据表来维护代码段、堆栈段和数据段，这种操作非常昂贵。而线程是共享进程中的数据的，使用相同的地址空间，因此CPU切换一个线程的花费远比进程要小很多，同时创建一个线程的开销也比进程要小很多。<br>
+对于多核cpu，进程中的多线程并行执行，执行过程中存在线程切换，线程切换开销较小。对于单核cpu，多线程在单cpu中并发执行，根据时间片切换线程。同一个线程同一时间段只能在一个cpu内核中运行，如果线程数小于cpu内核数，那么将有多余的内核空闲。</p>
+<h2>五、总结</h2>
+<ol>
+<li>单CPU中进程只能是并发，多CPU计算机中进程可以并行。</li>
+<li>单CPU单核中线程只能并发，单CPU多核中线程可以并行。</li>
+<li>无论是并发还是并行，使用者来看，看到的是多进程，多线程。</li>
+</ol>
+<p>转载自：<a href="https://www.cnblogs.com/valjeanshaw/p/11469514.html" target="_blank" rel="noopener">进程，线程与多核，多cpu之间的关系</a></p>
+</div></article></div></section><footer><div class="paginator"><a href="/2019/10/04/kafka/07kafka消费者-下/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sun Nov 17 2019 14:36:55 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 <a href="http://yoursite.com">fossi</a>,苏ICP备17064972号.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
