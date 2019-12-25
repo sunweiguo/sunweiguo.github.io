@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[1、两数之和]]></title>
-    <url>%2F2019%2F12%2F25%2Fleetcode-array%2F1%E3%80%81%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%2F</url>
+    <title><![CDATA[leetcode-001-两数之和]]></title>
+    <url>%2F2019%2F12%2F25%2Fleetcode-array%2Fleetcode-001-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C%2F</url>
     <content type="text"><![CDATA[刷题之旅从数组类型的题目开始。第一道题目是两数之和。 题目描述 给定一个整数数组 nums 和一个目标值 target，请你在该数组中找出和为目标值的那两个整数，并返回他们的数组下标。 你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。 示例: 给定 nums = [2, 7, 11, 15], target = 9 因为 nums[0] + nums[1] = 2 + 7 = 9 所以返回 [0, 1] 解题思路 第一次想到的思路是双层循环暴力找出两个条件的值： 123456789101112131415class Solution &#123; public int[] twoSum(int[] nums, int target) &#123; int[] res = new int[2]; for(int i=0;i&lt;nums.length-1;i++)&#123; for(int j=i+1;j&lt;nums.length;j++)&#123; if(nums[i] + nums[j] == target)&#123; res[0] = i; res[1] = j; return res; &#125; &#125; &#125; return res; &#125;&#125; 那么如何提到执行效率呢？降低时间复杂度，此时可以接用java中的HashMap数据结构来辅助我们，因为我们知道，这个数据接口可以帮助我们很快地找到对应的元素，那么思路就是：将数据的值作为key，其索引值作为value，那么我们可以根据key来找另一个key，比如我遍历数组到第一个数字2，那么此时map里面存储的是map&lt;2,0&gt;，那么我下次就可以去寻找有没有map&lt;7,x&gt;这样的数据，有的话那就直接返回了，没有则继续去找，直到找不到为止。 提交代码 123456789101112131415161718import java.util.Map;import java.util.HashMap;class Solution &#123; public int[] twoSum(int[] nums, int target) &#123; int[] res = new int[2]; HashMap&lt;Integer,Integer&gt; map = new HashMap&lt;&gt;(); for(int i=0;i&lt;nums.length;i++)&#123; if(map.containsKey(target-nums[i]))&#123; res[0] = i; res[1] = map.get(target-nums[i]); return res; &#125; //数组值为key，索引为value map.put(nums[i],i); &#125; return res; &#125;&#125;]]></content>
       <tags>
         <tag>leetcode</tag>
