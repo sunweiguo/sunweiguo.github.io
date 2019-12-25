@@ -58,7 +58,7 @@
 <p>当消息写入<code>leader</code>副本之后，<code>follow</code>副本会发送拉取请求来拉取消息以进行消息同步。在同步的过程中，不同的<code>follow</code>副本同步效率不尽相同，此时各个<code>follow</code>的<code>LEO</code>也就不一样，这个时候<code>HW</code>就是最小的<code>LEO</code>，那么消费者能消费到的消息就是这个<code>HW</code>之前的消息。</p>
 <p>说白点就是，这种方式保证消费者消费到的是当前<code>follow</code>副本中同步最慢的那个消息，可以看出，<code>Kafka</code>的复制机制既不是完全的同步复制，也不是单纯的异步复制，同步复制要求所有能工作的<code>follow</code>副本都要复制完，这条消息才会被确认已成功提交，这种复制方式极大地影响了性能；异步复制方式下，<code>follow</code>副本异步地从<code>leader</code>副本中复制数据，数据只要被<code>leader</code>副本写入就认为已成功提交，这种方式下，如果<code>leader</code>副本突然宕机但是<code>follow</code>副本还没有复制完，则会造成数据丢失。<code>kafka</code>这种<code>ISR</code>的方式有效地权衡了数据可靠性和性能之间的关系。</p>
 <p>下面介绍基本的使用，包括<code>topic</code>的查看、创建，生产者的启动以及消费者的启动等。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/06/13/kafka/02windows下kafka的基本使用/" class="prev">PRVE</a><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/06/13/kafka/02windows下kafka的基本使用/" class="prev">上一篇</a><a href="/2019/05/23/miscellany/18.实现动态切换多数据源及其原理分析/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
 <script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sat Jun 08 2019 22:24:50 GMT+0800',
     owner: 'sunweiguo',
