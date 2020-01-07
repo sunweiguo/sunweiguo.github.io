@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-01-05T11:17:03.884Z</updated>
+  <updated>2020-01-07T14:24:55.299Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>leetcode-012-两数之和2-输入有序数组</title>
+    <link href="http://yoursite.com/2020/01/07/leetcode-array/leetcode-012-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C2-%E8%BE%93%E5%85%A5%E6%9C%89%E5%BA%8F%E6%95%B0%E7%BB%84/"/>
+    <id>http://yoursite.com/2020/01/07/leetcode-array/leetcode-012-两数之和2-输入有序数组/</id>
+    <published>2020-01-07T14:22:05.939Z</published>
+    <updated>2020-01-07T14:24:55.299Z</updated>
+    
+    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第十二道题目是两数之和2-输入有序数组，对应leetcode的题号为167。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>给定一个已按照升序排列 的有序数组，找到两个数使得它们相加之和等于目标数。</p><p>函数应该返回这两个下标值 index1 和 index2，其中 index1 必须小于 index2。</p><p>说明:</p><p>返回的下标值（index1 和 index2）不是从零开始的。<br>你可以假设每个输入只对应唯一的答案，而且你不可以重复使用相同的元素。<br>示例:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: numbers = [2, 7, 11, 15], target = 9</span><br><span class="line">输出: [1,2]</span><br><span class="line">解释: 2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。</span><br></pre></td></tr></table></figure><h2>解题思路</h2><p>因为是有序数据，那么就比较简单了，一头一尾前后夹逼即可。</p><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] twoSum(<span class="keyword">int</span>[] numbers, <span class="keyword">int</span> target) &#123;</span><br><span class="line">        <span class="comment">//存放结果</span></span><br><span class="line">        <span class="keyword">int</span>[] res = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>];</span><br><span class="line">        <span class="comment">//定义一头一尾的指针，前后夹逼试探</span></span><br><span class="line">        <span class="keyword">int</span> low = <span class="number">0</span>,high = numbers.length-<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span>(low &lt; high)&#123;</span><br><span class="line">            <span class="keyword">if</span>(numbers[low] + numbers[high] == target)&#123;</span><br><span class="line">                <span class="comment">//注意下返回结果是数组下标+1</span></span><br><span class="line">                res[<span class="number">0</span>] = low + <span class="number">1</span>;</span><br><span class="line">                res[<span class="number">1</span>] = high + <span class="number">1</span>;</span><br><span class="line">                <span class="keyword">return</span> res;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(numbers[low] + numbers[high] &lt; target)&#123;</span><br><span class="line">                low++;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                high--;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> res;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;刷题之旅从数组类型的题目开始。第十二道题目是两数之和2-输入有序数组，对应leetcode的题号为167。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
+    
+  </entry>
   
   <entry>
     <title>leetcode-011-买卖股票的最佳时机2</title>
@@ -405,27 +426,6 @@
     
       &lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/kafka1-15.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
 &lt;p&gt;为了方便对&lt;a href=&quot;https://github.com/sunweiguo/SpringBoot-pratice&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;实习生小课题&lt;/a&gt;中kafka方便调试，我决定在自己的腾讯云服务器上部署一个单机kafka，其实跟本地windows没啥区别，不过还是做一下记录吧。服务器环境是centod7.3。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="kafka" scheme="http://yoursite.com/tags/kafka/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>02windows下kafka的基本使用</title>
-    <link href="http://yoursite.com/2019/06/13/kafka/02windows%E4%B8%8Bkafka%E7%9A%84%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8/"/>
-    <id>http://yoursite.com/2019/06/13/kafka/02windows下kafka的基本使用/</id>
-    <published>2019-06-13T13:14:46.677Z</published>
-    <updated>2019-08-27T11:57:57.870Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://bloghello.oursnail.cn/kafka1-15.jpg" alt="image"></p><p>最近公司用kafka，本地需要测试测试，本地为windows环境，因此学习一下windows下对kafka的基本操作，便于代码的调试，也是作为知识的记录。</p><a id="more"></a><h2>环境准备</h2><ul><li>JDK8自行下载</li><li><a href="http://kafka.apache.org/downloads.html" target="_blank" rel="noopener">kafka下载</a>【我自己用的是以前下载的版本，为 kafka_2.11-2.1.0.tgz 这个版本，直接下载解压即可】</li></ul><h2>KafKA使用</h2><p>由于是windows环境，解压之后我们的注意点是<code>kafka_2.11-2.1.0\bin\windows</code>目录。</p><p><img src="http://bloghello.oursnail.cn/kafka3-1.jpg" alt="image"></p><h5>启动ZK</h5><p>在此目录下打开cmd，执行命令<code>zookeeper-server-start.bat ..\..\config\zookeeper.properties</code>，如下图表示启动成功：</p><p><img src="http://bloghello.oursnail.cn/kafka3-2.jpg" alt="image"></p><h5>启动KAFKA</h5><p>依旧在目录下打开cmd，执行命令<code>kafka-server-start.bat ..\..\config\server.properties</code>，如下图表示启动成功：</p><p><img src="http://bloghello.oursnail.cn/kafka3-3.jpg" alt="image"></p><h5>测试Kafka命令</h5><ul><li>创建一个主题</li></ul><blockquote><p>kafka-topics.bat --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic TOPIC的名称</p></blockquote><ul><li>查看创建的主题列表</li></ul><blockquote><p>kafka-topics.bat --list --zookeeper localhost:2181</p></blockquote><p>我这里新建一个叫做<code>test</code>的topic作为实验。</p><p><img src="http://bloghello.oursnail.cn/kafka3-4.jpg" alt="image"></p><ul><li>启动生产者：</li></ul><blockquote><p>kafka-console-producer.bat --broker-list localhost:9092 --topic test</p></blockquote><ul><li>启动消费者：</li></ul><blockquote><p>kafka-console-consumer.bat --bootstrap-server localhost:9092 --topic test --from-beginning</p></blockquote><p>此时可以从控制台输入信息，待消费者即可接收到生产者发布的消息。</p><p><img src="http://bloghello.oursnail.cn/kafka3-5.jpg" alt="image"></p><p>至此，最基本的操作介绍完毕！</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/kafka1-15.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-&lt;p&gt;最近公司用kafka，本地需要测试测试，本地为windows环境，因此学习一下windows下对kafka的基本操作，便于代码的调试，也是作为知识的记录。&lt;/p&gt;
     
     </summary>
     
