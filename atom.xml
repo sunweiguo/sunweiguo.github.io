@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-01-15T13:56:50.240Z</updated>
+  <updated>2020-01-17T14:43:55.205Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>leetcode-021-最大连续1的个数</title>
+    <link href="http://yoursite.com/2020/01/17/leetcode-array/leetcode-021-%E6%9C%80%E5%A4%A7%E8%BF%9E%E7%BB%AD1%E7%9A%84%E4%B8%AA%E6%95%B0/"/>
+    <id>http://yoursite.com/2020/01/17/leetcode-array/leetcode-021-最大连续1的个数/</id>
+    <published>2020-01-17T14:42:21.076Z</published>
+    <updated>2020-01-17T14:43:55.205Z</updated>
+    
+    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第二十一道题目是最大连续1的个数，对应leetcode的题号为485。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>给定一个二进制数组， 计算其中最大连续1的个数。</p><p>示例 1:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,1,0,1,1,1]</span><br><span class="line">输出: 3</span><br><span class="line">解释: 开头的两位和最后的三位都是连续1，所以最大连续1的个数是 3.</span><br></pre></td></tr></table></figure><p>注意：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入的数组只包含 0 和1。</span><br><span class="line">输入数组的长度是正整数，且不超过 10,000。</span><br></pre></td></tr></table></figure><h2>解题思路</h2><p>这一题的思路就是遍历数组，如果为1就不停计数，遇到0就中断掉，不断记录计数值从而找出最大值。</p><ul><li>时间复杂度：O(N)。N 值是数组的长度。</li><li>空间复杂度：O(1)，仅仅使用了 count 和 max。</li></ul><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">findMaxConsecutiveOnes</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//max记录最大值</span></span><br><span class="line">        <span class="keyword">int</span> max = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">//记录连续1的个数</span></span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="comment">//为1就计数，否则就置零，中间不断比较记录最大个数</span></span><br><span class="line">            <span class="keyword">if</span>(nums[i] == <span class="number">1</span>)&#123;</span><br><span class="line">                count++;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                count = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>(count &gt; max)&#123;</span><br><span class="line">                max = count;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行用时 :3 ms, 在所有 Java 提交中击败了72.76%的用户</span><br><span class="line">内存消耗 :39.2 MB, 在所有 Java 提交中击败了94.95%的用户</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;刷题之旅从数组类型的题目开始。第二十一道题目是最大连续1的个数，对应leetcode的题号为485。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
+    
+  </entry>
   
   <entry>
     <title>leetcode-020-找到所有数组中消失的数字</title>
@@ -412,26 +433,6 @@
     
     
       <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>关于CNAME</title>
-    <link href="http://yoursite.com/2019/12/28/miscellany/21%E5%85%B3%E4%BA%8ECNAME/"/>
-    <id>http://yoursite.com/2019/12/28/miscellany/21关于CNAME/</id>
-    <published>2019-12-28T14:43:28.093Z</published>
-    <updated>2019-12-28T14:56:40.207Z</updated>
-    
-    <content type="html"><![CDATA[<p>关于cname一直都知道名词，但是不知道具体作用，看到一篇比较好的文章，转载下来。</p><a id="more"></a><p>当你上网时，在地址栏输入：<code>www.baidu.com</code> 的时候，你知道弹出的那个百度首页是从哪里来的吗？</p><p>对，是从网站服务器调取过来的，这个过程是通过域名解析获得IP地址后，然后向网站服务器发送请求，网站服务器做出响应，最后再将这个网页发送到你的浏览器。</p><p>再详细一点的描述是，每个域名（<code>www.baidu.com</code>）背后实际上是有个地址，这个地址代表的是网站服务器的地址。在互联网上，域名的存在只是便于记忆，它背后真实的识别方式是IP地址。</p><p>当我们在浏览器上输入域名后，我们的电脑会通过一个叫<code>DNS</code>的系统去解析这个域名，并获得IP地址。</p><div class="tip">DNS（Domain Name System[域名系统])，万维网上作为域名和IP地址相互映射的一个[分布式数据库]能够使用户更方便的访问互联网，而不用去记住能够被机器直接读取的IP数串。</div><p>这个过程中还会涉及到域名指向的设置，我们知道域名是有顶级域名（<code>baidu.com</code>)，二级域名（<code>www.baidu.com</code>)之分的，当多个域名都指向一个网站服务器上时，需要将这些子域名（顶级域名下面的二级域名、三级域名都称之为子域名）设置并指向自己的网站服务器上的，这个动作一般称之为A记录，又称IP指向。</p><div class="tip">A (Address) 记录是用来指定域名对应的IP地址记录。</div><p>说到这里实际上就会产生一个问题，就是当服务器需要更换时，这些原本指向这台服务器的域名就需要重新设置，并指向新的服务器，这样就会产生比较大的工作量。</p><p>说到这我们就要来说下<code>CNAME</code>。</p><div class="tip">CNAME：即别名记录。这种记录允许您将多个名字映射到另外一个域名。</div><p>简单来说，A记录就是把一个域名解析到一个IP地址，而<code>CNAME</code>记录就是把域名解析到另外一个域名。</p><p>比如<code>www.baidu.com</code>，这个二级域名解析到的是一个服务器的IP地址，比如<code>8.8.8.8</code>，而<code>CNAME</code>是将新域名，比如：<code>a.www.baidu.com</code>解析到另外一个域名，比如：<code>www.baidu.com</code>。</p><p>当新域名产生后都指向<code>CNAME</code>域名后，在发生服务器需要更换或者迁移时，就只需要把<code>www.baidu.com</code>这个域名做重新设置就可以了，这样就减少了很多工作量。</p><p><code>CNAME</code>在<code>CDN</code>中的应用<br><code>CNAME</code>的应用还远不止于此，在<code>CDN</code>（内容分发网络）上也是不可缺少的一环。</p><p><code>CDN</code>的主要功能是将原本离用户比较远的源站服务器，通过丰富的节点（缓存服务器）放到离用户最近的地方，实现用户对互联网上资源的快速访问。</p><p>这个快速访问的过程就需要<code>CNAME</code>的参与。</p><p>原理是这样的：</p><p>用户向浏览器提供要访问的域名，浏览器对域名进行解析，由于 <code>CDN</code> 参与后，对域名解析过程进行了调整，解析的结果不再是一个IP地址，而是该域名对应的 <code>CNAME</code> 。</p><p>但 <code>CNAME</code> 无法完成最终内容的获取，所以，浏览器需要再次对获得的 <code>CNAME</code> 进行解析，以得到实际的 IP 地址。在此过程中，<code>CDN</code>会根据用户的实际地理位置信息解析对应的 IP 地址，使得用户能就近访问。</p><p>这个过程中， <code>CNAME</code>的主要作用是配合<code>CDN</code>的负载均衡系统将<code>CNAME</code>背后对应的节点IP分配给不同的用户去访问。</p><p>总的来讲， <code>CNAME</code>提供了单一服务器和海量服务器的在管理<br>访问上的灵活性。单一服务器的场景下，通过将大量子域名指向到<code>CNAME</code>，再由 <code>CNAME</code> 指向到单一域名，解决了服务器更换、迁移带来的大量域名重新指向的问题。</p><p>另一方面，<code>CNAME</code>配合负载均衡系统，还可以实现将大量访问需求通过<code>CNAME</code>指向到多台服务器，以提高用户访问的速度。</p><p>作者：诺曼底的救赎<br>链接：<a href="https://www.jianshu.com/p/65757b5c0762" target="_blank" rel="noopener">https://www.jianshu.com/p/65757b5c0762</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;关于cname一直都知道名词，但是不知道具体作用，看到一篇比较好的文章，转载下来。&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="miscellany" scheme="http://yoursite.com/tags/miscellany/"/>
     
   </entry>
   
