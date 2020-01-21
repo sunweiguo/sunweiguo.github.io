@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-01-18T13:20:16.145Z</updated>
+  <updated>2020-01-21T13:49:58.712Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>leetcode-024-数组拆分I</title>
+    <link href="http://yoursite.com/2020/01/21/leetcode-array/leetcode-024-%E6%95%B0%E7%BB%84%E6%8B%86%E5%88%86I/"/>
+    <id>http://yoursite.com/2020/01/21/leetcode-array/leetcode-024-数组拆分I/</id>
+    <published>2020-01-21T13:49:36.330Z</published>
+    <updated>2020-01-21T13:49:58.712Z</updated>
+    
+    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第二十四道题目是数组拆分 I。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>对应leetcode的题号为561。</p><p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。</p><p>示例 1:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure><p>提示:</p><ul><li>n 是正整数,范围在 [1, 10000].</li><li>数组中的元素范围在 [-10000, 10000].</li></ul><h2>解题思路</h2><p>这道题目最简单的思路其实不好想，看了题解才恍然大悟。</p><p>摘自评论区一个比较通俗的解释：</p><blockquote><p>这道题有点田忌赛马的影子，这道题的关键就是谁与谁组队相比较的问题，由于求最大的值，所以我们要尽可能的保留大的值，假如按照最大+最小，第二大+第二小，就会直接把最大和第二大的数舍去了，如果最大与第二大组队就可以保留第二大的数字，以此类推，我们只需要排序之后，相邻之间组队就可以留下最大的值</p></blockquote><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i+=<span class="number">2</span>)&#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;刷题之旅从数组类型的题目开始。第二十四道题目是数组拆分 I。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
+    
+  </entry>
   
   <entry>
     <title>leetcode-023-数组中的K-diff数对</title>
@@ -406,27 +427,6 @@
     <summary type="html">
     
       &lt;p&gt;刷题之旅从数组类型的题目开始。第五道题目是移除元素，对应leetcode的题号为53。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>leetcode-004-搜索插入位置</title>
-    <link href="http://yoursite.com/2020/01/01/leetcode-array/leetcode-004-%E6%90%9C%E7%B4%A2%E6%8F%92%E5%85%A5%E4%BD%8D%E7%BD%AE/"/>
-    <id>http://yoursite.com/2020/01/01/leetcode-array/leetcode-004-搜索插入位置/</id>
-    <published>2020-01-01T12:42:42.816Z</published>
-    <updated>2020-01-01T12:43:04.388Z</updated>
-    
-    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第四道题目是移除元素，对应leetcode的题号为35。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。</p><p>你可以假设数组中无重复元素。</p><p>示例 1:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,3,5,6], 5</span><br><span class="line">输出: 2</span><br></pre></td></tr></table></figure><p>示例 2:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,3,5,6], 2</span><br><span class="line">输出: 1</span><br></pre></td></tr></table></figure><p>示例 3:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,3,5,6], 7</span><br><span class="line">输出: 4</span><br></pre></td></tr></table></figure><p>示例 4:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,3,5,6], 0</span><br><span class="line">输出: 0</span><br></pre></td></tr></table></figure><h2>解题思路</h2><p>其实最简单的方式是直接遍历有序数组，因为这个题目并没有要求要把target插入到数组指定位置，只需要返回需要插入的索引即可，那我们直接一个一个往后寻找即可。</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">searchInsert</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="comment">//当遇到跟目标值相等则返回其索引</span></span><br><span class="line">            <span class="comment">//当没有相等的，那么返回的索引即第一个比目标值大的位置</span></span><br><span class="line">            <span class="keyword">if</span>(nums[i] &gt;= target)&#123;</span><br><span class="line">                <span class="keyword">return</span> i;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//到这一步，要么返回0，要么说明target被插入到数据最后一个位置了</span></span><br><span class="line">        <span class="keyword">return</span> nums.length;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>不过当数据量很大的时候，比如这个有序数组有几十万数据，那么从头遍历的效率会比较低，那么就需要有一定的跳跃来减少不必要的查询，那么由于是有序数组，第一个想到的必然就是二分查找法，直接能把搜索的返回缩小为原来的一半，有效提高效率。</p><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">searchInsert</span><span class="params">(<span class="keyword">int</span>[] nums, <span class="keyword">int</span> target)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> left = <span class="number">0</span>,right = nums.length-<span class="number">1</span>,mid;</span><br><span class="line">        <span class="keyword">while</span>(left &lt;= right)&#123;</span><br><span class="line">            mid = (left + right) / <span class="number">2</span>;</span><br><span class="line">            <span class="keyword">if</span>(nums[mid] == target)&#123;</span><br><span class="line">                <span class="keyword">return</span> mid;</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(nums[mid] &lt; target)&#123;</span><br><span class="line">                left = mid + <span class="number">1</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                right = mid - <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//没找着？那么返回left即可，因为走到这一步的上一步的时候，left和right相等，此时target是介于left-1和left的值的中间的，那么target插入到left位置即可</span></span><br><span class="line">        <span class="keyword">return</span> left;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;刷题之旅从数组类型的题目开始。第四道题目是移除元素，对应leetcode的题号为35。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
     
     </summary>

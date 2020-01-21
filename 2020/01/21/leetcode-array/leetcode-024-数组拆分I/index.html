@@ -1,0 +1,32 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> leetcode-024-数组拆分I · fossi</title><meta name="description" content="leetcode-024-数组拆分I - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">leetcode-024-数组拆分I</h1><div class="post-meta"><span class="post-time">Jan 21, 2020</span></div><div class="post-content"><p>刷题之旅从数组类型的题目开始。第二十四道题目是数组拆分 I。</p>
+<p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p>
+<a id="more"></a>
+<h2>题目描述</h2>
+<p>对应leetcode的题号为561。</p>
+<p>给定长度为 2n 的数组, 你的任务是将这些数分成 n 对, 例如 (a1, b1), (a2, b2), …, (an, bn) ，使得从1 到 n 的 min(ai, bi) 总和最大。</p>
+<p>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,4,3,2]</span><br><span class="line"></span><br><span class="line">输出: 4</span><br><span class="line">解释: n 等于 2, 最大总和为 4 = min(1, 2) + min(3, 4).</span><br></pre></td></tr></table></figure>
+<p>提示:</p>
+<ul>
+<li>n 是正整数,范围在 [1, 10000].</li>
+<li>数组中的元素范围在 [-10000, 10000].</li>
+</ul>
+<h2>解题思路</h2>
+<p>这道题目最简单的思路其实不好想，看了题解才恍然大悟。</p>
+<p>摘自评论区一个比较通俗的解释：</p>
+<blockquote>
+<p>这道题有点田忌赛马的影子，这道题的关键就是谁与谁组队相比较的问题，由于求最大的值，所以我们要尽可能的保留大的值，假如按照最大+最小，第二大+第二小，就会直接把最大和第二大的数舍去了，如果最大与第二大组队就可以保留第二大的数字，以此类推，我们只需要排序之后，相邻之间组队就可以留下最大的值</p>
+</blockquote>
+<h2>提交代码</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">arrayPairSum</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i+=<span class="number">2</span>)&#123;</span><br><span class="line">            sum += nums[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></article></div></section><footer><div class="paginator"><a href="/2020/01/18/leetcode-array/leetcode-023-数组中的K-diff数对/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Jan 21 2020 21:49:36 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 - 2020 <a href="http://yoursite.com">fossi</a>,苏ICP备17064972号.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
