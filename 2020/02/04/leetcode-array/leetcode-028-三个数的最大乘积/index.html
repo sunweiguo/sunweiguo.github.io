@@ -1,0 +1,36 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.8.0"><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><title> leetcode-028-三个数的最大乘积 · fossi</title><meta name="description" content="leetcode-028-三个数的最大乘积 - fossi"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="short icon" href="/favicon.png"><link rel="stylesheet" href="/css/apollo.css"></head><body><header><a href="/" class="logo-link"><img src="/favicon.png"></a><ul class="nav nav-list"><li class="nav-list-item"><a href="/" target="_self" class="nav-list-link">首页</a></li><li class="nav-list-item"><a href="https://sunweiguo.github.io/tags/" target="_blank" class="nav-list-link">标签</a></li><li class="nav-list-item"><a href="http://bloghello.oursnail.cn/test.html" target="_blank" class="nav-list-link">爱情</a></li><li class="nav-list-item"><a href="https://github.com/sunweiguo" target="_blank" class="nav-list-link">GIT</a></li></ul></header><section class="container"><div class="post"><article class="post-block"><h1 class="post-title">leetcode-028-三个数的最大乘积</h1><div class="post-meta"><span class="post-time">Feb 4, 2020</span></div><div class="post-content"><p>刷题之旅从数组类型的题目开始。第二十八道题目是三个数的最大乘积，对应leetcode的题号为628。</p>
+<p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p>
+<a id="more"></a>
+<h2>题目描述</h2>
+<p>给定一个整型数组，在数组中找出由三个数组成的最大乘积，并输出这个乘积。</p>
+<p>示例 1:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3]</span><br><span class="line">输出: 6</span><br></pre></td></tr></table></figure>
+<p>示例 2:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3,4]</span><br><span class="line">输出: 24</span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<ul>
+<li>给定的整型数组长度范围是[3,104]，数组中所有的元素范围是[-1000, 1000]。</li>
+<li>输入的数组中任意三个数的乘积不会超出32位有符号整数的范围。</li>
+</ul>
+<h2>解题思路</h2>
+<p>这个题目要注意还有负数的存在。那么首先排序，然后结果也只有两种情况，第一种情况就是最后的三个数相乘，第二种情况就是前面两个数和最后一个数相乘。</p>
+<ol>
+<li>考虑全是负数的情况：那么最大乘积就是最大的三个数之积</li>
+<li>全是负数+一个零的情况:最大的乘积其实就是0，只要这个0参与计算就得到结果</li>
+<li>考虑有负数有正数的情况：最大的乘积是最小的两个负数乘以最大的正数即可</li>
+<li>考虑全是正数的情况：必然是最大的三个正数之积</li>
+</ol>
+<p>综上考虑，其实就是比较两种计算结果就可以得到最大乘积了。</p>
+<h2>提交代码</h2>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">maximumProduct</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//排序</span></span><br><span class="line">        Arrays.sort(nums);</span><br><span class="line">        <span class="keyword">int</span> lastIndex = nums.length-<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//只需要考虑两种情况，从中取出最大值即可</span></span><br><span class="line">        <span class="keyword">int</span> res1 = (nums[<span class="number">0</span>])*(nums[<span class="number">1</span>])*((nums[lastIndex]));</span><br><span class="line">        <span class="keyword">int</span> res2 = (nums[lastIndex-<span class="number">2</span>])*(nums[lastIndex-<span class="number">1</span>])*(nums[lastIndex]);</span><br><span class="line">        <span class="keyword">return</span> res1&gt;res2 ? res1 : res2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></article></div></section><footer><div class="paginator"><a href="/2020/02/02/leetcode-array/leetcode-027-种花问题/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
+<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Tue Feb 04 2020 21:54:45 GMT+0800',
+    owner: 'sunweiguo',
+    repo: 'sunweiguo.github.io',
+    oauth: {
+        client_id: '56c422eddebac740f021',
+        client_secret: 'fd1b1eff6dd6efc61b2a09650840be7aaab787fd',
+    },
+})
+gitment.render('container')</script><div class="copyright"><p>© 2019 - 2020 <a href="http://yoursite.com">fossi</a>,苏ICP备17064972号.</p></div></footer><script>(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;e=o.createElement(i);r=o.getElementsByTagName(i)[0];e.src='//www.google-analytics.com/analytics.js';r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));ga('create',"UA-134836068-1",'auto');ga('send','pageview');</script><script src="https://cdn.bootcss.com/mathjax/2.5.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script></body></html>
