@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[leetcode-029-子数组最大平均数 I]]></title>
-    <url>%2F2020%2F02%2F05%2Fleetcode-array%2Fleetcode-029-%E5%AD%90%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%B9%B3%E5%9D%87%E6%95%B0%20I%2F</url>
+    <title><![CDATA[leetcode-029-子数组最大平均数1]]></title>
+    <url>%2F2020%2F02%2F05%2Fleetcode-array%2Fleetcode-029-%E5%AD%90%E6%95%B0%E7%BB%84%E6%9C%80%E5%A4%A7%E5%B9%B3%E5%9D%87%E6%95%B01%2F</url>
     <content type="text"><![CDATA[刷题之旅从数组类型的题目开始。第二十九道题目是子数组最大平均数 I，对应leetcode的题号为643。 题目描述 给定 n 个整数，找出平均数最大且长度为 k 的连续子数组，并输出该最大平均数。 示例 1: 123输入: [1,12,-5,-6,50,3], k = 4输出: 12.75解释: 最大平均数 (12-5-6+50)/4 = 51/4 = 12.75 注意: 1 &lt;= k &lt;= n &lt;= 30,000。 所给数据范围 [-10,000，10,000]。 解题思路 比较简单的思路就是暴力解法，从头开始k个k个地算结果，最终比较出最大的结果即可： 123456789101112131415161718class Solution &#123; public double findMaxAverage(int[] nums, int k) &#123; //max中存储结果 double max = -Double.MAX_VALUE; for(int i=0;i&lt;nums.length;i++)&#123; int temp = 0; if(i+k&lt;=nums.length)&#123; for(int j=i;j&lt;i+k;j++)&#123; temp += nums[j]; &#125; if((double)temp/k &gt; max)&#123; max = (double)temp/k; &#125; &#125; &#125; return max; &#125;&#125; 执行的结果为： 12执行用时 :430 ms, 在所有 Java 提交中击败了21.91%的用户内存消耗 :41.8 MB, 在所有 Java 提交中击败了22.89%的用户 不过能不能优化下呢？很显然在循环中对于temp的求解发生了重复，其实更新的只是一头一尾的数据，中间还是一样的，那么借用滑动窗口的思想进行优化下。 提交代码 1234567891011121314151617181920class Solution &#123; public double findMaxAverage(int[] nums, int k) &#123; //先算出第一组的平均数 int sum = 0; for(int i=0;i&lt;k;i++)&#123; sum += nums[i]; &#125; double max = (double)sum/k; for(int i=k;i&lt;nums.length;i++)&#123; //计算窗口内的值，即i-k+1到i之间的数字，一直往后滑动 sum -= nums[i-k]; sum += nums[i]; double res = (double)sum/k; if(res &gt; max)&#123; max = res; &#125; &#125; return max; &#125;&#125; 效果得到了明显的提升，执行的结果为： 12执行用时 :7 ms, 在所有 Java 提交中击败了43.33%的用户内存消耗 :40.7 MB， 在所有 Java 提交中击败了76.93%的用户]]></content>
       <tags>
         <tag>leetcode</tag>
