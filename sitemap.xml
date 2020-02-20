@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://yoursite.com/2020/02/16/leetcode-array/leetcode-033-1%E6%AF%94%E7%89%B9%E4%B8%8E2%E6%AF%94%E7%89%B9%E5%AD%97%E7%AC%A6/</loc>
+    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
     
-    <lastmod>2020-02-16T13:19:20.714Z</lastmod>
+    <lastmod>2020-02-20T14:33:38.252Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://yoursite.com/2019/01/21/%E7%AB%99%E7%82%B9%E6%96%87%E7%AB%A0%E6%B1%87%E6%80%BB/</loc>
+    <loc>http://yoursite.com/2020/02/20/leetcode-array/leetcode-034-%E5%AF%BB%E6%89%BE%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E5%BF%83%E7%B4%A2%E5%BC%95/</loc>
     
-    <lastmod>2020-02-16T13:19:18.945Z</lastmod>
+    <lastmod>2020-02-20T14:33:31.497Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2020/02/16/leetcode-array/leetcode-033-1%E6%AF%94%E7%89%B9%E4%B8%8E2%E6%AF%94%E7%89%B9%E5%AD%97%E7%AC%A6/</loc>
+    
+    <lastmod>2020-02-16T13:19:20.714Z</lastmod>
     
   </url>
   
