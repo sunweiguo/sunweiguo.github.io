@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2020-02-20T14:33:31.497Z</updated>
+  <updated>2020-02-29T16:08:40.838Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>leetcode-035-使用最小花费爬楼梯</title>
+    <link href="http://yoursite.com/2020/03/01/leetcode-array/leetcode-035-%E4%BD%BF%E7%94%A8%E6%9C%80%E5%B0%8F%E8%8A%B1%E8%B4%B9%E7%88%AC%E6%A5%BC%E6%A2%AF/"/>
+    <id>http://yoursite.com/2020/03/01/leetcode-array/leetcode-035-使用最小花费爬楼梯/</id>
+    <published>2020-02-29T16:08:27.615Z</published>
+    <updated>2020-02-29T16:08:40.838Z</updated>
+    
+    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第三十五道题目是使用最小花费爬楼梯，对应leetcode的题号为764。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>数组的每个索引做为一个阶梯，第 i个阶梯对应着一个非负数的体力花费值 cost<a href="%E7%B4%A2%E5%BC%95%E4%BB%8E0%E5%BC%80%E5%A7%8B">i</a>。</p><p>每当你爬上一个阶梯你都要花费对应的体力花费值，然后你可以选择继续爬一个阶梯或者爬两个阶梯。</p><p>您需要找到达到楼层顶部的最低花费。在开始时，你可以选择从索引为 0 或 1 的元素作为初始阶梯。</p><p>示例 1:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: cost = [10, 15, 20]</span><br><span class="line">输出: 15</span><br><span class="line">解释: 最低花费是从cost[1]开始，然后走两步即可到阶梯顶，一共花费15。</span><br></pre></td></tr></table></figure><p>示例 2:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">输入: cost = [1, 100, 1, 1, 1, 100, 1, 1, 100, 1]</span><br><span class="line">输出: 6</span><br><span class="line">解释: 最低花费方式是从cost[0]开始，逐个经过那些1，跳过cost[3]，一共花费6。</span><br></pre></td></tr></table></figure><h2>解题思路</h2><p>解体思路还是看的别人的，虽然动态规划的思想之前也学习过，过了很久还是写不出来，感慨万千，还是先继续学习别人的写法吧：<a href="https://leetcode-cn.com/problems/min-cost-climbing-stairs/solution/cong-meng-bi-dao-ti-jie-de-quan-guo-cheng-by-keepa/" target="_blank" rel="noopener">从懵逼到题解的全过程</a></p><p><img src="http://bloghello.oursnail.cn/leetcode35-1.png" alt="image"></p><p>其实题解给我最大的提示是：动态规划其实就是个打表格法。即用一个表格来不停记录子问题的答案。需要不断地训练才能用的得心应手。</p><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">minCostClimbingStairs</span><span class="params">(<span class="keyword">int</span>[] cost)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] dp = <span class="keyword">new</span> <span class="keyword">int</span>[cost.length+<span class="number">3</span>];</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;dp.length-<span class="number">1</span>;i++)&#123;</span><br><span class="line">            dp[i] = Math.min(dp[i-<span class="number">2</span>],dp[i-<span class="number">1</span>]) + cost[i-<span class="number">2</span>]; </span><br><span class="line">        &#125;</span><br><span class="line">        dp[dp.length-<span class="number">1</span>] = Math.min(dp[dp.length-<span class="number">3</span>],dp[dp.length-<span class="number">2</span>]) + <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">return</span> dp[dp.length-<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;刷题之旅从数组类型的题目开始。第三十五道题目是使用最小花费爬楼梯，对应leetcode的题号为764。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
+    
+  </entry>
   
   <entry>
     <title>leetcode-034-寻找数组的中心索引</title>
@@ -406,27 +427,6 @@
     <summary type="html">
     
       &lt;p&gt;刷题之旅从数组类型的题目开始。第十六道题目是存在重复元素2，对应leetcode的题号为219。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-    
-      <category term="leetcode" scheme="http://yoursite.com/tags/leetcode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>leetcode-015-存在重复元素</title>
-    <link href="http://yoursite.com/2020/01/10/leetcode-array/leetcode-015-%E5%AD%98%E5%9C%A8%E9%87%8D%E5%A4%8D%E5%85%83%E7%B4%A0/"/>
-    <id>http://yoursite.com/2020/01/10/leetcode-array/leetcode-015-存在重复元素/</id>
-    <published>2020-01-10T14:04:49.514Z</published>
-    <updated>2020-01-10T14:40:41.964Z</updated>
-    
-    <content type="html"><![CDATA[<p>刷题之旅从数组类型的题目开始。第十五道题目是存在重复元素，对应leetcode的题号为217。</p><p><img src="http://bloghello.oursnail.cn/leetcode123.jpg" alt="image"></p><a id="more"></a><h2>题目描述</h2><p>给定一个整数数组，判断是否存在重复元素。</p><p>如果任何值在数组中出现至少两次，函数返回 true。如果数组中每个元素都不相同，则返回 false。</p><p>示例 1:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3,1]</span><br><span class="line">输出: true</span><br></pre></td></tr></table></figure><p>示例 2:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,2,3,4]</span><br><span class="line">输出: false</span><br></pre></td></tr></table></figure><p>示例 3:</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">输入: [1,1,1,3,3,4,3,2,4,2]</span><br><span class="line">输出: true</span><br></pre></td></tr></table></figure><h2>解题思路</h2><p>寻找重复元素的思路，比暴力解法还直接进入我脑海的思路还是Map：</p><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsDuplicate</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums == <span class="keyword">null</span> || nums.length == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Map&lt;Integer,Integer&gt; map = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(map.containsKey(nums[i]))&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                map.put(nums[i],<span class="number">1</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>不过执行效率并不满意：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">执行用时 :14 ms, 在所有 Java 提交中击败了43.49%的用户</span><br><span class="line">内存消耗 :43.6 MB, 在所有 Java 提交中击败了85.01%的用户</span><br></pre></td></tr></table></figure><p>不过这道题目也没想出其他什么快速的思路，翻了下评论和题解区，也都大同小异，不过这题写法上可以用hashset来精简下，不过看过java容器的同学一定直到hashset的本质就是hashmap.</p><h2>提交代码</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsDuplicate</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums == <span class="keyword">null</span> || nums.length == <span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Set&lt;Integer&gt; set = <span class="keyword">new</span> HashSet&lt;Integer&gt;();</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;nums.length;i++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(set.contains(nums[i]))&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">                set.add(nums[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;刷题之旅从数组类型的题目开始。第十五道题目是存在重复元素，对应leetcode的题号为217。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;http://bloghello.oursnail.cn/leetcode123.jpg&quot; alt=&quot;image&quot;&gt;&lt;/p&gt;
     
     </summary>
