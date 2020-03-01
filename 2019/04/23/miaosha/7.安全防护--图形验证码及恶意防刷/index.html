@@ -67,8 +67,8 @@
 <p>要想这个拦截器工作，我们要重写<code>WebMvcConfigurerAdapter</code>中的<code>addInterceptors</code>方法，将我们的拦截器添加进去：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> </span>&#123;</span><br><span class="line">    registry.addInterceptor(accessInterceptor);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样，利用注解和拦截器就实现了比较优雅的限流功能。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/05/04/suibi/入职前的一些感想/" class="prev">PRVE</a><a href="/2019/04/23/miaosha/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/05/04/suibi/入职前的一些感想/" class="prev">上一篇</a><a href="/2019/04/23/miaosha/6.服务级高并发秒杀优化（RabbitMQ+接口优化）/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
     id: 'Tue Apr 23 2019 18:48:31 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',

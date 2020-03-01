@@ -100,8 +100,8 @@
 <li>在使用<code>ArrayBlockingQueue</code>和<code>LinkedBlockingQueue</code>分别对1000000个简单字符做入队操作时，<code>LinkedBlockingQueue</code>的消耗是<code>ArrayBlockingQueue</code>消耗的10倍左右，即<code>LinkedBlockingQueue</code>消耗在1500毫秒左右，而<code>ArrayBlockingQueue</code>只需150毫秒左右。</li>
 <li>按照实现原理来分析，<code>ArrayBlockingQueue</code>完全可以采用分离锁，从而实现生产者和消费者操作的完全并行运行。<code>Doug Lea</code>之所以没这样去做，也许是因为<code>ArrayBlockingQueue</code>的数据写入和获取操作已经足够轻巧，以至于引入独立的锁机制，除了给代码带来额外的复杂性外，其在性能上完全占不到任何便宜。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/13/thread/线程间通信方式总结/" class="prev">PRVE</a><a href="/2019/02/12/thread/JUC组件拓展-ForkJoin简介/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
-<script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/13/thread/线程间通信方式总结/" class="prev">上一篇</a><a href="/2019/02/12/thread/JUC组件拓展-ForkJoin简介/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
     id: 'Tue Feb 12 2019 17:37:24 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
