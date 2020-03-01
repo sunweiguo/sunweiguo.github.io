@@ -300,8 +300,8 @@
 <p>我们可以看到，id为6的行，对应的name为c(不要忘记name是主键，主键按照顺序排序)，那么主键中就是按照字母表的顺序进行排列的（ASCII码），如果插入的name小于c，那么就不在gap的范围内(c,)，就可以插入，但是dd在gap的范围内,所以就会阻塞住。</p>
 <h5>8.2 第五种情况：不走索引</h5>
 <p>这个时候，所有的间隙都会加上间隙锁，那么就是锁表了。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/27/mysql/SQL必知必会/" class="prev">PRVE</a><a href="/2019/01/26/mysql/锁模块/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
-<script src="https://www.wenjunjiang.win/js/gitment.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/27/mysql/SQL必知必会/" class="prev">PRVE</a><a href="/2019/01/26/mysql/锁模块/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Sun Jan 27 2019 18:15:45 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',

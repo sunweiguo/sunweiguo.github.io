@@ -23,8 +23,8 @@
 <p>前三个请求会进行合并，即1，2，3三个id被合并到一个list中传给<code>test11</code>，第四个请求会单独执行.</p>
 <h2>二、总结</h2>
 <p>请求合并的优点小伙伴们已经看到了，多个请求被合并为一个请求进行一次性处理，可以有效节省网络带宽和线程池资源，但是，有优点必然也有缺点，设置请求合并之后，本来一个请求可能5ms就搞定了，但是现在必须再等10ms看看还有没有其他的请求一起的，这样一个请求的耗时就从5ms增加到15ms了，不过，如果我们要发起的命令本身就是一个高延迟的命令，那么这个时候就可以使用请求合并了，因为这个时候时间窗的时间消耗就显得微不足道了，另外高并发也是请求合并的一个非常重要的场景。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/spring-cloud-modules/6.Zuul网关服务/" class="prev">PRVE</a><a href="/2019/02/21/spring-cloud-modules/3.Hystrix请求熔断服务降级/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
-<script src="https://www.wenjunjiang.win/js/gitment.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/spring-cloud-modules/6.Zuul网关服务/" class="prev">PRVE</a><a href="/2019/02/21/spring-cloud-modules/3.Hystrix请求熔断服务降级/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+<script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Thu Feb 21 2019 15:07:39 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
