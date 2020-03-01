@@ -87,9 +87,8 @@
 <li><code>ThreadLocal</code>和<code>synchronized</code>的区别：同步机制(<code>synchronized</code>关键字)采用了以“时间换空间”的方式，提供一份变量，让不同的线程排队访问。而<code>ThreadLocal</code>采用了“以空间换时间”的方式，为每一个线程都提供一份变量的副本，从而实现同时访问而互不影响。</li>
 <li><code>ThreadLocal</code>主要是解决2种类型的问题：A. 解决并发问题：使用<code>ThreadLocal</code>代替同步机制解决并发问题。B. 解决数据存储问题：如一个<code>Parameter</code>对象的数据需要在多个模块中使用，如果采用参数传递的方式，显然会增加模块之间的耦合性。此时我们可以使用<code>ThreadLocal</code>解决。</li>
 </ul>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/weather-for-spring-cloud/1.天气预报系统-简单接口调用/" class="prev">PRVE</a><a href="/2019/02/20/java-basic/java基础之ThreadLocal内存泄漏问题/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/21/weather-for-spring-cloud/1.天气预报系统-简单接口调用/" class="prev">上一篇</a><a href="/2019/02/20/java-basic/java基础之ThreadLocal内存泄漏问题/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
 <script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
-    id: 'Wed Feb 20 2019 20:43:11 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
     oauth: {

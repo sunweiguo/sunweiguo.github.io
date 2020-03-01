@@ -36,9 +36,8 @@
 <p>假设客户端1在<code>redis master</code>上获得锁，然后主机宕机，<code>redis slave</code>成为新的<code>redis master</code>，但是还未同步到<code>redis slave</code>上，但是客户端1已经觉得自己获取到了锁。</p>
 <p>此时，客户端2来尝试加锁的时候，在新的<code>redis master</code>上完成了加锁，此时就会发生多个客户端完成对一个key的加锁。这时系统在业务语义上一定会出现问题，导致各种脏数据的产生。</p>
 <p>所以这个就是<code>redis cluster</code>，或者是<code>redis master-slave</code>架构的主从异步复制导致的redis分布式锁的最大缺陷：在<code>redis master</code>实例宕机的时候，可能导致多个客户端同时完成加锁。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/03redis实现分布式锁/" class="prev">PRVE</a><a href="/2019/01/22/miscellany/01事务的传播行为/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/22/miscellany/03redis实现分布式锁/" class="prev">上一篇</a><a href="/2019/01/22/miscellany/01事务的传播行为/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
 <script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
-    id: 'Tue Jan 22 2019 20:01:10 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
     oauth: {
