@@ -81,8 +81,8 @@
 <p>但是这种机制也会导致数据一致性问题，因为，由于网络原因，协调者发送的abort响应没有及时被参与者接收到，那么参与者在等待超时之后执行了commit操作。这样就和其他接到abort命令并执行回滚的参与者之间存在数据不一致的情况。</p>
 <h2>六、总结</h2>
 <p>了解了2PC和3PC之后，我们可以发现，无论是二阶段提交还是三阶段提交都无法彻底解决分布式的一致性问题。Google Chubby的作者Mike Burrows说过， <code>there is only one consensus protocol, and that’s Paxos” – all other approaches are just broken versions of Paxos.</code> 意即世上只有一种一致性算法，那就是Paxos，所有其他一致性算法都是Paxos算法的不完整版。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/22/zookeeper/Zookeeper笔记3-paxos算法/" class="prev">上一篇</a><a href="/2019/02/22/zookeeper/Zookeeper笔记1-CAP和BASE理论/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/22/zookeeper/Zookeeper笔记3-paxos算法/" class="prev">PRVE</a><a href="/2019/02/22/zookeeper/Zookeeper笔记1-CAP和BASE理论/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="//billts.site/extra_css/gitment.css">
+<script src="//billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Fri Feb 22 2019 11:21:19 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',

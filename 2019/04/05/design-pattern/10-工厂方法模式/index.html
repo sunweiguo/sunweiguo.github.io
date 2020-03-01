@@ -17,8 +17,8 @@
 <p>如果需要创建python，那么我也创建一个工厂：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PythonVeidoFactory</span> <span class="keyword">extends</span> <span class="title">VideoProduceFactory</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Video <span class="title">getVideo</span><span class="params">(String type)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> PythonVideo();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样子，简单工厂中在工厂中创建对象的时机推迟到其子类中，有利于扩展性。但是我们会发现，一个工厂生产一种产品，这里是<code>Vedio</code>，那么对于实际场景，比如美的这个企业，它不仅生产各种空调，还有各种冰箱，那么此时就不能满足我们的需求了，这就是抽象工厂要实现的功能，下节再说。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/04/05/design-pattern/11-抽象工厂模式/" class="prev">上一篇</a><a href="/2019/04/05/design-pattern/09-简单工厂模式/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/04/05/design-pattern/11-抽象工厂模式/" class="prev">PRVE</a><a href="/2019/04/05/design-pattern/09-简单工厂模式/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="//billts.site/extra_css/gitment.css">
+<script src="//billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Fri Apr 05 2019 16:08:04 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
