@@ -56,8 +56,8 @@
 <p>对于不支持事务型消息的消息中间件，如果要实现分布式事务的话，就可以采用这种方式。它能够通过重试机制+定期校对实现分布式事务，但相比于第一种方案，它达到数据一致性的周期较长，而且还需要在上游系统中实现消息重试发布机制，以确保消息成功发布给消息中间件，这无疑增加了业务系统的开发成本，使得业务系统不够纯粹，并且这些额外的业务逻辑无疑会占用业务系统的硬件资源，从而影响性能。</p>
 <p>因此，尽量选择支持事务型消息的消息中间件来实现分布式事务，如RocketMQ。还有其他的一些解决思路，这里就暂时只描述这些。后续再学习。</p>
 <p>参考自：<a href="https://juejin.im/post/5aa3c7736fb9a028bb189bca" target="_blank" rel="noopener">https://juejin.im/post/5aa3c7736fb9a028bb189bca</a></p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/23/java-basic/Integer拆箱和装箱/" class="prev">上一篇</a><a href="/2019/01/23/miscellany/09库存扣减问题/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
-<script src="https://www.wenjunjiang.win/js/gitment.js"></script><script>var gitment = new Gitment({
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/23/java-basic/Integer拆箱和装箱/" class="prev">上一篇</a><a href="/2019/01/23/miscellany/09库存扣减问题/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
     id: 'Wed Jan 23 2019 15:14:45 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
