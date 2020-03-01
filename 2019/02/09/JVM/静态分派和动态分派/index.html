@@ -49,8 +49,9 @@
 <p>动态分派在Java中被大量使用，使用频率及其高，如果在每次动态分派的过程中都要重新在类的方法元数据中搜索合适的目标的话就可能影响到执行效率，因此JVM在类的方法区中建立虚方法表（<code>virtual method table</code>）来提高性能。</p>
 <p><strong>⭐⭐⭐每个类中都有一个虚方法表，表中存放着各个方法的实际入口。如果某个方法在子类中没有被重写，那子类的虚方法表中该方法的地址入口和父类该方法的地址入口一样，即子类的方法入口指向父类的方法入口。如果子类重写父类的方法，那么子类的虚方法表中该方法的实际入口将会被替换为指向子类实现版本的入口地址</strong>。</p>
 <p>那么虚方法表什么时候被创建？虚方法表会在类加载的连接阶段被创建并开始初始化，类的变量初始值准备完成之后，JVM会把该类的方法表也初始化完毕。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/02/09/JVM/实例说明类加载过程/" class="prev">上一篇</a><a href="/2019/02/09/JVM/类的初始化过程/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/02/09/JVM/实例说明类加载过程/" class="prev">PRVE</a><a href="/2019/02/09/JVM/类的初始化过程/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
 <script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Feb 09 2019 21:19:59 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
     oauth: {

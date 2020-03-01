@@ -39,8 +39,9 @@
 <p>使得数据库支持并发操作。</p>
 <h2>总结</h2>
 <p>了解了上面的内容，我们就可以对这个问题做一个简单的总结性回答了，如何设计关系型数据库呢？首先数据库有一个存储的功能，使得它能存储在比如机械硬盘或者固态硬盘上面。其次，我们需要一个存储管理模块来映射程序逻辑与物理地址，实现存储管理。还需要缓存机制，对一些数据进行缓存提高效率，并且缓存不能太大，必须配备缓存淘汰机制；然后需要一个SQL解析模块，来解析SQL；然后需要日志管理来提供主从赋值、主从同步等功能；还需要一个权限划分模块，来提供给多用户使用场景；还需要容灾机制面对异常情况；最后，为了提高数据查询效率需要有索引管理模块；为了支持并发操作需要有锁模块。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/26/mysql/数据库索引入门/" class="prev">上一篇</a><a href="/2019/01/25/mysql/delete和truncate以及drop区别/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/26/mysql/数据库索引入门/" class="prev">PRVE</a><a href="/2019/01/25/mysql/delete和truncate以及drop区别/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
 <script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Jan 26 2019 16:23:31 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
     oauth: {

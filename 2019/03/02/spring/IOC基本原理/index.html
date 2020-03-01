@@ -39,8 +39,9 @@
 <p>我们就像是工厂的客户。我们只需要向工厂请求一个<code>Car</code>实例，然后它就给我们按照<code>Config</code>创建了一个<code>Car</code>实例。我们完全不用管这个<code>Car</code>实例是怎么一步一步被创建出来。</p>
 <p>实际项目中，有的<code>Service Class</code>可能是十年前写的，有几百个类作为它的底层。假设我们新写的一个<code>API</code>需要实例化这个<code>Service</code>，我们总不可能回头去搞清楚这几百个类的构造函数吧？<code>IoC Container</code>的这个特性就很完美的解决了这类问题——因为这个架构要求你在写<code>class</code>的时候需要写相应的<code>Config</code>文件，所以你要初始化很久以前的<code>Service</code>类的时候，前人都已经写好了<code>Config</code>文件，你直接在需要用的地方注入这个<code>Service</code>就可以了。这大大增加了项目的可维护性且降低了开发难度。</p>
 <p>整理自：<a href="https://www.zhihu.com/question/23277575/answer/169698662" target="_blank" rel="noopener">Sevenvidia的回答</a></p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/03/02/spring/IOC的用法/" class="prev">上一篇</a><a href="/2019/03/01/algorithms-basic/基础算法12-排序总结/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/03/02/spring/IOC的用法/" class="prev">PRVE</a><a href="/2019/03/01/algorithms-basic/基础算法12-排序总结/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://billts.site/extra_css/gitment.css">
 <script src="https://billts.site/js/gitment.js"></script><script>var gitment = new Gitment({
+    id: 'Sat Mar 02 2019 13:48:29 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
     oauth: {
