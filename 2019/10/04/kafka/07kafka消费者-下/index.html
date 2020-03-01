@@ -74,7 +74,7 @@
 </table>
 <p>对于第二种方式，消息的顺序性不能保证，考虑使用一个共享变量<code>offsets</code>来参与提交。每一个处理消息的<code>RecordHandler</code>类在处理完消息后都将对应的消费位移保存到共享变量<code>offsets</code>中（注意，这里的offsers是一个map结构，即&lt;分区，offset&gt;的结构），每次消费完分区消息后，就记录一下。这里为防止出现并发问题，需要对<code>offsers</code>的读写进行加锁处理。</p>
 </div></article></div></section><footer><div class="paginator"><a href="/2019/11/17/miscellany/20关于多CPU和多核CPU的区别/" class="prev">PRVE</a><a href="/2019/09/22/kafka/06kafka消费者中/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://jjeejj.github.io/css/gitment.css">
-<script src="https://jjeejj.github.io/js/gitment.js"></script><script>var gitment = new Gitment({
+<script src="https://www.wenjunjiang.win/js/gitment.js"></script><script>var gitment = new Gitment({
     id: 'Fri Oct 04 2019 11:16:52 GMT+0800',
     owner: 'sunweiguo',
     repo: 'sunweiguo.github.io',
