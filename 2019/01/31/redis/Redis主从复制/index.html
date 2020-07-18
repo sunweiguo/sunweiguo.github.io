@@ -98,7 +98,7 @@
 <p>单机器复制风暴：机器宕机后（该机器全是<code>Mater</code>），大量全量复制。解决：<code>master</code>分散多机器。</p>
 </blockquote>
 <p>说到底，还是需要有一种高可用的实现方式，在<code>master</code>出现故障之后，如何自动实现从<code>slave</code>晋升为<code>master</code>继续使用.而不是一直死守着原来老的<code>master</code>不放，因为老的<code>master</code>啥时候恢复不知道，恢复了可能会造成复制风暴，既然从节点本来是一直与<code>master</code>节点保持尽量的同步的，那么为什么不将数据最新的从节点升级为主节点呢？下一章继续来分析。</p>
-</div></article></div></section><footer><div class="paginator"><a href="/2019/01/31/miscellany/14数值计算精度丢失问题/" class="prev">上一篇</a><a href="/2019/01/31/redis/Redis持久化/" class="next">下一篇</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+</div></article></div></section><footer><div class="paginator"><a href="/2019/01/31/miscellany/14数值计算精度丢失问题/" class="prev">PRVE</a><a href="/2019/01/31/redis/Redis持久化/" class="next">NEXT</a></div><div id="container"></div><link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script><script>var gitment = new Gitment({
     id: 'Thu Jan 31 2019 20:45:32 GMT+0800',
     owner: 'sunweiguo',
